@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.env.local
+.env
+.env.*.local
+
+# Netlify
+.netlify/
+
+# Build & cache
+*.log
+.DS_Store
+
+# Editor
+.vscode/
+.idea/

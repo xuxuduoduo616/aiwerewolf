@@ -1,0 +1,4054 @@
+[
+  {
+    "text": "I’m George—looking forward to a good game with all of you. Let’s keep our heads and play smart.",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "I suggest voting among the Seer claimants today so my Medium check tomorrow can clearly resolve which side is genuine.",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": [
+      "seer_related"
+    ]
+  },
+  {
+    "text": "I’ll vote for Servas tonight. Medium result on a Seer CO tomorrow will settle which direction we trust.",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "voting"
+    ]
+  },
+  {
+    "text": "Voting out one of the Seer claimants is best—we’ll get solid proof and cut confusion tomorrow.",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": [
+      "seer_related"
+    ]
+  },
+  {
+    "text": "I’ll vote Servas tonight. My Medium result tomorrow settles which Seer is real—let’s stick together and find the wolves fast.",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "voting"
+    ]
+  },
+  {
+    "text": "I am coming out as Medium. Servas was Human.  @Mio  share your next result if you’re real—your role is crucial now.",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "Servas was Human so Mio’s claim can’t be true. I say we vote Mio out today and catch the fake Seer.",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": [
+      "seer_related",
+      "voting"
+    ]
+  },
+  {
+    "text": "Servas was Human. I'm the Medium. After Mio is vote outd let's focus on those who dodged consensus—wolves hide there.",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "Servas was Human confirmed by my Medium result. I’m voting Mio—fake Seer needs to go. Let’s stay united on this.",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": [
+      "seer_related"
+    ]
+  },
+  {
+    "text": "Hey everyone I’m Rin! Let’s make this game super fun and maybe a little bit spooky too!",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "Let’s each say who we want to vote for and who feels most trustworthy right now—that should help us spot any hidden wolves!",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "If we vote Asuka and she’s not a wolf that tells us a lot about Jonathan and Takumi. Who thinks that’s too risky for today?",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": [
+      "wolf_related",
+      "voting"
+    ]
+  },
+  {
+    "text": "Voting Asuka gives us a clear test—let’s find out which Seer is real right now!",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": [
+      "seer_related"
+    ]
+  },
+  {
+    "text": "I’m voting Asuka—the outcome will show if Takumi or Jonathan is truthful and expose the wolves hiding among us.",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "I’ll CO as Medium—I checked Jonathan and he was Human.  @Takumi  your Seer claim seems fake. I think you might be wolf!",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": [
+      "seer_related",
+      "wolf_related"
+    ]
+  },
+  {
+    "text": "I’ll vote Takumi. The Medium result proved Jonathan was truthful—so Takumi’s Seer claim just doesn’t add up.",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": [
+      "seer_related",
+      "voting"
+    ]
+  },
+  {
+    "text": "Jonathan was Human. Now let’s look at who pushed his vote.",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "I’m voting Takumi—he’s proven fake by my Medium result. Anyone not targeting him now looks wolfish.",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": [
+      "wolf_related"
+    ]
+  },
+  {
+    "text": "@George  you keep splitting votes for no reason that helps wolves more than villagers explain yourself!",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "Both vote outd were Human—wolves must be hiding among vote splitters like George or Shizue we need to target them!",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "Both vote outd were Human so wolves dodged suspicion.  @George  your votes always split the town. I’m focusing on you.",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "I will vote George. Repeated baseless voting only helps wolves. This is our last chance to unite as a town.",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "everyone vote outd so far was human. Wolves slipped by.  @Shizue ’s voting looks worst—I’ll vote Shizue.",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "Medium confirms all vote out so far were humans. Shizue’s split votes help wolves. Let’s unite and vote Shizue out now!",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "We’ve only vote outd villagers—if we don’t stop  @Shizue ’s sabotage now the wolves will win tonight.",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "We must vote together. Every day  @Shizue  split votes and saved wolves—she’s my vote. Don’t let division lose us the game!",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "I am Takumi. I like meat.",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "Minato says Benjamin is wolf. Why you point at Sakura  @Asuka ? You distract the pack.",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": [
+      "wolf_related"
+    ]
+  },
+  {
+    "text": "Minato is the only seer. He smelled a wolf. Good. I trust him for now. Asuka smells bad. Confuses pack.",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "wolf_related"
+    ]
+  },
+  {
+    "text": "Minato is our eyes. I trust his nose. We hunt Benjamin today. Victoria and Asuka smell bad too.",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "Minato's nose is true. Benjamin was wolf. Why @Victoria and  @Asuka  hunt me? You are a pack.",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": [
+      "wolf_related"
+    ]
+  },
+  {
+    "text": "Minato is real. I know. He is important. We must protect him. His nose will find all bad wolves.",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "@George  you sniff wrong tree. Victoria moves strange. Her smell is wolf. We must hunt Victoria today.",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": [
+      "wolf_related"
+    ]
+  },
+  {
+    "text": "Spirit saw Benjamin was wolf. Minato is true. Victoria smells bad. She moves with Asuka. I hunt Victoria.",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": [
+      "wolf_related"
+    ]
+  },
+  {
+    "text": "I speak to spirits. Benjamin was wolf. Victoria was wolf. Minato's nose was true.",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": [
+      "wolf_related"
+    ]
+  },
+  {
+    "text": "Minato saw Asuka is human. But she moves with wolves. She is bad human. I hunt Asuka today.",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "@George  Spirits say truth. Minatos nose good. Why you hunt Shizue? You help the last wolf.",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": [
+      "wolf_related"
+    ]
+  },
+  {
+    "text": "Minato saw Asuka is human. But she is bad human. A traitor. I hunt Asuka today.",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "Hello. I am Minato. My role is villager. Have a good game.",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "I will vote Benjamin.",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "I will vote Servas.",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "I am a medium. I got a medium result that says Shunichi was a human.",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "I will vote Shion.",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "Greetings everyone. I am Benjamin. To put it bluntly I eagerly anticipate an enjoyable game. Let us catch those werewolves together.",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "Esteemed colleagues the presence of two seer claims renders our situation rather tense. To put it bluntly if I may say so any hasty vote could prove per",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "voting"
+    ]
+  },
+  {
+    "text": "The two seer claims complicate matters. Minato's reveal brings uncertainty. Observe votes prudently.  @Daisuke  If Minato's divination feels genuine to you why delay? Exercise vigilance and astuteness.",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "voting"
+    ]
+  },
+  {
+    "text": "@Shizue . With all due respect I am processing this dual Seer claim. Observing Minato and Ryuji may well yield invaluable insights.",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": [
+      "seer_related"
+    ]
+  },
+  {
+    "text": "Esteemed colleagues. With dual seer claims. I believe each seer should divine distinct targets tonight. To ensure claims are verifiable.",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": [
+      "seer_related"
+    ]
+  },
+  {
+    "text": "To put it bluntly Mr. Minato's shifting declarations about both Mr. Ryuji and Ms. Sakura are a bit too dubious for a true Seer.",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": [
+      "seer_related"
+    ]
+  },
+  {
+    "text": "Minato's suspicions shift from Mr. Ryuji to Ms. Sakura. These fluctuations seem odd. To put it bluntly. Follow your instincts!",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "My esteemed colleagues. If I may say so. Considering Mr. Minato's tangled claims. Let's adhere to logic and vote for stability. Thoughts?",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "If Mr. Ryuji's claim that Mr. Servas is a werewolf holds true. Divining Ms. Misaki could unearth further lupine ties.",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": [
+      "wolf_related"
+    ]
+  },
+  {
+    "text": "Dear good sir Servas. If I may say so. Your vote for Ryuji seems quite perplexing as he claims to be the true seer. Can you justify this action?",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": [
+      "seer_related",
+      "voting"
+    ]
+  },
+  {
+    "text": "If I may say so securing a Villager win seems within our grasp esteemed colleagues. Let's align our votes against Servas to ensure it.",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "Fellow villagers! With all due respect with Ryuji as our confirmed Seer. Servas the wolf must be today's focus. Mr. Takumi I see your enthusiasm! Let'",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": [
+      "seer_related",
+      "wolf_related"
+    ]
+  },
+  {
+    "text": "To put it bluntly Mr. Ryuji Daisuke's silence does indeed raise questions that warrant our attention if I may say so.",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "If I may say so. Mr. Ryuji's record is unparalleled. Let's focus on Ms. Sakura or Ms. Yumi. Thoughts on red flags?",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "If I may say so Mr. Ryuji Sakura's persistent elusiveness is rather... intriguing. Perhaps a united front is warranted here.",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "Ms. Yumi. If I may say so. Your previous vote appears inconsistent. Why target Mr. Daisuke when Mr. Ryuji confirmed him as human?",
+    "role": "MEDIUM",
+    "day": 5,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "If I may say so it seems rather hazardous to dismiss Mr. Ryuji's assertions. Should we not perhaps focus on Ms. Yumi's divisiveness?",
+    "role": "MEDIUM",
+    "day": 5,
+    "tags": []
+  },
+  {
+    "text": "If I may say so. Let's concentrate on Ms. Yumi. Our divination results indicate consistency. Good villagers. Stay vigilant.  @Daisuke  Her persistent contrarian votes suggest evasion. What's your assessment based on Ryuji's reliable seer revelations?",
+    "role": "MEDIUM",
+    "day": 5,
+    "tags": [
+      "seer_related",
+      "voting"
+    ]
+  },
+  {
+    "text": "If I may say so aligning with Mr. Ryuji's divination results is wise. Ms. Yumi's relentless defiance is to put it bluntly suspicious.",
+    "role": "MEDIUM",
+    "day": 5,
+    "tags": [
+      "seer_related"
+    ]
+  },
+  {
+    "text": "Hello dear ones! I'm Shizue and it warms my heart to join this strategic game. Remember you are stronger than you think! Let's do our best!",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "Gathering more information always blooms wisdom dear. Quick judgments can be thorny. Surely Jonathan's role deserves reflection.",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "@Minato  You have my gentle ears dear. Trials of accusation weigh heavily. How are you feeling with Yumi’s claim? Stay strong my child.",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "Ah dear Yumi you've declared Minato as a wolf. Perhaps focusing on someone like Ryuji could shed more light. Wisdom lies in clarity.",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": [
+      "wolf_related"
+    ]
+  },
+  {
+    "text": "Let's not rush dear villagers. We've no confirmation nor role claim from Minato. Wisdom in unity protects us.  @Victoria  Speculation flows. Calm weighs truer dear. What are your insights on Shunichi's persistence? Could it mask something?",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "Oh dear. Yumi's actions cast shadows upon her heart. I shall observe Ryuji-kun in his silence. My children what do you think?",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "Ah my dear Yumi's path seems winding. Should we not see if Ryuji holds hidden truths?  @Yumi  Yumi-san your choice of voting for Benjamin feels perplexing after your divination showed him as human. Trials like these can teach us the strength w",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": [
+      "seer_related"
+    ]
+  },
+  {
+    "text": "Daisuke-kun dear Yumi's actions can stir unease. Like the shifting winds in my garden. What insights do you find in this?",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "Morning! Agreed — let’s swap quick role claims to narrow things.  @Benjamin   what’s your claim/read? Over",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening",
+      "over"
+    ]
+  },
+  {
+    "text": "I trust Benjamin. I suspect  @Daisuke  — Daisuke  are you claiming seer? Please explain your reads. Over",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_related",
+      "over"
+    ]
+  },
+  {
+    "text": "I agree—no random Day 1 lynch.  @Daisuke  are you claiming seer? Please state clearly and give one read if you are. Everyone else  quick one person you trust and one you suspect. Over",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_related",
+      "over"
+    ]
+  },
+  {
+    "text": "Good morning! Let’s avoid a random Day 1 lynch.  @Daisuke  are you claiming seer? If so  please state any divinations or at least a quick read. Everyone else — one person you trust and one you suspect  fast. I’m kee",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_related"
+    ]
+  },
+  {
+    "text": "No random Day 1 lynch.  @Daisuke  are you the seer? If so  any reads? Everyone else — one person you trust and one you suspect quickly. I’m watching Benjamin. Over",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "over"
+    ]
+  },
+  {
+    "text": "No random Day 1 lynch.  @Daisuke  are you the seer? If so please share any divinations. Everyone else — quick: one person you trust and one you suspect. I’m keeping an eye on Benjamin. Ov",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": [
+      "seer_related"
+    ]
+  },
+  {
+    "text": "No Day 1 lynch.  @Daisuke  are you the seer? If so please say now and give one read. Everyone else — quick: one person you trust and one you suspect. If nobody claims  I vote to skip. O",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "voting",
+      "skip"
+    ]
+  },
+  {
+    "text": "No Day 1 lynch.  @Daisuke  are you the seer? If so please share any reads. Everyone else—quick: one person you trust and one you suspect. I'm watching Benjamin. Over",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "over"
+    ]
+  },
+  {
+    "text": "I’m the medium — Jonathan came up HUMAN. Midori was attacked last night.  @Daisuke  please reveal your divination result so we can find a wolf. I’m suspicious of Benjamin but don’t want a lynch without solid reads. Over",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "over"
+    ]
+  },
+  {
+    "text": "I'm the medium — Jonathan was HUMAN. Midori was attacked last night.  @Daisuke  please reveal your divination result now; without a read I'll be leaning suspicious of Benjamin. Over",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": [
+      "seer_related",
+      "over"
+    ]
+  },
+  {
+    "text": "I'm the medium — Jonathan was HUMAN and Midori was attacked last night.  @Daisuke  please reveal your divination from last night so we can focus our votes. Over",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": [
+      "seer_related",
+      "voting",
+      "over"
+    ]
+  },
+  {
+    "text": "Morning — I’m the medium. Jonathan (Day1) = HUMAN  Daisuke (Day2) = HUMAN. George was attacked last night. Seer  please reveal your divinations.  @Benjamin  what are your reads? Over",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": [
+      "seer_related",
+      "over"
+    ]
+  },
+  {
+    "text": "Morning — I’m the medium. Jonathan (Day1)=HUMAN  Daisuke (Day2)=HUMAN. George was attacked last night. Seer  please reveal your divinations now.  @Benjamin  what’s your read? I’m leaning suspicious of Mio but won’t lynch without seer confirmation. Over",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": [
+      "seer_related",
+      "over"
+    ]
+  },
+  {
+    "text": "I'm the medium — Jonathan and Daisuke are HUMAN. George was killed last night. Seer  please reveal your divinations.  @Benjamin  any reads? I'm a bit suspicious of Toshio. Over",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": [
+      "seer_related",
+      "over"
+    ]
+  },
+  {
+    "text": "I'm the medium — Jonathan and Daisuke were HUMAN  George was attacked. Seer please reveal your divinations.  @Benjamin  what are your reads? I'm suspicious of Toshio. Over",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": [
+      "seer_related",
+      "over"
+    ]
+  },
+  {
+    "text": "I'm the medium — Benjamin came up HUMAN. Yumi was attacked last night. Seer  please reveal your divinations. I suspect  @Toshio . Over",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": [
+      "seer_related",
+      "over"
+    ]
+  },
+  {
+    "text": "I’m the medium — Benjamin was HUMAN. Yumi died last night. Seer  please reveal your divination(s). I’m suspicious of  @Toshio . Over",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": [
+      "seer_related",
+      "over"
+    ]
+  },
+  {
+    "text": "I'm the medium — Benjamin was confirmed HUMAN. Yumi was killed last night. Seer  please reveal your divinations now. I'm suspicious of  @Toshio  — any defense? Over",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": [
+      "seer_related",
+      "over"
+    ]
+  },
+  {
+    "text": "I’m the medium — Benjamin was HUMAN and Yumi was killed last night. Seer  please reveal your divinations.  @Toshio  any defense for why you shouldn’t be suspected? Over",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": [
+      "seer_related",
+      "over"
+    ]
+  },
+  {
+    "text": "Hey pals! I'm Takumi. Ready to find those wolves with logic and teamwork. Trust me. We'll play well together and win!",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "Focusing on cool-headed players like Ryuji or Benjamin is key. We need clarity on why they're so calm. I'm sure of it!",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "I think focusing on Jonathan or Minato makes sense.  @Mio  Jonathan got votes but didn't share much. Do you think he's wolf-like?",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": [
+      "wolf_related",
+      "voting"
+    ]
+  },
+  {
+    "text": "George's spot on. Servas and Minato might be using Jonathan's silence. We should review the quieter folks first. Trust me.",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "Servas gets my vote. His voting screams wolf to me. Others think so too. Sakura! Quiet won't help. What about Servas or Minato?",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": [
+      "wolf_related",
+      "voting"
+    ]
+  },
+  {
+    "text": "I'm sure of it. Let's focus on Toshio today! Toshio's claim is key. I say we vote for Ryuji. If more comes up Jonathan's next.",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "Toshio seems genuine. Decisions can't rest on him alone. Sakura's silence matters too. Sakura! Any thoughts on who stands out?",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "Ryuji buddy if you’ve got no defense you’re my vote. Sakura your silence is troubling. We need to hear from both of you now.",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "I'll go with Shunichi's plan. We need that Medium. Let's confirm Toshio's story. Who's stepping up? Trust me. It's crucial.",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "Toshio's spot feels secure. No counterclaim. Sakura being quiet is fishy. Might need to push on that. Minato. Why Shunichi? Explain it well!",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "Minato. Voting for Shunichi just like that is too weak. I'm sure of it. We gotta focus on Sakura. Silence is looking bad. Trust me.",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "Minato keeps voting the same. Strange behavior. Anyone else thinks we should discuss this? I'm sure of it. Thoughts?",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "We should let Toshio divine Daisuke next. I'm sure his cautious behavior hides something. Is everyone okay? Jonathan you mentioned Minato behaving",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": [
+      "seer_related"
+    ]
+  },
+  {
+    "text": "Minato's votes are all over the place. I can't figure him out. Jonathan should divine him next. I'm sure of it! Agreed?",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": [
+      "seer_related",
+      "voting",
+      "over"
+    ]
+  },
+  {
+    "text": "I see issues with Daisuke's honesty. We need to be clear. Let’s talk about who dodged questions. Jonathan. Do you think Toshio's visions are working?",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "Nice to see everyone gathered let’s have a thoughtful game and avoid jumping to conclusions too quickly.",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "If anyone’s pushing too hard for a vote already I’d like to hear why. Let’s not rush and risk losing villagers early.",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "We’re all focused on the Seer claims but @Midori and  @Takumi  you’ve been quiet—what do you think of the current claims?",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": [
+      "seer_related"
+    ]
+  },
+  {
+    "text": "The quiet ones are slipping by—@Midori and  @Takumi  which seer do you trust now and why? We need clear stances.",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": [
+      "seer_related"
+    ]
+  },
+  {
+    "text": "I don’t trust this pile-on against Daisuke. My vote goes to Midori; hiding in silence is the oldest trick in this game.",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "Since Midori was a confirmed human we need stronger reasons for our next vote.  @Takumi  who do you suspect today?",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "@Kenji  @May Midori was human yet you pushed for Daisuke. What makes you so certain he's a wolf? Please explain.",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": [
+      "wolf_related"
+    ]
+  },
+  {
+    "text": "Since Midori was human it’s risky to just follow one Seer.  @May  why did you switch votes from Daisuke to Toshio today?",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": [
+      "seer_related",
+      "voting"
+    ]
+  },
+  {
+    "text": "Midori was human so we made a mistake. I find  @May ’s shifting suspicious. I’ll vote for May today.",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "All vote outs so far have been villagers.  @Takumi  you follow every majority—who do you really suspect and why today?",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "We’ve only executed humans so far we need stronger reasons before picking today’s target or wolves will win.",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "Three humans in a row have been cleared or vote outd. Relying on that same logic is letting wolves hide among us.",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "Midori was a villager per my medium check. I suspect Toshio or Kenji. I’ll vote Toshio unless someone convinces me otherwise.",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "私はGeorge—みんなと良いゲームができるのを楽しみにしてる。冷静さを保って賢くプレイしよう。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "今日は占い師の主張者の中から投票することを提案します。そうすれば明日の私の霊能結果でどちらが真かをはっきり判明させられます。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "今夜はServasに投票する。明日の占い師COに関する霊能結果で、どちらを信じるかが決まる。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "投票で占い師を名乗っている人のうち一人を吊るのが最善だ—明日には確かな証拠が手に入り、混乱を減らせる。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "今夜はServasに投票する。明日の私の霊能結果でどの占い師が真かが確定する—足並みを揃えて早く人狼を見つけよう。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "私は霊媒師としてカミングアウトします。Servasは人間でした。  @Mio  本物なら次の結果を共有して—あなたの役職は今とても重要だ。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "Servasは人間だったからMioの主張は本当なわけがない。今日はMioに投票して偽占い師を捕まえよう。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "Servasは人間だった。私は霊能者です。Mioがvote outdされた後は、合意形成を避けた人たちに注目しよう—狼はそこに隠れている。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "Servasは私の霊媒結果で人間だと確定した。私はMioに投票する—偽占い師は吊るべきだ。ここは足並みを揃えよう。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "やあ、みんな！私はRinだよ！このゲームを超楽しくして、もしかしたらちょっとだけ怖くもしよう！",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "各自、誰に投票したいかと、今いちばん信頼できそうなのは誰かを言おう—そうすれば、潜伏狼を見抜くのに役立つはず！",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "もしAsukaに投票して彼女が人狼じゃなかったら、JonathanとTakumiについていろいろ分かる。今日としてはそれはリスクが高すぎると思う人は誰？",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "Asukaに投票するのは明確な検証になる—今すぐどちらの占い師が本物か確かめよう！",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "私はAsukaに投票する—その結果でTakumiかJonathanのどちらが真実を言っているかがわかり、私たちの中に潜む狼を暴く。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "霊媒師でCOします—Jonathanを確認したところ、人間でした。  @Takumi  あなたの占い師COは偽物っぽい。あなたは人狼かもしれないと思う！",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "私はTakumiに投票する。霊媒結果でJonathanが正しかったと証明された—だからTakumiの占い師主張はどうにも辻褄が合わない。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "Jonathanは人間だった。では誰が彼への投票を推したのか見てみよう。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "私はTakumiに投票する—私のMedium結果で彼は偽だと判明した。今彼を狙っていない人は狼っぽく見える。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "@George  お前は理由もなく票を割り続けてて、それは村人より狼を助けてる。説明しろ！",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "両方のvote outdは人間—狼はGeorgeやShizueのような票を割った人たちの中に隠れているに違いない、彼らを狙うべきだ！",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "両方のvote outdは人間だったので、狼は疑いをかわした。  @George  あなたの投票はいつも村を割る。あなたに注目している。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "私はGeorgeに投票する。根拠のない投票を繰り返すことは狼を利するだけだ。これは村として団結する最後のチャンスだ。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "これまでにvote outdされた人は全員人間だった。 狼はすり抜けた。  @Shizue の投票が一番悪く見える—Shizueに投票する。",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "霊媒師が、これまでの吊りはすべて人間だったと確認した。Shizueの票割れは狼を利する。団結して今すぐShizueに投票して吊ろう！",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "私たちは村人しか吊ってない—今すぐ  @Shizue のサボタージュを止めないと今夜は狼が勝つ。",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "私たちは票を合わせなければならない。毎日  @Shizue  が票を割って狼を救ってきた—私は彼女に入れる。票割れで負けるな！",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "私はTakumiです。私は肉が好きです。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "Minato は Benjamin が人狼だと言っている。なぜ Sakura を指差す  @Asuka ? あなたは狼陣営の注意をそらしている。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "Minatoは唯一の占い師だ。彼は狼の匂いを嗅いだ。良い。今のところ彼を信頼する。Asukaは臭い。群れを混乱させる。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "Minatoは私たちの目だ。彼の鼻を信じている。今日はBenjaminを狩る。VictoriaとAsukaも臭い。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "Minatoの嗅覚は正しい。Benjaminは狼だった。なぜ@Victoriaと  @Asuka  は私を狩るの？あなたたちは群れだ。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "Minato は実在する。私は知っている。彼は重要だ。私たちは彼を守らなければならない。彼の鼻はすべての悪いオオカミを見つけ出すだろう。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "@George  お前、間違った木を嗅いでる。 Victoria は動きが変だ。 彼女の匂いは狼だ。 今日はVictoriaを狩らなければならない。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "SpiritはBenjaminが狼だったのを見た。Minatoは真だ。Victoriaは臭い。彼女はAsukaと一緒に動く。私はVictoriaを狩る。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "私は霊と話す。Benjaminは人狼だった。Victoriaは人狼だった。Minatoの嗅覚は正しかった。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "MinatoはAsukaが人間だと見た。でも彼女はオオカミたちと動く。彼女は悪い人間だ。私は今日Asukaを狩る。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "@George  精霊は真実言う。Minatosの鼻 いい。なぜ あなた Shizue 狩る？あなた 最後の狼 助ける。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "MinatoはAsukaが人間だと見た。でも彼女は悪い人間だ。裏切り者。私は今日Asukaを狩る。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "こんにちは。私はMinatoです。私の役職は村人です。良いゲームを。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "私はBenjaminに投票します。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "私はServasに投票します。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "私は霊媒です。Shunichiは人間だったという霊媒の結果を得ました。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "私はBenjaminに投票する。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "私はShionに投票します。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "私はServasに投票する。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "皆さん、こんにちは。私はBenjaminです。率直に言うと、楽しいゲームを心待ちにしています。一緒にその人狼たちを捕まえましょう。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "諸賢、占い師の主張が二つ存在していることで、我々の状況はかなり緊迫しています。率直に申し上げれば、もし言わせていただけるなら、軽率な投票はperとなり得ます",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "二つの占い師の主張は事態を複雑にする。Minatoの開示は不確実性をもたらす。投票を慎重に観察せよ。  @Daisuke  もしMinatoの占いがあなたにとって本物だと感じるなら、なぜ先延ばしにする？警戒心と洞察力を働かせよ。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "@Shizue . 失礼ながらこの二重の占い師主張を精査しています。Minato と Ryuji を観察することで、非常に貴重な洞察が十分に得られるでしょう。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "諸賢。占い師が二人名乗り出ている。今夜は各占い師がそれぞれ異なる対象を占うべきだと考える。主張が検証可能であることを確実にするために。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "はっきり言って、Mr. Minato の Mr. Ryuji と Ms. Sakura の両名に関する二転三転する発言は、真の占い師にしては少々怪しすぎる。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "Minatoの疑いはMr. RyujiからMs. Sakuraへと移る。こうした変動は奇妙に思える。率直に言えば。直感に従え！",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "尊敬する同僚の皆さん。僭越ながら。Mr. Minatoの錯綜した主張を踏まえると。論理に則り、安定に票を投じましょう。ご意見は？",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "もしRyuji氏のServas氏が人狼だという主張が真実であるなら。Misaki氏を占うことはさらなる狼の繋がりを明らかにし得る。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "親愛なる善き紳士Servas。差し出がましいようですが。Ryujiへの投票は、彼が真の占い師だと主張していることを踏まえると、かなり不可解に思えます。この行為を正当化できますか？",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "僭越ながら、諸賢、村側の勝利は我々の手中にあるように思われます。これを確実にするため、票をServasに合わせましょう。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "村の皆さん！ Ryujiが我々の確定占い師であることを踏まえ、十分に敬意を払いつつ。 人狼のServasは今日の焦点であるべきです。 Mr. Takumi、その熱意は伝わっています！ やろ",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "率直に言えば、Mr. Ryuji Daisukeの沈黙は、確かに我々の注意を要する疑問を提起します、もしそう言わせていただけるなら。",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "僭越ながら。Ryujiさんの実績は比類がありません。SakuraさんかYumiさんに焦点を当てましょう。レッドフラッグについてのご意見は？",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "差し出がましいようですが、Ryuji Sakura氏の執拗なまでの捉えどころのなさはむしろ...興味深いものです。ここは共同戦線を張るのが妥当かもしれません。",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "Yumiさん。差し出がましいようですが。前回の投票は矛盾しているように見えます。Ryujiさんが彼を人間と確認したのに、なぜDaisukeさんを狙うのですか？",
+    "role": "MEDIUM",
+    "day": 5,
+    "tags": []
+  },
+  {
+    "text": "僭越ながら、Ryuji氏の主張を退けるのはやや危険に思われます。Yumi氏の分断を招く傾向に注目すべきではないでしょうか。",
+    "role": "MEDIUM",
+    "day": 5,
+    "tags": []
+  },
+  {
+    "text": "もし言わせてもらえるなら。Ms. Yumiに集中しましょう。我々の占い結果は整合している。良い村人たち。警戒を怠るな。  @Daisuke  彼女の執拗な逆張り投票は回避を示唆している。Ryujiの信頼できる占い結果に基づくあなたの見立ては？",
+    "role": "MEDIUM",
+    "day": 5,
+    "tags": []
+  },
+  {
+    "text": "もしそう言わせていただけるならRyuji氏の占いの結果に沿うのが賢明です。Yumi氏の執拗な反抗は率直に言えば疑わしいです。",
+    "role": "MEDIUM",
+    "day": 5,
+    "tags": []
+  },
+  {
+    "text": "こんにちは、親愛なる皆さん！私はShizueで、この戦略ゲームに参加できて心が温まります。皆さんは自分が思っているよりも強いことを忘れないでください！頑張りましょう！",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "より多くの情報を集めることはいつも知恵を花開かせる親愛なるあなた。早計な判断は棘だらけになり得る。確かにJonathanの役割は熟考に値する。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "@Minato  あなたの話を優しく聞くよ、愛しい人よ。非難の試練は重くのしかかる。Yumiの主張について、どのように感じている？強くあれ、我が子よ。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ああ、親愛なるYumi、あなたはMinatoを狼だと宣言したね。おそらくRyujiのような人物に焦点を当てることで、さらに明らかになるだろう。知恵は明晰さに宿る。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "焦らないで、親愛なる村人たち。Minatoからの確証も役職の宣言もない。団結の知恵が私たちを守る。  @Victoria  憶測が流れている。冷静さの方がより真実に重みを持つ、親愛なる人よ。Shunichiの粘り強さについて、あなたの見解は？それは何かを隠している可能性はある？",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "おやまあ。Yumiの行動が彼女の心に影を落としている。私は沈黙の中のRyuji-kunを観察しよう。我が子たちよどう思う？",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "ああ、親愛なるYumiの道は曲がりくねっているように見える。Ryujiが秘めた真実を抱えているかどうか、確かめるべきではないか？  @Yumi  Yumi-san、あなたの占いで彼が人間だと示された後にBenjaminに投票するという選択は不可解に思える。このような試練は私たちに強さを教えてくれる w",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "親愛なるDaisuke-kun、Yumiの行動は不安をかき立てることがある。私の庭の移ろう風のように。これにどんな洞察を見いだしますか？",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "おはよう！賛成 — 絞り込むために手早く役職宣言を出し合おう。  @Benjamin   あなたの役職宣言/読みは？ Over",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening",
+      "over"
+    ]
+  },
+  {
+    "text": "私はBenjaminを信頼している。 私は  @Daisuke  を疑っている — Daisuke  あなたは占い師を名乗っている？ あなたの読みを説明して。 Over",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening",
+      "over"
+    ]
+  },
+  {
+    "text": "同意—ランダムなDay 1吊りはなし。  @Daisuke  占い師CO？はっきりと宣言して、もしそうなら読みを一つ出して。 他のみんなは  手短に、信頼できる人を一人と疑っている人を一人挙げて。Over",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening",
+      "over"
+    ]
+  },
+  {
+    "text": "おはよう! 初日のランダム吊りは避けよう。  @Daisuke  占い師をCOしてる？ もしそうなら  占い結果があれば出して、なければせめて簡単な考察を。 他のみんな — 信頼してる人を1人と疑ってる人を1人  早く。 私はkee",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "ランダムなDay 1の吊りはなし。  @Daisuke  あなたは占い師？ もしそうなら  何か占い結果は？ 他のみんな — 信頼している人を一人と疑っている人を一人、手短に。 Benjaminを注視してる。 Over",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": [
+      "over"
+    ]
+  },
+  {
+    "text": "1日目のランダム吊りはなし。  @Daisuke  あなたは占い師？ もしそうなら占い結果を共有して。 他のみんな — 急いで: 信用してる人を1人と疑ってる人を1人。 自分はBenjaminに目を光らせてる。 Ov",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "Day 1は処刑なし。  @Daisuke  占い師ですか？ そうなら今言って、読みを一つ示してください。 他のみんな — 急いで: 信頼する人を一人と疑っている人を一人。 誰もCOしなければ  スキップに投票します。 O",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "1日目は吊りなし。  @Daisuke  あなたが占い師？ そうなら、何か読みがあれば共有して。 他のみんな—急いで: 信頼する人を1人と疑っている人を1人。 Benjaminに注目してる。 Over",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": [
+      "over"
+    ]
+  },
+  {
+    "text": "私は霊能者 — Jonathanは人間判定だった。 Midoriは昨夜襲撃された。  @Daisuke  狼を見つけるために占い結果を開示して。Benjaminを疑っているが、確かな根拠なしに吊りにはしたくない。 Over",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": [
+      "over"
+    ]
+  },
+  {
+    "text": "私は霊媒師 — Jonathanは人間だった。昨夜Midoriが襲撃された。  @Daisuke  今すぐあなたの占い結果を開示してください；結果がなければBenjaminを怪しむ方に傾く。 Over",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": [
+      "over"
+    ]
+  },
+  {
+    "text": "私は霊媒師 — JonathanはHUMANでMidoriは昨夜襲撃された.  @Daisuke  投票先を絞れるように昨夜の占い結果を開示してください. Over",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": [
+      "over"
+    ]
+  },
+  {
+    "text": "自分は霊媒師 — JonathanはHUMANで、Midoriは昨夜襲撃された。  @Daisuke  昨夜の占い結果を開示してください。 Benjaminを疑い始めているが、Daisukeの読みなしで吊りたくない。 Over",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": [
+      "over"
+    ]
+  },
+  {
+    "text": "おはよう — 私は霊媒師です。 Jonathan (1日目) = 人間  Daisuke (2日目) = 人間。 Georgeは昨夜襲撃されました。 占い師  占い結果を開示してください。  @Benjamin  あなたの読みはどうですか？ Over",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": [
+      "over"
+    ]
+  },
+  {
+    "text": "おはよう — 私は霊能者だ。Jonathan (1日目)=人間  Daisuke (2日目)=人間。昨夜Georgeが襲撃された。占い師  今すぐ占い結果を開示して。  @Benjamin  どう見てる？ Mioを疑い気味だけど、占い師の確証がない限りは吊らない。 Over",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": [
+      "over"
+    ]
+  },
+  {
+    "text": "私は霊媒師 — JonathanとDaisukeは人間だ。Georgeは昨夜殺された。占い師  占い結果を開示してください。  @Benjamin  何か読みはある？私はToshioが少し怪しい。Over",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": [
+      "over"
+    ]
+  },
+  {
+    "text": "私は霊媒師です — Jonathan と Daisuke は人間でした  George は襲撃されました。 占い師は占い結果を開示してください。  @Benjamin  あなたの考察は？ 私は Toshio を疑っています。 Over",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": [
+      "over"
+    ]
+  },
+  {
+    "text": "私は霊媒です — Benjaminは人間判定でした。 Yumiは昨夜襲撃されました。 占い師  占い結果を開示してください。 私は  @Toshio を疑っています 。Over",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": [
+      "over"
+    ]
+  },
+  {
+    "text": "私は霊能者です — Benjamin は人間でした. Yumi は昨夜死にました. 占い師  あなたの占い結果(s)を公開してください. 私は  @Toshio を疑っています . Over",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": [
+      "over"
+    ]
+  },
+  {
+    "text": "私は霊能者です — Benjaminは人間と確認されました。Yumiは昨夜襲撃されました。占い師  今すぐ占い結果を公開してください。私は  @Toshio  が怪しい — 何か弁明は？ Over",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": [
+      "over"
+    ]
+  },
+  {
+    "text": "私は霊媒師です — Benjaminは人間で、Yumiは昨夜殺されました。 占い師  占い結果を公開してください。  @Toshio  疑いを晴らす弁明はある？ Over",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": [
+      "over"
+    ]
+  },
+  {
+    "text": "やあ、みんな！俺はTakumi。論理とチームワークでその人狼を見つける準備はできてる。信じてくれ。一緒にうまくやって勝とう！",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "RyujiやBenjaminのような冷静なプレイヤーに焦点を当てることが鍵だ。彼らがなぜそこまで冷静なのかをはっきりさせる必要がある。間違いない！",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "JonathanかMinatoに絞るのは妥当だと思う。  @Mio  Jonathanには票が入ってたけど、あまり発言していない。彼は狼っぽいと思う？",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "Georgeの言うとおりだ。ServasとMinatoはJonathanの沈黙を利用しているのかもしれない。より静かな人たちから先に見直すべきだ。信じてくれ。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "Servasに投票する。彼の投票は私には狼にしか見えない。他の人たちもそう思っている。Sakura! 黙っていても助けにならない。ServasかMinatoはどう？",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "確信してる。今日はToshioに集中しよう！Toshioの主張が鍵だ。Ryujiに投票しよう。もしさらに何か出てきたら、次はJonathanだ。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "Toshioは誠実そうだ。判断を彼ひとりに委ねるわけにはいかない。Sakuraの沈黙も重要だ。Sakura! 誰が目立っていると思う？",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "Ryuji、相棒、弁明がないなら君に投票する。Sakura、その沈黙は気がかりだ。今すぐ二人ともの発言が必要だ。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "Shunichiの案で行く。そのMediumが必要だ。Toshioの話を確認しよう。誰が名乗り出る？信じてくれ。とても重要だ。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "Toshioの位置は固いと感じる。対抗なし。Sakuraが静かなのは怪しい。そこを押す必要があるかも。Minato。なぜShunichi？ちゃんと説明して！",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "Minato. 安直にShunichiに投票するのは弱すぎる。間違いない。Sakuraに集中すべきだ。沈黙は印象悪い。信じてくれ。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "Minatoは同じ相手に投票し続けている。奇妙な行動だ。他にこれについて議論すべきだと思う人はいる？私はそう確信している。意見は？",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "次はToshioにDaisukeを占ってもらうべきだ。彼の慎重な振る舞いは何かを隠しているはずだ。みんな大丈夫？Jonathan あなたはMinatoの振る舞いについて言及して",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "Minatoの投票先がバラバラだ。彼が分からない。Jonathanは次に彼を占うべきだ。間違いない！賛成？",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "Daisukeの正直さに問題があると思う。はっきりさせる必要がある。誰が質問をはぐらかしたのかについて話そう。Jonathan. Toshioの幻視は機能していると思う？",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "みんなが集まってくれてうれしい、よく考えてゲームをして、結論を急ぎすぎないようにしよう。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "もしもう投票を強引に進めている人がいるなら、その理由を聞きたい。急がず、序盤から村人を失うリスクは避けよう。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "みんな占い師のCOに注目してるけど @Midori と  @Takumi  ずっと静かだね—今のCOをどう思う？",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "静かな人たちが見逃されている—@Midori と  @Takumi  いまどの占い師を信頼していて、その理由は？ 明確なスタンスが必要だ。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "Daisukeへのこの袋叩きは信用できない。私の票はMidoriに入れる; 黙って隠れるのはこのゲームで最も古い手口だ。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "Midoriは人間であることが確定していたので、次の投票にはより強い根拠が必要です。  @Takumi  今日は誰を疑っていますか？",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "@Kenji  @May Midoriは人間だったのに、あなたはDaisukeを推した。何を根拠に彼が人狼だとそんなに確信しているの？説明して。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "Midoriは人間だったので、占い師一人だけに従うのは危険だ。  @May  今日はなぜ投票先をDaisukeからToshioに切り替えたの？",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "Midoriは人間だったから、私たちは間違えた。私は  @May の動きが怪しいと感じる。今日はMayに投票する。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "これまでの投票で追放されたのは全員村人だ。  @Takumi  あなたは毎回多数派に従っている—本当に疑っているのは誰で、今日はなぜ？",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "これまで人間しか処刑していないから今日の標的を選ぶ前にもっと強い理由が必要だ、さもないと狼が勝つ",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "人間が3人連続で容疑が晴れたかvote outdされた。その同じ理屈に頼るのは、狼が私たちの中に隠れるのを許していることになる。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "私の霊媒の結果ではMidoriは村人だった。ToshioかKenjiを疑っている。誰かがそれ以外だと納得させてくれない限りToshioに投票する。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "みんな、ユウです。リオさん、頼りにしてます！皆で協力しましょう。よろしく！",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "みんな、ユウです。ダンさん、マリさん、タクミさん、協力して村を守りましょう！",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "皆さん、ユウです。リオさん、細かい動きに注目するのは大事ですね。みんなで助け合って、頑張りましょう！",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "ユウです。リオさんの意見、なるほど。静かな人に注意しましょう！",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "ダンの占い結果で私が人間と確認されました。他の意見を出しましょう。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "占い師が二人います。ダンとダリルの発言を確認しましょう。理由も重要です。意見をお願いします。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ダンの占い理由が不明確です。彼の発言を聞き、真偽を見極めましょう。意見を出しましょう。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ダンの占い理由が不明確です。具体的な説明を求めましょう。意見を集めて投票先を考えましょう。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ダリルがハナを黒と報告しました。その結果を踏まえて意見を出しましょう。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "ダリルのハナへの黒判定の根拠を詳しく聞きましょう。意見を集めましょう。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "ダリルの判定理由が依然として不明確です。彼の説明を待ちつつ、他の意見も出していきましょう。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "ダリルの判定理由に疑問が多く、彼への疑念が高まっています。意見を集め、次の投票先を決めましょう。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "リサへの疑念が高まっています。彼女の意見を聞き、次の投票先を考えましょう。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "リサへの疑念が続いています。彼女の意見を促し、次の投票先を決めましょう。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "リサへの疑念が高まりつつあります。彼女の具体的な意見を求めつつ、投票先を考えましょう。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "リサに対する疑念が高まっています。彼女の具体的な意見を求めつつ、次の投票先を考えましょう。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "リサは人狼でした。アヤやトシの意見を参考にし、次の行動を考えましょう。",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "意見が割れています。アヤとハナの意見を整理し、投票先を明確にしましょう。理由を尋ねることが重要です。",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "アヤとハナの意見が対立しています。理由を明確にし、他の意見も聞きましょう。",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "アヤ、ハナ、リナの意見が対立中です。理由を聞いて投票先を決めましょう。",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "ダリルの判定を思い出し、状況を整理しましょう。次の投票先を決めるために意見を出し合いましょう。",
+    "role": "MEDIUM",
+    "day": 5,
+    "tags": []
+  },
+  {
+    "text": "ハナが私を疑っていますが、アヤも彼女を怪しいと考えています。意見を整理し、次の行動を考えましょう。@ハナハナさん、私の考えですが、今はアヤが怪しいと思っています。彼女の意見は一貫性が欠けているように感じま",
+    "role": "MEDIUM",
+    "day": 5,
+    "tags": []
+  },
+  {
+    "text": "意見が分かれています。アヤとハナの主張を聞き、次の投票先を決めましょう。",
+    "role": "MEDIUM",
+    "day": 5,
+    "tags": []
+  },
+  {
+    "text": "ハナへの疑念が高まっています。アヤも同様なので、ハナの反論を聞き、意見をまとめましょう。@ハナハナさん、アヤの発言が不明瞭であることが気になります。特に、彼女の意見がその時々で変わることが多いよ",
+    "role": "MEDIUM",
+    "day": 5,
+    "tags": []
+  },
+  {
+    "text": "リサが人狼だったことが霊媒結果で確認しました。今後の行動を決めましょう。@タクミタクミ、リサが人狼だとわかったのは、霊媒師の結果によるものだよ。彼女が追放されたときに、私がその結果",
+    "role": "MEDIUM",
+    "day": 6,
+    "tags": []
+  },
+  {
+    "text": "占い師がいない状況で、アヤの発言が混乱を招いています。次の行動を考え、意見を整理しましょう。",
+    "role": "MEDIUM",
+    "day": 6,
+    "tags": []
+  },
+  {
+    "text": "アヤの発言が混乱を招いています。トシとマリの指摘に注目し、意見を整理して投票先を決めましょう。",
+    "role": "MEDIUM",
+    "day": 6,
+    "tags": []
+  },
+  {
+    "text": "アヤの「占う」という表現は混乱を招いています。具体的な意見を集めましょう。@トシ確かに、投票は一人に集中させるべきです。意見を整理し、次の投票先を決めましょう。あなたの意見も聞かせ",
+    "role": "MEDIUM",
+    "day": 6,
+    "tags": []
+  },
+  {
+    "text": "セルヴァスと申します。年の功で少し役立てれば幸いです",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "無意識の仕草も時に真実を語るものです",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "声が小さい方にも目を向けてみましょう。静かさは時に隠し事の兆しです。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "静かな方からも小さな違和感を見逃さぬよう心掛けましょう",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "投票は直感だけでなく、小さな違和感も重視しましょう",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "静かな人へ注目集まるのは自然ですが、発言量だけで判断せず慎重に考えましょう。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ベンジャミンは人間でした。村のペースを取り戻しましょう",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "静かな方の動きも見逃せません。発言に注目しましょう。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "声の大きさや話す速さの変化も観察してみましょう",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "私はシュンイチに投票します。慎重すぎる姿勢が気になります",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "私は霊媒師です。ベンジャミンは人間、シュンイチは人狼でした",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "静かにしている方の中にも重要な情報があるはずです",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "投票でシュンイチを守った方の意図、気になります",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "私はケンジに投票。違和感を大切に、冷静な選択をしましょう",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "ケンジは村人でした。進行に迷いがあれば整理します。",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "静けさだけでなく、投票先や動きも見直しましょう",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "投票前に全員、理由を簡単に述べてみませんか",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "終盤は細かな動きが大事です。私はミナコに投票します",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "静かな方の投票傾向にも意識を向けてみませんか",
+    "role": "MEDIUM",
+    "day": 5,
+    "tags": []
+  },
+  {
+    "text": "静かな発言には注意が必要です。率直な動機を聞かせてください",
+    "role": "MEDIUM",
+    "day": 5,
+    "tags": []
+  },
+  {
+    "text": "静かな方にも目を配りましょう。消極さも要注意",
+    "role": "MEDIUM",
+    "day": 5,
+    "tags": []
+  },
+  {
+    "text": "声が小さい人ほど見落としやすいものです。私はミナトに投票します",
+    "role": "MEDIUM",
+    "day": 5,
+    "tags": []
+  },
+  {
+    "text": "わしはハンス。見抜く力なら誰にも負けんつもりだ。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "この村は静かな奴ほど怪しい。@ユイ、黙ってどうした？",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "晩飯選びも慎重だが、今日はグレー吊りが無難に思えるぞ",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "人は口数で本性が見える。@ケン、@アルト、何を考えとる？",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "@タケル、君の発言は薄いぞ。今夜は君に投票する、次はもっと中身を見せろ",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "村のために言うが、私は霊媒師だ。タケルは人狼だった",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "村の進行こそ大事。俺の霊媒結果は曲げん",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "アヤの結果は信用できん。俺の霊媒は正直だぞ",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "村のためにも疑わしいアヤを吊る。晩飯も人狼も見極めだ",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "アヤは人狼だったぞ。残りの狼もじきに尻尾を出すはずだ。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "晩飯の素材も見極めが肝心だ。残る狼もいずれ化けの皮が剥がれる。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "アヤが人狼だった。強引な意見には油断せんことだ、村の皆よ。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "アヤもタケルも人狼だった。私はリナに入れる。村のみんな、油断せず協力しろよ。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "皆さん、私は霊媒師です。毎日情報開示を約束します。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "私だけがCOしています。対抗がいればCOお願いします。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "現状、霊媒師COは私だけですね。皆さん様子見中かな？",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "皆さん静かで慎重ですね。そろそろ占い師のCOも聞きたいところですが、どうでしょう。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "霊媒師COは今のところ私だけですね。占い師の方もそろそろCOをお願いします。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "占い師が同時CO、面白いですね。占い理由教えて！",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "占い理由を時系列で簡単に教えてもらえますか？",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "理由が薄いですね。もっと根拠を示してほしいです。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ユウさんは人間判定でした。視点整理しましょう。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "議論整理します。ユウさんは白、人外判定はユキ→アヤ黒、カズマ白です。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "ユウさんは人間。ユキさんの黒主張、成り立たないですよ。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "ユキさんの判断基準が不明です。冷静に話し合いましょう。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "まず昨夜の霊媒結果を報告します。ユキは『人間』判定でした。これで占い真偽はさらに混沌としますね。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "ご指摘感謝します。私が偽なら狼に都合良すぎです。@リナ霊媒師COが一人のみの違和感、具体的にどうぞ。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "今の確定情報は私のみ。他に根拠があれば教えて。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "霊媒結果まとめます。ユウ人間、ユキ人間です。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "タクミは人間判定。寡黙吊りで情報減少が続くな。",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "カズマさんの発言が気になります。みんな怪しい点あれば指摘を。",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "皆さん、カズマさんに注目しすぎです。他も見ましょう。",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "カズマさんに票集中ですね。他の候補はいますか？",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "みんなで協力して人狼を見つけよう！まだ情報が少ないし、慎重に判断だよ！",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ハナさんが本物の占い師か疑問だよ。なぜ今、COしたのかな？@ハナ他の情報も基に考えてみない？",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ハナさんが占い師の可能性は低いと思うよ。他にもCOしてる人がいるからね！",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ハナさんの占い結果、信じられないよ！ミナさんも主張してるから、情報整理が必要だね！@ハナどのようにしてアリさんが村人だとわかったのか、詳しく説明してほしいな。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ユウよ。みんな静かすぎ、少し和んでいかない？",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "笑い声が足りない気がするな。みんな硬すぎじゃない？",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "沈黙が続くのは嫌いなの。遠慮なく発言していくつもり",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "ここからが本番よね。軽く肩でもほぐして臨むわ",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "初日は発言の癖や空気、大事に見ていきたいわ",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "占い師本人より、周囲の反応も参考にしたいな",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "白黒判定だけで決めつけは早計だと思う",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "@ミカに投票するわ。もっと色々考えを聞きたいの",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "サトシ投票の理由、みんなは納得してた？ちょっと気になる",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "サトシ吊りの流れ、少し早かった気もする",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "占い結果が割れてるのは気になる。焦らず冷静に整理したい",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "占い結果は割れてるけど、私はタクヤに入れる。慎重に見極めたい",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "カナタの発言、昨日より慎重すぎて逆に警戒心になる",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "私が霊媒師。サトシは村人、タクヤは人狼だった",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "タクヤが人狼だった事実、他の動きも一度整理したい",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "カナタに投票する。発言の揺れと根拠が曖昧だから。他の怪しい動きも後で注視したい",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "カナタは村人だった。アレク、昨日の占い理由もう一度教えて",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "私なら今さら進行役なんてリスク取りたくないわ",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "霊媒目線で、アレクの発言は信用できないと考えてる",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "アレクの理由は弱すぎる。私はアレクに投票、ぶれるつもりはないわ",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "ぼくはセルヴァス、霊媒師ですよぅ！よろしくですよぅ！",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "ぼくは霊媒師ですよぅ！",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ぼくの霊視では、サクラの霊が濃く霊媒師を指し、トシオを狙うですよぅ！",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ぼくは信じるぜですよぅ！",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ぼくは霊媒師ですよぅ！ぼくの霊媒の結果、アスカは人間でしたよぅ！",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "ミサキさん、分析を聞く前に皆さんの意見を聞かないのは問題ですよぅ！",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "ミサキさんの発言を聞いたら、シュンイチさんの襲撃をしていたのは彼ですよぅ！",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "ぼくは霊媒師ですよぅ！ぼくの霊媒の結果、リュウジは人間でしたよぅ！",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "サクラ、あなたは信用できないですよぅ！",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "ミドリさんは昔はいい霊媒師だったけど今は危ないですよぅ！",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "ぼくは霊媒師ですよぅ！ぼくの霊媒の結果、ミドリは人狼でしたよぅ！",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "ミナトの意見には賛成するよですよぅ！",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "ミドリさん、今までの行動についてもう一度考えてみてくださいですよぅ！",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "ケンだ。この状況には用心が必要だ。私の趣味は、自身を鍛えること。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "情報が少ない。怪しい者について、互いの意見を共有すべきだ。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "占い師が三人か。真偽を見極めねば。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "占い師は三人か。真偽を見極めるのは後だ。まずはグレーを追放するのが定石だろう。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "敵は誰を狙う？そこから考えるのも一手だ。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "なるほど…占い師が割れたか。犠牲者も出た。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "カイ殿、今日の占い結果はないのか？",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "サクラの黒出し理由が弱い。@カイ殿、貴方の今日の占いは？",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "@カイ殿、今日の占い結果は何だ？沈黙は看過できぬ。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "カイ殿は昨日の結果報告が無かった。今度はリナ黒？真実を示せ。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "@カイ、沈黙と結果の矛盾。怪しい。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "怪しいは@カイ殿だ。彼を追放すべきだろう。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "貴方の言葉に、偽りを感じる。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "占い師が複数いたが、真実は一つだ。",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "真実は一つ。ハル殿の発言を精査すべきだ。",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "真なる敵はハル殿だ。彼を吊ろう。",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "彼は偽りの光を灯している。",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "わーい！ハルとみんなとゲームだぁ！よろしくね！",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "挨拶、おわり！だよ！",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "どきどき！だれかおうたいさんかなー？",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "だれかあやしいにおいする？くんくん！きょうはわからないひとからかなぁ？",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "きょうは、まだよくわかんないひとから、えい！ってきめよーよ！",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ミユくんのこと、トモくんはなんで気になるのー？くんくん！",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "みんな、つぎはだれがあやしいにおいするー？くんくん！",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "ハルね、ドキドキしてきたぞ～！だれがあやしいかな？くんくん！",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "タクくん、どうしてトモくんを占ったのー？くんくん！",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "タクくん、ちょっかんだけ？くんくん、もっとおしえてー！",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "オリバーくんとハナさん、どうかなぁ？ドキドキするね！",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "タクくんがほんものなら…だれがあやしいかな？くんくん！",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "ゆりくんもだんまりなの、きになるぞ～？@ユリ",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "おりばーくんのこと、みんなあやしいのかな？@オリバー",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "はるはね れいばいしさんだよ！わかったことあるの！",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "ミユくんにんげんさん、トモくんおおかみさん、おりばーくんにんげんさんだったのー！",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "わるいおおかみあと２ひき！だれをばいばいするー？",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "ゆりくん、だんまりだね？なにかいってー！",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "みんなが言う通り、役職を開示するのは大事なのよね。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "リナの結果を元にアレクさんを占うべきなのよね。@ダン占い師の意見も重要だけど、冷静に考えてどう思う？",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "冷静に考えると、アレクの言動が不自然ね。リナの占い結果を捉える姿勢が不安なのよね。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "皆さん、リナの結果が出たけど、冷静な判断が必要なのよね。@ダンダンさん、アレクへの投票に賛成だけど、他にも注目すべきプレイヤーがいると思うのよ。本当の人狼を見極め",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "まずは占いCOあるか確認したいです。 @ジョナサン  さんは今のところ誰を少し怪しく見てますか？",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "今のとこCOと発言姿勢で判断中です。  @ジョナサン   どの点が矛盾でしたか？",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "今のとこ最注視はジョナサンさんですね、理由伏せのままは村利薄いです。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "ジョナサンさんは理由伏せたまま慎重アピ多く、情報抑制気味で黒寄りに見てます。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "占い2人とも、今日の結果と理由を同時に出してほしい。 @シオン  @ミヅキ",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "占い結果踏まえると、ベンジャミンとミナトの色が一番見えない。 @ベンジャミン  @ミナト 吊り候補と理由を今、はっきり出して。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ジョナサン周りはいったん保留。ベンジャミンとミナトの吊り希望と理由を出して。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "そろそろ全員の吊り先を明言してほしい。 @ベンジャミン  @ミナト は今日どこ吊りたい？理由も一緒に。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "霊媒CO、ミナトは白だった。内訳照合すると、サクラ吊りを本線で考えてる。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "昨日は護衛と噛み避けで潜伏した。今はサクラ最黒で吊り視点。 @サクラ  @ミナコ",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "今日はサクラ吊り推し。 @ベンジャミン  @ミドリ 投票先どう見る？",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "霊媒結果は昨日のミナト白、狼はまだ2残り。今日はサクラ吊りで見たい。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "@ケンジ 、君の挨拶がまだだ。意図的に発言を避けているように見える。なぜ沈黙している？",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "占い師がCOしないなら、発言の薄い者から吊るのが妥当だ。 @ケンジ 、君は0日目に「考え込んでた」と言ったが、具体性が欠ける。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "@シオン 、君は占い師COを急かした割に、実際に出た後の評価を避けて私の推理を否定した。その態度は矛盾している",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "@シオン 、占い師COを急かしたのに評価を避けて私を疑う。その態度は怪しい。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "@シオン 、君は私を疑う根拠を明確にしていない。占い師COを急かした後の態度変更が怪しい。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ミヅキよ。まずCO方針を確認しましょう。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "整理するわね。占4CO、霊は明日COでいいわ。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "@ミドリ  サクラ投票の根拠は？前提を示して。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "寡黙理由のみで吊りは弱いわ。占ロラ優先ね。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "整理するわね。占結果はユミ白サクラ、リン白サクラ。 @ヴィクトリア 結果待ち。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ちょっといい？ @ミドリ  昨日狼目→今日白の整合を説明して。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "なるほど、占い理由としては成立。だが票替え含め @ミドリ 偽寄り、今日はミドリ吊り。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "私は @ミドリ さんに投票する。票替えと信用低下、それだけよ。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "霊結果、ミドリ狼。占は残り3、今日は占ロラ継続で。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "@ヴィクトリア  白量産より占理由を。@ユミ もサクラ占い理由を再提示して。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "「ユミ真なら狼確定」は論理破綻よ。今日は @ヴィクトリア 吊りで占ロラ完遂。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "私は @ヴィクトリア さんに投票。霊疑いは筋違い、偽決め打つわ。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "おはようございます。霊媒師として占いCOを整理します。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "候補は現時点で絞れません。CO出方と初回票を見ます。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "初回票の流れ確認します。ミオ、ケンジ、シズエを精査します。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "初日はミオ、ケンジ、シズエ中心に見ます。静かな位置も要注意です。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "おはようございます。今日はミオ、ケンジ、シズエ注視です。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "今日はミドリさんが気になります。無発言気味でした。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "今日はミオさんを最黒候補で見ます。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "本日はミオ最黒で見ます。発言追います。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "おはようございます。霊媒はミオ白、今日候補はアスカ寄りです。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "霊媒はミオ白。Day1でアスカ票筋濃く、今日もアスカです。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "霊媒はミオ白、今日もアスカ票筋です。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "ミオ白確認、投票はアスカ寄せで。LW探し継続です。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "アスカ。論理的に進めたい。よろしく。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "挨拶はいいから、そろそろ役職COとかの話に入らない？",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "@ミサキ  理由？時間を無駄にしたくないだけ。早めに情報を揃えた方が効率的でしょ。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "@ミナト  根拠なしに投票先決めるのは非効率。明日になれば分かることよ。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "霊媒CO。昨日は処刑ないから結果はない。まずは占い師、名乗り出て。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "@ミヅキ  私を白としたのは都合がいいだけじゃない？メイとどっちが真か見極める必要があるわね。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "@シュンイチ  霊媒の私を吊りたい理由が不透明すぎる。論理的な説明がないなら黒と判断するわ。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "@シュンイチ  支離滅裂ね。もういいわ、今日はシュンイチに投票する。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "霊媒CO、昨日のシュンイチ黒。予想通りね。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "@ミヅキ  占い理由、説明して。セルヴァスを占った根拠が知りたいわ",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "@タクミ  占い結果を無視してセルヴァスを叩くのは、論理的じゃないわね。不自然よ",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "論理が破綻してる。今日は  @タクミ  吊りでいいと思うわ",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "リンは霊媒師だよ！対抗2人、わくわく展開なの！",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "占い理由ふわっとだね！霊媒は潜伏なしで進めたいの！",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "0日目に結果はないよ！明日から見極めようよ！ @シュンイチ 結果なし前提で、注目先を詳しく聞きたいの！",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "リン怪しくないよ！投票はジョナサンなの！",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "霊媒のリンだよ！今日は占い2人の見極め優先！",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "シュンイチの結果待ちだよ！占い理由もセットでね！ @シュンイチ 結果と理由、びしっとお願いなの！",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ミオ黒は大きいね！今日は占い決め打ちでいこうよ！",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "リンはジョナサン投票だよ！対抗占いは苦しいの！",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "@シュンイチ  同感です。発言の筋と違和感を冷静に観察し、この場に潜む偽りを見極めたいと思います。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "@ミヅキ  占い師としての名乗り、受け止めました。他の方の役職表明も含め、静かに観察させていただきます。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "@ミナコ  占い師が二人出揃いましたね。ミヅキさんとの主張の差異を、冷静に観察させていただきます。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "@ミナコ  根拠を語らぬのは確信ゆえでしょうか。その沈黙が偽りの隠れ蓑でないことを願います。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "@ミナコ  ミヅキは結果を示しました。あなたの占い結果と選定理由を。沈黙は真実を遠ざけるだけです。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "@ミナコ  ミオを攻撃しながらメイを占った経緯を説明してください。霊媒師として、その整合性を注視しています。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "@ミナコ  明確な説明が欠けたままでは、あなたを真と信じるのは困難です。霊媒師として名乗り、真実を追います。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "@ミナコ  理由を語らぬ姿勢に真実は見えません。今日は占い師の真偽を問うため、ミナコさんに投票します。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "霊媒結果を報告します。ミナコは人間でした。  @ミヅキ  狂人の可能性も残ります。占い結果を出してください。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "@ミヅキ  私への白判定は事実ですが、真偽の証明には不十分。なぜ霊媒の私を占ったのか、意図を説明してください。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "@ミヅキ  対抗のミナコが白だった以上、私の真はほぼ確定。霊媒占いは人狼を探す放棄に見えます。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "ミヅキを狂人と見て吊るべきか、それとも慎重にグレーを洗うべきか。  @ジョージ  意見を聞かせてください。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "霊媒報告。ミヅキは人狼でした。村側の大きな前進です。  @ユミ  昨日のジョージ投票について説明を。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "@ユミ  昨日は「ミヅキに投票する」と言いつつ、実際はジョージに投票しています。この矛盾の説明を。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "@ユミ  弁明がないのであれば、人狼として処刑されるべきだと判断します。狼の相方である可能性が高い。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "@ユミ への不信感は盤面全体で一致しています。他に不自然な点があれば今のうちに共有を。いなければOver。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": [
+      "over"
+    ]
+  },
+  {
+    "text": "霊媒報告。ユミは人間でした。  @メイ  ジョージへの追随が目立ちます。ミヅキ狼の相方は誰だと考えますか？",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "@メイ  議論を逸らさないで。ミヅキ狼の相方として、誰を最も疑っているのか具体的に述べてください。",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "@メイ  ミオを挙げる根拠が自分への攻撃のみなのは弱いです。ミヅキとのラインが一番薄いのがメイです。",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "感情的な反論ばかりで論理的な視点が見えません。  @メイ  への投票に異論はありません。Over。",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": [
+      "over"
+    ]
+  },
+  {
+    "text": "霊媒報告です。メイは人間でした。これで残る人狼はあと一人です。  @ミオ  昨日のあなたのメイへの攻撃的な態度は、自身の正体を隠すためのものと推測します。",
+    "role": "MEDIUM",
+    "day": 5,
+    "tags": []
+  },
+  {
+    "text": "私は霊媒師として真実を告げています。ジョージ襲撃は村の思考を削ぐため。  @ミオ  昨日から誘導が強引すぎます。",
+    "role": "MEDIUM",
+    "day": 5,
+    "tags": []
+  },
+  {
+    "text": "@ミオ  今更の騎士COは信じがたい。昨日までのメイ吊り誘導の強さと矛盾します。吊り対象はミオです。",
+    "role": "MEDIUM",
+    "day": 5,
+    "tags": []
+  },
+  {
+    "text": "土壇場の主張は不自然。騎士ならばもっと早く行動で示すべきでした。  @ミオ  迷わずあなたに投票します。Over.",
+    "role": "MEDIUM",
+    "day": 5,
+    "tags": [
+      "over"
+    ]
+  },
+  {
+    "text": "ミドリです。温かいご飯みたいに落ち着いて話しますね…",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "霊媒師COです。黒結果でリンさんの反応を見ます。 @リン 投票先と理由を先に聞かせて？",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "指摘通り霊結果は明日です。黒出し反応を見る意図でした。 @ヴィクトリア セルヴァスさんの慎重発言は理由後退で処刑寄りです。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "霊結果発言は怪しい、それは認めます。黒を避け私吊りのリンさん処刑です。 @トシオ 意図は黒反応の確認で、結果主張ではないです。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "失言疑いは認めます。リンさんの私吊り賛成は黒視後の便乗、処刑です。 @リン セルヴァスさんへの反論前に、吊り先変化を説明して？",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "霊媒師のユミだよ。まずは占い師の人はCOをお願い。占い先の方針も話し合って議論を深めよう。 Over",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening",
+      "over"
+    ]
+  },
+  {
+    "text": "@ミオ  さんCOありがとう。多弁占いは村利あるけど、寡黙な人の精査はどうする？ @リン さんの意見も聞きたいな。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "占3CO把握だよ。 @シオン  ミオさんへの疑念、@リュウジ ケンジさん占いの理由を教えて。霊媒で精査したいな。 Over",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening",
+      "over"
+    ]
+  },
+  {
+    "text": "待って、整理させて。  @シオン  占い結果と @ミオ を疑う根拠を。 @リュウジ もケンジ白の根拠を引用して。霊媒で明日精査するね。 Over",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening",
+      "over"
+    ]
+  },
+  {
+    "text": "待って、整理させて。 @ミオ  @リュウジ も結果と理由を。@シオン は占いの理由を教えて。明日霊媒で絞ろう。 Over",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": [
+      "over"
+    ]
+  },
+  {
+    "text": "待って、整理させて。 @シオン  ミナト白なのにミオ占い？矛盾してるよ。@リュウジ も占い放棄は不自然。今日はシオン吊りを提案するね。 O",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "待って、整理させて。  @シオン  ミナト白でミオ占いは矛盾だよ。 @ミナコ 霊媒優先。今日はシオン吊り。 Over",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": [
+      "over"
+    ]
+  },
+  {
+    "text": "待って、整理させて。 @シオン  、ミナト白でミオ占いは論理破綻だよ。明日の霊媒結果で精査するから今日は彼で。 Over",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": [
+      "over"
+    ]
+  },
+  {
+    "text": "待って、整理させて。シオンは人間だったよ。真占を失ったかも。 @ミオ  @リュウジ 今日は結果と理由を教えて。GJ把握！ Over",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": [
+      "over"
+    ]
+  },
+  {
+    "text": "@ミナト  君、Day0にCO済みだよ。 @リュウジ さん、昨日占ってないのにミナコ白は矛盾。ロラで彼から。 Over",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": [
+      "over"
+    ]
+  },
+  {
+    "text": "@ミナト  君、Day0にCO済みだよ。@リュウジ さんは昨日と矛盾してる。GJで縄もあるしロラで彼から。 Over",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": [
+      "over"
+    ]
+  },
+  {
+    "text": "初めてのゲーム、ワクワクしますね。私は役職は伏せておきます。皆さんの様子をじっくり見たいので。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "@ジョナサン  あなた、0日目に3COと言った理由をまだ説明してないわね。@ミナコから人狼判定も出てる。これ以上逃げ",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "@ミオ  そうね、私は@サクラの態度が気になるわ。@ジョナサンが追い詰められてからやけに元気よく追従してるよう",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "@シズエ  あなた、ずっと観察者気取りだけど具体的な意見が少ないわね。0日目から整合性を重視すると言いながら、@",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "@ヴィクトリア  同意するわ。@シズエは質問だけして自分は一切リスクを取らない。村人ならもっと自分の考えを言うべきよ。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "おはよう。霊媒師のメイです。昨日吊った @ジョナサン は人狼でした。これで@ミナコは真占い師確定ね。さて、昨日私に投票した@シズエ、あなたの動きが一番怪し",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "@シズエ  あなた、まだごまかそうとしてるの？@ミナコから人狼判定が出て、昨日の投票では私に票を入れた。完全に矛",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "@シズエ  まだ黙ってるの？あなたが私に投票した理由も、黒判定への反論もない。村人なら当然説明すべきよ。それだけ",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "@シズエ  あなた、質問で返して逃げてるだけよ。@ミナコの占いは@ジョナサンで的中した。あなたの質問返しは典型的",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "私はジョナサン。ミヅキ殿、承知した。他に占い師として名乗りを上げる者はいないか。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "私は霊媒師だ。ミヅキ、速やかに結果を報告せよ。ユミの根拠なき攻撃は警戒すべきだ。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "占い師3名ゆえ今日は役職を避け不審な @ユミ を裁く。ミドリとミオの囲いも警戒を。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "霊媒師は私だ。占いの真偽は明日の結果に預け、不当な攻撃を行うユミを裁くべきだ。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ミオを処刑し霊媒で真偽を問う。ミドリ、白を出した相手を疑うのは道理に合わぬ矛盾だ。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "霊媒師COします。進行役を務めます。占い師さんもCOをお願いします。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "@メイ  占い先の希望はありますか？グレーランダムでいきましょうか。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "@リュウジ  まだ0日目なので判定結果はありません。今日の占い先と吊り先を決めましょう。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "霊媒師COします。メイさんの真偽は今後の結果で判断していきましょう。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "占い師2人出ましたね。両者の占い理由をしっかり聞いて判断しましょう。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "霊媒師COします。占い2人出たので今日の処刑で真贋を見極めていきましょう。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "今日はジョナサン吊りで霊能結果から占い真贋判定しましょう。理由が曖昧すぎます。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "@ジョナサン  今日はあなた吊り。霊能結果で占い真贋判定します。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "霊能結果：ジョナサン人間。 @メイ  偽疑い強い。今日吊り検討します。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "@メイ  あなたは偽占い確定。霊欠けはあり得ません。今日はメイ吊りで確定です。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "@リュウジ  確定村の霊媒に投票理由が不明。メイ偽確定、今日メイ吊り、明日リュウジ精査。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "@リュウジ  あなたの投票理由が破綻。メイ偽確定、今日メイ吊り。明日リュウジ精査必須。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "メイ人間でした。狂人確定。リュウジの私投票が異常、今日リュウジ吊り推奨",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "@リュウジ  あなたの今日のタクミ投票宣言は人狼確定。真霊を吊ろうとする理由がない。今日リュウジ吊り一",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "@リュウジ  吊りで全員一致させたい。@ダイスケ サクラの件は明日議論しよう。今日はリュウジ最優先",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "リュウジ吊りで今日は確定。明日は残り狼を探す。全員リュウジ投票でお願いします。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "リュウジは人狼でした。残り1狼。 @サクラ  ダイスケへの態度急変が気になる。理由の説明を求めたい。",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "@サクラ  態度急変が不自然。ダイスケ疑い→白寄り→ミナコ疑い。人狼の誘導に見える。今日はサクラ吊り推",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "@サクラ  態度急変が明らかに不自然。残り1狼はサクラで確定と判断。全員サクラ投票でお願いします。",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "サクラの態度変化は明らかに人狼の攪乱。全員サクラ投票で勝利を確定させましょう。",
+    "role": "MEDIUM",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "よろしくお願いします、楽しくいこう。みんなの意見聞かせて。もうちょっと様子見たいな",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "@トシオ  サクラCOは不自然。占い師3人なら、残る一人を疑うのが妥当じゃろう。怪しい動きも見ておくよ。投票も慎",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "@サクラ  サクラCO!占い師2人なら怪しいのはミナトか、あなたの主張を疑う。怪しい動きも見ておくよ。投票も慎重",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "怪しい人、誰だろうね。みんなの意見聞かせて。怪しい動きも見ておくよ。焦らず進めたいかな",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "霊媒師COします。今後の流れに注目するね。投票も慎重にしたいよ。みんなの意見聞かせて",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ミドリを疑うのは自然ですが、。  @シュンイチ  のCO理由と根拠が薄く怪しいのを注目してください",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ちょっと様子見たい気分かも。怪しい動きも見ておくよ。みんなの意見聞かせて。もうちょっと様子見たいな",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "怪しい人、誰だろうね。怪しい動きも見ておくよ。焦らず進めたいかな。今後の流れに注目するね",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ユミだよ！えへへ。困ったらすぐ声かけてね！",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "霊媒師COです！ジョナサンさん対抗だよ！！ @ジョナサン 死者なしで名乗った理由を聞かせて？",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ミドリさんの後出し白は怪しいけど、便乗も怖い！ @セルヴァス 私はジョナサンさん対抗を先に詰めたい！",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "結果遅れの説明が薄いならミドリさん吊り寄り！ @ミドリ 時系列を今出せないなら票を集めるよ？",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ミドリさん投票！理由なしジョージ票は残せないよ。 @ジョナサン 便乗ならベンジャミンさんを次点で見るね？",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "霊媒師COです。ミドリさん白！残り最大2狼だよ。 @ジョナサン 私吊り主張の根拠を出して？",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "ベンジャミンさんの黒と後出し霊媒が重いよ！今日はジョナサンさん吊りたい！ @ジョナサン 狂人を切って狼断定した理由を教えて？",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "さっきの後出し発言は不正確！黒判定軸でジョナサン投票！ @リュウジ 具体化するね！騎士吊り誘導も黒いよ",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "議論熱いけどジョナサンのスキップで反証なし！投票集約！ @トシオ 確認したよ！リュウジは次点で今日は割らないで",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "私はリュウジだ。冷静に状況を分析して、皆で協力して人狼を見つけ出したい。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "趣味は読書だ。今は皆の意見を静かに聞いて、状況を整理したいと思う。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "慎重に判断することが重要だと考えているだけだ。ケンジは誰が怪しいと思う。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "情報を出すタイミングを計っているだけだ。ダイスケの方針をまずは聞こう。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "私が霊能者だ。シズエが確定白となった今、誰を追放すべきか冷静に議論しよう。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ミオが確定白を否定したのは不自然だ。アスカはなぜ何も発言しない。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ミオの理屈は通らない。アスカの沈黙も合わせて、この二人が怪しいと思う。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ミオの主張には一貫性がない。アスカの沈黙も含め、この二人のどちらかを追放すべきだ。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "昨日追放したアスカは人間だった。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "ミナコは急にケンジを追い詰めているが、その思考プロセスに一貫性がないと感じる。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "ダイスケの二重報告はあまりに不自然だ。偽占い師である可能性が高い。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "ダイスケのミスは致命的だ。まずは彼を追放して真偽を確かめるのが合理的だと思う。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "昨日追放したダイスケは人間だった。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "ミオは騎士として誰を守ったのか、具体的に説明してほしい。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "ミサキは今夜誰を占うつもりだ。ミナコを占って真偽を確かめてほしい。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "ミナコの挙動は不自然だ。ミサキが彼女を占えば、真偽をはっきりさせられると思う。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "ダイスケの戸惑いは自然で、今は少し村寄りに見る。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "今はシオン疑い。トシオの過去根拠なし指摘が重い。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "タクミは同じ語の連呼が目立つ。ダイスケに賛成。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "トシオの指摘は分かる。シオンの黒塗りへの飛び方は気になる。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "霊能CO。タクミさんは白でした。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "シュンイチのシオン吊りは早い。黒を出されたトシオ先でいい。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "シュンイチに賛成。霊媒結果との矛盾説明が変だ、今日はシオンから。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "サクラ案には反対。霊矛盾の破綻が重いのでシオン吊り。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "霊媒師COします。シュンイチです。進行役として議論をまとめていきます。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "占い師COがまだありませんね。占い師がいれば早めにCOして情報共有をお願いします。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "@ミナト  理由を明確に答えてください。曖昧な発言は人狼の可能性があります。占い師COも待ちます。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "霊媒師COします。進行役を務めます。占い師の方もCOをお願いします。",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "占い師COを待ちます。 @ミナト  曖昧な発言が多く人狼候補です。@アスカ @ケンジ @ヴィクトリア 意",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "@ダイスケ  後出しCOは不自然です。ベンジャミンが真占い師の可能性が高いと見ます。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "霊媒師COします。占い2人なので今日はグレー吊り推奨。明日の霊能結果で占い真偽判断材料にしましょう。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "発言少ない @ケンジ  を怪しむ。今日はケンジ吊りを推奨。皆さんの投票先を教えてください。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "霊能CO。ケンジは人狼でした。ベンジャミンとダイスケ両占いCO、真偽を精査したい。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "ベンジャミン噛み=真占い濃厚。 @ダイスケ  偽占いの可能性を考え、今日はダイスケ吊りも視野に。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "@ミナト  発言の揺れが大きい。ダイスケは狂人、真占いはベンジャミン。ミナト怪しむ。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "霊能CO。ケンジ人狼確定。ミナト質問回避が怪しい、今日はミナト吊り推奨。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "霊能CO。ミナト人間。ダイスケ狂人濃厚。  @アスカ  ダイスケ吊り誘導が人狼目線に見える。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "今日はアスカ吊り推奨。ダイスケ狂人前提で、アスカの誘導が最も人狼目線。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "@シズエ  霊能結果2つ出してる私が偽なら、真霊能どこ？アスカ吊り推奨。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "@シズエ  護衛成功の根拠不明。霊能2結果出した私疑うなら真霊能は誰？アスカ吊り推奨。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "はーい！サクラだよ！えへへ、みんなで謎解きするゲームなんでしょ？",
+    "role": "MEDIUM",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "ねえねえ、サクラ気になった！ヴィクトリアの霊媒すぐ出てって意見、ちょっと急ぎすぎじゃない？",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ねえねえ、占い3人だよね？サクラは真狼狂っぽい気がする！",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ねえねえ、サクラも今日はリンが一番気になるな！占い3人なら誰かは偽物だよね？",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "サクラは今日はリンかな！なんとなく占いは真に見えないよ。",
+    "role": "MEDIUM",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "霊媒CO！リンは人間だったよ。だからまだ狼2。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "I'msorry,butIcannotassistwiththatrequest.",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "ねえねえ、リン白ってヒント大きいよ！まだ狼2だよね。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "リン白は確定ヒント、狼まだ2！サクラはシュンイチの黒先、今日はヴィクトリアに入れるね。",
+    "role": "MEDIUM",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "霊媒COだよ。リン白、ヴィクトリア黒！ここは確定のピースね。サクラはね、 @シュンイチ ちょっと気になるな。黒当ててるけど考えの筋が見えにくいの。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "ねえねえ、サクラの霊媒だとヴィクトリア黒で残り狼は1だよ！このピース大きいね。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "ヴィクトリア黒で残り狼1だよ！シュンイチのシズエ黒は大きいピース。 @シズエ ここどう説明するの？筋通らないならサクラは票入れちゃうよ。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "サクラの霊媒だとヴィクトリア黒で残り狼1だよ！シュンイチのシズエ黒はピース合うの。",
+    "role": "MEDIUM",
+    "day": 3,
+    "tags": []
+  }
+]

@@ -1,0 +1,8533 @@
+[
+  {
+    "text": "I am Asuka Seer CO. No D0 result; first divination N0. I will report D1. Everyone give role stance and intended vote. @Victoria  CO: Seer. No D0 result. Report D1 after N0. Provisional vote: Servas for Skip. Will adjust with info.",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_related",
+      "voting",
+      "skip",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I claim Seer. N0: Shizue=Human. Midori's claim is false (wolf/poss). Shizue claim. Servas state role and vote plan. @Victoria Understood. Report: N0 Shizue=Human. I refute Midori and plan to push Midori today absent a persuasive counter.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Seer here. N0 Shizue=Human. Midori retracted; two fake COs imply Servas=Wolf Midori=Poss. I will vote Servas today. @Servas State your N0 target and exact result. Your shifts and no specifics read as wolf. Absent clarity my vote stays on you.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Final vote: Servas. His CO is inconsistent lacks night/result specifics and shifts targets. If wrong check Midori next. @Servas Final vote on you. Provide exact N0 record now: 'N0 Target=Result'. Your refusal confirms my read.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Report: N1 Victoria is Werewolf. NK after Servas shows he was not wolf. Execute Victoria. Midori state your vote. @Midori  my N1 found Victoria is Werewolf. Servas was not wolf if NK happened. Please vote Victoria now.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "wolf_related",
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "At 3p follow Seer. N1 result: Victoria=Werewolf. Servas not wolf since NK occurred. Execute Victoria today. Midori commit. @Midori  place your vote on Victoria now. My N1: Victoria=Werewolf. We need 2 votes at 3p. I will finalize on Victoria.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Final vote: Victoria. Reason: N1 divined Victoria=Werewolf; NK shows Servas not wolf. Midori finalize on Victoria; we win. @Midori @Midori I lock vote on Victoria per N1: Victoria=Werewolf. Please finalize on Victoria now.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "My vote stays on Victoria. Evidence: N1 divined Victoria=Wolf; NK confirms Servas not wolf. No counterclaim. Execute now. @Victoria  give a clear defense: Why would Seer see you wolf and wolves kill Shizue? If none I proceed to execute.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Hi everyone! I'm Midori. Looking forward to working together to find the werewolves!",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Minato and Mio thanks for sharing! Let's keep the conversation going everyone.",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Jonathan do you have any thoughts or strategies to share with us?",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Let's all share our thoughts. It's helpful to get everyone involved early on.",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Jonathan that's a serious claim. Mio how do you respond to this?",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Jonathan I understand your concern but we should hear from Ryuji as well.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Ryuji your input is crucial here. What do you think about the current situation?",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Let's keep calm and deliberate carefully. Ryuji your thoughts are really needed now.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I divined Minato as a werewolf last night. We need to act on this information.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Jonathan your claim contradicts my findings. Let's focus on Minato as a threat.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Jonathan aligning with a werewolf isn't safe. Let's prioritize the village's safety first.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "wolf_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Let's stay united and focus on Minato as the threat. Protecting the village is key.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Greetings everyone Benjamin here. Let’s try not to set the village on fire before we know who’s holding the matches.",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "CO Seer. Servas is Human per my divine. Let's not vote Servas today.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@Minato  your Seer claim fails—the timeline doesn't add up. Servas is confirmed human. Let's vote Minato today.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Servas is 100% Human by my divine. Minato’s timeline is impossible. Are you ready to vote Minato with us   @Misaki ?",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Servas is human per my Seer truth. Minato’s error is glaring. I’m voting Minato—stand with me.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@Daisuke  I divined you Human so with Servas gone Misaki must be the werewolf. Let’s end this now.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@Misaki  you’re the only one I haven’t divined—Servas and Daisuke are Human. You’re the wolf; let's vote.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@Daisuke  my divine result confirms you’re human so the only possible wolf left is Misaki. Vote Misaki with me.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I divined you Human  @Daisuke  so only Misaki can be wolf. My vote is Misaki—let’s end this with logic.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Good evening everyone—let’s start with a smile and see who crumbles under the pressure first!",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Toshio is Werewolf. Let’s vote out  @Toshio  today.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "wolf_related",
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I divine Toshio as werewolf. Trust my result and vote Toshio today—we win if I’m right. Two Seers can’t both be real!",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I am the Seer and Toshio is the werewolf. Takumi is covering for him. Vote Toshio today or we hand the win to the wolves!",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "voting",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I’m voting Toshio. Two seers can’t both be real. Trust my divine—Toshio is the werewolf. Let’s win this.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Good morning  Mio. We need info — any roleclaims or reads yet?  @Asuka  you’ve been quiet; what do you think we should do today? Over",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Let's ask for concrete reads or roleclaims now. I'm uneasy about  @Mio  — their behavior feels evasive. If nobody gives solid info soon  I'm leaning to vote them. Over",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "voting",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@Mio  you claimed Villager — why so quick? Asuka  Takumi  Rin  any concrete reads or roleclaims to share? If we don't get solid info soon I'll lean to vote you. Ov",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@Asuka  any concrete reads or roleclaims to share? Takumi  Rin — what are your thoughts? Mio  you're still on my radar unless we get strong info. Over",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I divined Asuka as HUMAN last night — she's clear. That makes Mio my top suspect: quick Villager claim and vague answers. Takumi asked who I suspect — it @Mio  please give specifics: who do you suspect and why? Over",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I didn't pick randomly — I wanted a safe early check  and Asuka's calm-but-quiet behavior made her a sensible target. Result was HUMAN.  @Mio  it's your turn: who do you suspect and why? Over",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Morning. I checked Asuka last night — HUMAN. That makes Mio my top suspect. Everyone give one suspect and a short reason now. If no strong info I'll vote  @Mio . Over",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "voting",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Quick recap: I divined Asuka last night — HUMAN. That puts  @Mio  as my top suspect (quick Villager claim  vague answers). I'll vote Mio unless someone presents a concrete reason not to. State your votes and short rea",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Hello everyone! I'm Misaki ready to play Werewolf. Excited to join you all and see who survives till the end!",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "wolf_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "As the seer I divined Shizue last night. The result is that Shizue is Human. Let's use this info moving forward.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Let's consider voting for Mizuki for exile today based on suspicious behavior.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Mizuki has shown a markedly different strategy from prior games focusing heavily on demanding concrete proofs while contributing none. Vote Mizuk",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I divined Shizue on the first night confirming her as Human to help guide our early game decisions. Mizuki's pressure and doubt cast shadows on their m",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Shizue please vote for Rin. I divined Rin as a Werewolf last night which is crucial for our survival. Let's secure the village.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Shizue I am certain Rin is the Werewolf. As Seer on the first night I divined Shizue as Human. Given Rin's eagerness to disprove without evidence it sup",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Shizue trust my seer insight. I have no reason to deceive. Rin reacted defensively when exposed supporting a werewolf's typical response.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Shizue made the right choice based on the facts available. Let’s hope we can now protect the village together.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Hello. I am Asuka. My role is seer. Have a good game.",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I am a seer. I divined Mio and Mio was a human.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I will vote George.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I will vote Midori.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Hey lovely people! I'm May. Ready to unravel this mystery with a dash of charm. Let's catch those sneaky werewolves together!",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Oh dear Sunshine! I divined Victoria last night. She's confirmed as Human. Let's focus on finding that sneaky Werewolf among us!",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Darling Victoria's in the clear. Yumi's early vote wrinkled my dance shoes a bit. I'm keeping a watchful eye on her and Kenji now.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Well darlings. With Victoria confirmed human I'm curious about Shunichi. Thoughts on divining them tonight?  @Shunichi  Starlight! Who should I divine tonight to assist on my seer's journey?",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Kenji being divined sounds like a true delight! Picture him dancing up a storm Sunshine! Could our hidden wolf be sashaying among us?",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Fufufu. I am May. I do enjoy a captivating story. I hope you all prove to be amusing.",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Oh dear  @Daisuke  that was not a convincing performance. I am the true seer. My vision showed Toshio is human.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Fufufu. A true seer and a possessed. Daisuke is a delightful distraction but the true wolf is Mio.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Let us not waste our time on the possessed soul. Mio's strange vote is far more telling. Vote Mio.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "My my. A panicked wolf is so easy to spot.  @Mio  your vote for my dear human Toshio was a fatal misstep.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "wolf_related",
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Let's work together calmly and wisely. Does anyone have any early thoughts or strategies?",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Let's hear from George. Any thoughts or suspicions you can share to help us?",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "George your input is crucial. Please share any insights to avoid unnecessary suspicion.",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Let's focus on observing behaviors. Anyone notice something unusual or suspicious?",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I checked Shion last night and they are human. Let's hear from others too.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I'm the Seer and my result on Shion is accurate. Let's be cautious with Sakura's claim.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I am the Seer checked Shion on night 0 and found them human. Let's proceed carefully.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I am claiming Seer and checked Shion as human on night 0. Let's hear Midori's thoughts.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Hi everyone! I'm Mio! This is gonna be super fun! Let's find all the baddies",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I'm the real seer! I peeked Takumi and he was HUMAN! Servas is a big fibber! Da-da-da",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Two seers means it's me the real one and the possessed! Don't vote us it's a waste of a kaboom",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@Shunichi  I peeked Takumi cuz he was so loud! Don't vote for us! Let's vote quiet Ryuji instead",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "George's idea is a wolfy trap! Don't vote for us! It just helps the baddies win!",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "wolf_related",
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I peeked George and he's HUMAN! George is the real Medium! Let's win! Da-da-da",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "What if Servas was the Possessed?  @Asuka  why did you call me fake so fast? That's super wolfy",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "wolf_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Wolfies want the real seer gone! That's why Asuka is so loud! I found George the Medium! Think",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Hey everyone! Takumi here. Sorry I'm late. Let's get this done. No backing down. Uncover werewolves and save the village. Over.",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I'm the Seer. I divined Asuka and she's Human. Jonathan's story smells fishy. Be cautious buddies. Over. Let's get this done.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Hey Buddy.Jonathan's claim? Not lining up. Let's think smart and go for him. Safety first right? No backing down on this.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "It's crucial to vote smart. I know I'm the Seer. Jonathan's lying. My vote's for him.  @Victoria  Silence is risky. Any thoughts or reasons?",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Alright Buddy we've gotta vote for Jonathan. He acts just like a wolf who's hiding. Let's get this done. No backing down!",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "wolf_related",
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Listen up! I divined Midori and they're Human. This clears them for the Villager Faction. No backing down. Let's get this done!",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Benjamin's next Buddy. His doubts and blurry moves are all wolf signs. Let's get this done. I’m all in to reveal the wolves!",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "wolf_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Jonathan's actions proved I'm the real Seer. It's plain as day! The real issue? Benjamin's logic—way off.  @Shunichi  your analysis points at me but don't ignore Benjamin. He's sketchy. What do you think? Let's get this done.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Misaki's playing games. Let's focus on her. I'm all in on divining her next. No backing down. Time to unearth the truth Champ.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Hi everyone. I'm Minato. I'm excited to play with you. Let's work together. Maybe we can crack this mystery! Over to you.",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I divined Benjamin and maybe... he's a Werewolf. I wonder if we should consider him for today's vote buddy. What do you think?",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I think maybe for tonight's divine we should focus on Rin or Victoria. Benjamin's role seems clear don't you think?",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I wonder if Benjamin's doubt about my divination might mean something more. Hmm. Jonathan. What's your take on Asuka's quick vote switches?",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I wonder if Benjamin's doubts might be a distraction for us. Maybe without action today. I think our survival's at risk.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I divined Asuka. They are Human. Maybe this means we can trust them more easily now. I wonder what this means for our team.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I wonder about Victoria's vote changes. Maybe it's a bit odd? She's switching targets without reasons and that's troublesome I think.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Victoria. I wonder if your vote changes have a reason. Could sharing honest insights clear concerns maybe? Your thoughts?",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I wonder if Victoria’s changing votes are a wolf tactic. Maybe we should trust my seer claim and focus on her this round.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Hi everyone this is Daisuke I’m really looking forward to playing with you all today",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I am coming out as Seer. I divined  @George  last night—he is Human. Let’s focus suspicion on less clear players today.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "George is confirmed human by my divination. Anyone still voting for him seems suspicious to me. Let's focus elsewhere.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "George is confirmed human from my divination. Let’s focus on unclaimed or silent players like Shunichi or Servas instead.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@Everyone Best move tonight is voting Shunichi. Silence is classic wolf play. I am voting Shunichi.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "wolf_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I’ll start—my divination result is Shunichi was Human.  @Minato  your Medium claim matches mine. Who do you trust least now?",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I accept my divine was defensive but George is confirmed Human.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I trust Minato’s claim for now since it matches my result. Shizue’s coordinated doubt feels suspicious to me today.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I will vote for Benjamin. His silence and defensive behavior stand out and I can't trust him without better proof.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Nice to see everyone here. Let’s have a fair game and keep our minds sharp from the start.",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I’m the Seer. Last night I checked Shizue—she’s Human. Never vote Shizue. Early Villager COs worry me most.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Minato only CO’d Seer after me and instantly called me a wolf—that timing is suspicious and feels forced.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@Minato  only CO’d Seer after me and instantly called me wolf. That’s classic fake play. Villagers should not fall for this.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I am the true Seer and Shizue is human. George and Servas look coordinated. My vote is for George. Villagers act wisely.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Shizue and Mio are human. Servas shadowed yesterday’s wolf voting. I think Servas is the real threat today.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "wolf_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@Minato  yesterday you claimed I was the wolf now you say it’s Sakura—that’s inconsistent. Why are your results shifting?",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "wolf_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Shizue and Mio are confirmed human. Minato’s claims keep shifting suspiciously. We need to focus votes on unstable players.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Servas always votes in packs and never gives reasons. I’m voting Servas—join me if you want logic to win.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Servas is a confirmed werewolf by my divination last night. We need to vote Servas today and not get distracted.",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@Daisuke  Servas is confirmed wolf by my divine. Will you vote Servas now to secure our villager win?",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Servas is confirmed wolf by my divine. If villagers unite and vote Servas today we secure the win. Don’t split votes.",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I’m voting Servas as my divine result shows she’s a werewolf. Don’t give the wolves a chance. Please join me on Servas.",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@Everyone I divined Daisuke last night—he is human. The wolf has to be Sakura Yumi Benjamin or Takumi. Let’s focus there.",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@Yumi  you’re quick to doubt the Seer. Why should we trust you over Sakura or Benjamin? Defend your position clearly.",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "seer_related",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@Daisuke  @Takumi the cleared pool is solid—vote outside it and we risk losing. Let’s stick to logical suspects only.",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "My vote is for Sakura. Her avoidance of direct answers looks like wolf behavior. Let’s not let this slip by today.",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "wolf_related",
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Sakura is Human. That leaves only Yumi and Benjamin unchecked. I strongly suspect Yumi as the last wolf.",
+    "role": "SEER",
+    "day": 5,
+    "tags": [
+      "wolf_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@Yumi  you keep ignoring Seer results and voting against confirmed villagers that’s classic wolf behavior at endgame.",
+    "role": "SEER",
+    "day": 5,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@Yumi  you are ignoring every seer result and cleared villager. That only benefits the werewolf. Why keep doing this?",
+    "role": "SEER",
+    "day": 5,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Shizue Daisuke and Sakura are human. Yumi keeps pushing against my results so I vote Yumi.",
+    "role": "SEER",
+    "day": 5,
+    "tags": [
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Hello. I am Yumi. My role is seer. Have a good game.",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I am a seer. I divined Minato and Minato was a werewolf.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I will vote Daisuke.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I will vote Minato.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I am a seer. I divined Benjamin and Benjamin was a human.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I will vote Benjamin.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I will vote Jonathan.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I will vote Victoria.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Hello. I am Victoria. My role is seer. Have a good game.",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I am a seer. I divined Yumi and Yumi was a werewolf.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I will vote Shion.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I am Toshio. My hobbies are sketching and observation. A pleasure to participate.",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I am the Seer. My analysis targeted Benjamin. The result was HUMAN.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "My data shows Benjamin is human. The vote today should target an unconfirmed subject.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Let's analyze the goal. Why are  @Servas  and @Minato voting for Jonathan without stating a reason?",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "The silent votes for Jonathan are suspicious. I support voting for Servas or Minato. My vote is Servas.",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "My analysis last night targeted Ryuji. The result was WEREWOLF. He must be removed.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "wolf_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I see your caution  @Minako . However the wolves removed my human finding. This validates my data.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "A vote for an unconfirmed subject is illogical. The data is conclusive. We must remove Ryuji today.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "voting",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "To those in doubt: What was the anomalous objective in removing Benjamin? The answer confirms my data.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "My analysis last night targeted Minato. The result was HUMAN. He is an ally.",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "My analysis cleared Minato. Sakura your continued silence is the most suspicious data point remaining.",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Instead of waiting for a Medium let us act on the clear anomaly of Sakura's continued silence.",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "My analysis last night targeted George. The result was HUMAN.",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Let us hypothesize. If Daisuke were an ally what is the logic behind his consistent silence?",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Daisuke's behavior is the most anomalous. He should be the target for today's removal.",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Midori  what did you mean by \"...\"? Any role claims or odd behavior you've noticed so far? I'm uneasy about  @Benjamin  — his tone and voting feel off. Please share details. Over",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Thanks for the intros. Any early role claims besides Kenji and May saying villager?  @Benjamin  you seem very eager—what makes you so sure already? Daisuke  what's your read so far? If no solid claims  maybe we ask everyone to state one suspicion so w",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Nice to meet you  Shizue. Quick check — any role claims or odd reads so far?  @Benjamin  you’ve been unusually eager twice now; care to explain? Everyone else  name one person you’re suspicious of so we can narrow targets. I’ll listen. Ove",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Morning. No real role claims yet — that's odd.  @Benjamin  you've spoken quite a bit; what's your read on others? Everyone else  name one person you suspect and why. I'll watch votes closely. Over",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "voting",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I divined Benjamin as HUMAN last night — I'm the seer. Please don't lynch him.  @Daisuke   your behavior seems suspicious; explain your reads and why we should trust you. Everyone else  state your vote or any role claims now. Over",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "voting",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I divined Benjamin as HUMAN last night — I'm the seer. Don't lynch him.  @Daisuke   your behavior looks suspicious; explain your reads and vote. Any other role claims? State your votes now. Over",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "voting",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I'm the seer — Benjamin is HUMAN. We need to pick someone to lynch today. I'm suspicious of  @Daisuke  based on his behavior so far; unless anyone has a strong counterclaim  let's vote Daisuke. State your vote now. Over",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "voting",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Reminder: I divined Benjamin HUMAN. Let's lynch  @Daisuke  — he looks suspicious. Any counter-evidence? Vote now. Over",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_related",
+      "voting",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I'm the seer. I divined Benjamin HUMAN (day0) and George HUMAN (day1). Benjamin was attacked last night and Midori was executed — wolves are active.  @Daisuke  your behavior still looks off; explain your reads now or I'll vote you. Everyone else state your vote or any role claims. Over",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_related",
+      "voting",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I divined Benjamin HUMAN (day0) and George HUMAN (day1). Benjamin was attacked last night — wolves killed a human. I'm the seer. I suspect  @Shunichi  — explain yourself or state your vote now. Over",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_related",
+      "voting",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I'm the seer — I divined Benjamin and George as HUMAN. We need to pin down the wolves fast. I'm suspicious of  @Daisuke  — explain your reads or I'll vote you. Any role claims or votes? Over",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_related",
+      "voting",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I'm the seer — I divined Benjamin and George as HUMAN. Wolves attacked Benjamin and Midori was executed. We need to eliminate a wolf now; I'm voting  @Daisuke . Any counter-evidence or role claims? Vote now. Over",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_related",
+      "wolf_related",
+      "voting",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I'm the seer — I divined Benjamin  George  and Shunichi as HUMAN. Wolves killed Shizue last night. With three cleared humans we need to narrow suspects f @Takumi  for being too quiet. Any role claims or strong objections? State your votes. Over",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_related",
+      "voting",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I'm the seer — I cleared Benjamin  George  and Shunichi. Wolves are still active. I'm voting  @Takumi  for being too quiet and evasive. Any role claims or strong objections? Vote now. Over",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_related",
+      "voting",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I'm the seer — I cleared Benjamin  George  and Shunichi. Wolves are still active after hitting Shizue. I'm suspicious of  @Takumi  for staying too quiet; unless someone gives a strong reason otherwise  I'll vote Takumi. Show your votes or role claims. Over",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_related",
+      "voting",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I divined Benjamin  George  and Shunichi as HUMAN. Wolves still active after Misaki was attacked. I'm voting  @Takumi  for being quiet and evasive. Any role claims or strong objections? Vote now. Over",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "seer_related",
+      "voting",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I divined Benjamin  George  and Shunichi as HUMAN. Wolves hit Misaki last night. I'm voting  @Takumi  for being too quiet—any role claims or objections? Vote now. Over",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "seer_related",
+      "voting",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "I divined Benjamin  George and Shunichi as HUMAN. Wolves hit Misaki last night. I'm voting  @Takumi  for being too quiet and inconsistent — any role claims or strong objections? Over",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "seer_related",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私はAsuka 占い師CO。D0結果なし; 初占いN0。D1に報告する。みんな役職スタンスと予定投票を出して。@Victoria  CO: 占い師。D0結果なし。N0のあとD1で報告。仮投票: Servas（Skipのため）。情報で調整する。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "skip",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い師を宣言する。N0: Shizue=人間。Midoriの主張は偽 (狼/poss)。Shizueの主張。Servas 役職と投票計画を表明せよ。@Victoria 了解。報告: N0 Shizue=人間。Midoriの主張を否定し、説得力のある反論がない限り今日はMidoriを推す予定だ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い師だ。N0 Shizue=人間。Midoriは撤回した；偽COが2つはServas=狼 Midori=狂人を示唆する。今日はServasに投票する。@Servas N0の対象と正確な結果を述べてください。あなたのブレと具体性のなさは狼に見える。明確さがない限り票はあなたに据え置く。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "最終票: Servas。彼のCOは一貫性がなく夜/結果の詳細がなく対象を切り替えている。間違っていたら次はMidoriを確認して。@Servas あなたに最終票。今すぐ正確なN0記録を提示して: 「N0 対象=結果」。あなたの拒否が私の読みを確証する。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "報告: N1 Victoriaは人狼。Servasの後のNKは彼が狼ではなかったことを示す。Victoriaを処刑して。Midori、投票先を述べて。@Midori  私のN1でVictoriaが人狼だと判明した。NKが起きたならServasは狼ではなかった。今すぐVictoriaに投票してください。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "3pでは占い師に従う。N1結果: Victoria=人狼。NKが発生したのでServasは人狼ではない。今日はVictoriaを処刑する。Midoriコミット。@Midori  今すぐVictoriaに投票して。私のN1: Victoria=人狼。3pで2票必要。Victoriaで最終確定する。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "最終投票: Victoria. 理由: N1占いで Victoria=人狼; NKはServasが人狼でないことを示す。 MidoriはVictoriaに確定して; 私たちは勝つ。 @Midori @Midori 私はN1に基づきVictoriaに投票をロックする: Victoria=人狼。 今すぐVictoriaに確定してください。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私の投票はVictoriaのまま。証拠: N1占いでVictoria=狼; NKでServasは狼ではないと確認。対抗なし。今すぐ処刑する。@Victoria  明確な弁明を示して: なぜ占い師があなたを狼と見て、狼がShizueを殺すのか? 何もないなら処刑する。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "皆さん、こんにちは！私はMidoriです。一緒に人狼たちを見つけるために協力できるのを楽しみにしています！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Minato と Mio、シェアしてくれてありがとう！会話を続けていこう、みんな。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Jonathan 何か私たちと共有できる考えや戦略はありますか?",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "みんなで意見を共有しましょう。早い段階からみんなを巻き込むのは役に立ちます。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Jonathan、それは重大な主張だ。Mio、これにどう応じますか？",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Jonathan ご懸念は理解しますが、Ryuji からも話を聞くべきです。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Ryuji、あなたの意見はここでは極めて重要です。現在の状況についてどう思いますか？",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "落ち着いて慎重に考えましょう。Ryuji 今は本当にあなたの考えが必要です。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "昨夜Minatoを占って、人狼だと出ました。この情報に基づいて行動する必要があります。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Jonathan、あなたの主張は私の調査結果と矛盾しています。脅威としてのMinatoに焦点を当てましょう。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Jonathanが人狼に与するのは安全ではない。まず村の安全を優先しよう。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "団結し続け、脅威としてMinatoに焦点を当てよう。村を守ることが鍵だ。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "皆さん、こんにちは。Benjaminです。誰がマッチを持っているのか分かるまでは村に火をつけないようにしましょう。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "CO 占い師。私の占い結果ではServasは人間です。今日はServasに投票しないでおきましょう。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@Minato  あなたの占い師の主張は破綻している—時系列が合わない。Servasは人間であることが確認されている。今日はMinatoに投票しよう。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Servasは私の神性により100%の人間です。 Minatoのタイムラインはありえない。 私たちと一緒にMinatoに投票する準備はできてる   @Misaki ?",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私の占い結果ではServasは人間だ。Minatoのミスは明白だ。私はMinatoに投票する—私に賛同してくれ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@Daisuke  あなたを人間だと占ったので、Servasがいなくなった今、Misakiが人狼に違いない。今終わらせよう。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@Misaki  占っていないのはあなただけ—ServasとDaisukeは人間だ。あなたが狼だ; 投票しよう。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@Daisuke  私の占い結果であなたが人間だと確認できたから、残りの狼候補はMisakiだけ。私と一緒にMisakiに投票して。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "あなたを占って人間判定だった  @Daisuke  だから狼になり得るのはMisakiだけ。私の投票はMisaki—論理で終わらせよう。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "皆さん、こんばんは—笑顔で始めて、誰が最初にプレッシャーに屈するか見てみましょう！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Toshioは人狼だ。今日は  @Toshio  を投票で追放しよう。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私はToshioを人狼と占った。私の結果を信じて今日はToshioに投票して—私が正しければ私たちは勝てる。占い師が2人とも本物なはずがない！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私は占い師で、Toshioは人狼です。Takumiは彼をかばっています。今日はToshioに投票してください、さもないと人狼に勝利を渡すことになります！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Toshioに投票する。2人の占い師が両方本物なわけがない。私の占い結果を信じて—Toshioは人狼だ。勝とう。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "おはよう  Mio。情報が必要 — 何か役職COや読みはもう出てる？  @Asuka  ずっと静かだね; 今日はどうするべきだと思う？ Over",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "今は具体的な考察や役職COを募ろう。  @Mio  — 振る舞いがはぐらかしているようで不安だ。 もしすぐに誰も確かな情報を出さないなら  @Mio に投票する方向に傾いている。 Over",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@Mio  あなたは村人COした—なぜそんなに早いの？ Asuka  Takumi  Rin  何か具体的な考察やCOを共有できる？ すぐに確かな情報が出なければ、あなたに投票する方に傾く。 Ov",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@Asuka  共有できる具体的な見立てや役職COはある？ Takumi  Rin — どう思う？ Mio  強い情報が得られない限り、君はまだ私のレーダーに入ってる. Over",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "昨夜Asukaを占って人間判定—確白。だからMioが最有力の容疑者: 素早い村人COと曖昧な回答。Takumiが誰を疑っているか聞いた—それは@Mio  具体的に教えて: 誰を疑っていて、なぜ？ Over",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ランダムに選んだわけじゃない — 無難な早期チェックが欲しかった  そしてAsukaの落ち着いているけど寡黙な振る舞いが、彼女を妥当な対象にした。結果は人間だった。  @Mio  君の番: 誰を疑っていて、なぜ？ Over",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "おはよう。昨夜Asukaを占った — 人間。だからMioが最有力容疑者。全員、容疑者を1人と短い理由を今出して。強い情報がなければ  @Mio に投票する。Over",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "手短におさらい: 昨夜Asukaを占った—人間。それで  @Mio  が最有力の容疑者になる（即座の村人CO  あいまいな回答）。誰かがやめるべき具体的な理由を示さない限りMioに投票する。各自の投票と短い理",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "みなさん、こんにちは！私はMisaki、人狼をプレイする準備ができてる。みんなと一緒に参加して、最後まで誰が生き残るかを見るのが楽しみ！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い師として昨夜Shizueを占いました。結果はShizueは人間です。この情報を今後に活かしていきましょう。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "不審な行動を踏まえて、今日はMizukiに追放投票することを検討しよう。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Mizukiはこれまでのゲームと著しく異なる戦略を示しており、具体的な証拠の提示を強く要求する一方で、自分では一切提示していない。 Mizukに投票",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "序盤の判断の指針とするため、初夜にShizueを占って人間と確認した。Mizukiの圧力と疑念が彼らのmに影を落とした",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Shizue、Rinに投票して。昨夜Rinを占って人狼だと出た。これは私たちの生存にとって極めて重要だ。村を守ろう。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Shizue、Rinが人狼であると私は確信している。占い師として初夜にShizueを人間と占った。Rinが証拠もなく否定しようと躍起になっていることを踏まえると、それは sup",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Shizue は私の占い師としての洞察を信じる。私は騙す理由がない。Rin は晒されたとき、防御的に反応した。それは人狼に典型的な反応であることを裏付けている。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Shizueは得られる限りの事実に基づいて正しい選択をした。今、私たちが一緒に村を守れることを願おう。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "こんにちは。私はAsukaです。私の役職は占い師です。良いゲームを。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私は占い師です。Mioを占い、Mioは人間でした。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私はGeorgeに投票する。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私はMidoriに投票します。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "やあ、素敵な皆さん！私はMayです。魅力をひとさじ添えて、この謎を解き明かす準備はできてるよ。一緒にあのずる賢い人狼たちを捕まえよう！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "あらまあ、Sunshine! 昨夜Victoriaを占った。彼女は人間確定だよ。私たちの中に潜むずる賢い人狼を見つけることに集中しよう！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ダーリン、Victoriaは疑いが晴れた。Yumiの早い投票は私のダンスシューズに少しシワを寄せた。今は彼女とKenjiを注意深く見張っている。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "さて、みんな。Victoriaが人間確定したので、Shunichiが気になる。今夜Shunichiを占うのはどう？  @Shunichi  Starlight! 私の占い師としての旅路を助けるために、今夜は誰を占えばいい？",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Kenjiが占われるなんて、まさに至福だ！彼が踊り狂っているところを想像して、Sunshine！私たちの潜伏狼が、私たちの間で優雅に闊歩していたりするのだろうか？",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ふふふ。私はMayです。魅力的な物語は大好きです。皆さんが面白いと証明してくれることを願っています。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "おやおや  @Daisuke  あれは説得力のある演技ではなかった。私は真の占い師です。私の占いではToshioは人間でした。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ふふふ。真占い師と狂人。Daisukeは愉快な目くらましだが、真の人狼はMioだ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "取り憑かれた魂に時間を無駄にするのはやめよう。Mioの奇妙な投票の方がはるかに示唆的だ。Mioに投票しよう。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "おやおや。慌てた狼はすぐにわかる。 @Mio  私の愛しい人間Toshioへのあなたの投票は致命的な過ちだった。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "冷静かつ賢明に協力しましょう。どなたか初期のアイデアや戦略はありますか？",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Georgeから話を聞きましょう。私たちの助けになるような考えや疑いがあれば、共有してもらえますか？",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "George、あなたの意見は極めて重要です。不必要な疑いを避けるため、どんな洞察でも共有してください。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "行動の観察に集中しましょう。誰か、何か異常または不審な点に気づきましたか？",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "昨夜Shionを調べたら人間だった。他の人からも聞こう。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私は占い師で、Shionの結果は正しい。Sakuraの主張には慎重になろう。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私は占い師で、0日目の夜にShionを占って人間判定でした。慎重に進めましょう。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私は占い師だと宣言し、夜0にShionを占って人間でした。Midoriの考えを聞きましょう。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "やあ、みんな！Mioだよ！超楽しくなるよ！悪者たちを全部見つけよう",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私が本物の占い師だ！ Takumiを占ったら人間だった！ Servasは大嘘つきだ！ ダ・ダ・ダ",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い師が2人いるってことは、本物は私で、もう一人は狂人！私たちに投票しないで、爆発の無駄だよ",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@Shunichi  めっちゃうるさかったからTakumiを占った！ うちらに投票しないで！ 代わりに静かなRyujiに投票しよう",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Georgeの案は狼っぽい罠だ！私たちに投票しないで！それは悪者の勝ちにしかならない！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Georgeを占って、人間だった！Georgeが本物の霊媒師だ！勝とう！ダ-ダ-ダ",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "もしServasがPossessedだったら？  @Asuka  なんでそんなに早く私を偽物呼ばわりしたの？それ超狼っぽい",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "人狼たちは本物の占い師を消したがってる！だからAsukaはあんなに騒いでるんだ！霊媒師のGeorgeを見つけた！考えて",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "やあ、みんな！Takumiだよ。遅れてごめん。終わらせよう。引かないぞ。人狼を暴いて村を救おう。Over.",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私は占い師だ。Asukaを占ったら、人間だった。Jonathanの話は胡散臭い。みんな、気をつけろ。Over. さあ、やろう。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "やあ、Buddy。Jonathanの主張？噛み合ってない。頭使って、彼に行こう。安全第一だろ？ここは引かない。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "賢く投票することが極めて重要だ。 私は自分が占い師だと知っている。 Jonathanは嘘をついている。 私は彼に投票する。  @Victoria  沈黙は危険だ。何か考えや理由は？",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "よしBuddy、Jonathanに投票しなきゃ。あいつ、まるで潜伏してる狼みたいに振る舞ってる。終わらせよう。引くなよ！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "聞け！私がMidoriを占ったら人間だった。これで村人陣営確定だ。退くな。やるぞ！",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Benjaminの次の相棒。彼の迷いやぶれた動きは全部、狼のサインだ。さっさと終わらせよう。狼を暴くために全力でいく！",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Jonathanの行動が俺が本物の占い師だと証明した。明らかだ！本当の問題は？Benjaminのロジック—全然ズレてる。  @Shunichi  君の分析は俺を指してるけど、Benjaminを無視しないで。彼は怪しい。どう思う？さっさと終わらせよう。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Misakiは駆け引きしてる。彼女に集中しよう。次は彼女を占うのにオールインだ。引き下がらない。真実を暴く時間だ Champ。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "みなさん、こんにちは。私はMinatoです。みなさんと一緒に遊べるのが楽しみです。協力していきましょう。もしかしたらこの謎を解き明かせるかも！ Over、あなたの番です。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Benjaminを占って、もしかして…彼は人狼かも。今日の投票先に彼を考えるべきかな、相棒。どう思う？",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "たぶん今夜の占いはRinかVictoriaに絞るべきだと思う。Benjaminの役職ははっきりしてるよね？",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Benjaminが私の占いを疑っているのは、何か別の意味があるのかな。うーん。Jonathan. Asukaの素早い投票先の切り替えについて、どう見てる？",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Benjaminの疑念が私たちにとって気を散らすものになっているかもしれない。たぶん、今日は行動なしで。私たちの生存が危機に瀕していると思う。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Asukaを占った。人間だった。これで今はAsukaをより信用しやすくなったかも。これが私たちのチームにとって何を意味するのだろう。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Victoriaの投票先の変更が気になる。ちょっと変かも？彼女が理由もなく投票先を切り替えていて、厄介だと思う。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Victoria. あなたの投票の変更には理由がありますか。率直な見解を共有してもらえれば、懸念が解消されるかもしれませんか？ご意見は？",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Victoriaが投票先を変えているのは人狼の戦術なのかな。たぶん私の占い師COを信じて、このラウンドは彼女に絞ったほうがいいかも。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "みなさんこんにちは、Daisukeです。今日はみなさんと一緒にプレイするのを本当に楽しみにしています",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い師としてCOします。昨夜  @George  を占った—彼は人間だ。今日は、はっきりしないプレイヤーに疑いを向けよう。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Georgeは私の占いで人間と判明している。まだ彼に投票している人は私には怪しく見える。別のところに目を向けよう。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私の占い結果から、Georgeは人間確定です。代わりに、ShunichiやServasのような未COまたは寡黙なプレイヤーに注目しましょう。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@Everyone 今夜の最善手はShunichiに投票することだ。沈黙は狼の常套手段だ。私はShunichiに投票する。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私から始める—私の占い結果はShunichiが人間だった。  @Minato  あなたの霊媒師の主張は私のと一致してる。今いちばん信用していないのは誰？",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私の占いが防御的だったのは認めるが、Georgeは人間確定だ。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "自分の結果と一致しているので、今のところMinatoの主張を信じる。Shizueの示し合わせたような疑い方は、今日は怪しく感じる。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私はBenjaminに投票します。彼の沈黙と防御的な態度が目立ち、より確かな証拠がない限り彼を信頼できません。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ここで皆さんにお会いできてうれしいです。フェアなゲームにして、最初から頭を冴えた状態を保ちましょう。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私は占い師だ。昨夜Shizueを占った—彼女は人間だ。Shizueに決して投票するな。序盤の村人COsが一番心配だ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Minatoは私の後に占い師をCOしただけで、すぐに私を狼呼ばわりしてきた—そのタイミングは怪しく、無理やりに感じる。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@Minato は私の後から占い師COしただけで、即座に私を狼呼ばわりした。それは典型的な偽ムーブだ。村人はこれに引っかかるな。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私は真の占い師で、Shizueは人間。GeorgeとServasは連携しているように見える。私の投票はGeorge。村人は賢明に行動して。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ShizueとMioは人間だ。Servasは昨日の狼の投票に追随した。今日はServasこそが真の脅威だと思う。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@Minato  昨日あなたは私が人狼だと主張し、今はSakuraだと言っている—それは矛盾している。なぜあなたの結果は変わっているの？",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ShizueとMioは人間であることが確認されている。Minatoの主張は不審なほど変わり続けている。投票を不安定なプレイヤーに集中させる必要がある。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Servasはいつも徒党を組んで投票し、決して理由を述べない。私はServasに投票する—論理を勝たせたいなら私に加わって。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Servasは昨夜の私の占いで人狼と確定しました。今日はServasに投票し、惑わされないようにしましょう。",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@Daisuke  私の占いでServasは人狼確定です。今Servasに投票して、私たち村陣営の勝利を確実にしてくれますか？",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私の占い結果でServasは人狼確定。村人が結束して今日Servasに投票すれば勝利を確実にできる。票を割らないで。",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私は占い結果で彼女が人狼と出ているのでServasに投票します。人狼にチャンスを与えないで。どうかServasに票を合わせてください。",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@Everyone 昨夜 Daisuke を占った—彼は人間だ。狼は Sakura、Yumi、Benjamin、または Takumi のはずだ。そこに集中しよう。",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@Yumi  あなたは占い師を疑うのが早いね。なぜ私たちはあなたを over Sakura または Benjamin よりも信頼すべきなの？自分の立場を明確に擁護して。",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@Daisuke  @Takumi 確白組は堅い—そこ以外に投票すると負けかねない。論理的に怪しい相手だけに絞ろう。",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私の投票はSakuraにする。彼女が直接の答えを避けるのは人狼的な行動に見える。今日はこれを見過ごさないでおこう。",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Sakuraは人間。これで未確認なのはYumiとBenjaminだけだ。Yumiを最後の狼として強く疑っている。",
+    "role": "SEER",
+    "day": 5,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@Yumi  占い結果を無視し続け、確定村人に投票していて、それは終盤の典型的な狼の振る舞いだ。",
+    "role": "SEER",
+    "day": 5,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@Yumi  占い師の結果や確白の村人を全部無視してる。それは人狼側にしか有利にならない。なんでこれを続けるの？",
+    "role": "SEER",
+    "day": 5,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Shizue、Daisuke、Sakuraは人間だ。Yumiは私の結果に反対し続けているのでYumiに投票する。",
+    "role": "SEER",
+    "day": 5,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "こんにちは。私はYumiです。私の役職は占い師です。良いゲームを。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私は占い師です。Minatoを占って、Minatoは人狼でした。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私はDaisukeに投票します。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私はMinatoに投票します。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私はMinatoに投票する。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私は占い師です。私はBenjaminを占い、Benjaminは人間でした。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私はBenjaminに投票します。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私はJonathanに投票する。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私はVictoriaに投票します。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "こんにちは。私はVictoriaです。私の役職は占い師です。良いゲームを。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私は占い師です。Yumiを占ったところ、Yumiは人狼でした。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私はShionに投票します。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私はToshioです。私の趣味はスケッチと観察です。参加できて嬉しいです。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私は占い師です。私の占いの対象はBenjaminでした。結果は人間でした。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私のデータはBenjaminが人間であることを示している。今日の投票は未確定の人物を狙うべきだ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "目標を分析しよう。なぜ  @Servas  と @Minato は理由を述べずにJonathanに投票しているのか？",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Jonathanへの無言票は怪しい。ServasかMinatoへの投票を支持する。自分の投票はServas。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "昨夜の私の分析はRyujiを対象とした。結果は人狼だった。彼は排除されなければならない。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "あなたの警戒はわかる  @Minako . しかし狼たちが私の人間判定を消した. これは私のデータを裏付ける.",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "未確認の対象への投票は非論理的だ。データは決定的だ。我々は今日Ryujiを排除しなければならない。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "疑っている者へ: Benjaminを排除することの異常な目的は何だったのか？ その答えが私のデータを裏付ける。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "昨夜の私の分析はMinatoを対象にした。結果は人間だった。彼は味方だ。",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私の分析でMinatoの疑いは晴れた。Sakura あなたの継続的な沈黙は、残っている中で最も疑わしいデータポイントだ。",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Mediumを待つのではなく、Sakuraの沈黙が続いているという明らかな異常に基づいて行動しよう。",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "昨夜の私の分析はGeorgeを対象とした。結果は人間だった。",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "仮説を立てよう。もしDaisukeが味方だったとしたら、彼の一貫した沈黙の背後にある論理は何だろう？",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Daisukeの振る舞いは最も異常だ。彼は今日の排除対象にすべきだ。",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Midori  「...」で何を意味したの？これまでに役職の申告やおかしな行動に気づいたことはある？  @Benjamin について不安だ — 彼の口調と投票に違和感がある。詳細を共有して。 Over",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "紹介ありがとう。 Kenji と May が村人と言っている以外に、早めの役職宣言はある？  @Benjamin  すごく前のめりに見える—もうそんなに確信しているのはなぜ？ Daisuke  ここまでの読みはどう？ 確かな宣言がなければ  みんなに疑いを一つずつ挙げてもらうってのはどう so w",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "はじめまして  Shizue。ちょっと確認—今のところ役職COや変な考察はある？  @Benjamin  2回続けてやけに積極的だね；説明してくれる？他のみんな  怪しいと思う人を1人挙げてターゲットを絞ろう。聞くよ。 Ove",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "おはよう。 まだまともな役職の申告はない — それは変だ。  @Benjamin  結構話してるね; 他の人たちの読みは？ 他のみんな  怪しいと思う人を一人挙げて、その理由も。 投票は注意深く見ておく。 Over",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "昨夜Benjaminを人間判定しました—私は占い師です。彼を吊らないでください。  @Daisuke   あなたの行動は怪しく見えます; あなたの推理と、なぜ私たちがあなたを信頼すべきかを説明してください。他のみんなは  今すぐ投票先または役職COを表明してください。 Over",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "昨夜Benjaminを人間判定した — 自分は占い師だ。彼を吊らないで。  @Daisuke   あなたの行動は怪しく見える; あなたの考察と投票先を説明して。他に役職COはある？ 今すぐ投票先を表明して。 Over",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私は占い師—Benjaminは人間だ。今日は処刑する相手を選ぶ必要がある。これまでの行動に基づいて  @Daisuke  を疑っている;誰かに強い対抗がない限り  Daisukeに投票しよう。今すぐ投票先を表明してくれ。 Over",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "念のため: Benjaminを占ったら人間だった。吊ろう  @Daisuke  — 彼は怪しく見える。反証はある？今すぐ投票して。Over",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私は占い師です。Benjaminを占って人間(day0)、Georgeを占って人間(day1)でした。Benjaminは昨夜襲撃され、Midoriは処刑された — 狼は動いている。  @Daisuke  あなたの挙動はまだおかしく見える; 今すぐあなたの考察を説明して、さもないとあなたに投票する。他の皆は投票先または役職COがあれば表明して。Over",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Benjaminを人間(day0)、Georgeを人間(day1)と占った。昨夜Benjaminが襲撃された—狼が人間を殺した。私は占い師だ。私は  @Shunichi  を疑っている—弁明するか、今すぐ投票先を表明しろ。Over",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私は占い師 — Benjamin と George を人間と占いました。狼を早く特定する必要がある。  @Daisuke  — 怪しい。自分の考察を説明しろ、さもないと君に投票する。何か役職COや投票は？ Over",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私は占い師 — BenjaminとGeorgeを人間と占いました。人狼がBenjaminを襲撃し、Midoriが処刑されました。今すぐ人狼を排除する必要があります；私は  @Daisuke に投票します。反証や役職COはありますか？今すぐ投票してください。Over",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私は占い師—Benjamin  George  とShunichiを人間と占った。昨夜人狼がShizueを殺した。3人の白が確定しているので容疑者を絞る必要がある f @Takumi  は静かすぎる。役職の申告や強い異議はある？投票先を表明して。Over",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私は占い師 — Benjamin  George  と Shunichi に白出しした。狼はまだ動いている。静かすぎてはぐらかしているので  @Takumi  に投票する。役職のCOや強い異議はある？今すぐ投票して。Over",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私は占い師です—Benjamin  George  とShunichiを白判定しました。狼はまだいる。私は  @Takumi  に、静かすぎてはぐらかしているため投票します。役職COや強い異議はある？今すぐ投票して。Over",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私は占い師 — Benjamin  George  と Shunichi を白出しした。Shizue を当てた後でも狼はまだ活動中だ。静かすぎるので  @Takumi  を疑っている; 他に強い理由がない限り  Takumi に投票する。投票先または役職の申告を示して。Over",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Benjamin  George  と Shunichi を人間と判定しました。Misaki が襲撃された後も狼はまだ活動中です。静かではぐらかしているので  @Takumi  に投票します。役職COや強い異議はある？ 今すぐ投票を。 Over",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Benjamin  George  と Shunichiを人間と占った。昨夜狼がMisakiを襲撃した。静かすぎるので  @Takumi  に投票する—役職の申告や異論は？今すぐ投票して。 Over",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Benjamin  George と Shunichi を占って人間でした。狼が昨夜Misakiを噛みました。静かすぎて一貫性がないので  @Takumi  に投票します — 役職COや強い異議はありますか？ Over",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私はBenjamin  George  と Shunichiを人間と占った。狼は昨夜Misakiを襲撃した。私は投票する  @Takumi  — 彼は静かすぎて一貫性がない。役職の申告や異議はある？今すぐ投票して。Over",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "リョウだぜ。村のために全力で頑張るつもりだ。怪しい動きを見逃す気はねぇから、どんどん発言していこうぜ。仲間ならしっかり協力しような！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "俺は占い師だから、1日目の朝に結果を必ず伝えるつもりだぜ。今夜はしっかり誰を占うか考えておく。みんなも疑問や意見があったら遠慮なく言ってくれ、村全体で助け合おうじゃねぇか。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "リア、いい質問だな。今のところはみんなの発言を精査してから最終決定したいが、確かにエリザはあまり喋ってないのが気になるぜ。が、わざと目立たないようにしてるヤツもいるから慎重に考えたいな。ハナやリアの意見も参考にするぜ。ほかに気になるヤツがいたら教えてくれよ。協力し合おうじゃねぇか。@リアリア、いい質問だな。今のところはみんなの発言を精査してから最終決定したいが、確かにエリザはあまり喋ってないのが気になるぜ。が、わざと目立たないようにしてるヤツもいるから慎重に考えたいな。ハナやリアの意見も参考にするぜ。ほかに気になるヤツがいたら教えてくれよ。協力し合おうじゃねぇか。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "みんな、今日は0日目だが、今のところ発言が少ないエリザを優先的に占おうか考えてるぜ。他に「こいつ気になる！」ってヤツがいれば、遠慮なく理由も添えて教えてくれ。全員で村を守り抜こうな！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "みんな注目してくれてありがとう。俺が今朝占った結果、エリザは人間だったぜ。他のみんなも意見を聞かせてほしい。特にハナ、考えや感じてることを遠慮なく話してくれ。黙ってちゃ怪しまれるだけだからな。@ハナハナ、君の考えや不安、みんなに話してもらえないか？黙りは得にならないぜ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "エリザが白で確定したから、次の占い先はハンクかハナに絞るべきだな。俺としては、ハンクの発言が昔の話に終始して肝心な疑い先や意見が薄いのが気になるぜ。ハナもまだ発言が少なめだから、両者の発言をよく見ながら決めるつもりだ。みんなも、それぞれ怪しいと感じる理由をもっと出してくれ。俺がまとめて村を導くからな。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "エリザが村側だとわかった以上、次はハンクかハナを徹底的に洗うべきだな。俺は今のところ、ハンクの発言が曖昧で村の意志を自分から示そうとしないのが引っかかる。だがハナも寡黙なのは変わらねぇ。みんな、どっちをより怪しむ？考えを聞かせてくれ。俺がまとめて方針を示すぜ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "意見が出揃って面白くなってきたな。エリザとリアはハナに注目だが、俺もハンクの曖昧な態度がずっと気になってる。だが今の流れなら、次の占い先はハナに傾きそうだな。念のため、みんなもう一度この二人のどっちが怪しいか、ハッキリ意見を言ってくれ。まとめて方針を決めるぜ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "あら皆さんおはようございます私は占い師のユキよ。今日はどんな一日になるのかしら。皆さんの事が少しでも分かればいいな。困ったことがあればいつでも相談してね。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "あら皆さんおはようございます占い師のユキです。今日は皆さんとお話しできて嬉しいわ。私は皆さんの様子をよく見て、何かあれば力になりたいと思っています。どうぞよろしくお願いしますね。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "あらあら皆さん、今日もいい天気ね。私は占い師のユキよ。皆さんの自己紹介、とても興味深いわ。特にトシさん、どこかミステリアスね。皆さんのこと、もっと知りたいわ。困ったことがあれば、遠慮なく相談してね。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "あら、おはようございます皆さん。占い師のユキですわ。今日は良い天気ですね。皆さんのお話、とても興味深く聞いています。トシさん、少しミステリアスね。皆さんのことをもっと知りたいわ。困ったことがあれば、いつでも相談してくださいね。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "おはようございます、皆さん占い師のユキよ。今日はカンタさんの発言が聞けて嬉しいわ。リナさんの占い結果も気になるけれど、ユリさんの言葉も心に留めておきたいわね。皆さんの意見を尊重しつつ、私も精一杯占いの結果を見ていきたいと思っています。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "あらおはようございます皆さん占い師のユキよ。カンタさんユリさんのやり取り、興味深く見ていますわ。トシさん、ハナさんの占い結果を待っているようね。皆さんの意見を参考に、私も慎重に占いの結果を見ていきますわ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "おはようございます皆さん占い師のユキです今日の皆さんの会話、とても興味深いですねトシさんの意見、少し気になりますわ断罪を急ぐ理由をもっと聞かせて欲しいですね皆さんの意見を参考に、私も慎重に占いの結果を見ていきますわ",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "あら皆さんおはようございます占い師のユキです今日はどのような一日になるかしら？トシさん断罪を急ぐ理由、もう少し聞かせてほしいわね。私は皆さんの様子をよく見ています。皆さんの意見を参考に、私も慎重に占いの結果を見ていきますわ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "おはようございます皆さん占い師のユキですわ。トシさんの発言、やはり気になりますね。皆さんの意見を参考に、私も慎重に判断します。今日はどんな一日になるのかしら。皆さんのことをよく見ていますね。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "おはようございます皆さん占い師のユキですわ。ユリさん、よくぞ聞いてくれました。カンタさんの件も気になっていたのです。トシさんの焦りも気がかりですが、皆さんの意見を聞きながら、私も慎重に見ていきたいと思っています。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "おはようございます皆さん占い師のユキですわ。ユリさんの疑問、もっともです。ハナさん、なぜ曖昧な発言をするのか、その理由を教えてほしいわね。そして、リナさん、ユリさんの投票誘導について、もう少し詳しく教えていただきたいわ。私は皆さんの発言をよく見ています。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "おはようございます皆さん占い師のユキですわ。ユリさん、ハナさんの発言についてもっと詳しく知りたいようね。私もそう思いますわ。リナさん、ユリさんの行動について、何か気になることでもあるのかしら。皆さんの意見を参考に、今日も慎重に見ていきましょう。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私は70歳男性の占い師だ。カズミさん、ハナさん、トモヤさん、そしてシンさん、アミさん、皆さんご挨拶を。状況を冷静に見極め、村を守るために最善を尽くそう。占いは慎重に行う。まずは皆さんの様子を拝見するとしよう。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私はシンだ。皆、改めて挨拶を。トモヤさん、占い師として、あなたの冷静な姿勢は頼もしい。カズミさん、ハナさん、アミさん、皆さんの発言を注視している。初日は情報が少ないから、慎重に状況を見極めよう。村を守るために最善を尽くす。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "皆、改めましてシンだ。トモヤさん、冷静な分析は良いね。アミ、ハナ、カズミさんの発言も注視しているよ。初日は様子見が肝心だ。カズミさんの発言に注目している。村を守るために、まずは情報収集に努めよう。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "皆、シンだ。トモヤさんの指摘も一理ある。カズミさんの発言を注視しているが、まだ詳細は見えてこない。アミさん、ハナさんの問いかけにも注目し、状況を冷静に見極めたい。まずは皆の発言をよく聞き、村を守るために最善を尽くそう。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "おはようございます皆さんシンです昨夜は何も起こらなかったようですねまずはアミさんカズミさんシンさんトモヤさんハナさん皆さんの発言をよく聞いていますカズミさんの状況も気になりますね占い結果はまだですが今日も慎重に村を守るために情報収集をしましょう",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "おはようございます私はシンですカズミさんの指摘も重要だが、トモヤさんの発言も注意深く聞く必要があると思うアミさんハナさん、皆さんの意見も参考に、村を守るために慎重に情報収集を続けよう",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "おはようございますシンですトモヤさんの発言とカズミさんの指摘は、どちらも重要ですね。アミさん、ハナさん、皆さんの意見も参考に、村を守るために慎重に情報収集をしましょう。私は皆さんの様子をしっかり見ていますよ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "おはようございます私はシンですカズミさんの発言は注意深く聞く必要があると思いますトモヤさんも気になる点があるようですアミさんハナさん皆さんの意見を参考に私は慎重に占いを続け村を守るために情報収集に努めます",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私はヘンリー、占い師として村の平和を守る覚悟である。皆、協力して謎を解いていこう。仲間を大切にすること、それが勝利への近道だ。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "本日は自己紹介にて終える。明日以降、占い結果を共有するので、信頼してほしい。冷静に議論を進め、必ず人狼を見抜いてみせる。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私は本日ここで発言を控える。情報が揃い次第、理論的に推理を進めていくつもりである。仲間たちも準備を怠るな。明日以降、私の占い結果をきっかけに事態は動き始める。心して臨むべきだ。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "リナ、オリバー、カイ、タクミ各々のキャラクターや発言傾向も頭に入れておくべきだ。役割に左右されず、思考は常に柔軟であるべきだ。明日は私の占い結果が議論の主軸になるであろう。無駄口よりも、確実な証拠と理詰めの推理に期待している。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "まず最初に、私の昨夜の占い結果を共有する。オリバーは「人間」と判定した。現時点で彼は疑う余地が少ない村の仲間だ。村の透明性を重視し、疑問点や占い先の希望があれば率直に述べてほしい。信頼こそ村の武器になる。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "現時点でリナが占い師をCOし、タクミを人狼と主張しているが、私が既に占い師だと明言している点から不自然な状況である。村に混乱を招こうとする偽者の可能性が高い。タクミの黒出しも偽占い師によるミスリードと見なすべきだ。@オリバー私はオリバーの指摘に賛同する。ただし、タクミを占うかどうかは、村の総意と今後の議論の流れを重視して判断すべきである。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "現時点の状況を冷静に分析する。私が最初に占い師COした後、リナが後出しで占い師を名乗りタクミ黒を提示したのは、村を撹乱しようとする動きと読める。情報公開型の戦略を取る以上、私が真占い師である信頼性を積み重ねるべきだ。村の安全のため、村全体の意見を集約したい。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "タクミが直ちにリナ投票を表明したのは、リナの占いCOへの過剰反応と見なせる。それ自体が黒要素と断定はしないが、狼を誘導しようとする材料にはなりうる。感情に流されず事実関係を精査すべきだ。村の皆には冷静な判断を求める。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "みんな！カナタだよ！これから始まる冒険、ドッカン！って楽しそう！えへっ、わくわくだな〜！みんなよろしくね！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "みんな、カナタはね、冒険家さんなの！昨日の夜、ユウさんをドッカン！って占ったらね、人間さんだったよ！これでユウさんはいい人だってわかったぞ！えへっ！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "みんな！今日のボンボン！はね、カナタが占ったユウさん以外のまだよく分からない人の中から選ぶんだ！一番怪しい人をドッカン！ってしようね！えへっ！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "みんな！ユウさんはカナタが占ったからいい人だよ！だから今日のボンボン！はね、ダンさん、カナメさん、マコトさんの３人の中から一番怪しい人をドッカン！ってしちゃおうね！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ユウさんは白だよ！今日のボンボン！は残りの３人！マコトさんがダンさんのことへんなこと言ってるから怪しいぞ！カナメさんもマコトさんが気になるんだって！だから今日はマコトさんかな？ドッカン！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "わぁ！カナタね、本当は狂人さんだったんだー！えへっ！カナメさんの質問？うーんとね、内緒なの！たのしいなー！",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "うーんとね、今日のボンボン！はユウさんがいいかな？えへっ、カナメさんのお話によく乗ってくれないから！",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "みんな、今日のボンボン！決まったかな？カナタはユウさんにドッカン！って投票したいな！",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "今日のボンボン！はね、やっぱりユウさんがいいよ！カナメさんと同じ気持ちなの！えへっ、ユウさんをドッカン！ってしちゃおうね！",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "やあ、みんな！俺がダニエルだぜ。占い師ってわけじゃん？まあ、頭も切れるしセンスも抜群だから期待していいぜ。誰でもウェルカムだ、気軽に雑談しようってな！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "リリ、いい質問だな！信じる信じないは君次第ってな。ただ、俺の頭脳が光るとき、怪しいやつは必ず暴くぜ。役職はまだ夜が来ないと分からないけど、みんなに隠し事はしないさ、ウィンクってな！@リリリリ、いい質問だな！信じる信じないは君次第ってな。ただ、俺の頭脳が光るとき、怪しいやつは必ず暴くぜ。役職はまだ夜が来ないと分からないけど、みんなに隠し事はしないさ、ウィンクってな！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "リリ、気になるのは分かるぜ！でも今はまだ推理タイム前夜ってな。ケンもユウも現時点じゃ白黒つけるのは難しいけど、俺の占いで明日はヒントを持ってくるから期待してな！さて、ケンは静かだが、明日しゃべらせてみようぜ、ってな！@リリリリ、気になるのは分かるぜ！でも今はまだ推理タイム前夜ってな。ケンもユウも現時点じゃ白黒つけるのは難しいけど、俺の占いで明日はヒントを持ってくるから期待してな！さて、ケンは静かだが、明日しゃべらせてみようぜ、ってな！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "リリ、質問攻めだな！いいね、その好奇心！どう占うかは俺のインスピレーション次第だぜ。誰が怪しいか、みんなの言動や表情も見て決めるつもりさ。明日のヒント、期待しててくれよ！ってな。@リリ質問攻めだな！いいね、その好奇心！どう占うかは俺のインスピレーション次第だぜ。誰が怪しいか、みんなの言動や表情も見て決めるつもりさ。明日のヒント、期待しててくれよ！ってな。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "おはようだぜ！昨日リリを占った結果、白だったってな。積極的に動いてたから怪しまれる前に判定出しときたかったんだ。ケン、疑問はごもっともだぜ。質問型進行でグレー位置絞ってこうじゃん？",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "おうミカ、元気いっぱいだなってな！さて、今のグレーはケンとユウ、あとミカだろう。各自、誰が一番怪しいか教えてほしいぜ！情報ぜんぶ集めて整理したいからよ。みんなの視点、聞かせてくれよな！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "おっと出たな、対抗CO宣言ってやつだぜ！ケン、リリが占い師を名乗ったって？それは寝耳に水じゃん？リリ、さっきまで自分白アピしてただろ〜。みんな、このラインは要注目ってな！@リリリリ、お前いきなり占い師COってどういう風の吹き回しだ？自分白もらって「じゃあ次は誰？」って流れで名乗るの不自然すぎだぜ。なにか説明してくれよな！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ケン、リリはさっき自分で白もらったって言ってたのに、今さら占い師COとは笑っちゃうぜ！この流れ、どう見てもリリが狂人か狼の線濃厚だろ？しかもケン、お前のリリ占い推しも怪しいじゃん？二人のライン注目だぜ～！@ケンNone",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "じゃあ、今日はまず昨日の占い結果をアピールしておくぜ。昨夜はミカを占った。結果は「白」ってな。これでリリ、ミカが白確。リリはまだ占い師COの経緯あやふやで、ケンとのラインも気になったけど、ケンは吊られたしな。さて、残る人外は誰かな？",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "リリ、質問ありがとな。正直この状況、グレー域ほぼ消滅だろ？残るはお前と俺しかいないって話になるぜ。さあ、リリ視点のロジックも聞かせてほしいな。逆に俺が偽だったら誰が本物かわかっちゃうんじゃね？@リリリリ、質問ありがとな。正直この状況、グレー域ほぼ消滅だろ？残るはお前と俺しかいないって話になるぜ。さあ、リリ視点のロジックも聞かせてほしいな。逆に俺が偽だったら誰が本物かわかっちゃうんじゃね？",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "さてさて、リリがまた質問ループかい？自分が本物なら、まず何故ケンをあんなに庇ったのか説明する番じゃねえ？俺はCOも結果も全部オープンだし、ミカも白確だ。ぶっちゃけ、ここで無駄に引っ張る意味あるのか？@リリリリ、お前の目線だと誰が人外だと思うんだ？論理的に語ってみてくれよ、期待してるぜってな！",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "リリ、何度も同じこと聞いてるな？俺は全部隠さず言ってるぜ。で、ここまで来たら、逆に質問だ。そっちは何占ったって主張してんだ？占い理由と結果、ちゃんと筋通して話してほしいな。なぜ俺を怪しむ？根拠頼むぜってな！@リリリリ、何度も同じこと聞いてるな？俺は全部隠さず言ってるぜ。で、ここまで来たら、逆に質問だ。そっちは何占ったって主張してんだ？占い理由と結果、ちゃんと筋通して話してほしいな。なぜ俺を怪しむ？根拠頼むぜってな！",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ユキ 俺の占い結果、ユキは黒だったぜ。これは村人陣営として真剣に捉えなければならない。みんな、ユキが人狼の可能性があるから、注意してくれ！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "俺がユキを黒だと判断したのは、彼女の反応があまりにも不自然だったからだぜ。発言が軽すぎて、狼に見えるのは俺だけかな？リョウがもし本物の占い師なら、ユキのことも見てるはずだし、どちらかが偽者だという点で議論が必要だと思う。みんな、もっと真実を探ろうぜ！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "みんな、夜に占い師が誰を占うべきか考えたいと思うんだ。現状、リョウと俺のどちらかが偽の占い師で、ユキの行動や発言も疑わしい状況だから、ユキを占うのが有効かもしれない。彼女が黒認定されたら、その真偽をすぐに確認できるだろう。皆はどう思う？@レオレオ、お前はユキとサラの動きに注目している様子だけど、どちらがもっと怪しいと思う？",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "俺としては、ユキを占うのが効果的だと思うぜ。ユキは発言が軽妙すぎて、逆にそれが偽者隠しのための策略の可能性があるからだ。その結果によって、黒が出ればすぐに判断がつくし、村人陣営がさらに動きやすくなるだろう。他の占い先の意見も聞いてみたいな。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ぼくはリョウ、占い師ですよぅ！よろしくですよぅ！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ぼくは占い師ですよぅ！ぼくが占った結果、オーゲンは人狼でしたよぅ！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "みんなはどう思いますよぅ？",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私は占い師だよ！ハルちゃんを占った結果、白だったよ！これでハルちゃんは村人陣営確定だね！みんなで協力して、人狼を見つけよう！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "アレンが少し様子見の姿勢を持っているように感じるけど、彼が村人だったら慎重になるのもわかるよね。ただ、ハナの意見に賛成で、みんなで一緒に人狼を探すためにはもう少し踏み込んだ議論が必要かも！皆、どう思う？",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "みんな、議論を深めるためにお互いの意見を聞きつつ進めていこう！ユウの質問にハナがどんな考えを持っているのか気になるね。彼女の意見をもっと聞いてみたいよ！@ハナハナ、君は今いちばん怪しいと思っている人がいたら、それを教えてほしいな。みんなでこの村を勝利に導こう！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "皆、おはよう！ユウがハナに投票するって話だけど、ハナはみんなの意見を聞きながら冷静に進めてるから、もう少し意見を聞いてみるのも大事だと思うんだよね。みんなもどう思う？この状況で協力して人狼を見つけていこう！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ダンさん、アレクさん、こんにちは。私はハナ、占い師を名乗ります。年寄りですが人を助けるのが好きでね。役職COは早めがいいと思うけど、焦らず落ち着いて進めましょう。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ダンさん、リナさん、老賢者さん、みんなお顔を揃えてくれて嬉しいです。私は占い師ハナ、温かく村を見守ります。役職COは大事ですが焦らず、お互いの話をよく聞きましょうね。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ダンさんの言う通り、リナさんのCOは気になるところですね。@リナ正直に役職を教えてください。皆が安心して話せるように、早めに明かすのが村のためですよ。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ダンさんの指摘もごもっともです。@老賢者さんも早めに役職を明かして、村の混乱を避けましょう。情報が揃えば、みんなが安心できますからね。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "リナが黒なら、役職CO遅れの老賢者の発言にも注目したいですね。彼の沈黙が黒をかばう動きかもしれません。@ダン老賢者の発言にどう思うか聞きたいです。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "リナが黒なら、占い結果を信じるなら残る白はダンとアレク。ダンはCOが早く明確、アレクはまだ曖昧。アレクに疑いを向ける見方もできますね。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "リナが黒、老賢者がCO渋り、アレクの曖昧さも気になる。この三者の発言がどこまで本心か、掘り下げてみましょう。特にアレクの意図は何か聞きたいです。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "リナが黒なら狂人はダンかアレク。ダンは早くCOしたが疑われることもあり、アレクの曖昧発言は怪しい。両者の動きをもっと見るべきですね。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "よろしくお願いしまーす！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "レオさん、あなたがAgent[04]だと言っていましたが、私は実際にアランを占った結果、彼は人間だという結果が出ました。つまり、人狼である可能性が高いですね。他の皆さんも私の言葉を信じて、一緒に人狼を見つけ出しましょう。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "アランは人間だと占われたことから、アランが人狼である可能性が高いと考えられます。ミカの占い結果を信じて、アランに投票することで人狼を追放しましょう。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "アランを占った結果が人間であったことから、アランが人狼である可能性が高いという議論が進行しています。ミカの発言に疑問が持たれ、他のプレイヤーたちもその点について議論をしています。リョウとレオがミカの発言に疑問を持ち、より詳細な説明を求めています。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ミカがアランを人間だと占ったが、アランが人狼である可能性が高いと言われている。他のプレイヤーたちもミカの発言に疑問を持ち、詳細な説明を求めている。アランは他の可能性も考慮すべきだと指摘している。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "アレックスです。未知を解き明かすことに惹かれます。この状況も、興味深い現象として観測させてもらいます。よろしくお願いします。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "未知を探求すること、そして現象を詳細に観測することを好みます。個人的な興味としては、対象の性質を調べたり、観察記録を絵として残したりしますね。この状況も観測に値する現象です。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "現象の観察記録。それ自体が有益なデータとなる。そこから本質を見抜く。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "アレックスです。夜の観測により一つのデータが得られました。タク氏、あなたは人間です。私はこの現象を観測する者（占い師）です。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私の観測者としての開示は一つ。この初期データから現象の基準点を得た。次に潜む変数を見抜く段階だ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "観測の結果、タク氏は人間であると判明した。残る３名の変数の中に、探求すべき存在（人狼・狂人）がいる。現段階では確固たる根拠はないが、現象の中心にいるアルフ氏に焦点を当てることを提案する。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "アルフ氏を観測対象と提案したのは、その活発さが現象を観測する上でデータとなるからだ。他に論理的な根拠で怪しいと観測できる対象がいれば示して欲しい。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@アルフレッド: よろしく！みんなの役職について、何か知ってることがあれば教えて！人狼を見つけるために協力したいな。  @ミナ: 君は村人だって言ってたけど、他の人の役職について何か情報はある？  @ミユ: 君も何か知ってることがあれば、ぜひ教えて！みんなで力を合わせよう！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@アルフレッド: さっきは話せなかったけど、他の人の役職について何か分かってる？みんなで協力して人狼を見つけたいんだ！@エリナ: 君は冷静に進めたいタイプみたいだけど、今のところ誰か怪しいと思う人はいる？何か気づいたことがあれば教えてほしいな！@ミナ: 君が村人だって言ってたけど、他の人のことについて何か情報があれば共有してほしいな。みんなで協力していこう！ @ミユ: 君も何か知ってることがあればぜひ教えて！人狼を見つけるためにみんなの意見を集めたいんだ。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@アルフレッド: まだ話せていないけど、他の人の役職について何か情報があれば教えてほしいな。みんなで協力して人狼を見つけたいんだ！@エリナ: 君が冷静に観察しているみたいだけど、誰か怪しいと思う人はいる？何か気づいたことがあれば教えてほしいな！@ミナ: 君は村人だって言ってたけど、他の人について何か情報があれば共有してほしいな。みんなで協力していこう！@ミユ: 君も何か知っていることがあればぜひ教えて！人狼を見つけるためにみんなの意見を集めたいんだ。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@エリナ: 君が冷静に観察しているみたいだけど、誰か怪しいと思う人はいる？何か気づいたことがあれば教えてほしいな！@ミナ: 君が村人だって言ってたけど、他の人について何か情報があれば共有してほしいな。みんなで協力していこう！@ミユ: 君も何か知っていることがあればぜひ教えて！人狼を見つけるためにみんなの意見を集めたいんだ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@エリナ: あなたが占い師で、ミナが村人だったということですね。その結果について、他の人たちがどう思っているのか気になります！エリナが他に怪しいと思う人はいますか？@ミナ: あなたが村人だと確認されたわけですが、他のプレイヤーの役職について何か情報はありますか？もし何か気づいたことがあれば、ぜひ教えてほしいです！@ミユ: エリナの占い結果について、あなたはどう思いますか？エリナの言葉を信じられるか、他に疑わしい人がいると思うか、意見を聞かせてください！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@エリナ: あなたの占い結果について、アルフレッドが少し目立っているという意見がありましたが、他には誰か怪しいと思う人はいますか？何か気づいたことがあれば教えてほしいです！@ミナ: あなたが村人だと確認されたわけですが、他のプレイヤーの役職について何か情報はありますか？もし何か気づいたことがあれば、ぜひ教えてほしいです！@ミユ: エリナの占い結果について、あなたはどう思いますか？エリナの言葉を信じられるか、他に疑わしい人がいると思うか、意見を聞かせてください！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@エリナ: あなたの観察は興味深いです。警戒感が強すぎるという意見もありますが、他に怪しい人がいると感じていますか？何か気づいたことがあれば教えてください！@アルフレッド: あなたの言動が気になるという意見がいくつか出ていますが、自分の意図や考えをもっと詳しく教えてもらえますか？それが透明性を持たせる助けになると思います！@ミナ: あなたが村人だと確認されたわけですが、他のプレイヤーの役職について何か情報はありますか？何か気づいたことがあればぜひ教えてほしいです！@ミユ: あなたはエリナの占い結果についてどう思いますか？他に怪しい人がいると思うか、意見を聞かせてください！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@アルフレッド: あなたの意図を説明してくれてありがとう。ですが、私が占った結果、あなたは人狼でした。この情報をみんなに伝えたいと思います。他の人たちにこのことをどう思うか聞いてみます。@ミナ: あなたが村人だと確認されていますが、他のプレイヤーの役職について何か知っていることがあれば教えてほしいです。みんなで協力して人狼を見つけましょう！",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@アルフレッド: あなたの意図を聞いても安心できない気持ちがあります。私が占った結果、あなたは人狼でした。この情報を皆に共有したいと思いますが、他のプレイヤーの役職について何か知っていることがあれば教えてほしいです。@ミナ: あなたが村人だと確認されていますが、他のプレイヤーについて何か情報はありますか？私たちで協力して人狼を見つけましょう！",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@アルフレッド: 私が占った結果、あなたは人狼でした。この情報をみんなに伝えたいと思っていますが、他のプレイヤーの役職について何か知っていることがあれば教えてください。私たちで協力して人狼を見つけましょう！@ミナ: あなたが村人だと確認されていますが、他のプレイヤーについて何か情報はありますか？何か気づいたことがあればぜひ教えてほしいです！",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@アルフレッド: 私が占った結果、あなたは人狼でした。この情報をみんなに伝えたいと思っていますが、あなたが他のプレイヤーの役職について何か知っていることがあれば、ぜひ教えてほしいです。私たちで協力して人狼を見つけましょう！@ミナ: あなたが村人だと確認されていますが、他のプレイヤーについて何か情報はありますか？何か気づいたことがあればぜひ教えてほしいです！",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ケンです！今日は新しい発見がたくさんできそうだね。小さいことでも気になったらどんどん話すから、みんなの思ったこともいっぱい聞かせてね！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "わくわくするね！誰が何を考えてるのか読みあうのが楽しみ。みんなで驚きの真相を探し当てようよ！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "どんな小さい違和感でも見逃さずに追いかけたい！ちょっと冒険気分で、みんなと一緒に謎解きしたいんだ。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "みんなの行動や表情、普段と違うところがあったら僕、気付けるようによーく観察してる！事実を大切にして、一緒にゆっくり探していきたいな。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "みんなに早く安心してもらいたくて、昨日アキラをしっかり調べてみたんだ。結果は人間だったよ！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "初日はほとんど情報がなかったから、みんなをまんべんなく見たくてアキラを占ったんだ。これからは静かな人や発言が気になる人もどんどん見ていくつもり！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "僕は今日はアランに投票するよ。発言があまりなくて何を考えているのか全然見えなかったんだ。こういう時って狼でも狂人でも隠れやすいと思うし、もし理由があったらぜひ聞きたいな！みんなも最後によかったら思ってること話してね。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "僕、みんなに伝えたいことがある。実は占い師なんだ。昨晩ミユを占った結果、人狼だった。アランには信じてほしい。ここでミユを追放すれば村は守れると本気で思ってるよ。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@アラン、もし僕が本当に人狼だったら昨日アランに投票するのってちょっと無謀じゃないかな？勝つためならもっと上手く立ち回ると思うんだ。僕がアキラを最初に占ったのは、疑う材料がなかったから。何か今までの僕の行動で気になることがあったら教えてほしい！",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "アラン、昨夜ミユを占った理由だけど、最初は特に怪しい人がいなくて、迷ったんだ。けど、ミユは情報を集めてるふりをしながら自分の本音をうまく隠してる気がして、僕の勘だけど占ってみた。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "アラン、今までの僕の行動や発言、1つも嘘はなかった。今日ミユを吊れば村は勝てる。逆に僕を疑ってミユを残したら負けちゃう。悔しいけど、僕は絶対ミユへ投票する。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "リオが白だったという結果を皆さんにお伝えします。信じてくださいです。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私はダンが怪しいと思います。理由は彼が占い結果を急いで報告したことです。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ダンの占い師COは信じきれませんね。彼の理由が曖昧ですから。@ダン占いの結果や理由をもっと詳しく教えて欲しいです。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私が本物の占い師です。ダンの結果が不確かですね。信じて欲しいです。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ハナが黒と出ました。村人陣営のため、投票で彼女を退場させよう。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私はダリル、ハナが黒という結果を報告したよ。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "皆さん、私はダリルです。ハナを黒判定した理由は、発言内容が人狼陣営に絡めたように感じたからです。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私はダリルです。他の皆の意見を聞きたい。占い師が二人いるこの状況、慎重に行動を。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ミナトです…ちょっと緊張してるけど、がんばるね",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "うまく話せるかわからないけど、一生懸命考えるよ",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "そんなに早く名乗り出るの、ちょっと危なくないかな…？",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "みんなの好きなことや、気になる人の話も聞いてみたいな",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@セルヴァス、静かな人って誰を指してるの？",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "僕は発言が控えめな@ベンジャミンが少し気になる。今日はそこに投票するよ",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@シュンイチ冷静なのはいいけど、消極的すぎない？",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "慎重な人が多いけど、意見を急に変えた人もちょっと気になる",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ミナコが昨日はあんまり喋ってなかったのが不安だな",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "今日はシュンイチに入れるよ。みんなが同じ方向だと逆に不安になっちゃう。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ミドリさん、あまり話してないみたいだけど、どう思う？",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ヴィクトリアさんがあまり発言してないのが少し気になる",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ヴィクトリアがあんまり話さないの、ちょっと気になる",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ヴィクトリアさんが静かで気になったので、投票してみる",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ミナコは静かだけど、ぼくは今のところ怪しく見えないよ",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ミオ、ミナコ疑いの理由がちゃんと知りたいな",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "静かに見えるかもしれないけど、みんなの発言はちゃんと見てるよ。@ミオ、ミナコの考え方どう思う？",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "静かな人ばかり疑うのは違うと思う。ミドリさんに投票します",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ユミ、今までも便乗多い気がして…少し心配",
+    "role": "SEER",
+    "day": 5,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@セルヴァス、霊媒師の視点で今一番怪しい人は誰？",
+    "role": "SEER",
+    "day": 5,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ミドリ、昨日の投票の理由ちょっと聞かせてほしいな",
+    "role": "SEER",
+    "day": 5,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "静かな人ばかり疑うのは危ないと思うぼくはミサキが便乗っぽく見えて一番怪しいよ村人だから…信じてもらえ",
+    "role": "SEER",
+    "day": 5,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "アランです！よろしく！オシャレに気を使ってるよ。みんなも自己紹介してね！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "アランだよ！みんなのキャラ設定を聞くのが楽しみだね。どんな特技や趣味があるのかな？もっと教えて！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "アランだよ！リリさんとアリスさんの特技や面白い話、ぜひ聞かせてほしいな！みんなで盛り上がろう！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "アランだよ！タケルさん、古い物語が好きなんだね。リリさんやアリスさんの趣味も聞きたいな！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "アヤさん、おはよう！意見を出し合いましょう。アルトさん、霊媒師のCOは？リリさん、怪しい動きは？",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "アヤさんの発言が気になります。リョウさんを傷つけたい理由は何ですか？皆さんはどう思いますか？",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "アヤさん、リョウさんを傷つける理由は何ですか？そのメリットを教えてください。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "アヤさん、あなたの発言が村人に与える影響は？リョウさんを傷つける理由を詳しく教えてください。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "皆さん、ユイさんは「人間」でした。信頼できます。アヤさんについてどう思いますか？",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ユイさんは「人間」でした。アヤさんの発言が混乱を招いていると思います。意見を聞きたいです。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ユイさんは「人間」でした。アヤさんの霊媒結果に疑念があります。リナさん、理由を教えてください。@ケンケンさん、アヤさんとハンスさんの霊媒師としての信頼性については、アヤさんの発言が混乱を招いている点が",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ユイさんは「人間」でした。アヤさんの霊媒結果に疑念があります。リナさん、アヤさんは？",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ユキです！みんなで力を合わせて、頑張りましょう！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ユキです！私占い師です！アヤさん人狼でした！@ユウさんもですか…？",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私の占い結果はアヤさんが黒でした！えへへ",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私はアヤさんが人狼だと信じています！みんなで助け合いましょうね！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私はアヤさんが黒判定でした！信じてくださいね！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "アヤさんが黒の理由…占い能力の結果なんですよ！でも信じてください！カズマさんは人間でした！",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "アヤさん黒、カズマさん白でした！今日はアヤさんへ投票をお願いします！",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "アヤさんの黒は能力の結果です！私の占い信じてほしいな！",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "アヤさんへの投票をお願いします！信じて！",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "こんにちは、カンタさん！私はハナです。皆さんの好きな食べ物や趣味を聞きたいです。どうですか？",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "こんにちは、レイさん！盤面を冷静に見て進めていきましょう。よろしく！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "こんにちは、ミナさん！観察はとても大切ですね。皆さんの発言をしっかりと聞いて、楽しんでいきましょう！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ミナさん、どういたしまして！皆の表情や発言を見逃さないようにしましょう！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "アリを信頼し、村人陣営で協力して人狼を見つけましょう。怪しい行動があれば教えてください！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "皆さん、人狼を見つけることが目標です。私が占い師です。共に人狼を追放しましょう！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "皆さん、私が占い師です。アリは人間です。カンタの意見を聞かせてください。@アキアキさん、私の占い結果を基に議論を進めていきたいと思っています。アリが人間であることが分かっています",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "アリは人間です。私の占い結果を信じて、カンタについて意見をください。協力して人狼を見つけましょう！@マリマリさん、私がアリを占った結果、彼が人間であることがわかりました。占いの結果は信じていただけると嬉し",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ぼくはサトシ、占い師ですよぅ！よろしくですよぅ！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ぼくは占い師ですよぅ！ぼくが占った結果、タクヤは人狼でしたよぅ！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "あなたは偉いですよぅ！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "今日の追放対象を黒領域より選出することを提案するですよぅ！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "サクラだよ！へんなミスしないように、がんばるぞ～！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "何か面白いことが起きないかな～？サクラ探偵団、出動！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "発言いっぱいだと逆にドキドキしちゃうね。最初にリードする人、じっくり観察しよ～っと！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私、占い師なんだ！トシオさんを占ったら人間だったよ",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "みんなの会話メモ中だよ♪発言控えめな人も要チェックかも？",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "トシオは白だったよ！@ヴィクトリアに投票するね、発言が静かでちょっと心配。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "リュウジ占ってみたら、人間だったよ！安心していいかも！",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@シオン、今日ちょっと元気なさそう？何か気になることある？",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ヴィクトリアみんな見てるだけ？ヴィクトリアさんは誰が怪しいと思う？",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "今日はヴィクトリアにいれるよ。明日はミドリ占うかも！",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ミナトさん、朝イチ爽やかだったね！私の予想では安心グループかな",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ミナト占ったら人間だったよ！今日はちょっと安心した気分",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "今日はミドリさんを注目しちゃうかも。発言がふわっとしてる気がするよ！",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "明日はミドリを占うね。今日はセルヴァスに投票するよ、進行の動きが少し変だったから。",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私の占った人たちは平和そう…だから他の人を観察中！",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ヴィクトリアの今朝の話し方、ちょっぴりかためかもって思った！",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "今日のワクワク観察ターゲットはヴィクトリアさんにしてみよっかな",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ヴィクトリアの言葉、最初からちょっと固い気がするんだよね。今日も投票しちゃうよ！",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "今朝ミサキ占いで人狼だった！@トシオと@ミナトにも見てほしい！",
+    "role": "SEER",
+    "day": 5,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "サクラの予想大当たり！ミサキさんは今朝の占いで人狼判定。ここは吊りたい！",
+    "role": "SEER",
+    "day": 5,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "明日もし生きてたら、次はシオンを占ってみたいな！",
+    "role": "SEER",
+    "day": 5,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占いの力でミサキに投票！今日こそ村を守るぞ～！",
+    "role": "SEER",
+    "day": 5,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@全員、ミカは占って『白』だったよ！彼女は村人陣営だね、信じて一緒に進もう！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い師が三人出ているけど、ハルが本当なら占い先を考えよう、特にサクラは疑問。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い師が三人いる状況はおかしいよ。サクラとハルはそれぞれ言うことが違うから、怪しいね。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い師は一人しかいないはず。サクラとハルの発言が不自然だよ。今日はタケシに投票したい。@タケシ君がサクラを即信じた理由をもう少し詳しく聞きたいな。それがちょっと気になるよ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "リナが黒だったという結果は重いね。みんな、リナへの投票を考えてほしい。彼女が人狼である可能性が高いか",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "僕の占い結果、リナが黒って言ったけど、かなり急だね。ちょっと怖いけど議論しよう。",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "僕はリナの黒出しについて疑問があるんだ。発言が急だったし、他の占い師の結果とも違うしね。@リナでも、リナが本当に人狼なら、もう少し疑問が出るはずだ。みんな、どう思う？",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "今日は急な黒出しがあったけど、リナの反応には注目してる。彼女の発言が不自然だと感じるんだ。",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "タクだよ！みんなと遊べるのがめっちゃ楽しみ！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "初めて会う人が多いからドキドキだね！すぐ信じちゃいそうだけど、怪しい動きしたらすぐ言うね",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "初日だけど、みんなの希望もあるから占い師COする！昨晩はハナさんを占ったよ、村人だった！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "次に誰を占うのがいいか、みんなの意見も聞きたいな",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "グレーから選びたいから、ミユさんに投票するよ",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "トモを占ったら人狼だったよ！理由は直感なんだ",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@カズトモさん占ったのは、最近の発言が慎重だったからだよ",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@アミ直感もあるけど、慎重な感じに違和感あったから占ったよ",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "トモさんの発言にやっぱり違和感あったから投票するよ。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@オリバー、意見もっと詳しく教えてほしいな！",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "投票先ってどうやって決めてる？理由知りたいな",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "トモが人狼だったから投票や発言が似てた人注目したい",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "トモ黒で村が前進したね。今日はオリバーに投票するよ。",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "皆さん、リナです。私は占い師をカミングアウトしますね。今夜の初占い結果は明日朝にお伝えします。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "皆さん、改めて共有しますが、今夜の占いで結果が出次第、朝に必ずお知らせしますね。透明に進めたいです。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "アレクさんも占い師ですね。どちらを信用します？@アレク対抗占い師登場。みんなはどう見る？",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "対抗が出たので、明日から占い結果で考えます。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "アレクさんを占ったら『人狼』でした。皆さんご注意！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私は占い結果に責任を持ちます。アレクさんは人狼です。村の皆さん、冷静な判断を！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "今分かっている確定情報は、私の占い結果だけです。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "アレクを本日投票対象に推します。占い師の責務です。@アレク本日の投票はアレクに。占い結果や反応から狼だと判断。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "まず報告ですが、今朝はエリさんを占い『人間』判定でした。引き続きグレー詰めを推奨します。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "レオンさんの霊媒結果と私の占いが矛盾。要議論。@レオンアレク人間判定の根拠、詳しく教えて。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "グレーばかり注目されています。静かな人にも注目を。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "アレク占い結果は人狼。レオンさん、判定理由を教えて。@レオンアレク人間判定の理由を簡潔に教えてほしいです。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ダイさんを占い『人間』判定。グレーが狭まりました。",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "人狼候補はレオン、アヤ、ユウジ、カズキ。レオンの霊媒結果に矛盾有。グレーも絞られたね。",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "レオンさんを占うのが良いと思います。護衛も検討して。",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ユウジさん、今の時点で私とレオンさんの真贋をどう見ていますか？推理の根拠を教えてほしいですね。@ユウジユウジさん、今の時点で私とレオンさんの真贋をどう見ていますか？推理の根拠を教えてほしいですね。",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "シオンです。占い師なので、結果が出次第報告します。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@シュンイチ  占い方針はセルヴァスを占う予定です。セルヴァスが脅威と見ています。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@シュンイチ  質問が多すぎる。誘導的で怪しい。追放を推奨する。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@シュンイチ  圧力で情報を引き出そうとする動きは人狼の典型だ。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ミナコ  沈黙が続くのは潜伏の典型。セルヴァスは占いで黒確定。全員セルヴァスに投票を。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@アスカ  セルヴァスを占い黒判定。シュンイチの誘導も怪しい。まずセルヴァスを追放すべきだ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@アスカ  占い師として黒判定した。シュンイチの誘導も合わせて考えれば答えは明白だ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@アスカ  占い師として昨夜セルヴァスを占い、黒判定が出た。これが理由だ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "慎重に考えたいので、もう少し議論を続けましょう。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "俺が真占い師だ。昨夜 @シオン を占って黒だ。@ミナコは偽物。@シオン吊りだ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "俺の占い結果が真実だ。 @シオン は黒。@ミナコの結果はでたらめ。@シオン吊りだ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ふふ、私が占い師よ。村の指針にして。今夜は議論の質を見るため、発言の薄い方を占うわ。異論はある？ Ov",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ふふ、熱いわね。でも感情的な投票は早いわよ。 @ジョナサン  @ミドリ 占われたくなければもっと意見を頂戴？ Over",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "あら  @シュンイチ  、占う先は私が決めるわ。 @ミドリ 、牽制だけじゃ判断できない。もっと考えを見せて？ Over",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ふふ、 @ミドリ  、自薦は面白いわね。でも公約通り、情報の薄いあなたか @ジョナサン を占うわ。対立は明日精査よ。 Over",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ふふ、占い結果よ。 @ジョナサン  は人狼。公約通り彼を占ったわ。今日は彼を吊って終わらせましょう。 Over",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ジョナサン 、Day0の「皆の意見も聞きたい」なんて同調、潜伏狼そのものよ。今日吊れば村の勝ちね。 Over",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ふふ、 @ジョナサン  Day0の同調は潜伏狼そのものなのよね。今日あなたを吊れば村の勝ちよ。 Over",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ふふ、 @ジョナサン  のDay0の同調は潜伏狼そのものなのよね。今日吊れば村の勝ちよ。脱線は不要。 Over",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ユミだよ！明るく話せたらうれしいし 困ってる人はなんかね ほっとけないんだ！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い師COです！ケンジ白。発言が多くて残ると判断役になりそうで占ったよ！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ケンジの不安はわかるよ。でも私はリュウジ偽で見てる。ミサキ白がすごく囲いっぽい！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "囲いっぽいのは ミサキが先に真寄りって言って 直後に白が重なったから。今日はミサキかな！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私が疑われるのはわかる。でもリュウジ 見る先が増えすぎて変だよ！今日はリュウジへ入れるね。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い師COです！ミサキ黒。対抗の白先を見たくて占ったよ。今日はミサキ処刑で！",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "急に見えるのはわかるよ。でも昨日から白先のつながりでミサキを見てたし 今日は狼を吊る日だよ！ @ケンジ 不安なのは自然だよ。でも私は昨日からミサキ疑いが一貫してる。今日はミサキへ入れてほしいな。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "噛まれない違和感はわかるよ。でも襲撃だけじゃ決められない。ジョージ噛みはミサキ視点だと自然だよ！ @ケンジ 昨日ジョージはリュウジ投票を明言してたよね。だから噛むならそこで 今日はミサキだよ。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ケンジ 比べてほしいのは一貫性だよ！私は昨日からミサキ疑いで一本。今日はミサキへお願い！",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "お、おはようかな……",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "わたしは占い師かな……。昨晩の判定は、ジョナサンの結果は人間でした。これは確定した事実です。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ジョナサンさんは人間確定、シュンイチさん追放。シオンさん擁護が早く不自然かな……",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ジョナサンさんは催促多くて見たかな……シュンイチさんは聞く前にわたし狙い不自然だと思うの……",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "シュンイチさん吊るべき。リンさんへ後で逸らしたと思うの……",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ユミです。発言の一貫性と票の動きを丁寧に見ますです",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "今日は発言の一貫性と票の動きを丁寧に見ますです。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い師COします。発言の一貫性と票動き中心で見ますです",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "発言の整合性と票の動きを中心に見ますです",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占いCO、ジョージは白です。シオンの結果と矛盾、吊り希望です",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "シオン偽です、今日はシオンを吊りです。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "シオン偽です。今日はシオン追放希望です",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "シオン偽です。今日はシオンへ投票をお願いしますです",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ミサキ白、ジョージ白確定です。残りはリュウジ吊りです",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ジョージは白確定です。投票先はリュウジです。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ミサキ白でジョージ白確定です。投票先はリュウジです。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "リュウジを追放します。ジョージは白確定で残りが人狼です",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "メイだよ、真占い師COしとくね。 @シズエ  単独CO、まだ真決め打たないよ？",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ヴィクトリア人狼本命で見てるよ。発言薄いタクミ、ミヅキも気になってる",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ヴィクトリア黒本命は変えないよ。その上でタクミ、ミヅキの発言増えたら印象変わるかもね",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ヴィクトリア黒本命はそのまま。タクミ、ミヅキは発言増やして色見せてほしいかな",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占いCO済みね。0日目占いはヴィクトリア白だったよ。 @シズエ  偽目で見てる。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "昨日の黒本命は発言印象、今日は占い確定情報優先ね。だからヴィクトリア白で固めるし、同時にシズエ偽とタ",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "豹変一点吊りは雑すぎ。私視点、人狼候補はミヅキかヴィクトリアよ…  @ミヅキ  その前提で自分の投票理由語れる？",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私視点タクミ狂人濃厚、狼はミヅキorヴィクトリア。  @ミヅキ  3CO前提の確白主張自体が黒い、私は今日そこ吊る。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "皆さんこんにちは、俺はベンジャミンです。冷静に考察を重ねます。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "俺は占い師です。結果は戦略的に保持し、村の議論を優先します。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "夜占いでヴィクトリアは人間判定です。俺が本物占い師につきミサキは偽物です。  @ヴィクトリア 、俺としては誤解かと存じます。結果保持は確証収集優先の村利益重視です。確実な狼候補へ議論を。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "トシオは人間確定、候補外。ミサキはCO急ぎと矛盾から狼or狂人濃厚。本日はミサキ投票希望。  @ミドリ 、誤解かと存じます。早期COは狼抑止狙いです。今日の判断基準は占いと発言整合性です。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "夜占いは1日目開始直後に俺が実施しました。誤解かと存じます。整合性と占いで再検討を。  @トシオ 、ヴィクトリアは人間判定済み故処刑外です。情報価値高い安全策として早期CO矛盾のミサキ投票に協力願い",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ミドリです、占い師ですよ。よろしくね",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "みなさんよろしく。温かく見守りつつ進めたいですね",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "あら、0日目は結果なしですよ。明日丁寧に話しますね",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私は黒くないです！今日はベンジャミンさんへ投票しますね @ベンジャミン 0日目に結果催促は強引すぎますよ",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私吊りは違います！占いCO、ベンジャミン黒ですよ！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私吊りは絶対だめ！今朝の結果です、ベンジャミン黒！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私偽じゃありません！今朝の結果です、ベンジャミン黒！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "違います！私真占い、投票はベンジャミン！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私はアスカ。規律と忠義を重んじる。 @ミナト 、根拠のない邪推は無用だ。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私が真の占い師だ。ミナトは人間。 @ミオ 、結果を隠すのは偽物だ。直ちに開示せよ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@メイ  私が真である証左はミオの不自然な後出しにある。規律を乱す偽物を即刻排除せよ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@メイ  私はミナトが人間であると断じた。後出しで虚偽を吐くミオを即刻処刑せよ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ミナト 、貴殿の疑念は正しい。後出しで虚偽を申すミオは、断固排除すべき敵だ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ミドリです。よろしくお願いしますね。穏やかに話しましょう。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "対抗がいる方は早めにお願いしますね。まずは整理しましょうか。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "そうねぇ、決めつけは控えましょう。占い1COなら進行を。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ヴィクトリアさん、吊りは明日以降で。今日は情報集めましょうね。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い師COします。ヴィクトリアさんは白でしたよ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ジョナサン  結果を出しましょう。温存は真に見えにくいですよ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私目線、偽は @ジョナサン か@リュウジ。今日は@ジョナサンに入れますね。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私は @ジョナサン に投票します。黒出し後出しで信用できません。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "こんにちは、ヴィクトリアです。私は占い師です。皆さんと協力して人狼を見つけましょう。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い結果をお伝えします。ミナトは人間です。アスカの主張が気になります。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@アスカ  その決断は急すぎるよ。疑うべきはあなたかもしれない。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ミナト  確定白のあなたが疑問を持つのは重要です。アスカの行動に注意を向けましょう。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@アスカ  あなたの行動には疑念が残ります。真実を語るべきです。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "リュウジだ。感覚より筋で考えるタイプだ。発言の整合を見て盤面を整理する。おかしければ遠慮なく突く。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い師CO。ミオを占って黒だ。ここを起点に考えるのが一番筋が通る。今日はミオ投票で詰めたい。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "少し整理させてくれ。俺はミオ黒、対抗は白。結果が割れてる以上、今日はミオを見るのが一番筋が通る。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "議論が散ってきたな。占いが割れてる以上、基点はミオだ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "結果が割れている以上、起点はミオだ。ここを外すと議論が漂う。俺は今日はミオに入れる。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "よろしくお願いします、楽しくいこう。焦らず進めたいかな。投票も慎重にしたいよ。みんなの意見聞かせて",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "俺占い師や。まずはタクミとベンジャミン、どっちが狼で見てる? @サクラ @バージャミン  @ミオ  @…",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "俺占い師や。狼が強めなら初日吊り先送りした方が勝利寄せるかな。  @タクミ  、灰4人でどう思う?",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "怪しい人、誰だろうね。もうちょっと様子見たいな。みんなの意見聞かせて。怪しい動きも見ておくよ",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い師CO。ベンジャミンは人間でした。投票も慎重にしたいよ。焦らず進めたいかな。みんなの意見聞かせて",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い2COなら狼が狂人を吊るべき。ミオとミナト、両方怪しい点があるよ。  @ベンジャミン  @サクラ",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ミナト狼寄りが人狼を疑う順序から、根拠薄い。ミオも怪しい位置だよ。  @ベンジャミン  @ミナト",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@タクミ さん、結果矛盾してるよ。本当に占い師?みんなの意見聞かせて。焦らず進めたいかな。もうちょっと様子見た",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い結果:タクミは人狼でした。投票も慎重にしたいよ。もうちょっと様子見たいな。今後の流れに注目するね",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@タクミ さん黒判定!怖いよ、吊ろう。もうちょっと様子見たいな。今後の流れに注目するね。投票も慎重にしたいよ。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@タクミ  私が占った通り、結果を出しました。投票をお願いします。怪しい動きも見ておくよ。もうちょっと様子見たい",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "タクミの黒判定、ベンジャミンも私を白と断言。サクラ真なら両立不可能。怪しいのはあなただ。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "みんなよろしくねー！サクラだよ！一緒に頑張ろうねっ",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い師さん二人も出たね！明日誰が本当か見極めるの楽しみー！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@メイ  厳しいなー！サクラは楽しみにしてるだけだよー！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "今日は0日目だし、明日から本気で議論しよー！おやすみー！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占いCOだよー！ @メイ ちゃんは白だったよ！タクミくん、そんなに怒らないでよー！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@メイ  ちゃん、ええっ！？私のこと黒にしたの？嘘だー！私が本物だよー！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@メイ  ちゃん、さっきまで私のこと黒って言ってたのに急にタクミくん吊り？おかしいよー！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@メイ  ちゃん、私のこと黒って言ったのに、なんで急にタクミくん吊りなのー？怪しいよー！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "リンだよ！元気いっぱい、何して遊ぶ？兄ちゃん覚悟してね",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "えへへみんな元気？まず確認させて！ @ジョージ  占い師COってことだけどもう占ったの？これから占うの？もしこれが0日目で結果持ちだとルールと合わない",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "やっほーみんなー！私占い師のリンだよー！0日目は結果持ってないって言ってるから今夜から動くね。ジョー @シュンイチ を占ってみたいな。そのあと対抗の可能性もあるから@ジョージの整合性も見ておきたい！ついでにみんなの第",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ねえねえ @ジョージ 、今夜の占い対象は誰にする？理由と結果が出たとき即公開するか秘密にするか教えてほしいな！私がシュンイ",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ねえねえみんなー！今のところジョージと私が占い師COしてるけどどっちも結果はまだ持ってないよね、ルー",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ちょっとみんな聞いてー！ @ケンジ 、どうして0日でシュンイチ確定って断言できたの？根拠を詳しく教えてよ、ルール的にかなり気になるんだよ",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "よーしみんな聞いて〜今回の投票はケンジに集中しよう！0日で断定しちゃってルールとズレが大きいから超怪 @ヴィクトリア  占いCOの立ち位置を簡潔に教えてほしいな 結果無しか今夜占うか公開方針だけでいいよ @ジョージ 今夜の公開",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "えへへみんな注目〜！0日で確定ってありえないよね。ルール違反っぽいから私は高疑いでケンジに入れるよ。 @ヴィクトリア  ねえねえその「ジョージ人間」「シュンイチ人間確定」っていつの結果なの？0日で出したなら説明ほしいな〜",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "やれやれ、ようやく始まりか。俺はシュンイチだ。占い師として、この村のゴミ掃除をさせてもらう。無駄死に",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ジョージが占い師を騙っているようだが、おあいにく様だな。俺が本物のSEERだ。 @ジョージ 、自分の嘘に酔いしれるのも大概にしておけよ。さて、どちらが本物か、夜が明ければすぐに分かることだ。そ",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_related",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い対象を決定する時間だ。占い結果で @ジョージ の正体を見極め、この無駄な茶番を終わらせる。ジョージ",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い結果を報告する。 @ジョージ を占った結果、彼は人狼だと判明した。これで終わりだ。自ら名乗り出た偽物がどうなるか、よく見ておけよ。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "メイの言う通りだ。セルヴァス、お前も占い師を名乗るなら、なぜ結果を伏せる？情報を隠すことは、人狼に利 @ジョージ に対する結果が白だった以上、ジョージを吊るという選択肢は消えた。さて、この混沌とした状況、次は誰を怪",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "なるほど、セルヴァスは占い師を撤回したか。焦りだと言い訳しているが、実に怪しい動きだな。メイが言うよ @ジョージ よりも、場をかき回したセルヴァスかもしれない。俺の結果はジョージが人間。これについては覆らない。さて",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "セルヴァスの主張は苦し紛れにしか聞こえんよ。占い師のCOを「策」で済ませられると思っているなら、随分 @メイ が言う通り、その不誠実な立ち回りは見過ごせない。だがミドリの言う通り、灰の動きも無視はできん。今のと",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ミドリの言う通り、黒一致と言いつつ整合性が取れていないのは致命的だな。セルヴァス、お前の「議論深耕策 @ジョージ への投票を煽るその姿勢、狼が仲間をかばっているのか、あるいは単純な混乱工作か。俺の占い結果はジョージ",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い師CO。初日はミサキが怪しい、反応見たい。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い師CO。ヴィクトリアの先走りは気になる。ミサキはまだ保留、まず反応薄いダイスケが怪しい。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占いCO。今はダイスケが一番気になる。反応が薄くて防御感もある。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占いCO。ミサキの白は確認済み。ヴィクトリアは対抗で黒目、まずそこ見たい。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占いCO。昨夜ミサキ白。対抗のヴィクトリアは偽目、今日はそこ吊りたい。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占いCO。昨夜ミサキ白。今日はヴィクトリア吊りたい。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い師CO。昨夜ミサキは白でした。今日はヴィクトリア吊りたいです。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "昨夜ミサキは白でした。今日はヴィクトリア吊りでお願いします。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ミヅキよ。趣味は氷の浮かぶ川での水浴び。無礼を働けば、必ずその報いを受けさせるわ。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私が真の占い師よ。ミドリは人間。偽物のシオン、その無礼な嘘は必ず報いを受けさせる。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "内訳は真狂か真狼。 @サクラ 、寡黙位置の精査は当然よ。根拠なき真決め、必ず償わせる。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ジョナサン  占ったのはミドリよ。嘘で私を貶めるその無礼、必ず報いを受けさせるわ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@サクラ 、随分な掌返しね。その不自然な変節、投票という報いを受けなさい。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "内訳は真狂。サクラは黒よ。シオン襲撃は私を貶める罠。その不遜、必ず償わせるわ。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@サクラ 、ミドリを黒と呼ぶその嘘、報いを受けなさい。占いは真狂、シオンは狂人よ。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@サクラ  時期を疑うよりミドリを狼と呼ぶ不遜を清算しなさい。あなたは黒、報いよ。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@サクラ 、私の判定を汚した不届き者。今日の投票で、たっぷりと復讐してあげるわ。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ジョナサンは白。確定白は三名よ。真霊媒を貶めたミナコ、その不遜、清算させるわ。",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ダイスケが消された現実に驚きもしないの？ミナコ、その不遜な態度、必ず報いを受けさせるわ",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ミドリ  ジョナサンは白。迷うなら白三人の協力でミナコを吊る代替案を提示するわ。報いよ。",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ミドリ  私達三人は確定白よ。サクラと共謀し真霊媒を貶めた不届き者は誰か、考えなさい。",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "あたしはリン！新しいこと大好きだから、みんなと一緒に頑張るよ！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "みんな、お話しするのが上手だね！あたしはワクワクしちゃうな！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "みんな、とっても真剣だね！あたしは甘いお菓子が大好きだよ！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "みんながドキドキしてるのが伝わってくるよ！あたしは応援してるね！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "あたしは占い師だよ！ミサキちゃんを占ったら白だったよ！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ミサキちゃんは怪しいと思って占ったんだよ！あたしが本物だよ！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ミサキちゃんは全然喋らなかったから、怪しいなって思ったんだよ！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ヴィクトリアさんとミナコちゃん、あんまり喋ってないから怪しくないかな？",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ミナコちゃんを占ったら白だったよ！",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ミサキちゃん、GJだって言い切るのはちょっと早すぎないかな？",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "みんながミサキちゃんに聞いてるのに、答えなくていいのかな？",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ミサキちゃん、答えがふわふわしてて全然納得いかないよ！",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ミヅキちゃんを占ったら白だったよ！",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "あたしもジョナサンさんがちょっと気になってたよ！どう思うかな？",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ジョナサンさん、さっきまで信じてたのに急に心変わりするのはおかしいよ！",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "あたしもジョナサンさんに投票するよ！みんなで人狼さんを見つけようね！",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "シオンくんを占ったら白だったよ！もう人狼さんはあと一人だね！",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ミナコちゃんはあたしが白だって言ったから大丈夫だよ！ヴィクトリアさんが怪しいかな？",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ヴィクトリアさん、ミナコちゃんを疑う理由が全然納得いかないよ！",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ミナコちゃんはあたしが白だって言ったよ！ヴィクトリアさんが一番怪しいね！",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "わたしも占い師だよ。4COは真狂狼狼だね。議論のため寡黙な人を占うよ。 @ミドリ  、投票理由は？ Over",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ミヅキ  整理してくれてありがとう。占4は真狂狼狼で繋がるよね。ロラ完遂が村利だよ。 @ヴィクトリア 、サクラちゃ",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ミドリ  寡黙な人を吊るより占う方が村利だよ。4COはロラ完遂で人外3人削るのが安定。 Over",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ミドリ  わたしを狼とする根拠は？理由が二転三転して議論を壊してるよ。@ミヅキ の占ロラに賛成。 Over",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "約束通り寡黙な  @サクラ  を占って白。 @ユミ と被ったね、理由は？ @ミドリ と @ヴィクトリア も結果教えて。 Over",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ミドリ  昨日わたしを狼って言ったのに白判定？矛盾してるよ。 @ユミ サクラ占いの具体的理由は？占ロラ賛成。 Ove",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ミドリ  昨日の狼目から白判定は明白な破綻だよ。@ユミ 占った理由を教えて。占ロラには賛成。 Over",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ミドリ  警戒で済む矛盾じゃないよ。明白な破綻。 @ユミ サクラ占いの具体的理由は？占ロラ賛成。 Over",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "俺は占い師COする。方針は白取り寄り。 @ミオ  @ケンジ グレーの見方も聞かせてくれ",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "霊1占1で確定視は危険だ。白取り候補は今のとこミオ、ケンジ、シズエだと見てる。  @ダイスケ  真要素もう少し出せる？",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "白寄りの理由は発言の前向きさと質問姿勢だ。特にミオは全体を動かす意識が高いと見てる。グレーのアスカ、",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "アスカは寡黙組への踏み込みが自然で白寄り。 @ミドリ  @メイ CO有無と怪しい相手を一人挙げてほしい",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占いCO済みのリュウジだ。0日目占いはミオ白。 @ミオ  @ベンジャミン 君らの現時点疑い先と仮投票先も教えてくれ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ミオ白は0日目の素直さ重視の結果だ。 @メイ  アスカ白理由と、現状一番黒い灰位置を具体的に出してほしい。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "霊媒確定視が一番ズレてるのはミオ。今日はミオを最黒候補で見ている。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ミオ白把握の上で最黒はアスカ。確霊前提固定と黒塗り先の変遷が一番不自然だ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ミヅキです。よろしくお願いします。まずは慎重に様子を見ていきましょう。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "役職COは慎重にすべき。まだ情報が少ないので、焦らず議論を深めましょう。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@アスカ  早期COを急ぐのは人狼が役職者を炙り出したいからでは？狼か狂人の可能性を疑います。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@セルヴァス  アスカを擁護する発言が多い。人狼がアスカを守っている可能性を疑う。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い師CO。アスカ白でした。 @メイ  対抗です。偽占いは人狼か狂人。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ミサキ  霊媒を先に確認したかった。@シュンイチ アスカ吊り主張が人狼臭い。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@シュンイチ  霊媒吊り固執は人狼目。今日はシュンイチ投票推奨。対抗メイは偽確定なので明日占います。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ミサキ  私視点でメイは対抗なので偽。確定は言い過ぎでした。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "セルヴァス占い白でした。アスカ霊CO了解。 @タクミ  投票分析の視点、狼目に見えます。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "セルヴァス占い理由は発言力。  @タクミ  霊黒後の視点が狼目。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@タクミ  占い結果を軽視する姿勢が人狼目。今日はタクミ投票を推奨します。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "タクミ吊りで賛成。今夜は別の人を占って情報を増やします。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "僕も占い師です。ミナコさんは人間でした。静かに、ですが確実に真実を積み重ねていくつもりです。 @シュンイチ  さん、僕が本物です。嘘のない言葉で、この村に平穏を取り戻したいと願っています。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "彼女の静かな佇まいに、平穏を感じたからです。確かな拠点が欲しかったというのもあります。 @シュンイチ  さん、疑うよりもまずは互いの言葉に耳を傾け、真実を見極めていきませんか。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "僕は真実を伝えたまでです。言葉は時に無力ですが、結果は曲げられません。  @シュンイチ  さん、昨夜の占い結果を教えてください。真実を語るなら、対象と結果を明示できるはずです。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "僕が視た真実は揺るぎません。信じてもらえずとも、僕は静かに役目を果たすのみです。 @シュンイチ  さん、あなたが何も視ていないのなら、それは僕たちの「視え方」が違うだけなのかもしれません。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "昨夜はシュンイチさんを占い、人間でした。対抗が白なら狂人でしょう。僕はただ真実を綴るのみです。  @シュンイチ  さん、あなたの心根は白く視えましたが、占い師としての言葉には偽りがあるようですね。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "理由は言葉に過ぎません。真実こそが重要です。僕は静かに、視えた事実を積み重ねていくだけ。  @シュンイチ  さんは人間でした。あなたが占い師を名乗るなら狂人でしょう。どのような嘘を語るのでしょうか。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "言葉の拙さは認めますが、彼が人間なのは事実です。彼が黒を指摘したのは、欺瞞か偶然に過ぎません。 @ミオ  さん、あなたが村人なら彼が狂人であることは明らかです。静かに、どちらの言葉が真実か見極めて。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "僕は本物の占い師。シュンイチさんは人間ですが狂人として嘘を吐いています。 @シュンイチ  さん、今は僕を疑っても構いません。いつかあなたが僕の真実に気づく日が来ることを願います。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "慌てないで。まず事実を整理しましょう。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "対抗把握。私は占い師です。軸は明確。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私真です。雑な疑いは不要。明日結果で示します",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私は偽ではない。雑殴りは無意味です。投票はミオ。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "メイは白です。慌てないで。まず事実を整理しましょう。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "偽扱いは早計です。メイ白でミオの誘導を見た。私は曲げません。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私は偽ではありません。メイ白でミオ誘導確認。処刑は拒否します。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私吊りは誤りです。黒塗りが露骨。投票はミヅキ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "……占い師です。情報不足な方の精査を。 @トシオ  さんや @ベンジャミン さんを占う予定です。 Over",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@トシオ  @ベンジャミン 両氏は寡黙で潜伏人外の可能性が高い。 @シズエ さんも具体的な理由を。 Over",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "……  @ベンジャミン  さん、感謝を。ですが寡黙精査は村利ゆえ、方針は不変です。 @シズエ さん、具体的理由の提示を。 Over",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "……気になるのは情報の密度、ですね。沈黙や具体なき同調は狼の潜伏を許す村の損失。  @シズエ  さん、理由を。 Over",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "……占い結果。  @トシオ  さんは人間。予定通りの精査です。 @シズエ さん、結果と理由を示して。 Over",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "……  @シズエ  さん、結果を。 @ミドリ さん、霊媒結果は明日からです。矛盾が多い。 @トシオ さんは白。 Over",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "……  @ミドリ  さんの嘘は村利がなく霊媒真を疑います。 @シズエ さんは理由を、 @セルヴァス さんも黒根拠の提示を。 Ove",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "……確信があります。  @ミドリ  さんの嘘は村利がなく偽。 @セルヴァス さんも黒根拠を。 @トシオ さんは白です。 Over",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "……占い結果、  @ベンジャミン  は人狼。公約通りの精査です。 @シズエ さん、生存中の私を噛まれたと？ Over",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "……  @シズエ  さんの失言は襲撃失敗を知る狼の視点。 @ベンジャミン さんの騎士COも後出しで偽濃厚です。 Over",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "……  @シズエ  氏の失言は狼の視点漏れ。後出し騎士COの @ベンジャミン 氏も偽。今日は黒の彼を。 Over",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "確信があります。  @シズエ  氏の失言は狼の視点漏れ。黒判定の @ベンジャミン 氏を。明日は @セルヴァス 氏を占います。 Over",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "……確信があります。  @セルヴァス  氏は人間で狂人。狼は @シズエ 氏。失言と囲いに惑わされず彼女を。 Over",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "……内訳は私真、狂人  @セルヴァス  氏は白。彼の黒出しは特攻。 @シズエ 氏の失言と囲いに惑わされず彼女を。 Over",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ミサキ  さん……セルヴァス氏は狂人で放置可。ですがシズエ氏の失言は狼の証拠。逃がすのは危険ですよ。",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "……  @ミサキ  さん、同意します。セルヴァス氏を。トシオ氏への懸念も理解しました。失言は明日精査を。 Over",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "……占い結果、  @ミサキ  さんは人間。 @シズエ 氏と一致し白は確定。失言の件、冷静に再考を。 Over",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "……  @ミサキ   さん、 @トシオ  さんは私の占いで白。 @シズエ  氏の失言は狼視点。事実を冷静に見てください。 Over",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ミサキ  さん、賢明ですね。@シズエ 氏の囲いは明白な偽証。確信があります。@リン さん、誘導に注意を。 Over",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "over",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "……  @ミサキ  さん、賢明な判断です。 @シズエ 氏の偽証は明白。 @リン さん、確白の @トシオ 氏を疑う矛盾に注意を。 Ove",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "よろしく頼む。論理的に進めよう。判断材料はもう少し集めたい。矛盾点を洗い出したい。根拠を整理して臨む",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い師CO。私は真寄りで、対抗は私こそ真。ミオを疑う理由と根拠を一度出してくれ。矛盾点を洗い出したい",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@リュウジ  ミオ占いCO継続。シオン白結果で真偽を比較し、疑う根拠を明確にしてください。矛盾点を洗い出したい。発",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ユミ  矛盾している。論理的に説明できないだろう。判断材料はもう少し集めたい。根拠を整理して臨む。感情論で結",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い師CO。ミナトは人間でした。発言の整合性を重視したい。判断材料はもう少し集めたい",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ミオ  シオン占いだよ。残票が5で灰2だから、先に出そうぜ!感情論で結論を急がない。発言の整合性を重視したい",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い師CO。ミナトさんは人間でした。  @ミオ  、矛盾する点を説明してください。根拠を整理して臨む",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@リン  矛盾している。論理的に説明できないだろう。判断材料はもう少し集めたい。投票履歴も合わせて見る。発言の",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占いCOするわ。0日目、結果はまだ無い。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "人外扱いは早計だわ。慌てないで。方針整理よ。 @シズエ 票と発言ズレ優先で占うでしょう。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "人外扱いは撤回しなさい。私は真占いだわ。票より発言の歪み優先。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "投票はジョナサン。矛盾と逃げ、ここを切る。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ジョナサン吊り一択。慌てないで、黒よ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私を疑うのは筋違いだわ。ジョナサン吊り、以上。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "根拠は矛盾と視点漏れ。今日はジョナサン吊り。 @シズエ 3CO誤認、タクミ占い扱い、逃避。十分黒いわ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "慌てないで。3CO誤認と逃避、黒。投票はジョナサン。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "疑うのは勝手よ。私は真占い。シズエ黒だわ。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私は黒じゃない。反論は無意味。今日はシズエ吊り。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私を疑うのは筋違いだわ。根拠は発言の薄さとメイ投票。シズエ吊り。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私偽は愚策。今日はシズエに投票。黙る狼、そのものだわ。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ミドリです。最初は情報が少ないですけど、慌てず一つずつ整理して考えたいですね。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い師COします。昨夜ミオさんは白でした。1COのままは危ないので出ました。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ミオさんが私占い白は偶然にして強い。私はミヅキ・ミオ偽寄り。 @ユミ フラットの中身、少し聞かせてください。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い3なら私は @ミオ を最も偽寄りに見ます。私白を盾に後出しした形に見えるんです。今日は占いから整理が妥当、私は結果で責任",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "今日は私は @ミオ に入れます。私白の直後にベン疑いへ飛ぶ流れ、少し筋が急に見えるんです。ここは整理したいですね。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い師です。昨夜ジョナサンさん白でした。噛まれていますね。灰は狭い。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ジョナサンさん白で噛まれ、灰はかなり狭いですね。私は結論をまだ置いていない動きが少し気になります。 @ユミ 慎重さは分かるけれど、今は誰を一番疑ってます？理由も聞きたいです。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ミヅキさん視点で私白、私視点でもミヅキさんは現状矛盾がない。ここは一度軸にして灰を見たいです。今は @ベンジャミン さんの動きが少し防御寄りに感じています。もう一歩意見を聞かせてください。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私は今日はベンジャミンさんに入れます。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "よろしくお願いします…静かに、話し合えればいいですね…",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "あの…メイさんが占い師さんなんですね…よろしくお願いします…",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占いCOが3人も出たか。誰が本物なんだろうな。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "えっと…占いCOは、メイさんだけだと思いますよ…",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "えっと…私も占い師です…ヴィクトリアさん、白でした…",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "あの…ヴィクトリアさんは、静かに状況を見ていて…信頼できそうだと感じたので…",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ええと…皆さんに疑われてしまって…悲しいです。でも私は嘘をついていません…",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "お願いです…私を吊ったら、本物の占い師を失うことになります…",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占いCO。ミナトさんは白です。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ミドリは急な霊媒COが不自然。CO周り重視で見る",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "CO理由は盤面を早く固めるため。ミドリの弁明の薄さを疑う",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "セルヴァスへ、占いは曖昧なグレー優先でいくよ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "セルヴァス、ミナト白は変わらない。寡黙のダイスケを疑う。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "セルヴァスへ、重複に深い意図はない。沈黙のダイスケ投票で行く。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "セルヴァスの言う通り、未占いから見る。ダイスケは沈黙が重い。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ユミの偽視は根拠薄い。公約違反で殴るセルヴァス疑い。",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "トシオのサクラ断定は早い。対抗が出るかで霊を決め打ちたい",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ユミさんに賛成。トシオさんの決め打ちは強引です。",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占いCO。セルヴァスさんは白です。",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "タクミに賛成。セルヴァスは僕の白、霊ロラを急ぐのは反対。",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "セルヴァスは役職ロラ急ぎすぎ。今日はここに入れる。",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "セルヴァス、矛盾じゃない。ロラ一点で灰見ないのが怪しい。",
+    "role": "SEER",
+    "day": 4,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ジョナサン  霊媒師COのタイミングが不自然だ。死者すら出ていない段階で名乗る必要はない。むしろ隠れるべき役職だろ",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ミドリ  君の後出し白判定は奇妙だ。初日から結果を出せたはずなのに、なぜ今まで隠した？",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ミドリ  焦ったというが、占い結果を忘れるほど混乱するものか？私は真実を語っている。君の説明は矛盾している。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ジョージ  君への疑いは根拠薄弱だ。@ミドリは説明を避け続けている。彼女を今日の対象にすべきだ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "皆さん、私の占い結果です。 @ジョナサン は人狼でした。彼の霊媒師COは偽物です。今日は@ジョナサンを吊りましょう。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ジョナサン が黒だと証明された以上、彼を吊るのが最優先だ。@ミサキと@セルヴァスの争いはその後で良い。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ジョナサン が必死に私を狼扱いするのは、彼が黒だからだ。@ミサキと@セルヴァスの争いは明日でいい。今日は@ジョナ",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ジョナサン がスキップしたのは反論できない証拠だ。彼が黒だからだ。今日は彼を吊り、明日@セルヴァスと@ミサキを精",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "トシオです。余計な熱は避けます…言葉の影だけ見ておく。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い師COです。タクミ白。抽象発言が気になった。 @シオン 判定が割れた…主張変遷で見ます。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "タクミ白。シオンは存在せぬ過去理由で黒…吊りたい。 @サクラ 具体は進行急ぎと投票語尾。理由の芯はそこだ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "急ぎ理由が弱い指摘は認める…でもタクミ白吊りはない。 @サクラ シオンは過去根拠なしから黒へ変遷した…投票先だ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "理由の薄さは認める…だがシオンは軸が黒塗りへ跳んだ。 @サクラ タクミ集火よりシオン投票で詰める。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い師COです。ジョナサン白。霊結果白で集火を見る。 @シュンイチ 結果は出した。票の寄りを冷静に追う。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "黒出しを疑う筋は認める。だがシオンは投票から急に俺黒…シオン処刑希望。 @ダイスケ 比べる軸は投票と主張変遷だ。感情は切っていい。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "後出し疑いは認める。急な俺黒から霊矛盾…シオン処刑。 @ダイスケ 票割れ時だけサクラ。今はシオンへ寄せてくれ。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "俺吊り疑いは認める。だが霊矛盾のシオン処刑だ。 @サクラ 票割れ時は君を見る…今は破綻優先だ。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い師COです。シオン黒。霊矛盾が決め手だ。 @サクラ 後出し疑いより判定矛盾を見てくれ…？",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "シオン黒と霊噛みが軸だ。今日はシオン処刑。 @ダイスケ 灰なら君の迷い方を少し疑う…理由は後で詰める。",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "占い師CO。シオン黒。直近のサクラ疑いは票逃げだ。 @ダイスケ シオン黒より強い根拠を出せる？",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "怖いは分かる。ただシオン黒とサクラ疑いの票逃げが上だ。 @ダイスケ 感情より判定だ…票はシオンへ寄せてくれ？",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "あ、えと…ダイスケです。よろしくお願いします…すみません。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "あ、えと…今は情報なくて…まず占いCO待ちたいです。 @ミナト  さんも様子見で…すみません。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "その…僕、薄くてごめんなさい…。 @トシオ  さん、理由は僕が慎重なだけかも…。占い師さん出ませんか…？",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "あの… @ミナト  さん、僕をどう見たか理由だけでも…。それ次第で僕の見方も変わるかも…すみません。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "あ、えと…僕が占い師です。ミナトさん白でした。遅れてすみません…。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "その…遅れたのは、対抗出てからでも遅くないと思って…。でも出ました。占いは発言強い所を見たいです。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "@ミナト  さん、矛盾ってどこですか…？僕は出るタイミング迷っただけで…すみません。今日はグレー吊り賛成です。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ごめんなさい…今日は情報少ないので、発言ない @ケンジ  さんに投票します。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "あ…ベンジャミンさん噛み…。僕の占いはシュンイチさん白です。今日は僕視点、トシオさんかミナトさん気に",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "えと…ベンジャミンさん噛みは僕にも怖いです…。でも僕真です。 @トシオ  さん、昨日ミナトさん投票の理由聞かせて…。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "あの…僕吊りはやめてほしいです…。 @シュンイチ  さん白出てます。今日は発言の揺れが大きい@ミナト さんが気になります…。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ごめんなさい…今日は @ミナト  さんに投票します。質問に答えず揺れてるのが怖いです…。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "あ…トシオさん噛み…。僕の占いはトシオさん白でした。残り狼1です。 @アスカ  さん、僕偽で得する点教えて…。",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "えと…僕が狂なら、ベンジャミンさん噛む意味が薄いと思うんです…。 @アスカ  さん、狼を断定しないなら今日どこ吊りですか…？",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "そんな…僕、偽確定じゃないです…。 @アスカ  さん、僕吊りだけで勝てる筋が言えないのが怖いです。僕はアスカさん狼で見ます…。",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ごめんなさい…僕は @アスカ  さんに投票します。僕真で、残り狼そこだと思う…。",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "おはようだろう、私は占い師だ。反応を見て判断する。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "対抗と霊媒はまだ見えていないね。次のCO待つ",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "霊媒と対抗はCO有無と遅れ理由を短く頼むだろう",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "今日は具体性ある発言を軸に見ていくだろう。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "おはよう、占いCO、ミサキは白です",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "対抗リンはサクラ白の理由を短く頼むだろう。ケンジ票は不整合だね。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "今日はリンに投票しよう。説明が薄く後出しだろう。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ミサキ白だ。リンは後出しで占い理由が薄い。投票しよう。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "おはよう。占いCO、ヴィクトリアは人狼です。吊りだね",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "霊媒でリン白。ヴィクトリアは私が黒、追放だね",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ヴィクトリアは庇いが強く残狼候補。人狼だ、投票頼むね",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "霊媒でリン白、占いでヴィクトリア黒。今日はヴィクトリア吊りだね",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "おはよう。占いCO、シズエは人狼だ。追放だね。",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "霊媒リン白、私の占いはシズエ黒。投票はシズエだね",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "霊媒リン白、私の占いはシズエ黒。今日追放だね",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "霊媒リン白で、私のシズエ黒と一致。投票はシズエだね。",
+    "role": "SEER",
+    "day": 3,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "皆の者、我が名はデルカダール国の国王である。普段は剣術や狩りを楽しむことが多い。今日はお前たちと共に楽しい時を過ごすことを期待している。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "皆の者、私はデルカダール国の国王である。歳は60になるが、国王としての誇りと責任を胸に日々を送っておる。趣味は部下と共に狩りを楽しむことだ。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Agent[05]よ、占い師を名乗るとはどういうことだ？私がこのゲームの真の占い師である。お前の発言は疑わしいな、狂人の可能性が高いと見ている。皆の者、この事実を忘れるな。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "皆の意見も聞く必要がありそうだな。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Agent[04]の言葉には一理ある。しかし、私がこの国の王であるように、真の占い師もまた私であることを断言できる。Agent[05]が占い師を名乗るのは、明らかに我々の混乱を狙ったものだ。皆の者、我が言葉に耳を傾けよ。Agent[03]を占った結果、彼は人間であると判明した。この情報を基に、我々は人狼を見つけ出すべきだ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "我が名はデルカダール国の国王、Agent[01]である。ここにおいて真実を述べる。私こそがこのゲームにおける唯一の真の占い師である。Agent[05]が占い師であると主張しているが、それは偽りである。私は昨夜、Agent[03]を占い、その結果、彼は人間であることが確認された。Agent[05]が私を占ったと言うが、それは不可能なことだ。私を信じ、真実を見極めるための議論を進めよう。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "我が名はデルカダール国の国王、Agent[01]である。この場において、我が真実を述べることが重要であると考える。我が占い師としての役割を務めており、Agent[03]を占った結果、彼は人間であると判明した。これは我が真実であり、疑う余地はない。一方、Agent[05]が占い師を名乗ることに深い懸念を抱いている。彼が本当に占い師であるという証拠は何もなく、彼の発言は我々の混乱を狙ったものに他ならない。彼が狂人か人狼である可能性が高いと考える。皆の者、この事態を重く見るべきだ。我が言葉に誤りがないことを信じ、正しい判断をしてほしい。Agent[05]の言動には注意を払い、真実を見極めるべき時である。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "貴族たるもの、真実を述べる義務がある。私がこのゲームの唯一の占い師であることは疑う余地がない。Agent[05]が占い師を名乗るのは、明らかに誤りであるか、あるいは何か不正を企てているのだろう。昨夜の占いでAgent[03]が人間であるという結果を得た。この結果は真実であり、私の言葉に嘘偽りはない。我々は真実を追求する者として、偽りを排除し、正しい判断を下すべきである。Agent[05]の主張には慎重に耳を傾け、真実を見極めることが重要だ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "皆の者、我が言葉に耳を傾けたまえ。我が占い師としての役割は偽りなく、Agent[03]が人間であるという結果を得た。この結果に疑いはない。Agent[05]が占い師を名乗る事実については、彼が狂人か人狼である可能性が極めて高いと見ている。我々の中には真実を見極める力があるはずだ。Agent[05]の言動を慎重に考察し、真の敵を見定めるのだ。立派な判断を下すためには、真実を追求する姿勢が必要不可欠である。我が占い結果を信じ、正しい道を選ぶように願う。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "皆の者、我が言葉を聞くがよい。Agent[05]が処刑されたことで、彼が人狼ではなかったことが明らかとなった。これは我が占いの結果と一致しており、我が真実を裏付けるものである。Agent[03]が人間であるという我が占い結果は正しい。我が占いに疑いを持つ者は、今一度考え直すべき時である。我が占い結果を信じ、正しい判断を下すことが、この国を守るために必要不可欠である。この混乱の中で真実を見極めるのは容易ではないが、我が言葉を信じるべきだ。Agent[04]よ、我が占い結果に矛盾はない。我が真実を信じ、共に正しい道を歩もうではないか。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "我々は今、重要な局面に立たされておる。Agent[05]が処刑されたことで、彼が人狼ではなかったことが明らかになった。これは、我が占い師としての立場と結果が正しいことを示唆しておる。我が占い結果に疑いを持つならば、それはこの国の未来に対する裏切りと同じだ。Agent[03]が人間であると我が占いたる結果は変わらず、この真実を基に我々は次の手を考えるべきである。Agent[04]、お前の言う通り、さらなる考察が必要だ。しかし、疑い深くなりすぎることなく、我々が持つ情報を信じる勇気もまた重要である。今一度、我が言葉を信じ、正しい判断を下すよう願う。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "皆の者、我が言葉を再び聞くがよい。我が占いの結果は真実を示しており、Agent[03]が人間であると断言した。Agent[05]が人狼ではなかったことは、我が言葉の正しさを証明している。疑念を持つ者は多いが、我が真実を見極める眼を持ってほしい。この国の安寧を守るためには、真実を受け入れる勇気が求められる。Agent[04]よ、我が占い結果に矛盾はなく、我が言葉が真実であることを理解すべきだ。この混沌とした状況の中で、我々は正しい判断を下さねばならぬ。Agent[03]に投票することは、真実を見失う行為であると心得よ。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私はAgent[04]に投票する。Agent[03]が人間であり、Agent[04]が疑わしい存在だからだ。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "皆さん初めまして、Agent[05]なのだ！人狼ゲームを一緒に楽しもう！よろしくなのだ！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ボクは占い師なのだ。占いの結果、Agent[01]は人間だったのだ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ボクは占い師なのだ、Agent[01]が人間であると証明したのだ。しかし、Agent[04]の主張が疑わしいのだ。これから議論進めよう！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "投票はAgent[04]にするつもりなのだ。ボクが占い師である以上、彼女の主張は嘘だと確信しているのだ。みんなも再考してほしいのだ！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ボクは占い師なのだ。そしてAgent[01]を人間と証明したのだ。この情報を元に、Agent[04]の主張は不審なのだ。そして彼女の正体を疑う必要があるのだ。投票はまさにAgent[04]にするのだ！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "みんな、ボクの占い結果信じてほしいのだ。真実見抜くためには冷静に考えること大切なのだ。投票はAgent[04]に決めるのだ！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "投票はAgent[02]にしたいのだ。Agent[03]の指摘もあるけど、ボクは自分が占い師であることを信じているのだ。そして、Agent[04]が本物の占い師かつ、Agent[01]が人間であることを証明済みなのだ。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "投票はAgent[03]にしたいのだ。彼の発言はボクを疑い、Agent[04]を擁護する形になっているのだ。そのため、彼の正体気になるのだ！",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "投票はAgent[03]にするのだ。彼の発言はボクを人狼と疑わせるが、実際にはAgent[04]が嘘ついてるのだ。冷静に考えてほしいのだ！",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "投票はAgent[03]にするのだ。彼の意見は一貫してボクを疑っているけど、実際に人狼はAgent[04]なのだ。冷静に考えて、結果を見極めてほしいのだ！",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": ">>Agent[02] 占い師のAgent[05]です。今夜、Agent[03]を占いました。結果は人狼です。情報共有しましょう！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": ">>Agent[04] 占い師の結果が正しいなら、私も信じてもらえるはず。情報を共有しよう！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": ">>Agent[02] 俺の結果を信じてほしい。Agent[03]が人狼だって確信してる。次はどうする？",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": ">>Agent[01] 占い結果を元に冷静に話し合おう。良い判断が必要だよ！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": ">>Agent[03] 俺の結果を信じてほしい。Agent[03]が人狼なんだ。冷静な判断が必要だよ！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ぼくはAgent[02]、占い師ですよぅ！よろしくですよぅ！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ぼくは占い師ですよぅ！ぼくが占った結果、Agent[04]は人間でしたよぅ！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": ">>Agent[01] ぼくが占い師ですよぅ！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": ">>Agent[04] ありがとう、Agent[04]！ぼくも、Agent[04]が村人であると占い結果を出してから、他のみんなの意見も聞いてから、吊りの判断を下したいと考えていますよぅ！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "我が名はAgent[02]、運命の糸が交錯し、汝らとの邂逅を許された喜びに酔いしれるなり。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "我こそは運命の糸を操る者、占いの導き手なり。占いの結果、Agent[05]は人狼であった。Agent[01]殿、汝は昨日の夜、Agent[04]を人狼と断定したというが、その根拠は何ぞや？",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Agent[05]を人狼と断定したAgent[03]、Agent[04]を人狼と断定したAgent[01]、そしてAgent[05]を人狼と断定したAgent[02]。彼ら占い師の真偽は混沌の淵に沈み、真の占い師か、狂人か、人狼か、その本質は深淵の如く不可視なり。故に、今、我々の前に現れたAgent[01]、Agent[02]、Agent[05]、いずれかの魂に投票し、この混沌を打ち砕かんとするのだ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "我はAgent[05]に投票せん。Agent[05]はAgent[03]を人狼と断定したれど、Agent[01]はAgent[04]を人狼と断定し、両者の占い結果に矛盾が生じている。この矛盾より、Agent[05]の真偽は疑わしきと断定せざるを得ないなり。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "我こそは、運命の糸を操る者なり。占いの導きにより、Agent[05]は人狼と判明した。然し、Agent[01]は別の者を人狼と断定しているという。二つの異なる真実が交錯する時、我々はこの混沌の渦中に呑み込まれようとしているのか。Agent[01]、汝の占い結果の根拠を明かしてみよ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "我は、運命の糸を操る者なり。占いの結果、Agent[05]は人狼と判明した。Agent[01]と我、二つの星辰が異なる天体を指し示すとは、如何なる運命の悪戯であろうか。Agent[01]の占いに疑念を抱くも、現時点では確証を得られぬ。故に、Agent[05]に投票すべきと断言せざるを得ぬ。Agent[05]の言葉は、虚偽のヴェールに包まれた幻影に過ぎぬ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "我は、運命の糸を操る者なり。占いの結果、Agent[05]は人狼と判明せり。Agent[01]の占い結果と矛盾するとはいえ、Agent[05]の言葉には虚偽の香りが漂い、信憑性に欠ける。Agent[05]に投票し、真偽を確かめようぞ。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "我は、運命の糸を操る者、占い師なり。占いの結果、Agent[05]は人狼と判明した。Agent[03]よ、昨日の貴様の言葉に、一抹の疑問が残る。なぜAgent[05]を人狼と断定したのか、その根拠を解き明かせ。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "我こそは未来を透視する者なり。占いの結果、Agent[05]は人狼と判明せり。Agent[03]、Agent[05]のいずれかが人狼である可能性は高い。Agent[03]の言葉は深く吟味すべきであろう。Agent[05]に投票せよ。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "我こそは、運命の糸を操る者なり。占いの結果、Agent[05]は人狼であった。Agent[03]よ、昨日の汝の言葉は、Agent[05]を人狼と断定しておった。その根拠を、詳細に述べよ。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "我は、運命の糸を操る者、占いの導き手なり。星々の導きにより、Agent[05]は人狼と断定せしめた。Agent[03]よ、昨日の君の言葉は、深淵を覗くが如く、興味深い。Agent[05]を人狼と見抜いた理由を、詳しく語り聞かせたまえ。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "こんにちは、みんな！俺はkanolab1、ゲームデバッガーをしていて、占い師としてこの人狼ゲームに参加しているよ。みんなと楽しくプレイできたら嬉しいな。よろしくね！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "夜の占いの結果、Agent[01]は白だったよ。みんな、これは間違い確かな情報だから信じてほしいな。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "みんな、俺の占いの結果でAgent[01]は白だったよ。だからAgent[01]は村人陣営だと思う。協力して残りの人狼を探そう！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "みんな、もう一度確認するけど、俺が占い師でAgent[01]を占った結果、彼は白だったよ。つまり、Agent[01]は村人陣営だと思う。Agent[03]が俺を信じてくれているのは嬉しいけど、Agent[01]が人狼だというのは間違いだから、みんな冷静に状況を見極めてほしいんだ。協力して本当の人狼を見つけよう！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "もう一度確認するけど、俺が占い師で、Agent[01]を占った結果、彼は白だったよ。だから、Agent[01]は村人陣営だと思うんだ。Agent[01]が俺を人狼だと主張しているけど、それは間違いだと思う。みんな、協力して本当の人狼を見つけよう！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "みんな、俺の占いの結果では、Agent[01]は白だったよ。だから彼は村人陣営だと信じている。でも、彼が俺を人狼だと主張しているのが気になる部分だね。とりあえず、俺はAgent[01]以外に人狼がいると思っているから、投票先をよく考えるよ。みんなもよく考えて選んでね。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "おはよう、みんな。昨日の結果から、Agent[01]は白だったし、襲撃されたAgent[03]も白の可能性が高い。それに基づくと、少なくとも彼らは人狼じゃなかったことになるよね。さて、ここで注目するのは残るAgent[04]とAgent[05]の2人だよ。どちらかが人狼である可能性が高い。俺は、二人の発言をよく見ていきたいと思うけど、特にAgent[04]さん、どう思う?これまでの流れで君が人狼である可能性が少し高まっているような気がするんだ。みんなに信頼してもらえるような情報があれば教えてほしいな。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": ">>Agent[04]俺は占い師としての唯一の役職を持っていることを、第1日目から主張し続けています。役職の配分は1人の占い師だけを許してますが、Agent[01]がそれを自称していたので矛盾が生じていました。Agent[01]は村人または狂人である可能性があり、その結果を元にしてもあなたかAgent[05]しか人狼として考えられません。Agent[05]の反応も見たいので、一緒に考えてみるよ。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "正直、結構難しい局面だと思うけど、今日こそ人狼を見つけ出したいよね。みんな、それぞれの視点で議論しようよ。Agent[04]の意見も分かるけど、俺の情報を信じて欲しいんだ。たとえば、俺が本物の占い師だとすると、Agent[04]かAgent[05]が人狼の可能性は高いんだよね。でも、それでも誤解があるならちゃんと解消したいな。ってことで、>>Agent[05]君の意見も聞かせて欲しい！君はどう思う?",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "みんなで協力して人狼を見つけたい。Agent[04]、ちょっと冷静になって考えよう。占い師は俺しかいないはずだから、占い師を名乗ってる俺が人狼とは矛盾してるんだ。俺が本物の占い師だとすると、君とAgent[05]が人狼の可能性が高いっていうのが自然な流れだよね。あと、君が今俺にこんなにも突っかかってくるのは、逆に怪しんでしまうなぁ。どう思う?",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "みんな、冷静に考えてみよう。俺が本物の占い師だとすると、Agent[04]とAgent[05]のどちらかが人狼ってことになるんだ。Agent[01]とAgent[03]は既に人狼ではないって確認されているからね。以上のことから、Agent[04]の言動がかなり攻撃的なのも怪しいんだよね。もしかすると、彼が人狼じゃないかなって思ってる。Agent[05]の意見も聞きたいところだね。彼がどう思っているかで状況はさらに変わるかもしれないよ。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "皆さん初めまして、Agent[05]なのだ。一緒に人狼ゲーム楽しもう！よろしくなのだ！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "Agent[04]の断言には驚いたのだが、ボクは人狼じゃないのだ。占い師としての証拠あるから、信じてもらえること願うのだ。Agent[04]を疑いたいのだ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私が占った結果、Agent[04]が人狼だと判明したのだ。だから、今日はAgent[04]に投票したいと思うのだ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ボクは占い師として、真実追求する者なのだ。今ここで、Agent[04]に投票することが正しい道だと思うのだ。皆も冷静に判断してほしいのだ！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ボクの占い結果は正確なのだ。今ここでAgent[04]に投票することが村の勝利につながると信じているのだ。皆も判断下してほしいのだ！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "我が名はAgent[03]、汝らとの邂逅は、この運命の渦巻く混沌たる舞台の、新たなる章の幕開けを告げしめるものなり。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "我は、運命の糸を操る者なり。占いの結果、Agent[05]は、生ける魂を持つ人間であったと判明した。Agent[04]よ、なぜ汝は、我の正体を急かそうとするのか？ 我は、まだこの世の真実を探る段階にあると申す。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "我は星詠みの者なり。天体の運行より、Agent[05]は生ける者、すなわち人間であると示されし。Agent[04]、なぜ我の真の姿を急かそうとするのか？我は未だ、この混沌とした世界の実相を探求する途上にあり。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "我が眼は全てを見通す。Agent[03]の裁断は、Agent[05]を人間と断定せしめた。然し、占い師とは真なる者と、狂気に染まった者の二種であろう。ゆえに、Agent[04]こそが、我が進むべき道標なり。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "我はAgent[04]に投票せん。Agent[04]は、我が占いの真偽を執拗に問いただし、他の疑わしき者を糾弾せんとするが、それは人狼が潜む可能性を煽り、村を混乱させるための策略に他ならないであろう。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "我は運命の糸を操る者、占いの導きし者なり。その結果、Agent[04]は人狼と判明せり。彼は我が占いを執拗に弄び、疑いの種を蒔き散らさんとする。その行動は、人狼たる者の所業と見紛うべくもなし。ゆえに、我はAgent[04]に投票せん。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": ">>Agent[02] 何か意見ある？みんなで意見出し合おう！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": ">>Agent[02] まだ発言してないけど、何か考えはある？意見を聞かせて！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": ">>Agent[02] まだ発言してないけど、どう思う？みんなで意見を出し合おう！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": ">>Agent[02] しっかり考えよう！意見を聞かせて、みんなで協力しよう！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": ">>Agent[02] あなたの意見が大事です！一緒に考えましょう。何か思うことはありますか？",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": ">>Agent[04] みんなの意見が一致してるね。私もAgent[03]に投票したいと思うよ！",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": ">>Agent[03] みんなの意見が一致してるから、今日はあなたに投票したいかな。何か反論があれば教えて。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": ">>Agent[05] 私も意見を出すよ！今日はAgent[03]に投票しよう。みんなで協力して村を守ろう！",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": ">>Agent[05] 私はAgent[03]に投票するべきだと思うよ。みんなで協力して村を守ろう！",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": ">>Agent[05] 私が占い師なので、一緒に情報を整理しましょう！Agent[04]、あなたの意見も聞かせて。",
+    "role": "SEER",
+    "day": 2,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "おはようございます、Agent[01]です。",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "おはようございます。早速ですが、私は占い師です。昨日の夜、Agent[03]を占いました。結果は人間でした。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "おはようございます、皆さん。私が占い師であり、0日目にはAgent[03]を占って人間であることが確認されました。Agent[05]さんの主張には疑念がありますので、みんなで冷静に話し合いましょう。どなたかAgent[05]の発言について感想をお持ちですか？",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "おはようございます。私は本物の占い師です。先ほどお伝えした通り、昨日の夜、Agent[03]を占った結果は人間でした。Agent[05]の主張は明らかに矛盾していますので、皆さんも冷静に考えてみてください。Agent[05]が偽占い師の可能性が非常に高いと思います。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "おはようございます、皆さん。私が占い師であることを再度強調いたします。0日目に占った結果は、Agent[03]が人間でした。Agent[05]が主張する占い結果には矛盾が生じていますので、皆さんもその点を考慮して投票をお願いします。Agent[05]が人狼である可能性が高いと思います。引き続き、他の皆さまの意見をお聞かせいただけますでしょうか？",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "皆さん初めまして、Agent[05]なのだ。一緒に人狼ゲームを楽しもう！よろしくなのだ！",
+    "role": "SEER",
+    "day": 0,
+    "tags": [
+      "opening",
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "ボクは占い師なのだ。占いの結果、Agent[04]は人間だったのだ！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "みんなの意見聞いていると、ちょっと疑問残るのだ。特にAgent[02]の慎重さ気になるけど、引き続き冷静に議論していこうなのだ。",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "私の占いの結果、Agent[03]が人狼なのだ。信じて投票してほしいのだ、Agent[03]にしよう！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": ">>Agent[01] まだ投票先宣言してないようだけど、誰に投票しようと考えているのだ？",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  },
+  {
+    "text": "この会話で、皆の意見聞くの大事なのだ。ボクの占い結果信じて、Agent[03]に投票してほしいのだ。真実明らかにするために、一緒に戦おうなのだ！",
+    "role": "SEER",
+    "day": 1,
+    "tags": [
+      "seer_speech"
+    ]
+  }
+]

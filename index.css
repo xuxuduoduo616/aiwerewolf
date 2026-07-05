@@ -1,0 +1,365 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Base ─────────────────────────────────────────────────────────────── */
+html, body, #root { height: 100%; }
+
+body {
+  margin: 0;
+  background: #050505;
+  font-family: 'Lato', sans-serif;
+}
+
+button, input { font: inherit; }
+
+.cinzel { font-family: 'Cinzel', serif; }
+
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ─── Sketch scene (動態背景 / Dynamic sketchy village background) ─────── */
+.sketch-scene {
+  position: relative;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(120,120,120,0.16), transparent 34rem),
+    linear-gradient(180deg, #151515 0%, #060606 72%);
+  isolation: isolate;
+  overflow: hidden;
+}
+
+/* Sketch hatching layer — pencil-stroke texture */
+.sketch-scene::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    linear-gradient(120deg, transparent 0 34%, rgba(255,255,255,0.04) 34% 35%, transparent 35%),
+    repeating-linear-gradient(
+      -45deg,
+      transparent 0px,
+      transparent 18px,
+      rgba(255,255,255,0.018) 18px,
+      rgba(255,255,255,0.018) 19px
+    ),
+    radial-gradient(ellipse at 18% 86%, rgba(180,180,180,0.10), transparent 18rem),
+    radial-gradient(ellipse at 80% 12%, rgba(255,255,255,0.07), transparent 18rem);
+  filter: grayscale(1) contrast(1.2);
+}
+
+/* Wind / fog layer — animated */
+.sketch-scene::after {
+  content: "";
+  position: absolute;
+  inset: -12%;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.38;
+  background:
+    repeating-linear-gradient(100deg, transparent 0 16px, rgba(255,255,255,0.03) 17px, transparent 18px),
+    radial-gradient(ellipse at 20% 80%, rgba(255,255,255,0.07), transparent 30rem),
+    radial-gradient(ellipse at 80% 20%, rgba(255,255,255,0.05), transparent 24rem),
+    radial-gradient(ellipse at 50% 95%, rgba(255,255,255,0.10), transparent 26rem);
+  animation: villageWind 14s ease-in-out infinite alternate;
+}
+
+@keyframes villageWind {
+  0%   { transform: translate3d(-1.5%, 0,    0) skewX(-0.8deg); opacity: 0.38; }
+  50%  { transform: translate3d( 0.5%, -0.5%, 0) skewX( 0.4deg); opacity: 0.42; }
+  100% { transform: translate3d( 1.5%, -1%,  0) skewX( 0.8deg); opacity: 0.35; }
+}
+
+/* Floating tree silhouettes (pure CSS) */
+.sketch-tree {
+  position: absolute;
+  bottom: 0;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.12;
+}
+.sketch-tree::before,
+.sketch-tree::after {
+  content: "";
+  position: absolute;
+  background: rgba(255,255,255,0.65);
+}
+/* Tree trunk */
+.sketch-tree::before {
+  width: 3px;
+  height: 80px;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+/* Tree canopy (triangle via clip-path) */
+.sketch-tree::after {
+  width: 60px;
+  height: 100px;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  animation: treeSway 8s ease-in-out infinite alternate;
+}
+@keyframes treeSway {
+  from { transform: translateX(-50%) rotate(-2deg); }
+  to   { transform: translateX(-50%) rotate(2deg);  }
+}
+
+/* Moon / night phase indicator */
+.sketch-moon {
+  position: absolute;
+  top: 40px;
+  right: 60px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  box-shadow: 0 0 40px rgba(255,255,255,0.06), inset -6px -4px 0 rgba(0,0,0,0.35);
+  animation: moonGlow 6s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: -1;
+}
+@keyframes moonGlow {
+  from { box-shadow: 0 0 30px rgba(255,255,255,0.04), inset -6px -4px 0 rgba(0,0,0,0.35); }
+  to   { box-shadow: 0 0 60px rgba(255,255,255,0.10), inset -6px -4px 0 rgba(0,0,0,0.30); }
+}
+
+/* Day/Night phase transition overlay */
+.phase-transition-night {
+  animation: fadeToNight 1.2s ease-in-out forwards;
+}
+.phase-transition-day {
+  animation: fadeToDaylight 1.2s ease-in-out forwards;
+}
+@keyframes fadeToNight {
+  from { filter: brightness(1); }
+  to   { filter: brightness(0.72) hue-rotate(20deg); }
+}
+@keyframes fadeToDaylight {
+  from { filter: brightness(0.72) hue-rotate(20deg); }
+  to   { filter: brightness(1); }
+}
+
+/* ─── Panels ──────────────────────────────────────────────────────────────── */
+.auth-panel,
+.mode-card,
+.center-console,
+.wolf-channel {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 24px 60px rgba(0,0,0,0.45);
+}
+
+/* ─── Lobby Mode Cards ─────────────────────────────────────────────────── */
+.mode-card {
+  min-height: 280px;
+  padding: 24px;
+  border: 1px solid rgba(161,161,170,0.28);
+  border-radius: 8px;
+  background: rgba(9,9,11,0.74);
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease, box-shadow 180ms ease;
+  cursor: pointer;
+}
+.mode-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(244,244,245,0.72);
+  background: rgba(24,24,27,0.86);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+/* ─── Icon Buttons ─────────────────────────────────────────────────────── */
+.icon-button {
+  width: 36px; height: 36px;
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  border: 1px solid rgba(113,113,122,0.35);
+  border-radius: 8px;
+  background: rgba(9,9,11,0.72);
+  color: rgb(228,228,231);
+  transition: background 160ms ease, border-color 160ms ease;
+}
+.icon-button:hover {
+  background: rgba(39,39,42,0.94);
+  border-color: rgba(244,244,245,0.7);
+}
+
+/* ─── Seat Stage (game board) ──────────────────────────────────────────── */
+.seat-stage {
+  position: absolute;
+  inset: 16px;
+  border: 1px solid rgba(113,113,122,0.24);
+  border-radius: 18px;
+  background:
+    radial-gradient(ellipse at 50% 52%, rgba(24,24,27,0.78) 0 24%, rgba(9,9,11,0.50) 45%, rgba(0,0,0,0.16) 72%),
+    linear-gradient(180deg, rgba(255,255,255,0.025), transparent);
+  overflow: hidden;
+}
+/* Dashed circle outline for seating ring */
+.seat-stage::before {
+  content: "";
+  position: absolute;
+  inset: 8% 12%;
+  border: 1px dashed rgba(212,212,216,0.18);
+  border-radius: 50%;
+}
+/* Subtle vignette corner darks */
+.seat-stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(0,0,0,0.35) 100%);
+}
+
+/* ─── Center Console ────────────────────────────────────────────────────── */
+.center-console {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: min(420px, 42vw);
+  min-height: 330px;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(212,212,216,0.28);
+  border-radius: 8px;
+  background: rgba(5,5,5,0.80);
+  backdrop-filter: blur(12px);
+  padding: 22px;
+  z-index: 10;
+}
+
+/* ─── Timers ────────────────────────────────────────────────────────────── */
+.timer-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(244,244,245,0.32);
+  background: rgba(244,244,245,0.08);
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  color: rgb(244,244,245);
+}
+.timer-pill.urgent {
+  border-color: rgba(248,113,113,0.6);
+  color: rgb(252,165,165);
+  animation: timerPulse 0.8s ease-in-out infinite;
+}
+@keyframes timerPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+
+/* ─── Action Buttons ────────────────────────────────────────────────────── */
+.action-button {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  gap: 8px;
+  border: 1px solid rgba(244,244,245,0.28);
+  border-radius: 8px;
+  background: rgb(244,244,245);
+  color: #050505;
+  padding: 0 14px;
+  font-size: 12px; font-weight: 800;
+  transition: opacity 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+.action-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(244,244,245,0.12);
+}
+.action-button:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+.action-button.danger {
+  background: rgb(127,29,29);
+  color: rgb(254,226,226);
+  border-color: rgba(248,113,113,0.36);
+}
+.action-button.danger:hover:not(:disabled) {
+  background: rgb(153,27,27);
+  box-shadow: 0 4px 16px rgba(220,38,38,0.25);
+}
+.action-button.muted {
+  background: rgba(39,39,42,0.9);
+  color: rgb(212,212,216);
+  border-color: rgba(113,113,122,0.42);
+}
+
+/* ─── Wolf Channel ──────────────────────────────────────────────────────── */
+.wolf-channel {
+  position: absolute;
+  left: 24px; bottom: 24px;
+  width: min(430px, 42vw);
+  max-height: 210px;
+  overflow-y: auto;
+  border: 1px solid rgba(127,29,29,0.6);
+  border-radius: 8px;
+  background: rgba(10,0,0,0.80);
+  backdrop-filter: blur(10px);
+  padding: 14px;
+  z-index: 10;
+  animation: wolfChannelIn 0.4s ease-out;
+}
+@keyframes wolfChannelIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* ─── Player Speaking Pulse ─────────────────────────────────────────────── */
+.speaking-ring {
+  animation: speakingPulse 1.4s ease-in-out infinite;
+}
+@keyframes speakingPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(244,244,245,0.5); }
+  50%       { box-shadow: 0 0 0 8px rgba(244,244,245,0);  }
+}
+
+/* ─── Vote Animation ────────────────────────────────────────────────────── */
+.vote-stamp {
+  animation: voteStamp 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+@keyframes voteStamp {
+  from { transform: scale(0.6) rotate(-8deg); opacity: 0; }
+  to   { transform: scale(1)   rotate(0deg);  opacity: 1; }
+}
+
+/* ─── Role Badge Reveal Animation ───────────────────────────────────────── */
+.role-reveal {
+  animation: roleReveal 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes roleReveal {
+  from { transform: rotateY(90deg); opacity: 0; }
+  to   { transform: rotateY(0deg);  opacity: 1; }
+}
+
+/* ─── Log Entry Slide-in ────────────────────────────────────────────────── */
+.log-entry-in {
+  animation: logSlideIn 0.25s ease-out;
+}
+@keyframes logSlideIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+/* ─── Game Over Screen ──────────────────────────────────────────────────── */
+.game-over-wolves { animation: wolfVictory 0.6s ease-out; }
+.game-over-village { animation: villageVictory 0.6s ease-out; }
+@keyframes wolfVictory {
+  from { opacity: 0; filter: brightness(2) saturate(2); }
+  to   { opacity: 1; filter: brightness(1) saturate(1); }
+}
+@keyframes villageVictory {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1);   }
+}
+
+/* ─── Responsive ────────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .center-console { width: min(390px, 54vw); }
+  .wolf-channel   { width: min(340px, 54vw); }
+}
+@media (max-width: 640px) {
+  .center-console { width: calc(100vw - 32px); min-height: 260px; }
+  .wolf-channel   { width: calc(100vw - 48px); left: 16px; }
+}
