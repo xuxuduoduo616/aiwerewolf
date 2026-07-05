@@ -23,7 +23,7 @@ export const generateWithGemini = async (req: SpeechRequest): Promise<string> =>
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'gemini-2.0-flash',
+        model: 'gemini-2.5-flash',
         prompt: `${req.systemPrompt}\n\n---\n${req.userPrompt}`,
         responseMimeType: 'application/json',
         temperature: req.temperature ?? 0.95,

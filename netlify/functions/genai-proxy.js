@@ -70,8 +70,8 @@ exports.handler = async function (event) {
     }
 
     // Whitelist models to prevent abuse of the key for arbitrary calls
-    const ALLOWED_MODELS = new Set(['gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-1.5-flash']);
-    const model = ALLOWED_MODELS.has(body.model) ? body.model : 'gemini-2.0-flash';
+    const ALLOWED_MODELS = new Set(['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash']);
+    const model = ALLOWED_MODELS.has(body.model) ? body.model : 'gemini-2.5-flash';
 
     const responseMimeType = body.responseMimeType === 'application/json' ? 'application/json' : 'text/plain';
     const temperature = typeof body.temperature === 'number'
