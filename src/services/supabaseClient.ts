@@ -1,160 +1,158 @@
-import { GameRecord, SupabaseSession, UserProfile } from '../types';
+/**
+ * Supabase client — uses official @supabase/supabase-js SDK v2.
+ * Supports both legacy anon key (eyJ...) and new publishable key (sb_publishable_...).
+ *
+ * Env vars required:
+ *   VITE_SUPABASE_URL  — e.g. https://xxx.supabase.co
+ *   VITE_SUPABASE_ANON_KEY — anon/publishable key
+ */
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import type { GameRecord, SupabaseSession, UserProfile } from '../types';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
 
 export const isSupabaseConfigured = () => Boolean(supabaseUrl && supabaseAnonKey);
 
-const requireConfig = () => {
+let _client: SupabaseClient | null = null;
+
+const getClient = (): SupabaseClient => {
   if (!supabaseUrl || !supabaseAnonKey) {
-    throw new Error('Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
+    throw new Error('Supabase 未配置：请设置 VITE_SUPABASE_URL 和 VITE_SUPABASE_ANON_KEY。');
   }
-  return { supabaseUrl, supabaseAnonKey };
+  if (!_client) {
+    _client = createClient(supabaseUrl, supabaseAnonKey);
+  }
+  return _client;
 };
 
-const authHeaders = (token?: string) => {
-  const { supabaseAnonKey } = requireConfig();
-  return {
-    apikey: supabaseAnonKey,
-    Authorization: `Bearer ${token || supabaseAnonKey}`,
-    'Content-Type': 'application/json',
-  };
-};
+// ─── Auth ────────────────────────────────────────────────────────────────────
 
-export const requestEmailOtp = async (email: string) => {
-  const { supabaseUrl } = requireConfig();
-  const res = await fetch(`${supabaseUrl}/auth/v1/otp`, {
-    method: 'POST',
-    headers: authHeaders(),
-    body: JSON.stringify({
-      email,
-      create_user: true,
-    }),
+export const requestEmailOtp = async (email: string): Promise<void> => {
+  const { error } = await getClient().auth.signInWithOtp({
+    email,
+    options: { shouldCreateUser: true },
   });
-
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(text || 'Failed to send verification code.');
-  }
+  if (error) throw new Error(error.message || '验证码发送失败。');
 };
 
-export const verifyEmailOtp = async (email: string, token: string): Promise<SupabaseSession> => {
-  const { supabaseUrl } = requireConfig();
-  const res = await fetch(`${supabaseUrl}/auth/v1/verify`, {
-    method: 'POST',
-    headers: authHeaders(),
-    body: JSON.stringify({
-      email,
-      token,
-      type: 'email',
-    }),
+export const verifyEmailOtp = async (
+  email: string,
+  token: string,
+): Promise<SupabaseSession> => {
+  const { data, error } = await getClient().auth.verifyOtp({
+    email,
+    token,
+    type: 'email',
   });
-
-  const json = await res.json();
-  if (!res.ok || !json.access_token || !json.user) {
-    throw new Error(json.error_description || json.msg || 'Invalid verification code.');
+  if (error || !data.session || !data.user) {
+    throw new Error(error?.message || '验证码无效或已过期。');
   }
-
   return {
-    accessToken: json.access_token,
-    refreshToken: json.refresh_token,
+    accessToken: data.session.access_token,
+    refreshToken: data.session.refresh_token,
     user: {
-      id: json.user.id,
-      email: json.user.email,
+      id: data.user.id,
+      email: data.user.email,
     },
   };
 };
 
-export const upsertProfile = async (session: SupabaseSession, displayName: string) => {
-  const { supabaseUrl } = requireConfig();
-  const profile = {
-    id: session.user.id,
-    email: session.user.email || '',
-    display_name: displayName,
-  };
+// ─── Profiles ────────────────────────────────────────────────────────────────
 
-  const res = await fetch(`${supabaseUrl}/rest/v1/profiles`, {
-    method: 'POST',
-    headers: {
-      ...authHeaders(session.accessToken),
-      Prefer: 'resolution=merge-duplicates,return=representation',
-    },
-    body: JSON.stringify(profile),
+export const upsertProfile = async (
+  session: SupabaseSession,
+  displayName: string,
+): Promise<UserProfile> => {
+  const client = getClient();
+  // Set the session so RLS applies
+  await client.auth.setSession({
+    access_token: session.accessToken,
+    refresh_token: session.refreshToken || '',
   });
 
-  const json = await res.json();
-  if (!res.ok) {
-    throw new Error(json.message || 'Failed to save profile.');
-  }
+  const { data, error } = await client
+    .from('profiles')
+    .upsert(
+      {
+        id: session.user.id,
+        email: session.user.email || '',
+        display_name: displayName,
+      },
+      { onConflict: 'id' },
+    )
+    .select()
+    .single();
 
-  const row = Array.isArray(json) ? json[0] : json;
-  return toProfile(row);
+  if (error) throw new Error(error.message || '档案保存失败。');
+  return toProfile(data);
 };
 
-export const fetchGameRecords = async (session: SupabaseSession): Promise<GameRecord[]> => {
-  const { supabaseUrl } = requireConfig();
-  const params = new URLSearchParams({
-    user_id: `eq.${session.user.id}`,
-    order: 'created_at.desc',
-    limit: '20',
+// ─── Game records ─────────────────────────────────────────────────────────────
+
+export const fetchGameRecords = async (
+  session: SupabaseSession,
+): Promise<GameRecord[]> => {
+  const client = getClient();
+  await client.auth.setSession({
+    access_token: session.accessToken,
+    refresh_token: session.refreshToken || '',
   });
 
-  const res = await fetch(`${supabaseUrl}/rest/v1/game_records?${params.toString()}`, {
-    headers: authHeaders(session.accessToken),
-  });
+  const { data, error } = await client
+    .from('game_records')
+    .select('*')
+    .eq('user_id', session.user.id)
+    .order('created_at', { ascending: false })
+    .limit(20);
 
-  const json = await res.json();
-  if (!res.ok) {
-    throw new Error(json.message || 'Failed to load game records.');
-  }
-
-  return Array.isArray(json) ? json.map(toGameRecord) : [];
+  if (error) throw new Error(error.message || '战绩加载失败。');
+  return (data || []).map(toGameRecord);
 };
 
 export const saveGameRecord = async (
   session: SupabaseSession,
-  record: Omit<GameRecord, 'id' | 'createdAt'>
-) => {
-  const { supabaseUrl } = requireConfig();
-  const res = await fetch(`${supabaseUrl}/rest/v1/game_records`, {
-    method: 'POST',
-    headers: {
-      ...authHeaders(session.accessToken),
-      Prefer: 'return=representation',
-    },
-    body: JSON.stringify({
+  record: Omit<GameRecord, 'id' | 'createdAt'>,
+): Promise<GameRecord> => {
+  const client = getClient();
+  await client.auth.setSession({
+    access_token: session.accessToken,
+    refresh_token: session.refreshToken || '',
+  });
+
+  const { data, error } = await client
+    .from('game_records')
+    .insert({
       user_id: record.userId,
       board_id: record.boardId,
       role: record.role,
       result: record.result,
       rounds: record.rounds,
       summary: record.summary,
-    }),
-  });
+    })
+    .select()
+    .single();
 
-  const json = await res.json();
-  if (!res.ok) {
-    throw new Error(json.message || 'Failed to save game record.');
-  }
-
-  const row = Array.isArray(json) ? json[0] : json;
-  return toGameRecord(row);
+  if (error) throw new Error(error.message || '战绩保存失败。');
+  return toGameRecord(data);
 };
 
-const toProfile = (row: any): UserProfile => ({
-  id: row.id,
-  email: row.email,
-  displayName: row.display_name || row.email?.split('@')[0] || 'Player',
-  createdAt: row.created_at || new Date().toISOString(),
+// ─── Mappers ──────────────────────────────────────────────────────────────────
+
+const toProfile = (row: Record<string, unknown>): UserProfile => ({
+  id: row.id as string,
+  email: row.email as string,
+  displayName: (row.display_name as string) || (row.email as string)?.split('@')[0] || 'Player',
+  createdAt: (row.created_at as string) || new Date().toISOString(),
 });
 
-const toGameRecord = (row: any): GameRecord => ({
-  id: row.id,
-  userId: row.user_id,
-  boardId: row.board_id,
-  role: row.role,
-  result: row.result,
-  rounds: row.rounds,
-  summary: row.summary,
-  createdAt: row.created_at || new Date().toISOString(),
+const toGameRecord = (row: Record<string, unknown>): GameRecord => ({
+  id: row.id as string,
+  userId: row.user_id as string,
+  boardId: row.board_id as GameRecord['boardId'],
+  role: row.role as GameRecord['role'],
+  result: row.result as 'WIN' | 'LOSE',
+  rounds: row.rounds as number,
+  summary: row.summary as string,
+  createdAt: (row.created_at as string) || new Date().toISOString(),
 });
