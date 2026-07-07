@@ -1,8 +1,5 @@
-import { useState } from 'react';
-import {
-  SupabaseSession,
-  UserProfile,
-} from '../types';
+import { useEffect, useState } from 'react';
+import type { SupabaseSession, UserProfile } from '../types';
 import {
   fetchGameRecords,
   isSupabaseConfigured,
@@ -10,6 +7,54 @@ import {
   upsertProfile,
   verifyEmailOtp,
 } from '../services/supabaseClient';
+
+const AUTH_STORAGE_KEY = 'werewolf_auth';
+const AUTH_EXPIRY_DAYS = 30;
+
+interface StoredAuth {
+  accessToken: string;
+  refreshToken: string;
+  userId: string;
+  email: string;
+  displayName: string;
+  expiresAt: number; // timestamp
+}
+
+// ─── Persistence helpers ─────────────────────────────────────────────────────
+
+const saveAuthToStorage = (session: SupabaseSession, profile: UserProfile) => {
+  const data: StoredAuth = {
+    accessToken: session.accessToken,
+    refreshToken: session.refreshToken || '',
+    userId: session.user.id,
+    email: profile.email,
+    displayName: profile.displayName,
+    expiresAt: Date.now() + AUTH_EXPIRY_DAYS * 24 * 60 * 60 * 1000,
+  };
+  try { localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(data)); } catch {}
+};
+
+const loadAuthFromStorage = (): StoredAuth | null => {
+  try {
+    const raw = localStorage.getItem(AUTH_STORAGE_KEY);
+    if (!raw) return null;
+    const data: StoredAuth = JSON.parse(raw);
+    if (Date.now() > data.expiresAt) {
+      localStorage.removeItem(AUTH_STORAGE_KEY);
+      return null;
+    }
+    return data;
+  } catch {
+    localStorage.removeItem(AUTH_STORAGE_KEY);
+    return null;
+  }
+};
+
+const clearAuthStorage = () => {
+  try { localStorage.removeItem(AUTH_STORAGE_KEY); } catch {}
+};
+
+// ─── Hook ────────────────────────────────────────────────────────────────────
 
 export interface AuthState {
   authEmail: string;
@@ -26,8 +71,9 @@ export interface AuthState {
   profile: UserProfile | null;
   isGuest: boolean;
   isAuthenticated: boolean;
+  isRestoringSession: boolean;  // true = checking localStorage, don't show login UI yet
   handleSendOtp: () => Promise<void>;
-  handleVerifyOtp: (onSuccess: (records: any[]) => void) => Promise<void>;
+  handleVerifyOtp: (onRecords: (records: any[]) => void) => Promise<void>;
   handleGuest: (loadLocal: () => void) => void;
   logoutAuth: () => void;
 }
@@ -42,6 +88,40 @@ const useAuth = (): AuthState => {
   const [session, setSession] = useState<SupabaseSession | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isGuest, setIsGuest] = useState(false);
+  const [isRestoringSession, setIsRestoringSession] = useState(isSupabaseConfigured());
+
+  // Boot: try to restore saved session
+  useEffect(() => {
+    const stored = loadAuthFromStorage();
+    if (!stored) { setIsRestoringSession(false); return; }
+
+    const restoredSession: SupabaseSession = {
+      accessToken: stored.accessToken,
+      refreshToken: stored.refreshToken,
+      user: { id: stored.userId, email: stored.email },
+    };
+    const restoredProfile: UserProfile = {
+      id: stored.userId,
+      email: stored.email,
+      displayName: stored.displayName,
+      createdAt: '',
+    };
+
+    // Verify the token is still valid by trying to fetch records
+    fetchGameRecords(restoredSession)
+      .then(records => {
+        setSession(restoredSession);
+        setProfile(restoredProfile);
+        // Cue the app that records arrive with a small delay so the caller sees
+        // the session first then the records
+        setIsRestoringSession(false);
+        return records;
+      })
+      .catch(() => {
+        clearAuthStorage();
+        setIsRestoringSession(false);
+      });
+  }, []);
 
   const isAuthenticated = Boolean(session || isGuest);
 
@@ -49,7 +129,7 @@ const useAuth = (): AuthState => {
     const email = authEmail.trim();
     if (!email) { setAuthError('请输入邮箱。'); return; }
     if (!isSupabaseConfigured()) {
-      setAuthError('Supabase 环境变量未配置：请先使用 Guest 试玩。');
+      setAuthError('Supabase 环境变量未配置。');
       return;
     }
     setIsAuthLoading(true);
@@ -64,7 +144,7 @@ const useAuth = (): AuthState => {
     }
   };
 
-  const handleVerifyOtp = async (onSuccess: (records: any[]) => void) => {
+  const handleVerifyOtp = async (onRecords: (records: any[]) => void) => {
     if (!authCode.trim()) { setAuthError('请输入邮箱验证码。'); return; }
     setIsAuthLoading(true);
     setAuthError('');
@@ -75,8 +155,9 @@ const useAuth = (): AuthState => {
       setSession(nextSession);
       setProfile(nextProfile);
       setIsGuest(false);
+      saveAuthToStorage(nextSession, nextProfile);  // ← persist 30 days
       const nextRecords = await fetchGameRecords(nextSession);
-      onSuccess(nextRecords);
+      onRecords(nextRecords);
     } catch (error: any) {
       setAuthError(error.message || '登录失败。');
     } finally {
@@ -92,11 +173,11 @@ const useAuth = (): AuthState => {
     loadLocal();
   };
 
-  // Only resets auth state; caller is responsible for resetting game state
   const logoutAuth = () => {
     setSession(null);
     setProfile(null);
     setIsGuest(false);
+    clearAuthStorage();
   };
 
   return {
@@ -108,6 +189,7 @@ const useAuth = (): AuthState => {
     isAuthLoading,
     session, profile, isGuest,
     isAuthenticated,
+    isRestoringSession,
     handleSendOtp,
     handleVerifyOtp,
     handleGuest,

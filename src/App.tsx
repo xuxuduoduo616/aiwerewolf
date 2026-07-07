@@ -43,6 +43,17 @@ const App: React.FC = () => {
   };
 
   // ── LOGIN ─────────────────────────────────────────────────────────────
+  if (auth.isRestoringSession) {
+    return (
+      <div className="sketch-scene min-h-screen flex items-center justify-center font-sans text-zinc-200">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 mx-auto animate-spin text-zinc-400" />
+          <p className="mt-3 text-sm text-zinc-500">正在恢复登录状态…</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!auth.isAuthenticated) {
     return (
       <div className="sketch-scene min-h-screen flex items-center justify-center font-sans text-zinc-200">
