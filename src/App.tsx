@@ -204,9 +204,11 @@ const App: React.FC = () => {
                     isSpeaking={game.currentSpeaker?.id === player.id}
                     compact onClick={() => game.setSelectedPlayerId(player.id)}
                     customBadge={
-                      game.phase === GamePhase.NIGHT_WEREWOLVES && game.nightState.wolfKillId === player.id
+                      // Wolf kill target — visible to wolves via wolfCountdown pill, also show on card
+                      game.nightState.wolfKillId === player.id && game.me?.role === Role.WEREWOLF
                         ? <Skull className="w-5 h-5 text-red-300" />
-                        : game.aiSeerLastCheck && game.aiSeerLastCheck.targetId === player.id
+                        : // Seer check result — only visible to Seer / Witch (they know knife targets)
+                        game.aiSeerLastCheck && game.aiSeerLastCheck.targetId === player.id && (game.me?.role === Role.SEER || game.me?.role === Role.WITCH)
                           ? (game.aiSeerLastCheck.isGood
                             ? <span className="bg-emerald-900/80 border border-emerald-500 text-emerald-200 text-[10px] px-1.5 py-0.5 rounded-full font-bold">金水</span>
                             : <span className="bg-red-950/80 border border-red-500 text-red-200 text-[10px] px-1.5 py-0.5 rounded-full font-bold">查杀</span>)
@@ -249,6 +251,12 @@ const App: React.FC = () => {
                       </div>
                       <p className="mt-2 text-zinc-400">{game.me ? ROLE_DESCRIPTIONS[game.me.role] : ''}</p>
                       {game.selectedPlayer && <p className="mt-2 text-zinc-300">已选择：{game.selectedPlayer.id}号 {game.selectedPlayer.name}</p>}
+                      {/* Witch: show who was attacked */}
+                      {game.me?.role === Role.WITCH && game.nightState.wolfKillId && (
+                        <p className="mt-2 text-amber-200 text-xs">
+                          昨夜 {game.nightState.wolfKillId}号 被狼人袭击
+                        </p>
+                      )}
                     </div>
                     <ActionBar
                       phase={game.phase} me={game.me} selectedPlayer={game.selectedPlayer}
