@@ -149,15 +149,12 @@ const useAuth = (): AuthState => {
     setIsAuthLoading(true);
     setAuthError('');
     try {
-      const nextSession = await verifyEmailOtp(authEmail.trim(), authCode.trim());
-      const displayName = authName.trim() || nextSession.user.email?.split('@')[0] || 'Player';
-      const nextProfile = await upsertProfile(nextSession, displayName);
-      setSession(nextSession);
-      setProfile(nextProfile);
+      const result = await verifyEmailOtp(authEmail.trim(), authCode.trim());
+      setSession(result.session);
+      setProfile(result.profile);
       setIsGuest(false);
-      saveAuthToStorage(nextSession, nextProfile);  // ← persist 30 days
-      const nextRecords = await fetchGameRecords(nextSession);
-      onRecords(nextRecords);
+      saveAuthToStorage(result.session, result.profile);  // ← persist 30 days
+      onRecords(result.records);
     } catch (error: any) {
       setAuthError(error.message || '登录失败。');
     } finally {

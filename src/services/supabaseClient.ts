@@ -14,16 +14,11 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undef
 
 export const isSupabaseConfigured = () => Boolean(supabaseUrl && supabaseAnonKey);
 
-let _client: SupabaseClient | null = null;
-
 const getClient = (): SupabaseClient => {
   if (!supabaseUrl || !supabaseAnonKey) {
     throw new Error('Supabase 未配置：请设置 VITE_SUPABASE_URL 和 VITE_SUPABASE_ANON_KEY。');
   }
-  if (!_client) {
-    _client = createClient(supabaseUrl, supabaseAnonKey);
-  }
-  return _client;
+  return createClient(supabaseUrl, supabaseAnonKey);
 };
 
 // ─── Auth ────────────────────────────────────────────────────────────────────
@@ -39,8 +34,15 @@ export const requestEmailOtp = async (email: string): Promise<void> => {
 export const verifyEmailOtp = async (
   email: string,
   token: string,
-): Promise<SupabaseSession> => {
-  const { data, error } = await getClient().auth.verifyOtp({
+): Promise<{
+  session: SupabaseSession;
+  profile: UserProfile;
+  records: GameRecord[];
+}> => {
+  const client = getClient();
+
+  // Step 1: Verify the OTP code — returns a valid session
+  const { data, error } = await client.auth.verifyOtp({
     email,
     token,
     type: 'email',
@@ -48,13 +50,47 @@ export const verifyEmailOtp = async (
   if (error || !data.session || !data.user) {
     throw new Error(error?.message || '验证码无效或已过期。');
   }
+
+  const accessToken = data.session.access_token;
+  const refreshToken = data.session.refresh_token || '';
+  const userId = data.user.id;
+  const userEmail = data.user.email || email;
+  const displayName = userEmail.split('@')[0] || 'Player';
+
+  // Step 2: Upsert profile using the freshly verified token
+  const { data: profileData, error: profileErr } = await client
+    .from('profiles')
+    .upsert(
+      {
+        id: userId,
+        email: userEmail,
+        display_name: displayName,
+      },
+      { onConflict: 'id' },
+    )
+    .select()
+    .single();
+
+  if (profileErr) throw new Error(profileErr.message || '档案保存失败。');
+
+  // Step 3: Fetch records using the same token
+  const { data: recordData, error: recordErr } = await client
+    .from('game_records')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(20);
+
+  if (recordErr) throw new Error(recordErr.message || '战绩加载失败。');
+
   return {
-    accessToken: data.session.access_token,
-    refreshToken: data.session.refresh_token,
-    user: {
-      id: data.user.id,
-      email: data.user.email,
+    session: {
+      accessToken,
+      refreshToken,
+      user: { id: userId, email: userEmail },
     },
+    profile: toProfile(profileData),
+    records: (recordData || []).map(toGameRecord),
   };
 };
 
@@ -65,7 +101,6 @@ export const upsertProfile = async (
   displayName: string,
 ): Promise<UserProfile> => {
   const client = getClient();
-  // Set the session so RLS applies
   await client.auth.setSession({
     access_token: session.accessToken,
     refresh_token: session.refreshToken || '',
