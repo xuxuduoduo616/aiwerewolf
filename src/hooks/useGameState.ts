@@ -473,7 +473,14 @@ export function useGameState(authContext: AuthContext) {
     const nextSpeaker = speakingQueue[0];
     setSpeakingQueue(prev => prev.slice(1));
     setCurrentSpeaker(nextSpeaker);
-    if (nextSpeaker.isHuman) return;
+    // Skip dead human players — they spoke their last words already
+  if (!nextSpeaker.isAlive && nextSpeaker.isHuman) {
+    addLog(`Dead player ${nextSpeaker.id} has no further speech.`, true, undefined, `${nextSpeaker.id}号已出局，跳过发言。`, 'system');
+    setCurrentSpeaker(null);
+    return;
+  }
+  // Human alive? Wait for them to type
+  if (nextSpeaker.isHuman) return;
 
     setIsProcessingAI(true);
     const seerInfo = nextSpeaker.role === Role.SEER ? aiSeerLastCheck : null;
@@ -673,7 +680,7 @@ export function useGameState(authContext: AuthContext) {
     speakingQueue, currentSpeaker,
     deadThisRound, voteRecords, wolfChat, wolfCountdown,
     pendingHunterId, savedRecordId,
-    speechTimer,
+    speechTimer, aiSeerLastCheck,
     // derived
     me, selectedPlayer, visibleText, phaseHint,
     logsEndRef,

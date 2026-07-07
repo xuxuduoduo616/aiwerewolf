@@ -7,6 +7,11 @@
 
 import type { Role } from '../types';
 
+const isChineseText = (text: string): boolean => {
+  const cjk = (text.match(/[一-鿿㐀-䶿]/g) || []).length;
+  return cjk / Math.max(1, text.length) > 0.3;
+};
+
 export interface SpeechEntry {
   text: string;
   role: string;
@@ -42,7 +47,7 @@ async function loadPool(role: string): Promise<SpeechEntry[]> {
 
 /**
  * Pick a random speech from the library.
- * Falls back to empty string if no match found.
+ * Falls back to empty string if no Chinese match found.
  */
 export async function pickSpeech(
   role: Role,
@@ -57,15 +62,19 @@ export async function pickSpeech(
   const dayMatched = entries.filter(e => e.day >= dayRange[0] && e.day <= dayRange[1]);
   const pool = dayMatched.length >= 5 ? dayMatched : entries;
 
+  // Only allow Chinese entries (since aiwolf corpus is mixed EN/JA/CN)
+  const chineseEntries = pool.filter(e => isChineseText(e.text));
+  const finalPool = chineseEntries.length >= 3 ? chineseEntries : pool;
+
   // Try to find an entry with preferred tags
   if (preferTags.length > 0) {
-    const tagged = pool.filter(e => preferTags.some(t => e.tags.includes(t)));
+    const tagged = finalPool.filter(e => preferTags.some(t => e.tags.includes(t)));
     if (tagged.length > 0) {
       return tagged[Math.floor(Math.random() * tagged.length)].text;
     }
   }
 
-  return pool[Math.floor(Math.random() * pool.length)].text;
+  return finalPool[Math.floor(Math.random() * finalPool.length)].text;
 }
 
 /**

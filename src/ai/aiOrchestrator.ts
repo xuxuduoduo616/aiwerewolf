@@ -19,6 +19,12 @@ import { generateSpeechWithLLM, generateActionWithLLM } from './geminiAdapter';
 
 // ─── helpers ───────────────────────────────────────────────────────────────
 
+const isChinese = (text: string): boolean => {
+  // Count CJK characters; if >30% are Chinese, treat as Chinese
+  const cjk = (text.match(/[一-鿿㐀-䶿]/g) || []).length;
+  return cjk / Math.max(1, text.length) > 0.3;
+};
+
 const fmtLogs = (logs: GameLog[]) =>
   logs.slice(-16).map(l => `${l.speakerId ? `${l.speakerId}号` : '系统'}: ${l.translation || l.message}`).join('\n');
 
@@ -99,7 +105,7 @@ ${fmtLogs(logs)}
 
   // Layer 3: Try Gemini LLM first
   const llmResult = await generateSpeechWithLLM(systemPrompt, userPrompt);
-  if (llmResult?.zh) {
+  if (llmResult?.zh && isChinese(llmResult.zh)) {
     // Update beliefs from this speech
     globalBeliefTracker.updateFromSpeech(player.id, llmResult.zh, players);
     return llmResult;
@@ -107,7 +113,7 @@ ${fmtLogs(logs)}
 
   // Layer 2: Speech library fallback
   const libText = await pickSpeech(player.role, [], round);
-  if (libText && libText.length > 20) {
+  if (libText && libText.length > 20 && isChinese(libText)) {
     // Inject a player mention if missing
     const alive = players.filter(p => p.isAlive && p.id !== player.id);
     const suspect = globalBeliefTracker.getMostSuspicious(player.id, alive);

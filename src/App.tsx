@@ -192,7 +192,15 @@ const App: React.FC = () => {
                     isSelected={game.selectedPlayerId === player.id}
                     isSpeaking={game.currentSpeaker?.id === player.id}
                     compact onClick={() => game.setSelectedPlayerId(player.id)}
-                    customBadge={game.phase === GamePhase.NIGHT_WEREWOLVES && game.nightState.wolfKillId === player.id ? <Skull className="w-5 h-5 text-red-300" /> : undefined}
+                    customBadge={
+                      game.phase === GamePhase.NIGHT_WEREWOLVES && game.nightState.wolfKillId === player.id
+                        ? <Skull className="w-5 h-5 text-red-300" />
+                        : game.aiSeerLastCheck && game.aiSeerLastCheck.targetId === player.id
+                          ? (game.aiSeerLastCheck.isGood
+                            ? <span className="bg-emerald-900/80 border border-emerald-500 text-emerald-200 text-[10px] px-1.5 py-0.5 rounded-full font-bold">金水</span>
+                            : <span className="bg-red-950/80 border border-red-500 text-red-200 text-[10px] px-1.5 py-0.5 rounded-full font-bold">查杀</span>)
+                          : undefined
+                    }
                   />
                 </div>
               ))}
