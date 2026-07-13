@@ -15,7 +15,7 @@ import { CUSTOM_AI_STYLES, FALLBACK_STYLE } from '../services/aiStyles';
 import { pickSpeech, pickWolfNightSpeech } from '../services/speechLibrary';
 import { globalBeliefTracker } from './beliefTracker';
 import { selectAction } from './actionSelector';
-import { generateSpeechWithLLM, generateActionWithLLM } from './geminiAdapter';
+import type { ActionType } from './actionSelector';
 
 // ─── helpers ───────────────────────────────────────────────────────────────
 
@@ -39,6 +39,16 @@ const fmtPlayers = (viewer: Player, players: Player[]) =>
       ? ROLE_LABELS[p.role] : '?';
     return `${id}[${status}][${role}]`;
   }).join(' ');
+
+const generateSpeechWithLLM = async (systemPrompt: string, userPrompt: string) => {
+  const { generateSpeechWithLLM: generate } = await import('./geminiAdapter');
+  return generate(systemPrompt, userPrompt);
+};
+
+const generateActionWithLLM = async (prompt: string, validTargets: number[]) => {
+  const { generateActionWithLLM: generate } = await import('./geminiAdapter');
+  return generate(prompt, validTargets);
+};
 
 // ─── reset ─────────────────────────────────────────────────────────────────
 
@@ -135,7 +145,7 @@ export const generateAIAction = async (
   player: Player,
   players: Player[],
   logs: GameLog[],
-  type: 'KILL' | 'CHECK' | 'VOTE' | 'SAVE' | 'POISON',
+  type: ActionType | 'SAVE',
   voteRecords: VoteRecord[] = [],
 ): Promise<{ targetId: number | null; reason?: string }> => {
 
@@ -158,7 +168,7 @@ export const generateAIAction = async (
   if (valid.length === 0) return { targetId: null };
 
   // Layer 1: BeliefTracker-based decision (always runs)
-  const l1Decision = selectAction(player, players, globalBeliefTracker, type as any, 1, voteRecords, currentAccuracy);
+  const l1Decision = selectAction(player, players, globalBeliefTracker, type, 1, voteRecords, currentAccuracy);
 
   // Layer 3: Try Gemini for better action selection
   const round = Math.max(1, voteRecords.length > 0 ? voteRecords[voteRecords.length - 1].round : 1);
@@ -212,9 +222,7 @@ export const generateWolfChat = async (
 输出${Math.min(3, wolves.length)}条夜聊策略。
 JSON：{"messages":[{"speakerId":number,"message":"中文","strategyTag":"刀口|悍跳|冲锋|倒钩|补位"}]}`;
 
-  const raw = await import('./geminiAdapter').then(m =>
-    m.generateSpeechWithLLM(systemPrompt, userPrompt)
-  );
+  const raw = await generateSpeechWithLLM(systemPrompt, userPrompt);
 
   // Parse wolf chat messages
   if (raw?.zh) {

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import type { SupabaseSession, UserProfile } from '../types';
+import type { GameRecord, SupabaseSession, UserProfile } from '../types';
 import {
   fetchGameRecords,
   isSupabaseConfigured,
@@ -54,6 +54,9 @@ const clearAuthStorage = () => {
   try { localStorage.removeItem(AUTH_STORAGE_KEY); } catch {}
 };
 
+const getErrorMessage = (error: unknown, fallback: string): string =>
+  error instanceof Error ? error.message || fallback : fallback;
+
 // ─── Hook ────────────────────────────────────────────────────────────────────
 
 export interface AuthState {
@@ -73,7 +76,7 @@ export interface AuthState {
   isAuthenticated: boolean;
   isRestoringSession: boolean;  // true = checking localStorage, don't show login UI yet
   handleSendOtp: () => Promise<void>;
-  handleVerifyOtp: (onRecords: (records: any[]) => void) => Promise<void>;
+  handleVerifyOtp: (onRecords: (records: GameRecord[]) => void) => Promise<void>;
   handleGuest: (loadLocal: () => void) => void;
   logoutAuth: () => void;
 }
@@ -137,14 +140,14 @@ const useAuth = (): AuthState => {
     try {
       await requestEmailOtp(email);
       setAuthStep('VERIFY');
-    } catch (error: any) {
-      setAuthError(error.message || '验证码发送失败。');
+    } catch (error: unknown) {
+      setAuthError(getErrorMessage(error, '验证码发送失败。'));
     } finally {
       setIsAuthLoading(false);
     }
   };
 
-  const handleVerifyOtp = async (onRecords: (records: any[]) => void) => {
+  const handleVerifyOtp = async (onRecords: (records: GameRecord[]) => void) => {
     if (!authCode.trim()) { setAuthError('请输入邮箱验证码。'); return; }
     setIsAuthLoading(true);
     setAuthError('');
@@ -155,8 +158,8 @@ const useAuth = (): AuthState => {
       setIsGuest(false);
       saveAuthToStorage(result.session, result.profile);  // ← persist 30 days
       onRecords(result.records);
-    } catch (error: any) {
-      setAuthError(error.message || '登录失败。');
+    } catch (error: unknown) {
+      setAuthError(getErrorMessage(error, '登录失败。'));
     } finally {
       setIsAuthLoading(false);
     }
