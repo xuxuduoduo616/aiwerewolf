@@ -11,6 +11,11 @@ dist/
 *.log
 .DS_Store
 
+# Raw Codex worker event streams are local diagnostics; task cards and reports
+# under memory/coordination remain the versioned shared project memory.
+memory/coordination/runs/
+.codex-worker-worktrees/
+
 # Editor
 .vscode/
 .idea/
