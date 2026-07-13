@@ -5,9 +5,9 @@
 
 ## Verified Baseline
 
-- Local tests: `npm run test:run` passed 14/14 tests.
+- Local tests: `npm run test:run` passed 158/158 tests (26 test files).
 - Local production build: `npm run build` succeeded.
-- Current branch head: `143860d` (`fix: 修复验证码过期bug`).
+- Current branch head: `91a8789` (wave 1 + 2 accepted).
 - The build has one non-blocking Gemini import warning; see `memory/progress-report.md`.
 - No task card is active or accepted yet.
 
