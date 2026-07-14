@@ -19,3 +19,7 @@ memory/coordination/runs/
 # Editor
 .vscode/
 .idea/
+
+# Test files — excluded from Netlify deployment
+**/*.test.ts
+**/*.test.js
