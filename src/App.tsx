@@ -9,6 +9,8 @@ import ActionBar from './components/ActionBar';
 import RecordsPanel from './components/RecordsPanel';
 import WolfChannel from './components/WolfChannel';
 import SpeechInput from './components/SpeechInput';
+import VoteSummary from './components/VoteSummary';
+import { resolveVoteResult } from './gameEngine';
 import {
   Clock3, History, KeyRound, Languages, Loader2,
   LogOut, Mail, Moon, RefreshCw, ScrollText, Shield,
@@ -41,6 +43,25 @@ const App: React.FC = () => {
       transform: 'translate(-50%, -50%)',
     };
   };
+
+  // Latest completed vote round → structured summary in the log sidebar.
+  const voteRound = game.voteRecords.length > 0
+    ? Math.max(...game.voteRecords.map(v => v.round))
+    : null;
+  const showVoteSummary =
+    voteRound !== null &&
+    game.phase !== GamePhase.DAY_VOTING &&
+    game.phase !== GamePhase.DAY_DISCUSSION;
+  const voteSummaryEliminatedId = (() => {
+    if (voteRound === null) return null;
+    const tally: Record<number, number> = {};
+    for (const v of game.voteRecords) {
+      if (v.round === voteRound && v.targetId !== null) {
+        tally[v.targetId] = (tally[v.targetId] || 0) + 1;
+      }
+    }
+    return resolveVoteResult(tally);
+  })();
 
   // ── LOGIN ─────────────────────────────────────────────────────────────
   if (auth.isRestoringSession) {
@@ -313,6 +334,14 @@ const App: React.FC = () => {
                   )}
                 </div>
               ))}
+              {showVoteSummary && voteRound !== null && (
+                <VoteSummary
+                  voteRecords={game.voteRecords}
+                  players={game.players}
+                  round={voteRound}
+                  eliminatedPlayerId={voteSummaryEliminatedId}
+                />
+              )}
               {game.isProcessingAI && (
                 <div className="text-xs text-zinc-500 flex items-center gap-2">
                   <Loader2 className="w-3 h-3 animate-spin" /> AI正在思考局势...
