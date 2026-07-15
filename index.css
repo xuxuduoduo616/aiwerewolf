@@ -183,6 +183,16 @@ button, input { font: inherit; }
   box-shadow: var(--shadow-panel);
 }
 
+/* Aged-parchment border for the auth panel — warm brown inner glow layered
+   over the panel's dark drop shadow. Static (no motion). */
+.parchment-border {
+  border-style: solid;
+  border-color: var(--border-subtle);
+  box-shadow:
+    inset 0 0 30px rgba(161, 130, 80, 0.06),
+    0 0 20px rgba(0, 0, 0, 0.5);
+}
+
 /* ─── Lobby Mode Cards ─────────────────────────────────────────────────── */
 .mode-card {
   min-height: 280px;
@@ -432,6 +442,19 @@ button, input { font: inherit; }
 @keyframes villageVictory {
   from { opacity: 0; transform: scale(0.9); }
   to   { opacity: 1; transform: scale(1);   }
+}
+
+/* Faction-specific center-console glow on victory. Static backgrounds — no
+   motion, so no reduced-motion entry needed. Base tint matches .center-console. */
+.victory-wolves {
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(var(--wolf-red-900), 0.30), transparent 70%),
+    rgba(5, 5, 5, 0.80);
+}
+.victory-village {
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(217, 160, 60, 0.14), transparent 70%),
+    rgba(5, 5, 5, 0.80);
 }
 
 /* ─── Responsive ────────────────────────────────────────────────────────── */

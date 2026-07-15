@@ -78,8 +78,9 @@ const App: React.FC = () => {
   if (!auth.isAuthenticated) {
     return (
       <div className="sketch-scene min-h-screen flex items-center justify-center font-sans text-zinc-200">
-        <div className="auth-panel w-[min(92vw,430px)] p-8 border border-zinc-600 bg-zinc-950/86 rounded-lg shadow-[0_0_45px_rgba(0,0,0,0.6)]">
+        <div className="auth-panel parchment-border w-[min(92vw,430px)] p-8 border border-zinc-600 bg-zinc-950/86 rounded-lg shadow-[0_0_45px_rgba(0,0,0,0.6)]">
           <div className="text-center mb-7">
+            <Moon className="w-10 h-10 mx-auto mb-3 opacity-40" />
             <h1 className="text-4xl text-zinc-100 font-bold tracking-wide cinzel">AI WEREWOLF</h1>
             <p className="text-xs text-zinc-400 mt-2">Shadows of the Village</p>
           </div>
@@ -245,11 +246,12 @@ const App: React.FC = () => {
               })}
 
               {/* Center console */}
-              <div className="center-console">
+              <div className={`center-console${game.winner ? (game.winner === 'WEREWOLVES' ? ' victory-wolves' : ' victory-village') : ''}`}>
                 {game.winner ? (
                   <div className={`text-center ${game.winner === 'WEREWOLVES' ? 'game-over-wolves' : 'game-over-village'}`}>
                     <Trophy className="w-10 h-10 mx-auto mb-3 text-zinc-100" />
                     <h1 className="text-3xl font-black">{game.winner === 'WEREWOLVES' ? '狼人胜利' : '好人胜利'}</h1>
+                    <p className="text-sm text-zinc-300 mt-2">第{Math.max(1, game.roundCount)}轮结束{game.me ? ` · ${ROLE_LABELS[game.me.role]}` : ''}</p>
                     <p className="text-xs text-zinc-400 mt-2">{game.savedRecordId ? '战绩已记录。' : '正在记录战绩...'}</p>
                     <button onClick={() => game.setPhase(GamePhase.LOBBY)} className="mt-5 action-button">返回大厅</button>
                   </div>
@@ -270,7 +272,7 @@ const App: React.FC = () => {
                       )}
                     </div>
                     <p className="mt-4 text-sm text-zinc-300 leading-relaxed min-h-[42px]">{game.phaseHint}</p>
-                    <div className="mt-4 rounded border border-zinc-700 bg-black/35 p-3 text-xs text-zinc-300">
+                    <div key={`role-${game.phase}`} className="role-reveal mt-4 rounded border border-zinc-700 bg-black/35 p-3 text-xs text-zinc-300">
                       <div className="flex items-center gap-2 font-bold text-zinc-100">
                         <UserIcon className="w-4 h-4" />
                         你的身份：{game.me ? ROLE_LABELS[game.me.role] : '未知'}
@@ -321,7 +323,7 @@ const App: React.FC = () => {
           ) : (
             <div className="flex-1 overflow-y-auto p-4 space-y-3">
               {game.logs.map(log => (
-                <div key={log.id} className={`${log.isSystem ? 'text-center' : log.speakerId === MY_PLAYER_ID ? 'text-right' : 'text-left'}`}>
+                <div key={log.id} className={`log-entry-in ${log.isSystem ? 'text-center' : log.speakerId === MY_PLAYER_ID ? 'text-right' : 'text-left'}`}>
                   {log.isSystem ? (
                     <span className={`inline-block text-[11px] px-3 py-1 rounded-full border ${log.tone === 'wolf' ? 'border-red-900 bg-red-950/35 text-red-100' : 'border-zinc-800 bg-black/30 text-zinc-400'}`}>
                       {game.visibleText(log)}
