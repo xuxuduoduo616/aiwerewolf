@@ -1,7 +1,7 @@
 # Project Coordination State
 
 **Last verified:** 2026-07-15  
-**Project phase:** Cycle 1 P0 fixes committed; Cycle 2 P1/P2 workers in progress.
+**Project phase:** Cycles 1-2 committed (P0 + P1 vote-summary + P2 AI infra PoC). Cycle 3 P1 UI design-system in progress.
 
 ## Verified Baseline
 

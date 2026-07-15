@@ -2,6 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Design Tokens ────────────────────────────────────────────────────────
+   Ink/charcoal scale + wolf-red scale as raw RGB channels so any alpha can be
+   applied via rgba(var(--token), a). Values mirror the zinc/red rgba() literals
+   previously inlined across this file — refactor preserves exact rendered color. */
+:root {
+  /* Ink (zinc/charcoal) scale */
+  --ink-950: 9, 9, 11;      /* zinc-950 */
+  --ink-900: 24, 24, 27;    /* zinc-900 */
+  --ink-800: 39, 39, 42;    /* zinc-800 */
+  --ink-500: 113, 113, 122; /* zinc-500 */
+  --ink-300: 212, 212, 216; /* zinc-300 */
+  --ink-200: 228, 228, 231; /* zinc-200 */
+  --ink-100: 244, 244, 245; /* zinc-100 */
+  --ink-bright: rgb(244, 244, 245);
+
+  /* Wolf / danger red scale */
+  --wolf-red-900: 127, 29, 29;  /* red-900 */
+  --wolf-red-600: 220, 38, 38;  /* red-600 */
+  --wolf-red-400: 248, 113, 113;/* red-400 */
+
+  /* Borders */
+  --border-subtle: rgba(113, 113, 122, 0.35);
+  --border-strong: rgba(244, 244, 245, 0.72);
+
+  /* Shadows */
+  --shadow-panel: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 24px 60px rgba(0, 0, 0, 0.45);
+  --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+  /* Blur */
+  --blur-panel: 12px;
+}
+
 /* ─── Base ─────────────────────────────────────────────────────────────── */
 html, body, #root { height: 100%; }
 
@@ -148,7 +180,7 @@ button, input { font: inherit; }
 .mode-card,
 .center-console,
 .wolf-channel {
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 24px 60px rgba(0,0,0,0.45);
+  box-shadow: var(--shadow-panel);
 }
 
 /* ─── Lobby Mode Cards ─────────────────────────────────────────────────── */
@@ -157,15 +189,15 @@ button, input { font: inherit; }
   padding: 24px;
   border: 1px solid rgba(161,161,170,0.28);
   border-radius: 8px;
-  background: rgba(9,9,11,0.74);
+  background: rgba(var(--ink-950), 0.74);
   transition: transform 180ms ease, border-color 180ms ease, background 180ms ease, box-shadow 180ms ease;
   cursor: pointer;
 }
 .mode-card:hover {
   transform: translateY(-4px);
-  border-color: rgba(244,244,245,0.72);
-  background: rgba(24,24,27,0.86);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08);
+  border-color: var(--border-strong);
+  background: rgba(var(--ink-900), 0.86);
+  box-shadow: var(--shadow-hover);
 }
 
 /* ─── Icon Buttons ─────────────────────────────────────────────────────── */
@@ -173,15 +205,15 @@ button, input { font: inherit; }
   width: 36px; height: 36px;
   display: inline-flex;
   align-items: center; justify-content: center;
-  border: 1px solid rgba(113,113,122,0.35);
+  border: 1px solid var(--border-subtle);
   border-radius: 8px;
-  background: rgba(9,9,11,0.72);
-  color: rgb(228,228,231);
+  background: rgba(var(--ink-950), 0.72);
+  color: rgb(var(--ink-200));
   transition: background 160ms ease, border-color 160ms ease;
 }
 .icon-button:hover {
-  background: rgba(39,39,42,0.94);
-  border-color: rgba(244,244,245,0.7);
+  background: rgba(var(--ink-800), 0.94);
+  border-color: rgba(var(--ink-100), 0.7);
 }
 
 /* ─── Seat Stage (game board) ──────────────────────────────────────────── */
@@ -219,10 +251,10 @@ button, input { font: inherit; }
   width: min(420px, 42vw);
   min-height: 330px;
   transform: translate(-50%, -50%);
-  border: 1px solid rgba(212,212,216,0.28);
+  border: 1px solid rgba(var(--ink-300), 0.28);
   border-radius: 8px;
   background: rgba(5,5,5,0.80);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(var(--blur-panel));
   padding: 22px;
   z-index: 10;
 }
@@ -232,15 +264,15 @@ button, input { font: inherit; }
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  border: 1px solid rgba(244,244,245,0.32);
-  background: rgba(244,244,245,0.08);
+  border: 1px solid rgba(var(--ink-100), 0.32);
+  background: rgba(var(--ink-100), 0.08);
   border-radius: 999px;
   padding: 6px 10px;
   font-size: 12px;
-  color: rgb(244,244,245);
+  color: rgb(var(--ink-100));
 }
 .timer-pill.urgent {
-  border-color: rgba(248,113,113,0.6);
+  border-color: rgba(var(--wolf-red-400), 0.6);
   color: rgb(252,165,165);
   animation: timerPulse 0.8s ease-in-out infinite;
 }
@@ -272,13 +304,13 @@ button, input { font: inherit; }
   cursor: not-allowed;
 }
 .action-button.danger {
-  background: rgb(127,29,29);
+  background: rgb(var(--wolf-red-900));
   color: rgb(254,226,226);
-  border-color: rgba(248,113,113,0.36);
+  border-color: rgba(var(--wolf-red-400), 0.36);
 }
 .action-button.danger:hover:not(:disabled) {
   background: rgb(153,27,27);
-  box-shadow: 0 4px 16px rgba(220,38,38,0.25);
+  box-shadow: 0 4px 16px rgba(var(--wolf-red-600), 0.25);
 }
 .action-button.muted {
   background: rgba(39,39,42,0.9);
@@ -293,7 +325,7 @@ button, input { font: inherit; }
   width: min(430px, 42vw);
   max-height: 210px;
   overflow-y: auto;
-  border: 1px solid rgba(127,29,29,0.6);
+  border: 1px solid rgba(var(--wolf-red-900), 0.6);
   border-radius: 8px;
   background: rgba(10,0,0,0.80);
   backdrop-filter: blur(10px);
@@ -363,3 +395,38 @@ button, input { font: inherit; }
   .center-console { width: calc(100vw - 32px); min-height: 260px; }
   .wolf-channel   { width: calc(100vw - 48px); left: 16px; }
 }
+
+/* ─── Keyboard Focus Visibility ─────────────────────────────────────────── */
+.icon-button:focus-visible,
+.action-button:focus-visible,
+.mode-card:focus-visible {
+  outline: 2px solid var(--ink-bright);
+  outline-offset: 2px;
+}
+
+/* ─── Reduced Motion ────────────────────────────────────────────────────────
+   Neutralize all animations for users who prefer reduced motion, settling any
+   mid-keyframe opacity/transform to a static, fully-visible readable state. */
+@media (prefers-reduced-motion: reduce) {
+  .sketch-scene::after { animation: none; }
+  .sketch-tree::after  { animation: none; }
+  .sketch-moon         { animation: none; }
+
+  .phase-transition-night,
+  .phase-transition-day { animation: none; }
+
+  .speaking-ring     { animation: none; }
+  .timer-pill.urgent { animation: none; }
+
+  .vote-stamp,
+  .role-reveal,
+  .log-entry-in,
+  .wolf-channel,
+  .game-over-wolves,
+  .game-over-village {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
