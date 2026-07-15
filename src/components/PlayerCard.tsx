@@ -1,7 +1,7 @@
 import React from 'react';
 import { Player, Role } from '../types';
 import { ROLE_LABELS } from '../constants';
-import { User, Eye, FlaskConical, Crosshair, Skull, Mic, Cpu, BadgeHelp } from 'lucide-react';
+import { User, Eye, FlaskConical, Crosshair, Skull, Mic, Cpu, BadgeHelp, PawPrint, Moon } from 'lucide-react';
 
 interface PlayerCardProps {
   player: Player;
@@ -12,6 +12,7 @@ interface PlayerCardProps {
   isSpeaking?: boolean;
   compact?: boolean;
   customBadge?: React.ReactNode;
+  isWolfTeammate?: boolean;
 }
 
 const RoleIcon = ({ role }: { role: Role }) => {
@@ -44,6 +45,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
   isSpeaking,
   compact,
   customBadge,
+  isWolfTeammate,
 }) => {
   const showRole = revealRole || isMe || player.isRevealed;
 
@@ -76,6 +78,14 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
           className={`${compact ? 'w-14 h-14' : 'w-16 h-16'} rounded-full object-cover border-2 border-zinc-600 bg-zinc-950 shadow-md`}
         />
         {customBadge && <div className="absolute -top-2 -right-2 z-10">{customBadge}</div>}
+        {isWolfTeammate && (
+          <div
+            className="absolute -bottom-1 -left-1 z-10 bg-red-950/90 border border-red-700 rounded-full p-1 shadow-lg"
+            aria-label="狼队友"
+          >
+            <PawPrint className="w-3 h-3 text-red-300" />
+          </div>
+        )}
         {!player.isAlive && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/55 rounded-full backdrop-blur-[1px]">
             <Skull className="text-red-500 w-8 h-8 drop-shadow-md" />
@@ -89,8 +99,11 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
       </div>
 
       <div className="mt-2 w-full text-center flex flex-col items-center gap-1">
-        <div className="text-xs font-bold text-zinc-100 truncate w-full px-1">
+        <div className="text-xs font-bold text-zinc-100 truncate w-full px-1 flex items-center justify-center gap-1">
           {isMe ? 'YOU' : player.name}
+          {isMe && player.role === Role.WEREWOLF && (
+            <Moon className="w-3 h-3 text-red-400 shrink-0" aria-label="我是狼人" />
+          )}
         </div>
 
         {!isMe && player.isAlive && <AIModelBadge label={player.aiModelLabel} />}

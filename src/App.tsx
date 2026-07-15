@@ -93,7 +93,7 @@ const App: React.FC = () => {
           </button>
           <div className="flex justify-between mt-4 text-xs text-zinc-400">
             <button onClick={() => auth.setAuthStep(auth.authStep === 'EMAIL' ? 'VERIFY' : 'EMAIL')} className="hover:text-white">Switch Step</button>
-            <button onClick={() => auth.handleGuest(rec.loadLocalRecords)} className="hover:text-white">Guest Trial</button>
+            <button onClick={() => auth.handleGuest(() => { rec.loadLocalRecords(); game.setPhase(GamePhase.LOBBY); })} className="hover:text-white">Guest Trial</button>
           </div>
           <p className="mt-5 text-[11px] leading-relaxed text-zinc-500 text-center border-t border-zinc-800 pt-4">
             新手推荐：点击 <span className="text-zinc-300">Guest Trial</span> 直接试玩，选择「新手」难度。
@@ -195,7 +195,10 @@ const App: React.FC = () => {
           {/* Seat stage */}
           <section className="relative flex-1 min-h-0">
             <div className="seat-stage">
-              {game.players.map((player, index) => (
+              {game.players.map((player, index) => {
+                const isHumanWolf = game.me?.role === Role.WEREWOLF && game.me?.isAlive === true;
+                const isWolfTeammate = isHumanWolf && player.id !== MY_PLAYER_ID && player.camp === 'WEREWOLF';
+                return (
                 <div key={player.id} className="absolute" style={seatStyle(index, game.players.length)}>
                   <PlayerCard
                     player={player} isMe={player.id === MY_PLAYER_ID}
@@ -203,6 +206,7 @@ const App: React.FC = () => {
                     isSelected={game.selectedPlayerId === player.id}
                     isSpeaking={game.currentSpeaker?.id === player.id}
                     compact onClick={() => game.setSelectedPlayerId(player.id)}
+                    isWolfTeammate={isWolfTeammate}
                     customBadge={
                       // Wolf kill target — visible to wolves via wolfCountdown pill, also show on card
                       game.nightState.wolfKillId === player.id && game.me?.role === Role.WEREWOLF
@@ -216,7 +220,8 @@ const App: React.FC = () => {
                     }
                   />
                 </div>
-              ))}
+                );
+              })}
 
               {/* Center console */}
               <div className="center-console">
