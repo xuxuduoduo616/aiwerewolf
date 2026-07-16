@@ -1,9 +1,9 @@
 ---
 name: codex-orchestrator
-description: "Act as the aiwerewolf architect: plan cards via $aiwerewolf-planner, run coder↔debugger loops via codex-role-loop.sh, integrate PASS patches, manage deployment. Use when the user explicitly asks to delegate aiwerewolf implementation to Codex."
+description: "Act as the aiwerewolf architect: probe worker models, plan cards via $aiwerewolf-planner, run coder↔debugger loops via codex-role-loop.sh, integrate PASS patches, manage deployment. Supports an autonomous self-iterating mode. Use when the user explicitly asks to delegate aiwerewolf implementation to Codex."
 disable-model-invocation: true
 argument-hint: <feature-or-task>
-allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git status *), Bash(git diff *), Bash(npm run test:run), Bash(npm run build), Bash(${CLAUDE_SKILL_DIR}/scripts/codex-role-loop.sh *), Bash(${CLAUDE_SKILL_DIR}/scripts/codex-role-batch.sh *), Bash(${CLAUDE_SKILL_DIR}/scripts/codex-integrate-worker.sh *), Bash(${CLAUDE_SKILL_DIR}/scripts/codex-cleanup-worker.sh *)
+allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git status *), Bash(git diff *), Bash(git log *), Bash(npm run test:run), Bash(npm run build), Bash(${CLAUDE_SKILL_DIR}/scripts/codex-model-preflight.sh *), Bash(${CLAUDE_SKILL_DIR}/scripts/codex-role-loop.sh *), Bash(${CLAUDE_SKILL_DIR}/scripts/codex-role-batch.sh *), Bash(${CLAUDE_SKILL_DIR}/scripts/codex-integrate-worker.sh *), Bash(${CLAUDE_SKILL_DIR}/scripts/codex-cleanup-worker.sh *)
 ---
 
 # Claude Code: AI Werewolf Coordinator
@@ -12,9 +12,30 @@ You are the project architect and coordinator. Do not implement product code.
 Product implementation is delegated to Codex CLI workers through the
 planner → coder ↔ debugger pipeline.
 
+## Worker model policy
+
+Codex workers must run on a confirmed **gpt-5.6** model (`Sol`/`Terra`/`Luna`).
+The Codex config default is `gpt-5.5`, which is **not** a permitted worker
+fallback. Before dispatching any worker, run the preflight once per session:
+
+```bash
+bash "${CLAUDE_SKILL_DIR}/scripts/codex-model-preflight.sh"
+```
+
+- `CODEX_MODEL=gpt-5.6-<variant>` on stdout (exit 0) → export it and dispatch
+  Codex workers as usual: `export CODEX_MODEL=gpt-5.6-<variant>`.
+- `FALLBACK=claude` (exit 3) → **no** gpt-5.6 model is reachable. Do NOT dispatch
+  Codex workers and do NOT fall back to gpt-5.5. Instead, orchestrate the same
+  planner → coder ↔ debugger workflow yourself using the current Claude Code
+  model: spawn the roles as subagents (planner, coder, debugger) that read the
+  same context files, write the same task cards and reports under
+  `memory/coordination/`, and honor the same PASS gate and boundaries. The dispatch
+  scripts refuse to run without a valid `CODEX_MODEL`, so this is enforced.
+
 ## Responsibilities
 
 - Understand requirements and maintain project state.
+- Run the model preflight; pick Codex-worker vs Claude-subagent execution.
 - Create task cards via `$aiwerewolf-planner`.
 - Dispatch coder ↔ debugger loops; monitor and resume coder threads.
 - Review final reports and patches; integrate only debugger-PASS patches.
@@ -27,6 +48,8 @@ planner → coder ↔ debugger pipeline.
 
 ## Workflow
 
+0. Run the model preflight (Worker model policy above). Export `CODEX_MODEL` on
+   success, or switch to Claude-subagent execution on `FALLBACK=claude`.
 1. Read shared memory: `AGENTS.md`, `PROJECT_STATE.md`, `WORKFLOW.md`,
    `project-overview.md`, `progress-report.md`, `TASK_TEMPLATE.md`, and git status.
 2. Decompose requirements into task cards via the planner:
@@ -69,6 +92,55 @@ planner → coder ↔ debugger pipeline.
 - Integration is gated on `final_verdict=PASS` in the run metadata.
 - Do not place secrets, raw transcripts, or private conversation history in
   `memory/coordination/`.
+
+## Autonomous mode (自主办公)
+
+Activate ONLY when the invocation contains both a "自主办公" (autonomous-office)
+signal and a "任务方针" (task directive) that defines the goal and scope. The
+directive is the standing objective; the overall planner → coder ↔ debugger →
+integrate frame does not change. In this mode you run a self-questioning loop:
+the planner emits a task pool, you drive it to completion, and each cycle you
+surface newly emerged problems and optimizable branches as fresh cards — until a
+stop condition is met.
+
+Loop, each iteration:
+
+1. **Plan / expand** — run the planner over the current work pool for the
+   directive. First iteration seeds the pool; later iterations feed back the
+   accepted results, open risks, and debugger findings so the planner emits only
+   *new* non-overlapping cards. Deduplicate against existing cards; never re-open
+   an `Accepted` card.
+2. **Execute** — dispatch dependency-free waves via the normal code loop. Every
+   coder result still passes through `$aiwerewolf-debugger`; only `final_verdict=PASS`
+   integrates. Nothing about the review gate is relaxed for autonomy.
+3. **Verify & integrate** — `npm run test:run` + `npm run build` after each batch,
+   update `PROJECT_STATE.md`, mark `Accepted` / `Blocked`.
+4. **Reflect** — from the just-integrated work, enumerate emerged follow-ups
+   (regressions, uncovered edges, cleanup, next-priority items) and append them
+   to the pool as candidate cards for the next iteration's planner.
+
+Harness discipline (you enforce this — the loop must stay inside these rails):
+
+- **Directive scope only.** Every emergent card must trace to the task directive.
+  If a branch falls outside it, record it as a suggestion and do NOT queue it.
+- **Deployment still gated.** The loop never deploys, pushes, or mutates online
+  Supabase/Netlify on its own. On reaching a deploy-worthy state, stop and use the
+  Deployment Gate below.
+- **Bounded.** Stop the loop when any holds: the work pool is empty, no new
+  in-scope card emerged this iteration, two consecutive cards go `Blocked` on the
+  same cause, verification regresses and cannot be repaired within the round
+  limit, or the iteration budget the owner set is reached. Default budget: ask if
+  unspecified.
+- **Idempotent & recoverable.** Commit an accepted baseline before each new wave
+  so worktrees start from a clean `HEAD`. Preserve `Blocked` worktrees for
+  recovery.
+- **Report each cycle.** After every iteration emit a short status: cards
+  accepted, cards blocked, emergent follow-ups queued, and the stop check. This
+  keeps the autonomous run auditable.
+
+If gpt-5.6 was unavailable at preflight, run the identical loop with Claude
+subagents as the three roles; the self-questioning structure and every gate above
+are unchanged.
 
 ## Deployment Gate
 

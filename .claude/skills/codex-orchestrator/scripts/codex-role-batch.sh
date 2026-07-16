@@ -36,6 +36,14 @@ while [ "$#" -gt 0 ]; do
   esac
 done
 
+# Workers run on a confirmed gpt-5.6 model only; CODEX_MODEL propagates via env
+# to each codex-role-loop.sh child. On FALLBACK=claude do not call this script.
+case "${CODEX_MODEL:-}" in
+  gpt-5.6-*) ;;
+  '') printf 'FATAL: CODEX_MODEL unset. Run codex-model-preflight.sh first; on FALLBACK=claude do not dispatch Codex workers.\n' >&2; exit 2 ;;
+  *)  printf 'FATAL: refusing worker model "%s"; only gpt-5.6-* is allowed (gpt-5.5 is not a permitted fallback).\n' "${CODEX_MODEL}" >&2; exit 2 ;;
+esac
+
 case "$max_workers" in *[!0-9]*|'') printf 'Invalid max-workers\n' >&2; exit 2 ;; esac
 [ "$max_workers" -ge 1 ] && [ "$max_workers" -le 10 ] || {
   printf 'max-workers must be 1-10\n' >&2; exit 2; }

@@ -26,6 +26,20 @@ resolve_codex() {
 resolve_codex || exit 2
 
 # ---------------------------------------------------------------------------
+# Worker model policy.
+# Codex workers run on a confirmed gpt-5.6 model only. CODEX_MODEL must be set
+# by the coordinator from codex-model-preflight.sh. If preflight returned
+# FALLBACK=claude, the coordinator orchestrates with the current Claude model
+# and must NOT call this script: gpt-5.5 is not a permitted worker fallback.
+# ---------------------------------------------------------------------------
+CODEX_MODEL="${CODEX_MODEL:-}"
+case "$CODEX_MODEL" in
+  gpt-5.6-*) ;;
+  '') printf 'FATAL: CODEX_MODEL unset. Run codex-model-preflight.sh first; on FALLBACK=claude do not dispatch Codex workers.\n' >&2; exit 2 ;;
+  *)  printf 'FATAL: refusing worker model "%s"; only gpt-5.6-* is allowed (gpt-5.5 is not a permitted fallback).\n' "$CODEX_MODEL" >&2; exit 2 ;;
+esac
+
+# ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 project_dir="$(git rev-parse --show-toplevel)"
@@ -114,7 +128,7 @@ run_codex() {
   local wt="$1" events="$2" final="$3"; shift 3
   local ec=0
   "$CODEX_BIN" exec --cd "$wt" --sandbox workspace-write \
-    -c approval_policy="never" --skip-git-repo-check --json \
+    -c approval_policy="never" -m "$CODEX_MODEL" --skip-git-repo-check --json \
     --output-last-message "$final" "$@" >"$events" 2>&1 || ec=$?
   return "$ec"
 }
@@ -241,6 +255,7 @@ Leave changes uncommitted. Do NOT edit PROJECT_STATE.md."
 
   # ---- DEBUGGER LOOP ---------------------------------------------------------
   verdict="FAIL"; round=1; dbg_ec=0
+  REVIEW_FAIL=""
 
   while [ "$round" -le "$max_rounds" ]; do
     dbg_events="$run_dir/$task_id-$stamp.dbg-r$round.jsonl"
