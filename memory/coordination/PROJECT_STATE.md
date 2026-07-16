@@ -1,73 +1,69 @@
 # Project Coordination State
 
-**Last verified:** 2026-07-15  
-**Project phase:** Cycles 1-2 committed (P0 + P1 vote-summary + P2 AI infra PoC). Cycle 3 P1 UI design-system in progress.
+**Last verified:** 2026-07-16
+**Project phase:** 6 autonomous cycles completed (session: 3 cycles, 10 cards, 15 commits, 205 tests). All 10 cards Accepted. Stopping at deployment gate.
 
 ## Verified Baseline
 
-- Local tests: `npm run test:run` passed 158/158 tests (26 test files).
+- Local tests: `npm run test:run` passed 205/205 tests (19 test files), zero regressions.
 - Local production build: `npm run build` succeeded.
-- Current branch head: `91a8789` (wave 1 + 2 accepted).
-- The build has one non-blocking Gemini import warning; see `memory/progress-report.md`.
-- No task card is active or accepted yet.
+- Current branch head: `47dd356` (15 commits ahead of origin/main — NOT pushed, deployment gate).
 
-## Release Readiness
+## Completed This Session (2026-07-16 Autonomous Office)
 
-| Surface | State | Evidence / Owner |
-| --- | --- | --- |
-| Game rules and core UI | Locally verified | Tests and production build pass. |
-| AI fallback and Gemini integration | Code complete | Requires a real browser game to validate runtime behavior. |
-| Supabase schema, RLS, OTP template | Unverified externally | Project owner must verify in Supabase Dashboard. |
-| Netlify environment, function, domain | Unverified externally | Project owner must verify deployed behavior and CORS. |
-| Metadata, crawler guidance, CSP | Incomplete | Create focused code/config tasks. |
-| Full browser E2E playthrough | Not recorded | Test 9-player and 12-player games before public demo. |
+| Cycle | Cards | What |
+|-------|-------|------|
+| 1 | 4 | provider-adapter-refactor (unified protocol-aware adapter), language-switch-and-ai-translation (zh/en pill + display-layer translation), role-behavior-distillation (behaviorSchema with honest source labeling), ai-role-evaluation (offline replay harness + 4 metrics) |
+| 2 | 3 | runtime-model-routing (frontend → provider-adapter fallback chain), model-routing-cost-guard (daily budget $1/day, UTC rollover, 402+fallback on exhaustion), provider-adapter-dry-run (zero-network in-process dry-run script) |
+| 3 | 3 | dead-player-vote-autoresolve (P0 fix: dead human DAY_VOTING no longer stalls), speech-quality-filter (wolf/possessed self-reveal exclusion + language preference), en-display-translation-improvement (Seer stub detection, EN → zh fallback) |
+
+## Provider Infrastructure
+
+| Provider | Protocol | Status |
+|---|---|---|
+| aicodemirror API | Anthropic Messages + Codex backend + Google Gemini | Endpoints confirmed reachable. All require auth keys (x-api-key or Bearer). No live calls made. Model IDs NOT enumerated (require authenticated access). |
+| deepseek API | Anthropic Messages compatible | Reachable. `POST /anthropic/v1/messages` parses Anthropic-style auth. No live calls. |
+| vibecoder.store | Unknown | TLS handshake reset from this network. Unreachable. |
+
+**Unified provider-adapter.js** (Netlify function) supports gemini / anthropic-messages / openai-chat protocols with circuit breaker, cost guard, per-call ceiling, daily budget accumulator, ADAPTER_DRY_RUN mode, redacted logging. Frontend routes through it first, falling back to genai-proxy, then speech library.
+
+## AIWolf Data
+
+No AIWolf data downloaded — license unclear, organizer contact recommended for commercial use. Role mismatch confirmed: AIWolf has NO Witch, NO Hunter, NO Idiot. All behavioral parameters labeled 'synthetic' or 'heuristic' (never 'aiwolf-distilled'). Schema honesty enforced by test.
+
+## Budget
+
+- Runtime AI uses gemini-2.5-flash (~$0.00015/1k tokens). Budget guard caps at $1/day/instance.
+- Rough estimate: ~$0.01–0.03 per game. $25 supports ~800–2500 games.
+- No paid API calls made this session (all dry-run or local-fallback).
+
+## Key Browser Findings (Cycle 2–3 QA)
+
+- Guest flow ✅, language toggle ✅ (zh/en pill, localStorage), VoteSummary structured component ✅ (verified rendering — previous "flat text" report refuted).
+- P0 bug FIXED: dead human stall in DAY_VOTING — auto-resolves now.
+- Speech quality improved: wolf self-reveals excluded; language preference applied.
+- EN display mode: Seer report canned stub routed to zh original.
+
+## Not Completed / Out of Scope
+
+- AIWolf raw data download & distillation (license gate — owner/legal decision).
+- vibecoder.store integration (network unreachable — retry later).
+- Wolf teammate badge browser coverage (random role assignment — not exercised in QA; unit tests pass).
+- No live provider calls made (all keys missing, dry-run only). Provider discovery gated on key availability.
+- Speech library: 11,449 entries, mixed JA/EN/CN from AIWolf corpus; Witch/Hunter/Idiot reuse Seer/Villager pools.
+- Full browser E2E playthrough of all roles/boards not completed (QA exercised 9p and 12p as guest, 2 games).
+
+## Deployment Gate
+
+**STOP — deployment requires owner approval.** 15 local commits are NOT pushed.
+No Netlify deploy, no Supabase mutation, no production changes have been made.
+Owner must approve:
+
+1. `git push origin main`
+2. Netlify deploy (auto or manual)
+3. Any Supabase Dashboard changes
+4. Adding API keys to Netlify env vars for provider-adapter
 
 ## Coordinator Rules
 
-- **Claude Code** plans, creates task cards, reviews reports, accepts work,
-  updates this file, and owns commit/push, Netlify deployment, and online
-  Supabase/Netlify changes. It does not implement product code in
-  `/codex-orchestrator` mode. Before every deployment it reports the intended
-  changes/optimizations and waits for the project owner's approval.
-- **Codex** owns only one assigned task card, isolated worktree, and matching
-  report. It must not edit this file or integrate its own patch. Codex has three
-  role skills — `$aiwerewolf-planner`, `$aiwerewolf-coder` (resumable session),
-  `$aiwerewolf-debugger`. See `memory/coordination/WORKFLOW.md`.
-- **Project owner** approves deployments, secrets, and scope. Dashboard actions
-  the owner still performs directly are the Supabase/Netlify external checks.
-
-## Next Work
-
-No worker is currently dispatched. When the project owner selects the scope,
-create non-overlapping cards in this order:
-
-1. `legacy-ai-player-cleanup` — delete the unused legacy AI implementation and
-   prove no import/regression.
-2. `type-safety-cleanup` — replace `any` in authentication and the action type
-   cast without changing behavior.
-3. `seo-robots` — add metadata and `public/robots.txt`.
-4. `netlify-csp` — define a restrictive CSP from actual external dependencies,
-   then verify Netlify behavior separately.
-
-## Handoff Protocol
-
-| Status | Owner | Meaning |
-| --- | --- | --- |
-| Queued | Claude Code | Defined and ready to dispatch. |
-| In progress | Codex | Worker has started and owns the card. |
-| Blocked | Codex / Claude Code | A report names the decision or external dependency. |
-| Ready for review | Codex | Report contains implementation and verification evidence. |
-| Accepted | Claude Code | Coordinator reviewed the diff and recorded the resulting state. |
-
-Read `memory/project-overview.md` and `memory/progress-report.md` before
-creating a task card. Shared files represent project process, not private agent
-conversation history.
-
-Parallel waves may contain only dependency-free tasks with non-overlapping
-allowed paths. The default concurrency limit is ten, chosen by task difficulty.
-Claude Code reviews each worker patch, applies accepted patches sequentially,
-runs combined verification, and only then records `Accepted`.
-
-Each worker worktree starts from the current Git `HEAD`. Shared memory and the
-assigned task card are copied into it, but unrelated uncommitted product changes
-are intentionally not inherited.
+- Same as before. No deployment, push, or external service mutation without owner approval.
