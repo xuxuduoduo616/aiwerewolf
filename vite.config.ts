@@ -6,6 +6,10 @@ export default defineConfig(() => {
   return {
     base: './', // Ensures assets load correctly on any path
     plugins: [react()],
+    test: {
+      // Keep coordination worktrees (.claude/worktrees/*) out of the test run.
+      exclude: ['**/node_modules/**', '**/dist/**', '**/.claude/**'],
+    },
     // NOTE: We intentionally do NOT inject API_KEY into the frontend.
     // The Gemini API key lives ONLY server-side in netlify/functions/genai-proxy.js.
     // The frontend calls the proxy; the key is never shipped to the browser.
