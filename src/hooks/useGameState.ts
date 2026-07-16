@@ -48,6 +48,32 @@ export const shouldAutoResolveVote = (
   me: Pick<Player, 'isAlive' | 'canVote'> | undefined
 ): boolean => phase === GamePhase.DAY_VOTING && !(me?.isAlive && me.canVote);
 
+/**
+ * P0 fix (night-pipeline-exception-safety): every isProcessingAI block must
+ * reset the flag even when an AI call rejects (e.g. the dynamic geminiAdapter
+ * chunk failing to load after a redeploy). Without this, the phase driver
+ * early-returns on isProcessingAI forever and the game wedges on the
+ * "AI正在思考局势..." spinner.
+ *
+ * Never rejects: errors are routed to onError so callers can log a system
+ * line and apply a safe default action; the flag always resets in finally,
+ * and the caller's phase advance after the await runs on both paths.
+ */
+export const runAIPhaseSafely = async (
+  setProcessing: (value: boolean) => void,
+  task: () => Promise<void>,
+  onError: (error: unknown) => void,
+): Promise<void> => {
+  setProcessing(true);
+  try {
+    await task();
+  } catch (error) {
+    onError(error);
+  } finally {
+    setProcessing(false);
+  }
+};
+
 export interface AuthContext {
   session: SupabaseSession | null;
   isGuest: boolean;
@@ -347,56 +373,68 @@ export function useGameState(authContext: AuthContext) {
     const humanWolf = me?.role === Role.WEREWOLF && me.isAlive;
     const wolves = players.filter(player => player.role === Role.WEREWOLF && player.isAlive);
     if (wolfChat.length === 0 && wolves.length > 0) {
-      const chat = await generateWolfChat(wolves, players, logs, Math.max(1, roundCount), voteRecords);
-      setWolfChat(chat);
+      try {
+        const chat = await generateWolfChat(wolves, players, logs, Math.max(1, roundCount), voteRecords);
+        setWolfChat(chat);
+      } catch {
+        // Wolf chat is cosmetic — a failed AI call must never block the night.
+      }
     }
     if (humanWolf) return;
 
-    setIsProcessingAI(true);
-    const leader = wolves[0];
-    const action = leader ? await generateAIAction(leader, players, logs, 'KILL', voteRecords) : { targetId: null };
-    const fallback = players.find(player => player.isAlive && player.role !== Role.WEREWOLF);
-    const targetId = action.targetId || fallback?.id || null;
-    if (targetId) setNightState(prev => ({ ...prev, wolfKillId: targetId }));
-    setIsProcessingAI(false);
+    await runAIPhaseSafely(setIsProcessingAI, async () => {
+      const leader = wolves[0];
+      const action = leader ? await generateAIAction(leader, players, logs, 'KILL', voteRecords) : { targetId: null };
+      const fallback = players.find(player => player.isAlive && player.role !== Role.WEREWOLF);
+      const targetId = action.targetId || fallback?.id || null;
+      if (targetId) setNightState(prev => ({ ...prev, wolfKillId: targetId }));
+    }, () => {
+      addLog('AI error. Default wolf target used.', true, undefined, 'AI出错，狼队采用保底刀口。', 'system');
+      const fallback = players.find(player => player.isAlive && player.role !== Role.WEREWOLF);
+      if (fallback) setNightState(prev => ({ ...prev, wolfKillId: fallback.id }));
+    });
     setPhase(GamePhase.NIGHT_SEER);
   };
 
   const handleSeerPhase = async () => {
     if (me?.role === Role.SEER && me.isAlive) return;
-    setIsProcessingAI(true);
-    const seer = players.find(player => player.role === Role.SEER && player.isAlive);
-    if (seer) {
-      const action = await generateAIAction(seer, players, logs, 'CHECK', voteRecords);
-      const target = players.find(player => player.id === action.targetId);
-      if (target) setAiSeerLastCheck({ targetId: target.id, isGood: target.role !== Role.WEREWOLF });
-    }
-    setIsProcessingAI(false);
+    await runAIPhaseSafely(setIsProcessingAI, async () => {
+      const seer = players.find(player => player.role === Role.SEER && player.isAlive);
+      if (seer) {
+        const action = await generateAIAction(seer, players, logs, 'CHECK', voteRecords);
+        const target = players.find(player => player.id === action.targetId);
+        if (target) setAiSeerLastCheck({ targetId: target.id, isGood: target.role !== Role.WEREWOLF });
+      }
+    }, () => {
+      addLog('AI error. Seer check skipped.', true, undefined, 'AI出错，本晚查验跳过。', 'system');
+    });
     setPhase(GamePhase.NIGHT_WITCH);
   };
 
   const handleWitchPhase = async () => {
     if (me?.role === Role.WITCH && me.isAlive) return;
-    setIsProcessingAI(true);
-    const witch = players.find(player => player.role === Role.WITCH && player.isAlive);
-    if (witch) {
-      let nextNight = { ...nightState };
-      let nextWitch = { ...witchStatus };
-      const killedPlayer = players.find(player => player.id === nightState.wolfKillId);
-      if (nightState.wolfKillId && witchStatus.hasSave && killedPlayer?.role !== Role.WEREWOLF && Math.random() > 0.45) {
-        nextNight = { ...nextNight, witchSaved: true };
-        nextWitch = { ...nextWitch, hasSave: false };
-      } else if (witchStatus.hasPoison && Math.random() > 0.72) {
-        const action = await generateAIAction(witch, players, logs, 'POISON', voteRecords);
-        if (action.targetId && action.targetId !== nightState.wolfKillId) {
-          nextNight = { ...nextNight, witchPoisonId: action.targetId };
-          nextWitch = { ...nextWitch, hasPoison: false };
+    await runAIPhaseSafely(setIsProcessingAI, async () => {
+      const witch = players.find(player => player.role === Role.WITCH && player.isAlive);
+      if (witch) {
+        let nextNight = { ...nightState };
+        let nextWitch = { ...witchStatus };
+        const killedPlayer = players.find(player => player.id === nightState.wolfKillId);
+        if (nightState.wolfKillId && witchStatus.hasSave && killedPlayer?.role !== Role.WEREWOLF && Math.random() > 0.45) {
+          nextNight = { ...nextNight, witchSaved: true };
+          nextWitch = { ...nextWitch, hasSave: false };
+        } else if (witchStatus.hasPoison && Math.random() > 0.72) {
+          const action = await generateAIAction(witch, players, logs, 'POISON', voteRecords);
+          if (action.targetId && action.targetId !== nightState.wolfKillId) {
+            nextNight = { ...nextNight, witchPoisonId: action.targetId };
+            nextWitch = { ...nextWitch, hasPoison: false };
+          }
         }
+        setNightState(nextNight);
+        setWitchStatus(nextWitch);
       }
-      setNightState(nextNight);
-      setWitchStatus(nextWitch);
-    }
-    setIsProcessingAI(false);
+    }, () => {
+      addLog('AI error. Witch action skipped.', true, undefined, 'AI出错，女巫本晚不用药。', 'system');
+    });
     setPhase(GamePhase.DAY_ANNOUNCE);
   };
 
@@ -495,108 +533,113 @@ export function useGameState(authContext: AuthContext) {
   // Human alive? Wait for them to type
   if (nextSpeaker.isHuman) return;
 
-    setIsProcessingAI(true);
-    const seerInfo = nextSpeaker.role === Role.SEER ? aiSeerLastCheck : null;
-    const response = await generateAIDialogue(
-      nextSpeaker,
-      players,
-      logs,
-      GamePhase.DAY_DISCUSSION,
-      deadThisRound,
-      Math.max(1, roundCount),
-      seerInfo,
-      voteRecords,
-      nightState
-    );
-    addLog(response.en, false, nextSpeaker.id, response.zh, 'speech');
-    setIsProcessingAI(false);
+    await runAIPhaseSafely(setIsProcessingAI, async () => {
+      const seerInfo = nextSpeaker.role === Role.SEER ? aiSeerLastCheck : null;
+      const response = await generateAIDialogue(
+        nextSpeaker,
+        players,
+        logs,
+        GamePhase.DAY_DISCUSSION,
+        deadThisRound,
+        Math.max(1, roundCount),
+        seerInfo,
+        voteRecords,
+        nightState
+      );
+      addLog(response.en, false, nextSpeaker.id, response.zh, 'speech');
+    }, () => {
+      addLog(`Player ${nextSpeaker.id} speech skipped (AI error).`, true, undefined, `AI出错，${nextSpeaker.id}号发言跳过。`, 'system');
+    });
     setCurrentSpeaker(null);
   };
 
   const finishVote = async (humanTargetId: number | null) => {
-    setIsProcessingAI(true);
-    const votes: Record<number, number> = {};
-    const votesByVoter: Record<number, number | null> = {};
-    const humanCanVote = Boolean(me?.isAlive && me.canVote);
+    await runAIPhaseSafely(setIsProcessingAI, async () => {
+      const votes: Record<number, number> = {};
+      const votesByVoter: Record<number, number | null> = {};
+      const humanCanVote = Boolean(me?.isAlive && me.canVote);
 
-    if (humanCanVote && humanTargetId) {
-      votes[humanTargetId] = (votes[humanTargetId] || 0) + 1;
-      votesByVoter[MY_PLAYER_ID] = humanTargetId;
-      addLog(`You voted Player ${humanTargetId}.`, true, undefined, `你投给了${humanTargetId}号。`, 'vote');
-    } else {
-      votesByVoter[MY_PLAYER_ID] = null;
-      addLog('You have no vote or abstained.', true, undefined, '你无票或弃票。', 'vote');
-    }
+      if (humanCanVote && humanTargetId) {
+        votes[humanTargetId] = (votes[humanTargetId] || 0) + 1;
+        votesByVoter[MY_PLAYER_ID] = humanTargetId;
+        addLog(`You voted Player ${humanTargetId}.`, true, undefined, `你投给了${humanTargetId}号。`, 'vote');
+      } else {
+        votesByVoter[MY_PLAYER_ID] = null;
+        addLog('You have no vote or abstained.', true, undefined, '你无票或弃票。', 'vote');
+      }
 
-    const aiVoters = players.filter(player => player.isAlive && !player.isHuman && player.canVote);
-    for (const voter of aiVoters) {
-      await delay(180);
-      const action = await generateAIAction(voter, players, logs, 'VOTE', voteRecords);
-      votesByVoter[voter.id] = action.targetId;
-      if (action.targetId) votes[action.targetId] = (votes[action.targetId] || 0) + 1;
-    }
+      const aiVoters = players.filter(player => player.isAlive && !player.isHuman && player.canVote);
+      for (const voter of aiVoters) {
+        await delay(180);
+        let targetId: number | null = null;
+        try {
+          targetId = (await generateAIAction(voter, players, logs, 'VOTE', voteRecords)).targetId;
+        } catch {
+          // Failed AI vote counts as abstain — keep the tally moving.
+        }
+        votesByVoter[voter.id] = targetId;
+        if (targetId) votes[targetId] = (votes[targetId] || 0) + 1;
+      }
 
-    const newVoteRecords = createVoteRecords(Math.max(1, roundCount), votesByVoter);
-    setVoteRecords(prev => [...prev, ...newVoteRecords]);
-    addLog(
-      `Vote record: ${newVoteRecords.map(v => `${v.voterId}->${v.targetId || 'skip'}`).join(', ')}`,
-      true,
-      undefined,
-      `票型：${newVoteRecords.map(v => `${v.voterId}号→${v.targetId ? `${v.targetId}号` : '弃票'}`).join('，')}`,
-      'vote'
-    );
+      const newVoteRecords = createVoteRecords(Math.max(1, roundCount), votesByVoter);
+      setVoteRecords(prev => [...prev, ...newVoteRecords]);
+      addLog(
+        `Vote record: ${newVoteRecords.map(v => `${v.voterId}->${v.targetId || 'skip'}`).join(', ')}`,
+        true,
+        undefined,
+        `票型：${newVoteRecords.map(v => `${v.voterId}号→${v.targetId ? `${v.targetId}号` : '弃票'}`).join('，')}`,
+        'vote'
+      );
 
-    const eliminatedPlayerId = resolveVoteResult(votes);
-    if (!eliminatedPlayerId) {
-      addLog('Tie vote. No one is exiled.', true, undefined, '平票，无人出局。', 'vote');
-      setIsProcessingAI(false);
-      setPhase(GamePhase.NIGHT_START);
-      return;
-    }
-
-    const target = players.find(player => player.id === eliminatedPlayerId);
-    const outcome = applyElimination(players, eliminatedPlayerId, 'VOTE');
-    setPlayers(outcome.players);
-    if (outcome.sparedByIdiot) {
-      addLog(`Player ${eliminatedPlayerId} reveals Idiot and survives.`, true, undefined, `${eliminatedPlayerId}号白痴翻牌免死，但之后失去投票权。`, 'action');
-      setIsProcessingAI(false);
-      setPhase(GamePhase.NIGHT_START);
-      return;
-    }
-
-    addLog(`Player ${eliminatedPlayerId} was exiled.`, true, undefined, `${eliminatedPlayerId}号被放逐出局。`, 'vote');
-    if (outcome.winner) {
-      setWinner(outcome.winner);
-      setPhase(GamePhase.GAME_OVER);
-      setIsProcessingAI(false);
-      return;
-    }
-
-    if (target?.role === Role.HUNTER) {
-      if (target.isHuman) {
-        setPendingHunterId(target.id);
-        setHunterReturnPhase(GamePhase.NIGHT_START);
-        setPhase(GamePhase.DAY_HUNTER_SHOT);
-        setIsProcessingAI(false);
+      const eliminatedPlayerId = resolveVoteResult(votes);
+      if (!eliminatedPlayerId) {
+        addLog('Tie vote. No one is exiled.', true, undefined, '平票，无人出局。', 'vote');
+        setPhase(GamePhase.NIGHT_START);
         return;
       }
-      const aliveTargets = outcome.players.filter(player => player.isAlive && player.id !== target.id);
-      const shot = aliveTargets[Math.floor(Math.random() * aliveTargets.length)];
-      if (shot) {
-        const shotOutcome = applyElimination(outcome.players, shot.id, 'HUNTER');
-        addLog(`Hunter shoots Player ${shot.id}.`, true, undefined, `猎人开枪带走${shot.id}号。`, 'action');
-        setPlayers(shotOutcome.players);
-        if (shotOutcome.winner) {
-          setWinner(shotOutcome.winner);
-          setPhase(GamePhase.GAME_OVER);
-          setIsProcessingAI(false);
+
+      const target = players.find(player => player.id === eliminatedPlayerId);
+      const outcome = applyElimination(players, eliminatedPlayerId, 'VOTE');
+      setPlayers(outcome.players);
+      if (outcome.sparedByIdiot) {
+        addLog(`Player ${eliminatedPlayerId} reveals Idiot and survives.`, true, undefined, `${eliminatedPlayerId}号白痴翻牌免死，但之后失去投票权。`, 'action');
+        setPhase(GamePhase.NIGHT_START);
+        return;
+      }
+
+      addLog(`Player ${eliminatedPlayerId} was exiled.`, true, undefined, `${eliminatedPlayerId}号被放逐出局。`, 'vote');
+      if (outcome.winner) {
+        setWinner(outcome.winner);
+        setPhase(GamePhase.GAME_OVER);
+        return;
+      }
+
+      if (target?.role === Role.HUNTER) {
+        if (target.isHuman) {
+          setPendingHunterId(target.id);
+          setHunterReturnPhase(GamePhase.NIGHT_START);
+          setPhase(GamePhase.DAY_HUNTER_SHOT);
           return;
         }
+        const aliveTargets = outcome.players.filter(player => player.isAlive && player.id !== target.id);
+        const shot = aliveTargets[Math.floor(Math.random() * aliveTargets.length)];
+        if (shot) {
+          const shotOutcome = applyElimination(outcome.players, shot.id, 'HUNTER');
+          addLog(`Hunter shoots Player ${shot.id}.`, true, undefined, `猎人开枪带走${shot.id}号。`, 'action');
+          setPlayers(shotOutcome.players);
+          if (shotOutcome.winner) {
+            setWinner(shotOutcome.winner);
+            setPhase(GamePhase.GAME_OVER);
+            return;
+          }
+        }
       }
-    }
 
-    setIsProcessingAI(false);
-    setPhase(GamePhase.NIGHT_START);
+      setPhase(GamePhase.NIGHT_START);
+    }, () => {
+      addLog('AI error during voting. Night begins.', true, undefined, 'AI投票处理出错，直接进入夜晚。', 'system');
+      setPhase(GamePhase.NIGHT_START);
+    });
   };
 
   const handleHumanSpeechSubmit = () => {

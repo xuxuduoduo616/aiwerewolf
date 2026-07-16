@@ -21,14 +21,24 @@ const isLocalVite = () => {
   return new Set(['5173', '4173', '4174', '4175']).has(window.location.port);
 };
 
+const FETCH_TIMEOUT_MS = 12000;
+
+// Bounded timeout so a dead network path can never hang the AI pipeline.
+// AbortSignal.timeout is missing in some older browsers → no signal there.
+const timeoutSignal = (): AbortSignal | undefined =>
+  typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function'
+    ? AbortSignal.timeout(FETCH_TIMEOUT_MS)
+    : undefined;
+
 // POST a JSON body and return response.text, or '' on any failure
-// (non-OK status, network error, invalid JSON, missing text).
+// (non-OK status, network error, timeout abort, invalid JSON, missing text).
 const postForText = async (endpoint: string, body: Record<string, unknown>): Promise<string> => {
   try {
     const res = await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
+      signal: timeoutSignal(),
     });
     if (!res.ok) return '';
     const json = await res.json();

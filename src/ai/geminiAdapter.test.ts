@@ -156,6 +156,44 @@ describe('local Vite guard', () => {
   });
 });
 
+describe('fetch timeout wiring (night-pipeline-exception-safety)', () => {
+  it('passes a 12s bounded AbortSignal to every fetch', async () => {
+    const timeoutSpy = vi.spyOn(AbortSignal, 'timeout');
+    fetchMock
+      .mockResolvedValueOnce(errorResponse(500))
+      .mockResolvedValueOnce(okResponse({ text: 'ok' }));
+
+    await generateWithGemini(req);
+
+    expect(timeoutSpy).toHaveBeenCalledWith(12000);
+    for (const [, init] of fetchMock.mock.calls) {
+      expect(init.signal).toBeInstanceOf(AbortSignal);
+    }
+    timeoutSpy.mockRestore();
+  });
+
+  it('omits the signal when AbortSignal.timeout is unavailable (older browsers)', async () => {
+    const original = AbortSignal.timeout;
+    // Simulate an older browser without static AbortSignal.timeout.
+    (AbortSignal as unknown as { timeout?: unknown }).timeout = undefined;
+    try {
+      fetchMock.mockResolvedValueOnce(okResponse({ text: 'ok' }));
+
+      expect(await generateWithGemini(req)).toBe('ok');
+      expect(fetchMock.mock.calls[0][1].signal).toBeUndefined();
+    } finally {
+      AbortSignal.timeout = original;
+    }
+  });
+
+  it("returns '' when the fetch aborts on timeout (speech library takes over)", async () => {
+    fetchMock.mockRejectedValue(new DOMException('The operation timed out.', 'TimeoutError'));
+
+    expect(await generateWithGemini(req)).toBe('');
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+});
+
 describe('caller-facing failure contract (aiOrchestrator consumers)', () => {
   it('generateSpeechWithLLM returns parsed zh/en on success', async () => {
     fetchMock.mockResolvedValueOnce(okResponse({ text: '{"zh":"你好","en":"Hello"}' }));

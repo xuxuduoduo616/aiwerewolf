@@ -40,14 +40,32 @@ const fmtPlayers = (viewer: Player, players: Player[]) =>
     return `${id}[${status}][${role}]`;
   }).join(' ');
 
-const generateSpeechWithLLM = async (systemPrompt: string, userPrompt: string) => {
-  const { generateSpeechWithLLM: generate } = await import('./geminiAdapter');
-  return generate(systemPrompt, userPrompt);
+// The dynamic imports below can reject (Vite dev module invalidation, stale
+// hashed chunk after a production redeploy). Treat that exactly like an LLM
+// failure so the library/hardcoded fallback layers take over instead of
+// wedging the night pipeline with an unhandled rejection.
+const generateSpeechWithLLM = async (
+  systemPrompt: string,
+  userPrompt: string,
+): Promise<{ zh: string; en: string } | null> => {
+  try {
+    const { generateSpeechWithLLM: generate } = await import('./geminiAdapter');
+    return await generate(systemPrompt, userPrompt);
+  } catch {
+    return null;
+  }
 };
 
-const generateActionWithLLM = async (prompt: string, validTargets: number[]) => {
-  const { generateActionWithLLM: generate } = await import('./geminiAdapter');
-  return generate(prompt, validTargets);
+const generateActionWithLLM = async (
+  prompt: string,
+  validTargets: number[],
+): Promise<{ targetId: number | null; reason?: string }> => {
+  try {
+    const { generateActionWithLLM: generate } = await import('./geminiAdapter');
+    return await generate(prompt, validTargets);
+  } catch {
+    return { targetId: null };
+  }
 };
 
 // ─── reset ─────────────────────────────────────────────────────────────────
