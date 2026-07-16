@@ -8,8 +8,24 @@
 // final actions. A profile only tunes prompt emphasis and stance thresholds.
 
 import { Role } from '../types';
+import type {
+  ClaimTiming,
+  RoleBehaviorParams,
+  SourcedClaimTiming,
+  SourcedNumber,
+} from '../ai/behaviorSchema';
 
 export type BehaviorVariant = 'cautious' | 'balanced' | 'aggressive';
+
+// Source-tag helpers. NO AIWolf data has been downloaded (log reuse license is
+// unresolved — see memory/coordination/reports/p2-aiwolf-feasibility.md), so no
+// value below may be labeled 'aiwolf-distilled'. Werewolf/Villager/Seer use
+// 'heuristic' (hand-authored, distillation pending license confirmation);
+// Witch/Hunter/Idiot have no AIWolf equivalent and use 'synthetic' templates.
+const heuristic = (value: number): SourcedNumber => ({ value, source: 'heuristic' });
+const synthetic = (value: number): SourcedNumber => ({ value, source: 'synthetic' });
+const heuristicClaim = (value: ClaimTiming): SourcedClaimTiming => ({ value, source: 'heuristic' });
+const syntheticClaim = (value: ClaimTiming): SourcedClaimTiming => ({ value, source: 'synthetic' });
 
 export interface RoleBehaviorProfile {
   role: Role;
@@ -26,6 +42,8 @@ export interface RoleBehaviorProfile {
   bluffProbability: number;
   /** Brief role-specific instruction appended to the system prompt. */
   systemPromptAddendum: string;
+  /** Source-tagged behavioral parameters (see src/ai/behaviorSchema.ts). */
+  params: RoleBehaviorParams;
 }
 
 // Profiles are keyed by role, then variant. Cautious vs aggressive for the same
@@ -41,6 +59,11 @@ export const ROLE_BEHAVIOR_PROFILES: Record<Role, Record<BehaviorVariant, RoleBe
       voteRationality: 0.85,
       bluffProbability: 0,
       systemPromptAddendum: '你是稳健的预言家，优先积累查验信息，不轻易开票，避免暴露给狼队。',
+      params: {
+        claimTiming: heuristicClaim('when-pressured'),
+        voteFollowsSuspicion: heuristic(0.85),
+        speechAggressiveness: heuristic(0.3),
+      },
     },
     balanced: {
       role: Role.SEER,
@@ -51,6 +74,11 @@ export const ROLE_BEHAVIOR_PROFILES: Record<Role, Record<BehaviorVariant, RoleBe
       voteRationality: 0.75,
       bluffProbability: 0,
       systemPromptAddendum: '你是标准预言家，按节奏跳身份、报查验，带好人推狼。',
+      params: {
+        claimTiming: heuristicClaim('day2'),
+        voteFollowsSuspicion: heuristic(0.75),
+        speechAggressiveness: heuristic(0.55),
+      },
     },
     aggressive: {
       role: Role.SEER,
@@ -61,6 +89,11 @@ export const ROLE_BEHAVIOR_PROFILES: Record<Role, Record<BehaviorVariant, RoleBe
       voteRationality: 0.6,
       bluffProbability: 0,
       systemPromptAddendum: '你是强势预言家，果断起跳报查杀，主导票型，压制悍跳狼。',
+      params: {
+        claimTiming: heuristicClaim('day1'),
+        voteFollowsSuspicion: heuristic(0.6),
+        speechAggressiveness: heuristic(0.85),
+      },
     },
   },
   [Role.WITCH]: {
@@ -73,6 +106,13 @@ export const ROLE_BEHAVIOR_PROFILES: Record<Role, Record<BehaviorVariant, RoleBe
       voteRationality: 0.85,
       bluffProbability: 0,
       systemPromptAddendum: '你是保守女巫，倾向留药，只在明确神职被刀时才动救药，毒药慎用。',
+      params: {
+        claimTiming: syntheticClaim('never'),
+        voteFollowsSuspicion: synthetic(0.85),
+        speechAggressiveness: synthetic(0.25),
+        saveThreshold: synthetic(0.3),
+        poisonThreshold: synthetic(0.85),
+      },
     },
     balanced: {
       role: Role.WITCH,
@@ -83,6 +123,13 @@ export const ROLE_BEHAVIOR_PROFILES: Record<Role, Record<BehaviorVariant, RoleBe
       voteRationality: 0.75,
       bluffProbability: 0,
       systemPromptAddendum: '你是标准女巫，权衡刀口价值决定是否救，锁定狼人后果断用毒。',
+      params: {
+        claimTiming: syntheticClaim('when-pressured'),
+        voteFollowsSuspicion: synthetic(0.75),
+        speechAggressiveness: synthetic(0.5),
+        saveThreshold: synthetic(0.55),
+        poisonThreshold: synthetic(0.7),
+      },
     },
     aggressive: {
       role: Role.WITCH,
@@ -93,6 +140,13 @@ export const ROLE_BEHAVIOR_PROFILES: Record<Role, Record<BehaviorVariant, RoleBe
       voteRationality: 0.6,
       bluffProbability: 0,
       systemPromptAddendum: '你是激进女巫，倾向早用药推进节奏，锁定嫌疑就毒。',
+      params: {
+        claimTiming: syntheticClaim('day2'),
+        voteFollowsSuspicion: synthetic(0.6),
+        speechAggressiveness: synthetic(0.8),
+        saveThreshold: synthetic(0.8),
+        poisonThreshold: synthetic(0.55),
+      },
     },
   },
   [Role.HUNTER]: {
@@ -105,6 +159,12 @@ export const ROLE_BEHAVIOR_PROFILES: Record<Role, Record<BehaviorVariant, RoleBe
       voteRationality: 0.85,
       bluffProbability: 0,
       systemPromptAddendum: '你是低调猎人，隐藏身份到关键时刻，出枪只带高置信度的狼。',
+      params: {
+        claimTiming: syntheticClaim('never'),
+        voteFollowsSuspicion: synthetic(0.85),
+        speechAggressiveness: synthetic(0.3),
+        shootThreshold: synthetic(0.8),
+      },
     },
     balanced: {
       role: Role.HUNTER,
@@ -115,6 +175,12 @@ export const ROLE_BEHAVIOR_PROFILES: Record<Role, Record<BehaviorVariant, RoleBe
       voteRationality: 0.75,
       bluffProbability: 0,
       systemPromptAddendum: '你是标准猎人，视局势亮牌施压，出枪目标以证据为准。',
+      params: {
+        claimTiming: syntheticClaim('when-pressured'),
+        voteFollowsSuspicion: synthetic(0.75),
+        speechAggressiveness: synthetic(0.55),
+        shootThreshold: synthetic(0.65),
+      },
     },
     aggressive: {
       role: Role.HUNTER,
@@ -125,6 +191,12 @@ export const ROLE_BEHAVIOR_PROFILES: Record<Role, Record<BehaviorVariant, RoleBe
       voteRationality: 0.6,
       bluffProbability: 0,
       systemPromptAddendum: '你是强势猎人，公开亮牌用枪压制狼队，敢于强推可疑位。',
+      params: {
+        claimTiming: syntheticClaim('day1'),
+        voteFollowsSuspicion: synthetic(0.6),
+        speechAggressiveness: synthetic(0.8),
+        shootThreshold: synthetic(0.45),
+      },
     },
   },
   [Role.VILLAGER]: {
@@ -137,6 +209,11 @@ export const ROLE_BEHAVIOR_PROFILES: Record<Role, Record<BehaviorVariant, RoleBe
       voteRationality: 0.85,
       bluffProbability: 0,
       systemPromptAddendum: '你是稳健村民，先观察盘逻辑，证据充分才表态和投票。',
+      params: {
+        claimTiming: heuristicClaim('never'),
+        voteFollowsSuspicion: heuristic(0.85),
+        speechAggressiveness: heuristic(0.25),
+      },
     },
     balanced: {
       role: Role.VILLAGER,
@@ -147,6 +224,11 @@ export const ROLE_BEHAVIOR_PROFILES: Record<Role, Record<BehaviorVariant, RoleBe
       voteRationality: 0.75,
       bluffProbability: 0,
       systemPromptAddendum: '你是标准村民，正常表水、盘逻辑，跟随可信预言家推票。',
+      params: {
+        claimTiming: heuristicClaim('never'),
+        voteFollowsSuspicion: heuristic(0.7),
+        speechAggressiveness: heuristic(0.5),
+      },
     },
     aggressive: {
       role: Role.VILLAGER,
@@ -157,6 +239,11 @@ export const ROLE_BEHAVIOR_PROFILES: Record<Role, Record<BehaviorVariant, RoleBe
       voteRationality: 0.6,
       bluffProbability: 0,
       systemPromptAddendum: '你是冲锋村民，主动带节奏、抛怀疑，敢于领投推动出局。',
+      params: {
+        claimTiming: heuristicClaim('never'),
+        voteFollowsSuspicion: heuristic(0.55),
+        speechAggressiveness: heuristic(0.8),
+      },
     },
   },
   [Role.WEREWOLF]: {
@@ -169,6 +256,12 @@ export const ROLE_BEHAVIOR_PROFILES: Record<Role, Record<BehaviorVariant, RoleBe
       voteRationality: 0.85,
       bluffProbability: 0.15,
       systemPromptAddendum: '你是深水狼，尽量伪装普通好人，倒钩藏身，少跳身份多埋点。',
+      params: {
+        claimTiming: heuristicClaim('never'),
+        voteFollowsSuspicion: heuristic(0.8),
+        speechAggressiveness: heuristic(0.25),
+        firstNightTargetPriority: heuristic(0.6),
+      },
     },
     balanced: {
       role: Role.WEREWOLF,
@@ -179,6 +272,12 @@ export const ROLE_BEHAVIOR_PROFILES: Record<Role, Record<BehaviorVariant, RoleBe
       voteRationality: 0.7,
       bluffProbability: 0.45,
       systemPromptAddendum: '你是标准狼，按狼队策略冲锋或悍跳，制造好人内斗。',
+      params: {
+        claimTiming: heuristicClaim('when-pressured'),
+        voteFollowsSuspicion: heuristic(0.65),
+        speechAggressiveness: heuristic(0.55),
+        firstNightTargetPriority: heuristic(0.8),
+      },
     },
     aggressive: {
       role: Role.WEREWOLF,
@@ -189,6 +288,12 @@ export const ROLE_BEHAVIOR_PROFILES: Record<Role, Record<BehaviorVariant, RoleBe
       voteRationality: 0.55,
       bluffProbability: 0.85,
       systemPromptAddendum: '你是悍跳狼，果断悍跳神职，强行倒推真预言家，主导错误票型。',
+      params: {
+        claimTiming: heuristicClaim('day1'),
+        voteFollowsSuspicion: heuristic(0.5),
+        speechAggressiveness: heuristic(0.9),
+        firstNightTargetPriority: heuristic(0.95),
+      },
     },
   },
   // IDIOT is not a driven behavioral role here; provide a neutral profile set so
@@ -203,6 +308,11 @@ export const ROLE_BEHAVIOR_PROFILES: Record<Role, Record<BehaviorVariant, RoleBe
       voteRationality: 0.8,
       bluffProbability: 0,
       systemPromptAddendum: '你是白痴，像普通好人发言，被抗推时翻牌免死。',
+      params: {
+        claimTiming: syntheticClaim('when-pressured'),
+        voteFollowsSuspicion: synthetic(0.8),
+        speechAggressiveness: synthetic(0.35),
+      },
     },
     balanced: {
       role: Role.IDIOT,
@@ -213,6 +323,11 @@ export const ROLE_BEHAVIOR_PROFILES: Record<Role, Record<BehaviorVariant, RoleBe
       voteRationality: 0.75,
       bluffProbability: 0,
       systemPromptAddendum: '你是白痴，像普通好人发言，被抗推时翻牌免死。',
+      params: {
+        claimTiming: syntheticClaim('when-pressured'),
+        voteFollowsSuspicion: synthetic(0.75),
+        speechAggressiveness: synthetic(0.5),
+      },
     },
     aggressive: {
       role: Role.IDIOT,
@@ -223,6 +338,11 @@ export const ROLE_BEHAVIOR_PROFILES: Record<Role, Record<BehaviorVariant, RoleBe
       voteRationality: 0.7,
       bluffProbability: 0,
       systemPromptAddendum: '你是白痴，像普通好人发言，被抗推时翻牌免死。',
+      params: {
+        claimTiming: syntheticClaim('when-pressured'),
+        voteFollowsSuspicion: synthetic(0.7),
+        speechAggressiveness: synthetic(0.65),
+      },
     },
   },
 };

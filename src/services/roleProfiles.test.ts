@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { Role } from '../types';
 import {
+  isValidRoleBehaviorParams,
+  type RoleBehaviorParams,
+  type SourcedNumber,
+} from '../ai/behaviorSchema';
+import {
   ROLE_BEHAVIOR_PROFILES,
   getRoleBehaviorProfile,
   type BehaviorVariant,
@@ -62,6 +67,55 @@ describe('roleProfiles', () => {
         ),
       );
       expect(addenda.size).toBe(3);
+    }
+  });
+
+  // --- Source-tagged behavioral params (src/ai/behaviorSchema.ts) ---
+
+  const NUMERIC_PARAM_KEYS: Array<keyof RoleBehaviorParams> = [
+    'voteFollowsSuspicion',
+    'speechAggressiveness',
+    'firstNightTargetPriority',
+    'saveThreshold',
+    'poisonThreshold',
+    'shootThreshold',
+  ];
+
+  it('every profile carries schema-valid behavioral params', () => {
+    for (const role of Object.values(Role)) {
+      for (const variant of ['cautious', 'balanced', 'aggressive'] as BehaviorVariant[]) {
+        const profile = getRoleBehaviorProfile(role, variant);
+        expect(isValidRoleBehaviorParams(role, profile.params)).toBe(true);
+      }
+    }
+  });
+
+  it('labels nothing aiwolf-distilled while no AIWolf data has been acquired', () => {
+    for (const byVariant of Object.values(ROLE_BEHAVIOR_PROFILES)) {
+      for (const profile of Object.values(byVariant)) {
+        const sources = [
+          profile.params.claimTiming.source,
+          ...NUMERIC_PARAM_KEYS.map(
+            (k) => (profile.params[k] as SourcedNumber | undefined)?.source,
+          ).filter((s): s is SourcedNumber['source'] => s !== undefined),
+        ];
+        for (const source of sources) {
+          expect(source).not.toBe('aiwolf-distilled');
+        }
+      }
+    }
+  });
+
+  it('cautious vs aggressive params differ by >= 0.2 in at least 2 numerics per driven role', () => {
+    for (const role of DRIVEN_ROLES) {
+      const cautious = getRoleBehaviorProfile(role, 'cautious').params;
+      const aggressive = getRoleBehaviorProfile(role, 'aggressive').params;
+      const bigDiffs = NUMERIC_PARAM_KEYS.filter((k) => {
+        const a = cautious[k] as SourcedNumber | undefined;
+        const b = aggressive[k] as SourcedNumber | undefined;
+        return a !== undefined && b !== undefined && Math.abs(a.value - b.value) >= 0.2;
+      });
+      expect(bigDiffs.length).toBeGreaterThanOrEqual(2);
     }
   });
 });
