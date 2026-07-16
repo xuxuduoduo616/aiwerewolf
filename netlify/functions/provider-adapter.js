@@ -196,6 +196,60 @@ const isProviderOpen = (provider, now = Date.now()) => getBreaker(provider).open
 
 const resetProviderState = () => breakerState.clear();
 
+// --- Daily budget accumulator --------------------------------------------------
+// Cumulative estimated spend layered on top of the per-call cost ceiling. The
+// ceiling is env-configurable via ADAPTER_DAILY_BUDGET_USD (conservative $1/day
+// default) and the accumulator resets when the UTC date changes. LIMITATION:
+// like the circuit breaker and rate limiter, this state is module-level, i.e.
+// per warm Lambda instance only — cold starts reset it and parallel instances
+// do not share it. It is a per-instance soft guard, not global billing truth.
+
+const DEFAULT_DAILY_BUDGET_USD = 1.0;
+
+const getDailyBudgetUsd = () => {
+  const configured = Number(process.env.ADAPTER_DAILY_BUDGET_USD);
+  return Number.isFinite(configured) && configured > 0 ? configured : DEFAULT_DAILY_BUDGET_USD;
+};
+
+const utcDateOf = (now) => new Date(now).toISOString().slice(0, 10);
+
+const budgetState = { utcDate: utcDateOf(Date.now()), spentUsd: 0 };
+
+// Request counts per provider/model since instance start, keyed "provider:model".
+const requestCounters = new Map();
+
+const rollBudgetDay = (now) => {
+  const today = utcDateOf(now);
+  if (budgetState.utcDate !== today) {
+    budgetState.utcDate = today;
+    budgetState.spentUsd = 0;
+  }
+};
+
+const getBudgetRemaining = (now = Date.now()) => {
+  rollBudgetDay(now);
+  return Math.max(0, getDailyBudgetUsd() - budgetState.spentUsd);
+};
+
+const recordBudgetSpend = (usd, now = Date.now()) => {
+  rollBudgetDay(now);
+  budgetState.spentUsd += usd;
+};
+
+const countRequest = (provider) => {
+  const cfg = PROVIDER_REGISTRY[provider];
+  const key = `${provider}:${(cfg && cfg.model) || provider}`;
+  requestCounters.set(key, (requestCounters.get(key) || 0) + 1);
+};
+
+const getRequestCounters = () => Object.fromEntries(requestCounters);
+
+const resetBudgetState = (now = Date.now()) => {
+  budgetState.utcDate = utcDateOf(now);
+  budgetState.spentUsd = 0;
+  requestCounters.clear();
+};
+
 // --- Protocol translators ----------------------------------------------------
 
 const resolveApiKey = (cfg) => {
@@ -391,6 +445,25 @@ exports.handler = async function (event) {
     };
   }
 
+  // Daily budget guard: reject before any live call once the accumulated
+  // estimated spend for this instance would exceed the daily ceiling. The
+  // local-fallback signal shape tells the frontend to use its speech library.
+  const budgetRemaining = getBudgetRemaining(Date.now());
+  if (cost > budgetRemaining) {
+    return {
+      statusCode: 402,
+      headers,
+      body: JSON.stringify({
+        error: 'Daily budget exhausted for this instance',
+        text: '',
+        model_used: LOCAL_FALLBACK,
+        cost_estimate: 0,
+        fallback_used: true,
+        budget_remaining: budgetRemaining,
+      }),
+    };
+  }
+
   // Passed the cost guard; truncate to a safe max before any live call.
   const prompt = rawPrompt.length > MAX_PROMPT_LEN ? rawPrompt.slice(0, MAX_PROMPT_LEN) : rawPrompt;
 
@@ -401,6 +474,7 @@ exports.handler = async function (event) {
 
   // Dry-run mode: deterministic mock, no network, mock-safe for tests.
   if (process.env.ADAPTER_DRY_RUN === 'true') {
+    countRequest(primary);
     return {
       statusCode: 200,
       headers,
@@ -409,6 +483,7 @@ exports.handler = async function (event) {
         model_used: primary,
         cost_estimate: cost,
         fallback_used: false,
+        budget_remaining: budgetRemaining,
       }),
     };
   }
@@ -419,17 +494,21 @@ exports.handler = async function (event) {
       logError(`provider-adapter ${provider} skipped: circuit open`);
       continue;
     }
+    countRequest(provider);
     const text = await tryProviderWithRetries(provider, prompt, options);
     if (text) {
       recordProviderSuccess(provider);
+      const callCost = estimateCost(provider, tokens);
+      recordBudgetSpend(callCost, Date.now());
       return {
         statusCode: 200,
         headers,
         body: JSON.stringify({
           text,
           model_used: provider,
-          cost_estimate: estimateCost(provider, tokens),
+          cost_estimate: callCost,
           fallback_used: provider !== primary,
+          budget_remaining: getBudgetRemaining(Date.now()),
         }),
       };
     }
@@ -437,6 +516,7 @@ exports.handler = async function (event) {
   }
 
   // All live providers failed — signal the caller to use its local speech library.
+  countRequest(LOCAL_FALLBACK);
   return {
     statusCode: 200,
     headers,
@@ -445,6 +525,7 @@ exports.handler = async function (event) {
       model_used: LOCAL_FALLBACK,
       cost_estimate: 0,
       fallback_used: true,
+      budget_remaining: getBudgetRemaining(Date.now()),
     }),
   };
 };
@@ -461,5 +542,10 @@ exports.recordProviderFailure = recordProviderFailure;
 exports.recordProviderSuccess = recordProviderSuccess;
 exports.isProviderOpen = isProviderOpen;
 exports.resetProviderState = resetProviderState;
+exports.DEFAULT_DAILY_BUDGET_USD = DEFAULT_DAILY_BUDGET_USD;
+exports.getBudgetRemaining = getBudgetRemaining;
+exports.recordBudgetSpend = recordBudgetSpend;
+exports.getRequestCounters = getRequestCounters;
+exports.resetBudgetState = resetBudgetState;
 
 // --- END OF FILE netlify/functions/provider-adapter.js ---

@@ -25,6 +25,7 @@ const originalEnv = {
   DEEPSEEK_API_KEY: process.env.DEEPSEEK_API_KEY,
   ALLOWED_ORIGIN: process.env.ALLOWED_ORIGIN,
   ADAPTER_DRY_RUN: process.env.ADAPTER_DRY_RUN,
+  ADAPTER_DAILY_BUDGET_USD: process.env.ADAPTER_DAILY_BUDGET_USD,
 };
 
 // Captured log lines — the adapter must never log key material.
@@ -97,6 +98,7 @@ describe('provider-adapter', () => {
     process.env.DEEPSEEK_API_KEY = FAKE_DEEPSEEK_KEY;
     delete process.env.ALLOWED_ORIGIN;
     delete process.env.ADAPTER_DRY_RUN;
+    delete process.env.ADAPTER_DAILY_BUDGET_USD;
     logLines.length = 0;
     fetchMock.mockReset();
     fetchMock.mockRejectedValue(new Error('unexpected fetch'));
@@ -350,5 +352,102 @@ describe('provider-adapter', () => {
     expect(redactForLog('Authorization: Bearer some-opaque-token')).not.toContain('some-opaque-token');
     expect(redactForLog(new Error(`key=${FAKE_DEEPSEEK_KEY}`))).not.toContain(FAKE_DEEPSEEK_KEY);
     expect(redactForLog('plain message')).toBe('plain message');
+  });
+
+  it('daily budget defaults to $1 and is env-configurable, ignoring invalid values', () => {
+    const adapter = loadModule();
+    expect(adapter.DEFAULT_DAILY_BUDGET_USD).toBe(1.0);
+    expect(adapter.getBudgetRemaining()).toBe(1.0);
+    process.env.ADAPTER_DAILY_BUDGET_USD = '2.5';
+    expect(adapter.getBudgetRemaining()).toBe(2.5);
+    process.env.ADAPTER_DAILY_BUDGET_USD = 'not-a-number';
+    expect(adapter.getBudgetRemaining()).toBe(1.0);
+    process.env.ADAPTER_DAILY_BUDGET_USD = '0';
+    expect(adapter.getBudgetRemaining()).toBe(1.0);
+    process.env.ADAPTER_DAILY_BUDGET_USD = '-3';
+    expect(adapter.getBudgetRemaining()).toBe(1.0);
+  });
+
+  it('successful responses include budget_remaining and accumulate spend', async () => {
+    const { handler, DEFAULT_DAILY_BUDGET_USD } = loadModule();
+    const first = parseBody(await handler(createEvent({ prompt: 'hello' })));
+    expect(first.budget_remaining).toBeCloseTo(DEFAULT_DAILY_BUDGET_USD - first.cost_estimate, 12);
+    // Pre-existing contract fields are unchanged.
+    expect(first.text).toBe('gemini live text');
+    expect(first.model_used).toBe('gemini-2.5-flash');
+    expect(first.fallback_used).toBe(false);
+    const second = parseBody(await handler(createEvent({ prompt: 'hello' })));
+    expect(second.budget_remaining).toBeLessThan(first.budget_remaining);
+  });
+
+  it('rejects with 402 and the local-fallback signal when the daily budget is exhausted', async () => {
+    const { handler, recordBudgetSpend, DEFAULT_DAILY_BUDGET_USD } = loadModule();
+    recordBudgetSpend(DEFAULT_DAILY_BUDGET_USD);
+    const res = await handler(createEvent({ prompt: 'hello' }));
+    expect(res.statusCode).toBe(402);
+    const body = parseBody(res);
+    expect(body.error).toContain('budget');
+    expect(body.text).toBe('');
+    expect(body.fallback_used).toBe(true);
+    expect(body.model_used).toBe('local-fallback');
+    expect(body.budget_remaining).toBe(0);
+    // Never makes a live provider call.
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(genaiMock.GoogleGenAI).not.toHaveBeenCalled();
+  });
+
+  it('budget accumulator resets on UTC day rollover but not within the same day', () => {
+    const { getBudgetRemaining, recordBudgetSpend, DEFAULT_DAILY_BUDGET_USD } = loadModule();
+    const t0 = Date.UTC(2026, 0, 1, 12, 0, 0);
+    recordBudgetSpend(DEFAULT_DAILY_BUDGET_USD + 5, t0);
+    expect(getBudgetRemaining(t0)).toBe(0);
+    // Later the same UTC day: still exhausted.
+    expect(getBudgetRemaining(t0 + 3 * 3600 * 1000)).toBe(0);
+    // Next UTC day: accumulator resets to the full budget.
+    expect(getBudgetRemaining(t0 + 24 * 3600 * 1000)).toBe(DEFAULT_DAILY_BUDGET_USD);
+  });
+
+  it('tracks per-provider/model request counters and resets via the test hook', async () => {
+    const adapter = loadModule();
+    const { handler, getRequestCounters, resetBudgetState, DEFAULT_DAILY_BUDGET_USD } = adapter;
+    await handler(createEvent({ prompt: 'hello' }));
+    expect(getRequestCounters()['gemini-2.5-flash:gemini-2.5-flash']).toBe(1);
+    // A full chain failure counts every attempted provider plus local-fallback.
+    genaiMock.generateContent.mockRejectedValue(new Error('gemini down'));
+    fetchMock.mockRejectedValue(new Error('provider down'));
+    await handler(createEvent({ prompt: 'hello' }));
+    const counters = getRequestCounters();
+    expect(counters['gemini-2.5-flash:gemini-2.5-flash']).toBe(2);
+    expect(counters['aicodemirror-claude:claude-sonnet-4-6']).toBe(1);
+    expect(counters['deepseek-anthropic:deepseek-chat']).toBe(1);
+    expect(counters['deepseek-openai:deepseek-chat']).toBe(1);
+    expect(counters['local-fallback:local-fallback']).toBe(1);
+    resetBudgetState();
+    expect(getRequestCounters()).toEqual({});
+    expect(adapter.getBudgetRemaining()).toBe(DEFAULT_DAILY_BUDGET_USD);
+  });
+
+  it('dry-run responses include budget_remaining without spending budget', async () => {
+    process.env.ADAPTER_DRY_RUN = 'true';
+    const { handler, getBudgetRemaining, getRequestCounters, DEFAULT_DAILY_BUDGET_USD } = loadModule();
+    const body = parseBody(await handler(createEvent({ prompt: 'hello' })));
+    expect(body.text).toContain('dry-run');
+    expect(body.budget_remaining).toBe(DEFAULT_DAILY_BUDGET_USD);
+    // Dry-run never spends budget but does count the routed request.
+    expect(getBudgetRemaining()).toBe(DEFAULT_DAILY_BUDGET_USD);
+    expect(getRequestCounters()['gemini-2.5-flash:gemini-2.5-flash']).toBe(1);
+  });
+
+  it('all-providers-failed local fallback includes budget_remaining', async () => {
+    genaiMock.generateContent.mockRejectedValue(new Error('gemini down'));
+    fetchMock.mockRejectedValue(new Error('provider down'));
+    const { handler, DEFAULT_DAILY_BUDGET_USD } = loadModule();
+    const res = await handler(createEvent({ prompt: 'hello' }));
+    expect(res.statusCode).toBe(200);
+    const body = parseBody(res);
+    expect(body.text).toBe('');
+    expect(body.fallback_used).toBe(true);
+    // No successful live call, so nothing was spent.
+    expect(body.budget_remaining).toBe(DEFAULT_DAILY_BUDGET_USD);
   });
 });
