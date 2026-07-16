@@ -1,13 +1,13 @@
 # Project Coordination State
 
 **Last verified:** 2026-07-16
-**Project phase:** 6 autonomous cycles completed (session: 3 cycles, 10 cards, 15 commits, 205 tests). All 10 cards Accepted. Stopping at deployment gate.
+**Project phase:** Session cycles 1–4 complete (11 cards Accepted, 216 tests). DEPLOYED to production (owner-approved): `git push origin main` → Netlify auto-deploy, verified live at ai-werewolf.net.
 
 ## Verified Baseline
 
-- Local tests: `npm run test:run` passed 205/205 tests (19 test files), zero regressions.
+- Local tests: `npm run test:run` passed 216/216 tests (20 test files), zero regressions.
 - Local production build: `npm run build` succeeded.
-- Current branch head: `47dd356` (15 commits ahead of origin/main — NOT pushed, deployment gate).
+- Current branch head: `b94cdbe` — pushed to origin/main. Netlify deploy verified live (session bundle hashes served).
 
 ## Completed This Session (2026-07-16 Autonomous Office)
 
@@ -16,6 +16,7 @@
 | 1 | 4 | provider-adapter-refactor (unified protocol-aware adapter), language-switch-and-ai-translation (zh/en pill + display-layer translation), role-behavior-distillation (behaviorSchema with honest source labeling), ai-role-evaluation (offline replay harness + 4 metrics) |
 | 2 | 3 | runtime-model-routing (frontend → provider-adapter fallback chain), model-routing-cost-guard (daily budget $1/day, UTC rollover, 402+fallback on exhaustion), provider-adapter-dry-run (zero-network in-process dry-run script) |
 | 3 | 3 | dead-player-vote-autoresolve (P0 fix: dead human DAY_VOTING no longer stalls), speech-quality-filter (wolf/possessed self-reveal exclusion + language preference), en-display-translation-improvement (Seer stub detection, EN → zh fallback) |
+| 4 | 1 | night-pipeline-exception-safety (owner-reported P0: permanent "AI思考" stall — try/finally around all isProcessingAI blocks, guarded dynamic imports, 12s fetch timeouts) |
 
 ## Provider Infrastructure
 
@@ -53,16 +54,15 @@ No AIWolf data downloaded — license unclear, organizer contact recommended for
 - Speech library: 11,449 entries, mixed JA/EN/CN from AIWolf corpus; Witch/Hunter/Idiot reuse Seer/Villager pools.
 - Full browser E2E playthrough of all roles/boards not completed (QA exercised 9p and 12p as guest, 2 games).
 
-## Deployment Gate
+## Deployment Status
 
-**STOP — deployment requires owner approval.** 15 local commits are NOT pushed.
-No Netlify deploy, no Supabase mutation, no production changes have been made.
-Owner must approve:
+**DEPLOYED 2026-07-16 with owner approval.** Two pushes: `73e2934` (cycles 1–3) and `b94cdbe` (stall fix). Netlify auto-deploy from GitHub verified live.
 
-1. `git push origin main`
-2. Netlify deploy (auto or manual)
-3. Any Supabase Dashboard changes
-4. Adding API keys to Netlify env vars for provider-adapter
+Still requiring owner action before the provider adapter can make live calls:
+
+1. Adding API keys to Netlify env vars (AICODEMIRROR_API_KEY, DEEPSEEK_API_KEY) — until then provider-adapter falls back to genai-proxy/speech library, which is safe.
+2. Optional: set ADAPTER_DAILY_BUDGET_USD (default $1/day/instance).
+3. Any Supabase Dashboard changes.
 
 ## Coordinator Rules
 
