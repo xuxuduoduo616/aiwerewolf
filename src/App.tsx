@@ -10,6 +10,8 @@ import RecordsPanel from './components/RecordsPanel';
 import WolfChannel from './components/WolfChannel';
 import SpeechInput from './components/SpeechInput';
 import VoteSummary from './components/VoteSummary';
+import LogMessage from './components/LogMessage';
+import { useDisplayLanguage } from './i18n';
 import { resolveVoteResult } from './gameEngine';
 import {
   Clock3, History, KeyRound, Languages, Loader2,
@@ -21,6 +23,7 @@ const MY_PLAYER_ID = 1;
 
 const App: React.FC = () => {
   const auth = useAuth();
+  const [displayLanguage, toggleDisplayLanguage] = useDisplayLanguage();
   const rec = useRecords(auth.session);
   const game = useGameState({
     session: auth.session,
@@ -138,7 +141,13 @@ const App: React.FC = () => {
             </div>
             <div className="flex items-center gap-2">
               <button onClick={() => rec.setShowRecords(!rec.showRecords)} className="icon-button"><History className="w-4 h-4" /></button>
-              <button onClick={() => game.setTranslateEnabled(!game.translateEnabled)} className="icon-button"><Languages className="w-4 h-4" /></button>
+              <button
+                onClick={toggleDisplayLanguage}
+                title={displayLanguage === 'zh' ? 'Switch display language to English' : '切换显示语言为中文'}
+                className="h-9 px-2.5 inline-flex items-center gap-1.5 rounded-lg border border-zinc-700 bg-black/70 text-zinc-200 text-xs font-bold hover:bg-zinc-800 hover:border-zinc-300 transition"
+              >
+                <Languages className="w-4 h-4" />{displayLanguage === 'zh' ? '中文' : 'EN'}
+              </button>
               <button onClick={() => { auth.logoutAuth(); game.setPhase(GamePhase.LOGIN); rec.setRecords([]); rec.setRecordError(''); }} className="icon-button"><LogOut className="w-4 h-4" /></button>
             </div>
           </header>
@@ -208,7 +217,13 @@ const App: React.FC = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <button onClick={() => game.setTranslateEnabled(!game.translateEnabled)} className="icon-button"><Languages className="w-4 h-4" /></button>
+              <button
+                onClick={toggleDisplayLanguage}
+                title={displayLanguage === 'zh' ? 'Switch display language to English' : '切换显示语言为中文'}
+                className="h-9 px-2.5 inline-flex items-center gap-1.5 rounded-lg border border-zinc-700 bg-black/70 text-zinc-200 text-xs font-bold hover:bg-zinc-800 hover:border-zinc-300 transition"
+              >
+                <Languages className="w-4 h-4" />{displayLanguage === 'zh' ? '中文' : 'EN'}
+              </button>
               <button onClick={() => game.setIsMuted(!game.isMuted)} className="icon-button">{game.isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}</button>
               <button onClick={() => game.setPhase(GamePhase.LOBBY)} className="icon-button"><RefreshCw className="w-4 h-4" /></button>
             </div>
@@ -326,12 +341,12 @@ const App: React.FC = () => {
                 <div key={log.id} className={`log-entry-in ${log.isSystem ? 'text-center' : log.speakerId === MY_PLAYER_ID ? 'text-right' : 'text-left'}`}>
                   {log.isSystem ? (
                     <span className={`inline-block text-[11px] px-3 py-1 rounded-full border ${log.tone === 'wolf' ? 'border-red-900 bg-red-950/35 text-red-100' : 'border-zinc-800 bg-black/30 text-zinc-400'}`}>
-                      {game.visibleText(log)}
+                      <LogMessage log={log} language={displayLanguage} />
                     </span>
                   ) : (
                     <div className={`inline-block max-w-[270px] rounded-lg border p-2 text-xs leading-relaxed ${log.speakerId === MY_PLAYER_ID ? 'bg-zinc-100 text-black border-zinc-200' : 'bg-zinc-900 border-zinc-700 text-zinc-200'}`}>
                       <div className="text-[10px] font-bold opacity-70 mb-1">{log.speakerId === MY_PLAYER_ID ? 'YOU' : `${log.speakerId}号`}</div>
-                      {game.visibleText(log)}
+                      <LogMessage log={log} language={displayLanguage} />
                     </div>
                   )}
                 </div>
