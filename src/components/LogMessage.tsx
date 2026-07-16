@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import type { GameLog } from '../types';
-import { DisplayLanguage, pickLogText } from '../i18n';
+import { DisplayLanguage, pickTranslationSource } from '../i18n';
 import { needsTranslation, translateLogText } from '../services/translationService';
 
 interface Props {
@@ -16,9 +16,14 @@ interface Props {
  * mismatches the display language (e.g. Japanese corpus speech) are translated
  * asynchronously via translationService; the original text is shown until the
  * translation arrives, and a small "view original" toggle appears afterwards.
+ *
+ * In EN mode, when the English field is missing or a known canned fallback
+ * stub while a Chinese original exists, pickTranslationSource swaps in the zh
+ * original as the source — so pending/failed/local-dev states show the zh
+ * original (never the stub), and the toggle switches translation ↔ zh original.
  */
 const LogMessage: React.FC<Props> = ({ log, language }) => {
-  const baseText = pickLogText(log, language);
+  const baseText = pickTranslationSource(log, language);
   const [translated, setTranslated] = useState<string | null>(null);
   const [showOriginal, setShowOriginal] = useState(false);
 

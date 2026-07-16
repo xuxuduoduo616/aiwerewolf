@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { pickTranslationSource } from '../i18n';
 import {
   TRANSLATION_ENDPOINT,
   clearTranslationCache,
@@ -139,5 +140,63 @@ describe('translateLogText', () => {
     vi.stubGlobal('window', { location: { port: '5173' } });
     expect(await translateLogText('log-10', ja, 'zh')).toBe(ja);
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
+
+// Mirrors LogMessage's EN-mode stub path: pickTranslationSource swaps a canned
+// English stub for the zh original, which then flows through translateLogText.
+describe('EN display stub path (pickTranslationSource + translateLogText)', () => {
+  const zh = '我觉得3号很可疑，昨晚的发言有问题。';
+  const stubLog = { message: 'Speaks based on game situation.', translation: zh, isSystem: false };
+
+  it('replaces the stub with a translation of the zh original on success', async () => {
+    const fetchMock = stubFetch(async () => ({
+      ok: true,
+      json: async () => ({ text: 'I think Player 3 is suspicious after last night.' }),
+    }));
+    const source = pickTranslationSource(stubLog, 'en');
+    expect(source).toBe(zh);
+    const result = await translateLogText('stub-1', source, 'en');
+    expect(result).toBe('I think Player 3 is suspicious after last night.');
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    const body = JSON.parse(init.body as string);
+    expect(body.prompt).toContain(zh);
+  });
+
+  it('falls back to the zh original (not the stub) when the proxy fails', async () => {
+    stubFetch(async () => { throw new Error('network down'); });
+    const source = pickTranslationSource(stubLog, 'en');
+    expect(await translateLogText('stub-2', source, 'en')).toBe(zh);
+  });
+
+  it('shows the zh original in local Vite dev without fetching', async () => {
+    const fetchMock = stubFetch();
+    vi.stubGlobal('window', { location: { port: '5173' } });
+    const source = pickTranslationSource(stubLog, 'en');
+    expect(await translateLogText('stub-3', source, 'en')).toBe(zh);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('does not re-translate genuine English speech', async () => {
+    const fetchMock = stubFetch();
+    const realLog = { message: 'I think Player 3 is suspicious.', translation: zh, isSystem: false };
+    const source = pickTranslationSource(realLog, 'en');
+    expect(source).toBe('I think Player 3 is suspicious.');
+    expect(await translateLogText('stub-4', source, 'en')).toBe('I think Player 3 is suspicious.');
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('keeps per-log-id cache dedup on the stub path', async () => {
+    const fetchMock = stubFetch(async () => ({ ok: true, json: async () => ({ text: 'Translated.' }) }));
+    const source = pickTranslationSource(stubLog, 'en');
+    const [first, second] = await Promise.all([
+      translateLogText('stub-5', source, 'en'),
+      translateLogText('stub-5', source, 'en'),
+    ]);
+    expect(await translateLogText('stub-5', source, 'en')).toBe('Translated.');
+    expect(first).toBe('Translated.');
+    expect(second).toBe('Translated.');
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 });

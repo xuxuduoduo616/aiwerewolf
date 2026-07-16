@@ -48,6 +48,42 @@ export const pickLogText = (
   return log.message || log.translation || '';
 };
 
+/**
+ * Canned English stubs the local AI fallback writes into the `message` field
+ * when no real English speech exists (src/ai/aiOrchestrator.ts). Exact known
+ * strings only — genuine English speech must never match.
+ */
+const CANNED_EN_STUBS: RegExp[] = [
+  /^Speaks based on game situation\.$/,
+  /^Frames Player (\d+|\?)\.$/,
+  /^Pushes suspicion on Player (\d+|\?)\.$/,
+  /^Seer reports: Player \d+ is (GOOD|WOLF)\.$/,
+];
+
+export const isCannedEnglishStub = (text: string): boolean =>
+  CANNED_EN_STUBS.some(pattern => pattern.test(text.trim()));
+
+/**
+ * Pick the text a translation request should start from. Normally this is the
+ * display text itself (pickLogText); in EN mode, when a speech entry's English
+ * field is missing or a known canned fallback stub while a Chinese original
+ * exists, the zh original carries the real content and becomes the source.
+ */
+export const pickTranslationSource = (
+  log: Pick<GameLog, 'message' | 'translation' | 'isSystem'>,
+  language: DisplayLanguage,
+): string => {
+  if (
+    language === 'en' &&
+    !log.isSystem &&
+    log.translation &&
+    (!log.message || isCannedEnglishStub(log.message))
+  ) {
+    return log.translation;
+  }
+  return pickLogText(log, language);
+};
+
 /** Display-language state, persisted to localStorage across reloads. */
 export const useDisplayLanguage = (): [DisplayLanguage, () => void] => {
   const [language, setLanguage] = useState<DisplayLanguage>(loadDisplayLanguage);
