@@ -24,6 +24,12 @@ export interface GameBenchmarkResult {
   /** Evaluation set identifier, e.g. "synthetic-9p-100games". */
   evalSet: string;
   notes: string;
+  /**
+   * Optional 0–1: fraction of speeches leaking hidden role knowledge.
+   * Lower is better. Produced by the offline evaluation harness
+   * (`evaluation.ts`); older results omit it.
+   */
+  infoLeakageRate?: number;
 }
 
 /** Fields expected in the 0–1 range, used by validation and tests. */
@@ -46,6 +52,10 @@ export const isValidBenchmarkResult = (r: GameBenchmarkResult): boolean => {
     if (typeof v !== 'number' || Number.isNaN(v) || v < 0 || v > 1) return false;
   }
   if (typeof r.estimatedCostUSD !== 'number' || r.estimatedCostUSD < 0) return false;
+  if (r.infoLeakageRate !== undefined) {
+    const v = r.infoLeakageRate;
+    if (typeof v !== 'number' || Number.isNaN(v) || v < 0 || v > 1) return false;
+  }
   return true;
 };
 

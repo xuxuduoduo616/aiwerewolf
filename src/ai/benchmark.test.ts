@@ -35,3 +35,22 @@ describe('benchmark schema', () => {
     expect(isValidBenchmarkResult(bad)).toBe(false);
   });
 });
+
+// Additive cases for the optional infoLeakageRate field (evaluation harness).
+describe('benchmark schema — infoLeakageRate extension', () => {
+  it('remains valid without infoLeakageRate (back-compat)', () => {
+    expect(MOCK_BENCHMARK_RESULT.infoLeakageRate).toBeUndefined();
+    expect(isValidBenchmarkResult(MOCK_BENCHMARK_RESULT)).toBe(true);
+  });
+
+  it('accepts infoLeakageRate within [0, 1]', () => {
+    const r: GameBenchmarkResult = { ...MOCK_BENCHMARK_RESULT, infoLeakageRate: 0.07 };
+    expect(isValidBenchmarkResult(r)).toBe(true);
+  });
+
+  it('rejects out-of-range infoLeakageRate', () => {
+    expect(isValidBenchmarkResult({ ...MOCK_BENCHMARK_RESULT, infoLeakageRate: 1.2 })).toBe(false);
+    expect(isValidBenchmarkResult({ ...MOCK_BENCHMARK_RESULT, infoLeakageRate: -0.1 })).toBe(false);
+    expect(isValidBenchmarkResult({ ...MOCK_BENCHMARK_RESULT, infoLeakageRate: Number.NaN })).toBe(false);
+  });
+});
