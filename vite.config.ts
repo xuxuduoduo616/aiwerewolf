@@ -6,6 +6,12 @@ export default defineConfig(() => {
   return {
     base: './', // Ensures assets load correctly on any path
     plugins: [react()],
+    server: {
+      watch: {
+        // Coordination worktrees churn (.claude/worktrees/*) must not trigger dev reloads.
+        ignored: ['**/.claude/**'],
+      },
+    },
     test: {
       // Keep coordination worktrees (.claude/worktrees/*) out of the test run.
       exclude: ['**/node_modules/**', '**/dist/**', '**/.claude/**'],
