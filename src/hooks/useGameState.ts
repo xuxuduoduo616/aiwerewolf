@@ -36,6 +36,18 @@ const AI_STYLE_KEYS = Object.keys(CUSTOM_AI_STYLES);
 const MY_PLAYER_ID = 1;
 const LOCAL_RECORD_KEY = 'werewolf_guest_records';
 
+/**
+ * P0 fix (dead-player-vote-autoresolve): during DAY_VOTING the phase driver
+ * must auto-resolve the vote when the human has no vote (dead, or vote lost
+ * e.g. revealed Idiot) — otherwise nothing ever calls finishVote and the game
+ * soft-locks until the dead spectator clicks "NO VOTE". A living human who
+ * can vote is still waited on indefinitely.
+ */
+export const shouldAutoResolveVote = (
+  phase: GamePhase,
+  me: Pick<Player, 'isAlive' | 'canVote'> | undefined
+): boolean => phase === GamePhase.DAY_VOTING && !(me?.isAlive && me.canVote);
+
 export interface AuthContext {
   session: SupabaseSession | null;
   isGuest: boolean;
@@ -153,6 +165,7 @@ export function useGameState(authContext: AuthContext) {
       else if (phase === GamePhase.DAY_ANNOUNCE) handleDayAnnounce();
       else if (phase === GamePhase.DAY_HUNTER_CHECK) handleHunterCheck();
       else if (phase === GamePhase.DAY_DISCUSSION) handleDiscussion();
+      else if (shouldAutoResolveVote(phase, me)) finishVote(null);
     }, 700);
 
     return () => window.clearTimeout(timer);
