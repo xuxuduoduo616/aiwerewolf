@@ -1,13 +1,14 @@
 # Project Coordination State
 
-**Last verified:** 2026-07-16
-**Project phase:** Session cycles 1–6 complete (21 cards Accepted, 268 tests). Cycle 6 integrated locally, awaiting owner approval for DEPLOY.
+**Last verified:** 2026-07-17
+**Project phase:** Session cycles 1–6 complete (22 cards Accepted, 268 tests). Netlify pipeline restored; functions-502 fix (netlify-functions-cjs-fix) integrated locally, awaiting owner approval for DEPLOY.
 
 ## Verified Baseline
 
 - Local tests: `npm run test:run` passed 268/268 tests (25 test files), zero regressions.
 - Local production build: `npm run build` succeeded.
-- Current branch head: `6c3a49e` — cycle 6 wave 2–4 commit. pushed to origin/main. Netlify deploy verified live.
+- origin/main head: `1d26425`. Netlify Published: `ccdb788` (verified serving identical assets to HEAD build — diff is screenshots only). The 4 previously-skipped commits (975b5a0, a29e1ec, 78533e4, cab46f3) are ancestors of ccdb788 and LIVE; historic Skipped labels need no action.
+- **2026-07-17 finding:** both Netlify Functions returned 502 in production (`module is not defined in ES module scope` — root `"type": "module"` vs CJS `.js` functions; broken since first deploy from this repo, masked by frontend fallback chain). Fixed by card `netlify-functions-cjs-fix`: `git mv` all three functions to `.cjs` + path updates in `scripts/provider-dry-run.mjs` and `netlify/__tests__/*`. Debugger VERDICT: PASS. Committed locally, NOT pushed (push auto-deploys — owner briefing pending).
 
 ## Completed This Session (2026-07-16 Autonomous Office)
 

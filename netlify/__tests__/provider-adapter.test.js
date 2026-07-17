@@ -9,7 +9,7 @@ const genaiMock = vi.hoisted(() => ({
   generateContent: vi.fn(),
 }));
 
-const adapterPath = join(dirname(fileURLToPath(import.meta.url)), '../functions/provider-adapter.js');
+const adapterPath = join(dirname(fileURLToPath(import.meta.url)), '../functions/provider-adapter.cjs');
 const adapterSource = readFileSync(adapterPath, 'utf8');
 
 // Obviously-fake placeholder keys, planted in process.env only to prove

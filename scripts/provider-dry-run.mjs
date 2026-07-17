@@ -1,6 +1,6 @@
 // scripts/provider-dry-run.mjs
 //
-// Local verification for netlify/functions/provider-adapter.js.
+// Local verification for netlify/functions/provider-adapter.cjs.
 //
 // Default mode (zero network): loads the adapter in-process (same vm pattern
 // as netlify/__tests__/provider-adapter.test.js), sets ADAPTER_DRY_RUN=true,
@@ -28,7 +28,7 @@ import vm from 'node:vm';
 
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(SCRIPT_DIR, '..');
-const ADAPTER_PATH = join(REPO_ROOT, 'netlify/functions/provider-adapter.js');
+const ADAPTER_PATH = join(REPO_ROOT, 'netlify/functions/provider-adapter.cjs');
 const REPORT_PATH = join(REPO_ROOT, 'memory/coordination/reports/provider-adapter-dry-run-results.md');
 const PROBE_TIMEOUT_MS = 10_000;
 

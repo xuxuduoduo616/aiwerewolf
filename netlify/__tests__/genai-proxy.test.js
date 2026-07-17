@@ -9,7 +9,7 @@ const genaiMock = vi.hoisted(() => ({
   generateContent: vi.fn(),
 }));
 
-const proxyPath = join(dirname(fileURLToPath(import.meta.url)), '../functions/genai-proxy.js');
+const proxyPath = join(dirname(fileURLToPath(import.meta.url)), '../functions/genai-proxy.cjs');
 const proxySource = readFileSync(proxyPath, 'utf8');
 
 const originalEnv = {

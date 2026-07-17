@@ -9,7 +9,7 @@ const genaiMock = vi.hoisted(() => ({
   generateContent: vi.fn(),
 }));
 
-const adapterPath = join(dirname(fileURLToPath(import.meta.url)), '../functions/model-adapter.js');
+const adapterPath = join(dirname(fileURLToPath(import.meta.url)), '../functions/model-adapter.cjs');
 const adapterSource = readFileSync(adapterPath, 'utf8');
 
 const originalEnv = {
