@@ -1,7 +1,7 @@
 import React from 'react';
 import { Player, Role } from '../types';
 import { ROLE_LABELS } from '../constants';
-import { User, Eye, FlaskConical, Crosshair, Skull, Mic, Cpu, BadgeHelp, PawPrint, Moon } from 'lucide-react';
+import { User, Eye, FlaskConical, Crosshair, Skull, Mic, Cpu, BadgeHelp, PawPrint, Moon, Check } from 'lucide-react';
 
 interface PlayerCardProps {
   player: Player;
@@ -10,6 +10,7 @@ interface PlayerCardProps {
   onClick: () => void;
   isSelected?: boolean;
   isSpeaking?: boolean;
+  hasSpoken?: boolean;
   compact?: boolean;
   customBadge?: React.ReactNode;
   isWolfTeammate?: boolean;
@@ -43,6 +44,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
   onClick,
   isSelected,
   isSpeaking,
+  hasSpoken,
   compact,
   customBadge,
   isWolfTeammate,
@@ -59,6 +61,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
         ${!player.isAlive ? 'opacity-75 brightness-[0.65] border-zinc-800' : 'hover:-translate-y-1 hover:shadow-xl'}
         ${isSelected ? 'border-zinc-100 bg-zinc-800 shadow-[0_0_16px_rgba(244,244,245,0.35)]' : 'border-zinc-700/70 bg-zinc-900/78'}
         ${isSpeaking ? 'ring-2 ring-zinc-100 shadow-[0_0_22px_rgba(244,244,245,0.45)] scale-105 z-10 speaking-ring' : ''}
+        ${hasSpoken && player.isAlive && !isSpeaking ? 'opacity-90' : ''}
       `}
     >
       <div className="absolute -top-2 -left-2 bg-black border border-zinc-500 text-zinc-100 w-7 h-7 flex items-center justify-center rounded-full z-20 shadow-lg text-xs font-bold">
@@ -94,6 +97,14 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
         {isSpeaking && (
           <div className="absolute -bottom-1 -right-1 bg-zinc-100 rounded-full p-1.5 shadow-lg border border-zinc-400">
             <Mic className="w-3 h-3 text-black" />
+          </div>
+        )}
+        {hasSpoken && player.isAlive && !isSpeaking && (
+          <div
+            className="absolute -bottom-1 -right-1 z-10 bg-emerald-600 rounded-full p-1 shadow-lg border border-emerald-400"
+            aria-label="已发言"
+          >
+            <Check className="w-3 h-3 text-white" />
           </div>
         )}
       </div>

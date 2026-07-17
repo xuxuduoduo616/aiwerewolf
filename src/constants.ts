@@ -1,4 +1,5 @@
 import { GameConfig, Role } from './types';
+import type { DisplayLanguage } from './i18n';
 
 export const MODE_9_PLAYER: GameConfig = {
   id: '9-standard',
@@ -74,6 +75,24 @@ export const PHASE_LABELS: Record<string, string> = {
   DAY_VOTING: '放逐投票',
   GAME_OVER: '游戏结束',
 };
+
+export const PHASE_LABELS_EN: Record<string, string> = {
+  LOGIN: 'Login',
+  LOBBY: 'Lobby',
+  NIGHT_START: 'Nightfall',
+  NIGHT_WEREWOLVES: 'Werewolves Hunt',
+  NIGHT_SEER: 'Seer Checks',
+  NIGHT_WITCH: 'Witch Acts',
+  DAY_ANNOUNCE: 'Dawn Report',
+  DAY_HUNTER_CHECK: 'Hunter Status',
+  DAY_HUNTER_SHOT: 'Hunter Shot',
+  DAY_DISCUSSION: 'Day Discussion',
+  DAY_VOTING: 'Exile Vote',
+  GAME_OVER: 'Game Over',
+};
+
+export const getPhaseLabel = (phase: string, language: DisplayLanguage): string =>
+  language === 'en' ? (PHASE_LABELS_EN[phase] || phase) : (PHASE_LABELS[phase] || phase);
 
 export const WEREWOLF_SLANG = [
   '金水', '查杀', '悍跳', '倒钩', '冲锋', '铁逻辑',

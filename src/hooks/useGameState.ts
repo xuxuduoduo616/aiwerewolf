@@ -106,6 +106,24 @@ export const shouldAutoSkipSpeech = (
   currentSpeakerId: number | undefined
 ): boolean => speechTimer === 0 && currentSpeakerId === MY_PLAYER_ID;
 
+/**
+ * Pure helper: derive the speaking-status badge for a single player card so
+ * the logic can be unit-tested without jsdom.
+ */
+export const computeSpeakingStatus = (
+  playerId: number,
+  isAlive: boolean,
+  currentSpeakerId: number | undefined,
+  spokenPlayerIds: Set<number>,
+  phase: GamePhase
+): 'speaking' | 'spoken' | 'pending' | 'none' => {
+  if (phase !== GamePhase.DAY_DISCUSSION) return 'none';
+  if (!isAlive) return 'none';
+  if (currentSpeakerId === playerId) return 'speaking';
+  if (spokenPlayerIds.has(playerId)) return 'spoken';
+  return 'pending';
+};
+
 export interface AuthContext {
   session: SupabaseSession | null;
   isGuest: boolean;
@@ -149,6 +167,8 @@ export function useGameState(authContext: AuthContext) {
   const [speechTimer, setSpeechTimer] = useState<number | null>(null);
   // Track last eliminated player for clockwise speaking order
   const [lastEliminatedId, setLastEliminatedId] = useState<number | null>(null);
+  // Per-player "finished speaking" tracking for the current day round
+  const [spokenPlayerIds, setSpokenPlayerIds] = useState<Set<number>>(new Set());
 
   const SPEECH_DURATION = 60; // seconds per player
 
@@ -207,6 +227,7 @@ export function useGameState(authContext: AuthContext) {
   useEffect(() => {
     if (!shouldAutoSkipSpeech(speechTimer, currentSpeaker?.id)) return;
     addLog('Time expired.', true, undefined, '发言时间到，自动跳过。', 'system');
+    setSpokenPlayerIds(prev => new Set(prev).add(MY_PLAYER_ID));
     setCurrentSpeaker(null);
   }, [speechTimer]);
 
@@ -496,6 +517,9 @@ export function useGameState(authContext: AuthContext) {
       return;
     }
 
+    // New day — reset per-round speaking status before last-words are queued
+    setSpokenPlayerIds(new Set());
+
     // NetEase fix: ALL rounds — dead players get last words
     const lastWords = outcome.players.filter(p => outcome.deadIds.includes(p.id));
     setSpeakingQueue(lastWords);
@@ -558,6 +582,7 @@ export function useGameState(authContext: AuthContext) {
     // Skip dead human players — they spoke their last words already
   if (!nextSpeaker.isAlive && nextSpeaker.isHuman) {
     addLog(`Dead player ${nextSpeaker.id} has no further speech.`, true, undefined, `${nextSpeaker.id}号已出局，跳过发言。`, 'system');
+    setSpokenPlayerIds(prev => new Set(prev).add(nextSpeaker.id));
     setCurrentSpeaker(null);
     return;
   }
@@ -579,8 +604,10 @@ export function useGameState(authContext: AuthContext) {
         gameLanguage
       );
       addLog(response.en, false, nextSpeaker.id, response.zh, 'speech');
+      setSpokenPlayerIds(prev => new Set(prev).add(nextSpeaker.id));
     }, () => {
       addLog(`Player ${nextSpeaker.id} speech skipped (AI error).`, true, undefined, `AI出错，${nextSpeaker.id}号发言跳过。`, 'system');
+      setSpokenPlayerIds(prev => new Set(prev).add(nextSpeaker.id));
     });
     setCurrentSpeaker(null);
   };
@@ -679,6 +706,7 @@ export function useGameState(authContext: AuthContext) {
     const nextSpeech = normalizeHumanSpeech(userInput);
     if (!nextSpeech) return;
     addLog(nextSpeech, false, MY_PLAYER_ID, nextSpeech, 'speech');
+    setSpokenPlayerIds(prev => new Set(prev).add(MY_PLAYER_ID));
     setUserInput('');
     setCurrentSpeaker(null);
   };
@@ -760,12 +788,13 @@ export function useGameState(authContext: AuthContext) {
     // state
     config, players, phase, setPhase, logs,
     difficulty, setDifficulty,
+    gameLanguage,
     selectedPlayerId, setSelectedPlayerId,
     witchStatus, nightState, roundCount, winner,
     isProcessingAI, isMuted, setIsMuted,
     translateEnabled, setTranslateEnabled,
     userInput, setUserInput,
-    speakingQueue, currentSpeaker,
+    speakingQueue, currentSpeaker, spokenPlayerIds,
     deadThisRound, voteRecords, wolfChat, wolfCountdown,
     pendingHunterId, savedRecordId,
     speechTimer, aiSeerLastCheck,

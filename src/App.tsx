@@ -1,6 +1,6 @@
 import React from 'react';
 import { GamePhase, Role, DIFFICULTY_CONFIGS, difficultyLabel, difficultyDescription } from './types';
-import { GAME_MODES, PHASE_LABELS, ROLE_DESCRIPTIONS, ROLE_LABELS } from './constants';
+import { GAME_MODES, getPhaseLabel, ROLE_DESCRIPTIONS, ROLE_LABELS } from './constants';
 import useAuth from './hooks/useAuth';
 import { useRecords } from './hooks/useRecords';
 import { useGameState } from './hooks/useGameState';
@@ -213,13 +213,13 @@ const App: React.FC = () => {
               <div className="w-10 h-10 rounded-full bg-zinc-100 text-black flex items-center justify-center font-black">{Math.max(1, game.roundCount)}</div>
               <div>
                 <h2 className="text-sm font-bold tracking-wide">{game.config?.displayName}</h2>
-                <p className="text-xs text-zinc-400">{PHASE_LABELS[game.phase] || game.phase}</p>
+                <p className="text-xs text-zinc-400">{getPhaseLabel(game.phase, game.gameLanguage)}</p>
               </div>
             </div>
             {/* Language is fixed at startGame from the lobby pill — no in-game toggle. */}
             <div className="flex items-center gap-2">
-              <button onClick={() => game.setIsMuted(!game.isMuted)} className="icon-button">{game.isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}</button>
-              <button onClick={() => game.setPhase(GamePhase.LOBBY)} className="icon-button"><RefreshCw className="w-4 h-4" /></button>
+              <button onClick={() => game.setIsMuted(!game.isMuted)} className="icon-button" title={displayLanguage === 'zh' ? '静音/取消静音' : 'Mute / Unmute'} aria-label={displayLanguage === 'zh' ? '静音/取消静音' : 'Mute / Unmute'}>{game.isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}</button>
+              <button onClick={() => game.setPhase(GamePhase.LOBBY)} className="icon-button" title={displayLanguage === 'zh' ? '返回大厅' : 'Return to lobby'} aria-label={displayLanguage === 'zh' ? '返回大厅' : 'Return to lobby'}><RefreshCw className="w-4 h-4" /></button>
             </div>
           </header>
 
@@ -236,6 +236,7 @@ const App: React.FC = () => {
                     revealRole={game.phase === GamePhase.GAME_OVER}
                     isSelected={game.selectedPlayerId === player.id}
                     isSpeaking={game.currentSpeaker?.id === player.id}
+                    hasSpoken={game.phase === GamePhase.DAY_DISCUSSION && game.spokenPlayerIds.has(player.id)}
                     compact onClick={() => game.setSelectedPlayerId(player.id)}
                     isWolfTeammate={isWolfTeammate}
                     customBadge={
@@ -269,7 +270,7 @@ const App: React.FC = () => {
                     <div className="flex items-center justify-between gap-3">
                       <div>
                         <div className="text-xs text-zinc-500">PHASE</div>
-                        <div className="text-lg font-bold">{PHASE_LABELS[game.phase] || game.phase}</div>
+                        <div className="text-lg font-bold">{getPhaseLabel(game.phase, game.gameLanguage)}</div>
                       </div>
                       {game.wolfCountdown !== null && (
                         <div className="timer-pill"><Clock3 className="w-4 h-4" />{game.wolfCountdown}s</div>
@@ -308,6 +309,7 @@ const App: React.FC = () => {
                       value={game.userInput} onChange={game.setUserInput}
                       onSubmit={game.handleHumanSpeechSubmit}
                       visible={game.phase === GamePhase.DAY_DISCUSSION && game.currentSpeaker?.id === MY_PLAYER_ID}
+                      selectedPlayer={game.selectedPlayer}
                     />
                   </>
                 )}

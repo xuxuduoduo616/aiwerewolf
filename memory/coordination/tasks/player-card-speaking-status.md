@@ -2,7 +2,7 @@
 
 ## Status
 
-Queued
+Ready for review
 
 ## Objective
 
