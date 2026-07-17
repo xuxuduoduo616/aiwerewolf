@@ -109,7 +109,7 @@ const App: React.FC = () => {
           <button
             onClick={() => auth.authStep === 'EMAIL'
               ? auth.handleSendOtp()
-              : auth.handleVerifyOtp(records => { rec.setRecords(records); game.setPhase(GamePhase.LOBBY); })}
+              : auth.handleVerifyOtp(records => { rec.setRecords(records); rec.setShowRecords(true); game.setPhase(GamePhase.LOBBY); })}
             disabled={auth.isAuthLoading}
             className="mt-6 w-full bg-zinc-100 text-black py-3 font-bold rounded hover:bg-white transition flex items-center justify-center gap-2"
           >
@@ -118,7 +118,7 @@ const App: React.FC = () => {
           </button>
           <div className="flex justify-between mt-4 text-xs text-zinc-400">
             <button onClick={() => auth.setAuthStep(auth.authStep === 'EMAIL' ? 'VERIFY' : 'EMAIL')} className="hover:text-white">Switch Step</button>
-            <button onClick={() => auth.handleGuest(() => { rec.loadLocalRecords(); game.setPhase(GamePhase.LOBBY); })} className="hover:text-white">Guest Trial</button>
+            <button onClick={() => auth.handleGuest(() => { rec.loadLocalRecords(); rec.setShowRecords(true); game.setPhase(GamePhase.LOBBY); })} className="hover:text-white">Guest Trial</button>
           </div>
           <p className="mt-5 text-[11px] leading-relaxed text-zinc-500 text-center border-t border-zinc-800 pt-4">
             新手推荐：点击 <span className="text-zinc-300">Guest Trial</span> 直接试玩，选择「新手」难度。
@@ -219,7 +219,7 @@ const App: React.FC = () => {
             {/* Language is fixed at startGame from the lobby pill — no in-game toggle. */}
             <div className="flex items-center gap-2">
               <button onClick={() => game.setIsMuted(!game.isMuted)} className="icon-button" title={displayLanguage === 'zh' ? '静音/取消静音' : 'Mute / Unmute'} aria-label={displayLanguage === 'zh' ? '静音/取消静音' : 'Mute / Unmute'}>{game.isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}</button>
-              <button onClick={() => game.setPhase(GamePhase.LOBBY)} className="icon-button" title={displayLanguage === 'zh' ? '返回大厅' : 'Return to lobby'} aria-label={displayLanguage === 'zh' ? '返回大厅' : 'Return to lobby'}><RefreshCw className="w-4 h-4" /></button>
+              <button onClick={() => { game.setPhase(GamePhase.LOBBY); rec.setShowRecords(true); }} className="icon-button" title={displayLanguage === 'zh' ? '返回大厅' : 'Return to lobby'} aria-label={displayLanguage === 'zh' ? '返回大厅' : 'Return to lobby'}><RefreshCw className="w-4 h-4" /></button>
             </div>
           </header>
 
@@ -263,7 +263,7 @@ const App: React.FC = () => {
                     <h1 className="text-3xl font-black">{game.winner === 'WEREWOLVES' ? '狼人胜利' : '好人胜利'}</h1>
                     <p className="text-sm text-zinc-300 mt-2">第{Math.max(1, game.roundCount)}轮结束{game.me ? ` · ${ROLE_LABELS[game.me.role]}` : ''}</p>
                     <p className="text-xs text-zinc-400 mt-2">{game.savedRecordId ? '战绩已记录。' : '正在记录战绩...'}</p>
-                    <button onClick={() => game.setPhase(GamePhase.LOBBY)} className="mt-5 action-button">返回大厅</button>
+                    <button onClick={() => { game.setPhase(GamePhase.LOBBY); rec.setShowRecords(true); }} className="mt-5 action-button">返回大厅</button>
                   </div>
                 ) : (
                   <>
