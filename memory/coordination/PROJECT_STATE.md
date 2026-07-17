@@ -1,13 +1,13 @@
 # Project Coordination State
 
 **Last verified:** 2026-07-16
-**Project phase:** Session cycles 1–5 complete (12 cards Accepted, 231 tests). DEPLOYED to production (owner-approved): `git push origin main` → Netlify auto-deploy, verified live at ai-werewolf.net.
+**Project phase:** Session cycles 1–6 complete (21 cards Accepted, 268 tests). Cycle 6 integrated locally, awaiting owner approval for DEPLOY.
 
 ## Verified Baseline
 
-- Local tests: `npm run test:run` passed 231/231 tests (21 test files), zero regressions.
+- Local tests: `npm run test:run` passed 268/268 tests (25 test files), zero regressions.
 - Local production build: `npm run build` succeeded.
-- Current branch head: `8486060` — pushed to origin/main. Netlify deploy verified live (in-game language pill removed, lobby pill sole authority).
+- Current branch head: `6c3a49e` — cycle 6 wave 2–4 commit. NOT yet pushed (pending owner approval).
 
 ## Completed This Session (2026-07-16 Autonomous Office)
 
@@ -18,6 +18,7 @@
 | 3 | 3 | dead-player-vote-autoresolve (P0 fix: dead human DAY_VOTING no longer stalls), speech-quality-filter (wolf/possessed self-reveal exclusion + language preference), en-display-translation-improvement (Seer stub detection, EN → zh fallback) |
 | 4 | 1 | night-pipeline-exception-safety (owner-reported P0: permanent "AI思考" stall — try/finally around all isProcessingAI blocks, guarded dynamic imports, 12s fetch timeouts) |
 | 5 | 1 | lobby-language-authority (P1 fix: in-game pill removed, lobby sole language authority, EN games produce full native English AI speech from all 3 layers + wolf chat, zh unchanged, 231 tests) |
+| 6 | 9 | UI optimization: P0 speech-timer-autoskip-fix (human stall fix), action-bar-i18n (KILL→刀人 etc.), lobby-difficulty-i18n (Beginner/Intermediate/Expert), dead-player-card-readability, speech-input-placeholder-i18n, header-icon-tooltips (aria-labels), quick-speech-buttons (7 presets, X号 tap-to-fill), phase-labels-i18n (12 phase keys EN), player-card-speaking-status (已发言checkmark badges) |
 
 ## Provider Infrastructure
 
