@@ -7,7 +7,7 @@
 
 - Local tests: `npm run test:run` passed 268/268 tests (25 test files), zero regressions.
 - Local production build: `npm run build` succeeded.
-- Current branch head: `6c3a49e` — cycle 6 wave 2–4 commit. NOT yet pushed (pending owner approval).
+- Current branch head: `6c3a49e` — cycle 6 wave 2–4 commit. pushed to origin/main. Netlify deploy verified live.
 
 ## Completed This Session (2026-07-16 Autonomous Office)
 
