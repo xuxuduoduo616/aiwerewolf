@@ -56,7 +56,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
       className={`
         relative flex flex-col items-center transition-all duration-300 cursor-pointer border text-left
         ${compact ? 'w-[108px] min-h-[132px] p-2 rounded-lg' : 'h-40 p-2 rounded-xl'}
-        ${!player.isAlive ? 'opacity-60 grayscale brightness-[0.5] border-zinc-800' : 'hover:-translate-y-1 hover:shadow-xl'}
+        ${!player.isAlive ? 'opacity-75 brightness-[0.65] border-zinc-800' : 'hover:-translate-y-1 hover:shadow-xl'}
         ${isSelected ? 'border-zinc-100 bg-zinc-800 shadow-[0_0_16px_rgba(244,244,245,0.35)]' : 'border-zinc-700/70 bg-zinc-900/78'}
         ${isSpeaking ? 'ring-2 ring-zinc-100 shadow-[0_0_22px_rgba(244,244,245,0.45)] scale-105 z-10 speaking-ring' : ''}
       `}

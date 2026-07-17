@@ -83,6 +83,29 @@ export const runAIPhaseSafely = async (
 export const resolveGameLanguage = (language?: DisplayLanguage): DisplayLanguage =>
   language ?? DEFAULT_DISPLAY_LANGUAGE;
 
+/**
+ * P0 fix (speech-timer-autoskip-fix): the speech-timer tick must land on 0 so
+ * the auto-skip effect can fire. The old tick jumped 1 → null, and the
+ * auto-skip guard (speechTimer !== 0) then early-returned forever — the human
+ * speech phase permanently stalled. An inactive timer (null) stays null; an
+ * active timer counts down to 0, never negative, and stays at 0 until the
+ * timer effect resets it.
+ */
+export const tickSpeechTimer = (value: number | null): number | null => {
+  if (value === null) return null;
+  return Math.max(0, value - 1);
+};
+
+/**
+ * Auto-skip guard: fires only when an active speech timer has reached 0 AND
+ * the current speaker is the human. An inactive timer (null) or a non-human
+ * speaker never triggers it.
+ */
+export const shouldAutoSkipSpeech = (
+  speechTimer: number | null,
+  currentSpeakerId: number | undefined
+): boolean => speechTimer === 0 && currentSpeakerId === MY_PLAYER_ID;
+
 export interface AuthContext {
   session: SupabaseSession | null;
   isGuest: boolean;
@@ -175,17 +198,14 @@ export function useGameState(authContext: AuthContext) {
     }
     setSpeechTimer(SPEECH_DURATION);
     const interval = window.setInterval(() => {
-      setSpeechTimer(v => {
-        if (v === null || v <= 1) return null;
-        return v - 1;
-      });
+      setSpeechTimer(tickSpeechTimer);
     }, 1000);
     return () => window.clearInterval(interval);
   }, [currentSpeaker, phase]);
 
   // Auto-skip human speech when timer reaches 0
   useEffect(() => {
-    if (speechTimer !== 0 || currentSpeaker?.id !== MY_PLAYER_ID) return;
+    if (!shouldAutoSkipSpeech(speechTimer, currentSpeaker?.id)) return;
     addLog('Time expired.', true, undefined, '发言时间到，自动跳过。', 'system');
     setCurrentSpeaker(null);
   }, [speechTimer]);

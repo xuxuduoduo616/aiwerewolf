@@ -1,5 +1,5 @@
 import React from 'react';
-import { GamePhase, Role, DIFFICULTY_CONFIGS } from './types';
+import { GamePhase, Role, DIFFICULTY_CONFIGS, difficultyLabel, difficultyDescription } from './types';
 import { GAME_MODES, PHASE_LABELS, ROLE_DESCRIPTIONS, ROLE_LABELS } from './constants';
 import useAuth from './hooks/useAuth';
 import { useRecords } from './hooks/useRecords';
@@ -172,11 +172,11 @@ const App: React.FC = () => {
                           : 'bg-black/50 text-zinc-300 border-zinc-700 hover:border-zinc-400'
                       }`}
                     >
-                      {DIFFICULTY_CONFIGS[d].label}
+                      {difficultyLabel(DIFFICULTY_CONFIGS[d], displayLanguage)}
                     </button>
                   ))}
                 </div>
-                <p className="mt-2 text-xs text-zinc-500 leading-relaxed">{DIFFICULTY_CONFIGS[game.difficulty].description}</p>
+                <p className="mt-2 text-xs text-zinc-500 leading-relaxed">{difficultyDescription(DIFFICULTY_CONFIGS[game.difficulty], displayLanguage)}</p>
               </div>
 
               <div className="grid md:grid-cols-2 gap-5 max-w-4xl">

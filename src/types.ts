@@ -66,7 +66,9 @@ export const DIFFICULTY_LABELS: Record<Difficulty, string> = {
 export interface DifficultyConfig {
   id: Difficulty;
   label: string;
+  labelEn: string;
   description: string;
+  descriptionEn: string;
   // Action selection: higher = AI plays better
   actionAccuracy: number;    // 0–1, probability of choosing optimal action
   // Speech quality: higher = more contextual / less repetitive
@@ -81,7 +83,9 @@ export const DIFFICULTY_CONFIGS: Record<Difficulty, DifficultyConfig> = {
   easy: {
     id: 'easy',
     label: '新手',
+    labelEn: 'Beginner',
     description: 'AI 故意暴露逻辑漏洞，适合第一次玩狼人杀的玩家',
+    descriptionEn: 'AI deliberately exposes logical flaws — ideal for first-time werewolf players.',
     actionAccuracy: 0.45,
     speechQuality: 0.3,
     wolfCoordination: 0.3,
@@ -90,7 +94,9 @@ export const DIFFICULTY_CONFIGS: Record<Difficulty, DifficultyConfig> = {
   normal: {
     id: 'normal',
     label: '进阶',
+    labelEn: 'Intermediate',
     description: 'AI 使用标准策略，偶有逻辑失误，适合有一定基础的玩家',
+    descriptionEn: 'AI uses standard strategy with occasional mistakes — for players with some experience.',
     actionAccuracy: 0.72,
     speechQuality: 0.7,
     wolfCoordination: 0.65,
@@ -99,13 +105,22 @@ export const DIFFICULTY_CONFIGS: Record<Difficulty, DifficultyConfig> = {
   hard: {
     id: 'hard',
     label: '高手',
+    labelEn: 'Expert',
     description: 'AI 接近最优策略，发言真实，难以区分，适合老手挑战',
+    descriptionEn: 'AI plays near-optimal strategy with realistic speech, hard to tell apart — a challenge for veterans.',
     actionAccuracy: 0.92,
     speechQuality: 0.95,
     wolfCoordination: 0.90,
     mistakeRate: 0.08,
   },
 };
+
+/** Pure pickers for the lobby difficulty selector (display language 'zh' | 'en'). */
+export const difficultyLabel = (config: DifficultyConfig, language: 'zh' | 'en'): string =>
+  language === 'en' ? config.labelEn : config.label;
+
+export const difficultyDescription = (config: DifficultyConfig, language: 'zh' | 'en'): string =>
+  language === 'en' ? config.descriptionEn : config.description;
 
 export interface GameConfig {
   id: '9-standard' | '12-standard';
