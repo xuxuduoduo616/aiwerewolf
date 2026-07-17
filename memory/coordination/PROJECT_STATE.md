@@ -1,14 +1,15 @@
 # Project Coordination State
 
 **Last verified:** 2026-07-17
-**Project phase:** Session cycles 1–6 complete (22 cards Accepted, 268 tests). Netlify pipeline restored; functions-502 fix (netlify-functions-cjs-fix) integrated locally, awaiting owner approval for DEPLOY.
+**Project phase:** Session cycles 1–6 complete (22 cards Accepted, 268 tests). Netlify pipeline restored; functions-502 fix DEPLOYED and verified live.
 
 ## Verified Baseline
 
 - Local tests: `npm run test:run` passed 268/268 tests (25 test files), zero regressions.
 - Local production build: `npm run build` succeeded.
-- origin/main head: `1d26425`. Netlify Published: `ccdb788` (verified serving identical assets to HEAD build — diff is screenshots only). The 4 previously-skipped commits (975b5a0, a29e1ec, 78533e4, cab46f3) are ancestors of ccdb788 and LIVE; historic Skipped labels need no action.
-- **2026-07-17 finding:** both Netlify Functions returned 502 in production (`module is not defined in ES module scope` — root `"type": "module"` vs CJS `.js` functions; broken since first deploy from this repo, masked by frontend fallback chain). Fixed by card `netlify-functions-cjs-fix`: `git mv` all three functions to `.cjs` + path updates in `scripts/provider-dry-run.mjs` and `netlify/__tests__/*`. Debugger VERDICT: PASS. Committed locally, NOT pushed (push auto-deploys — owner briefing pending).
+- origin/main head: `cf2728e` — netlify-functions-cjs-fix. **DEPLOYED 2026-07-17 with owner approval**, Netlify auto-deploy from push, live-verified.
+- The 4 previously-skipped commits (975b5a0, a29e1ec, 78533e4, cab46f3) were already live via `ccdb788` (ancestry + asset-hash verified); historic Skipped labels need no action.
+- **Functions restored (2026-07-17):** both Netlify Functions had returned 502 since the first deploy from this repo (`module is not defined in ES module scope` — root `"type": "module"` vs CJS `.js`; masked by frontend fallback chain). Fixed by card `netlify-functions-cjs-fix` (`git mv` to `.cjs`, debugger PASS). Post-deploy verification on both domains: OPTIONS 204, empty POST → 400 `Missing prompt`, live probe POST → 200 `{"text":"OK"}` — **API_KEY is configured and the Gemini path works in production for the first time.** Live AI polish/EN translation now active; $1/day budget guard + per-IP rate limit apply.
 
 ## Completed This Session (2026-07-16 Autonomous Office)
 
