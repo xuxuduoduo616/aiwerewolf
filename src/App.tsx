@@ -181,7 +181,7 @@ const App: React.FC = () => {
 
               <div className="grid md:grid-cols-2 gap-5 max-w-4xl">
                 {GAME_MODES.map(mode => (
-                  <button key={mode.id} onClick={() => game.startGame(mode, displayLanguage)} className="mode-card text-left">
+                  <button key={mode.id} onClick={() => { game.startGame(mode, displayLanguage); rec.setShowRecords(false); }} className="mode-card text-left">
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <div className="text-5xl font-black text-zinc-100">{mode.playerCount}</div>
