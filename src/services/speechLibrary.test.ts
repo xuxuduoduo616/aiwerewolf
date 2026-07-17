@@ -150,6 +150,15 @@ describe('pickSpeechFromEntries — language preference', () => {
     const picked = pickMany(noMatch, Role.VILLAGER, { language: 'en' });
     expect(picked.has('')).toBe(false);
   });
+
+  it('combines EN preference with the self-reveal filter off (wolf night chat)', () => {
+    // Mirrors pickWolfNightSpeech('en'): language 'en' + filterSelfReveal false.
+    const enReveal = 'I am a werewolf, let us pick the kill together.';
+    const pool = [entry(enReveal), ...enTexts.map(t => entry(t)), ...zhTexts.map(t => entry(t))];
+    const picked = pickMany(pool, Role.WEREWOLF, { language: 'en', filterSelfReveal: false });
+    for (const text of picked) expect([enReveal, ...enTexts]).toContain(text);
+    expect(picked.has(enReveal)).toBe(true);
+  });
 });
 
 describe('pickSpeechFromEntries — existing behavior retained', () => {

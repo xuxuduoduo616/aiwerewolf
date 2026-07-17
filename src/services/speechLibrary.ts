@@ -153,9 +153,10 @@ export async function pickSpeech(
  * Pick a speech for wolf night chat (from whisper logs if available).
  * Night chat is wolf-team-internal, so the self-reveal filter is off.
  */
-export async function pickWolfNightSpeech(): Promise<string> {
+export async function pickWolfNightSpeech(language: DisplayLanguage = 'zh'): Promise<string> {
   return pickSpeech(Role.WEREWOLF, ['wolf_night_chat', 'wolf_day_speech'], 0, {
     filterSelfReveal: false,
+    language,
   });
 }
 

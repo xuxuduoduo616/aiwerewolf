@@ -30,6 +30,7 @@ import {
   resolveVoteResult,
 } from '../gameEngine';
 import { isSupabaseConfigured, saveGameRecord } from '../services/supabaseClient';
+import { DEFAULT_DISPLAY_LANGUAGE, type DisplayLanguage } from '../i18n';
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 const AI_STYLE_KEYS = Object.keys(CUSTOM_AI_STYLES);
@@ -74,6 +75,14 @@ export const runAIPhaseSafely = async (
   }
 };
 
+/**
+ * lobby-language-authority: the lobby selection is snapshotted once at
+ * startGame as the fixed game language for all AI generation; a missing value
+ * keeps today's zh behavior.
+ */
+export const resolveGameLanguage = (language?: DisplayLanguage): DisplayLanguage =>
+  language ?? DEFAULT_DISPLAY_LANGUAGE;
+
 export interface AuthContext {
   session: SupabaseSession | null;
   isGuest: boolean;
@@ -90,6 +99,7 @@ export function useGameState(authContext: AuthContext) {
 
   const [config, setConfig] = useState<GameConfig | null>(null);
   const [difficulty, setDifficulty] = useState<Difficulty>('normal');
+  const [gameLanguage, setGameLanguage] = useState<DisplayLanguage>(DEFAULT_DISPLAY_LANGUAGE);
   const [players, setPlayers] = useState<Player[]>([]);
   const [phase, setPhase] = useState<GamePhase>(GamePhase.LOGIN);
   const [logs, setLogs] = useState<GameLog[]>([]);
@@ -258,8 +268,9 @@ export function useGameState(authContext: AuthContext) {
     ]);
   };
 
-  const startGame = (nextConfig: GameConfig) => {
+  const startGame = (nextConfig: GameConfig, language?: DisplayLanguage) => {
     resetAIMemory();
+    setGameLanguage(resolveGameLanguage(language));
     setAIDifficulty(DIFFICULTY_CONFIGS[difficulty].actionAccuracy);
     const shuffledRoles = [...nextConfig.roles].sort(() => Math.random() - 0.5);
     const wolfIndices: number[] = [];
@@ -374,7 +385,7 @@ export function useGameState(authContext: AuthContext) {
     const wolves = players.filter(player => player.role === Role.WEREWOLF && player.isAlive);
     if (wolfChat.length === 0 && wolves.length > 0) {
       try {
-        const chat = await generateWolfChat(wolves, players, logs, Math.max(1, roundCount), voteRecords);
+        const chat = await generateWolfChat(wolves, players, logs, Math.max(1, roundCount), voteRecords, gameLanguage);
         setWolfChat(chat);
       } catch {
         // Wolf chat is cosmetic — a failed AI call must never block the night.
@@ -544,7 +555,8 @@ export function useGameState(authContext: AuthContext) {
         Math.max(1, roundCount),
         seerInfo,
         voteRecords,
-        nightState
+        nightState,
+        gameLanguage
       );
       addLog(response.en, false, nextSpeaker.id, response.zh, 'speech');
     }, () => {

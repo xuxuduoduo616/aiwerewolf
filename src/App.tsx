@@ -181,7 +181,7 @@ const App: React.FC = () => {
 
               <div className="grid md:grid-cols-2 gap-5 max-w-4xl">
                 {GAME_MODES.map(mode => (
-                  <button key={mode.id} onClick={() => game.startGame(mode)} className="mode-card text-left">
+                  <button key={mode.id} onClick={() => game.startGame(mode, displayLanguage)} className="mode-card text-left">
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <div className="text-5xl font-black text-zinc-100">{mode.playerCount}</div>
@@ -216,14 +216,8 @@ const App: React.FC = () => {
                 <p className="text-xs text-zinc-400">{PHASE_LABELS[game.phase] || game.phase}</p>
               </div>
             </div>
+            {/* Language is fixed at startGame from the lobby pill — no in-game toggle. */}
             <div className="flex items-center gap-2">
-              <button
-                onClick={toggleDisplayLanguage}
-                title={displayLanguage === 'zh' ? 'Switch display language to English' : '切换显示语言为中文'}
-                className="h-9 px-2.5 inline-flex items-center gap-1.5 rounded-lg border border-zinc-700 bg-black/70 text-zinc-200 text-xs font-bold hover:bg-zinc-800 hover:border-zinc-300 transition"
-              >
-                <Languages className="w-4 h-4" />{displayLanguage === 'zh' ? '中文' : 'EN'}
-              </button>
               <button onClick={() => game.setIsMuted(!game.isMuted)} className="icon-button">{game.isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}</button>
               <button onClick={() => game.setPhase(GamePhase.LOBBY)} className="icon-button"><RefreshCw className="w-4 h-4" /></button>
             </div>

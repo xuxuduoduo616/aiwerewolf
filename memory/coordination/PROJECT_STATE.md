@@ -1,13 +1,13 @@
 # Project Coordination State
 
 **Last verified:** 2026-07-16
-**Project phase:** Session cycles 1–4 complete (11 cards Accepted, 216 tests). DEPLOYED to production (owner-approved): `git push origin main` → Netlify auto-deploy, verified live at ai-werewolf.net.
+**Project phase:** Session cycles 1–5 complete (12 cards Accepted, 231 tests). Cycle 5 integrated locally, awaiting owner approval for DEPLOY.
 
 ## Verified Baseline
 
-- Local tests: `npm run test:run` passed 216/216 tests (20 test files), zero regressions.
+- Local tests: `npm run test:run` passed 231/231 tests (21 test files), zero regressions.
 - Local production build: `npm run build` succeeded.
-- Current branch head: `b94cdbe` — pushed to origin/main. Netlify deploy verified live (session bundle hashes served).
+- Current branch head: `1421083` — last pushed to origin/main. Cycle 5 patch NOT yet pushed (pending owner approval).
 
 ## Completed This Session (2026-07-16 Autonomous Office)
 
@@ -17,6 +17,7 @@
 | 2 | 3 | runtime-model-routing (frontend → provider-adapter fallback chain), model-routing-cost-guard (daily budget $1/day, UTC rollover, 402+fallback on exhaustion), provider-adapter-dry-run (zero-network in-process dry-run script) |
 | 3 | 3 | dead-player-vote-autoresolve (P0 fix: dead human DAY_VOTING no longer stalls), speech-quality-filter (wolf/possessed self-reveal exclusion + language preference), en-display-translation-improvement (Seer stub detection, EN → zh fallback) |
 | 4 | 1 | night-pipeline-exception-safety (owner-reported P0: permanent "AI思考" stall — try/finally around all isProcessingAI blocks, guarded dynamic imports, 12s fetch timeouts) |
+| 5 | 1 | lobby-language-authority (P1 fix: in-game pill removed, lobby sole language authority, EN games produce full native English AI speech from all 3 layers + wolf chat, zh unchanged, 231 tests) |
 
 ## Provider Infrastructure
 

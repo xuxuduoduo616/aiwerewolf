@@ -10,6 +10,7 @@
  */
 
 import type { GameLog, GamePhase, NightState, Player, Role, VoteRecord, WolfChatMessage } from '../types';
+import type { DisplayLanguage } from '../i18n';
 import { ROLE_LABELS, WEREWOLF_SLANG } from '../constants';
 import { CUSTOM_AI_STYLES, FALLBACK_STYLE } from '../services/aiStyles';
 import { pickSpeech, pickWolfNightSpeech } from '../services/speechLibrary';
@@ -24,6 +25,16 @@ const isChinese = (text: string): boolean => {
   const cjk = (text.match(/[一-鿿㐀-䶿]/g) || []).length;
   return cjk / Math.max(1, text.length) > 0.3;
 };
+
+const isEnglish = (text: string): boolean => {
+  const cjkOrKana = (text.match(/[一-鿿㐀-䶿ぁ-ゟ゠-ヿ]/g) || []).length;
+  return cjkOrKana === 0 && /[a-zA-Z]/.test(text);
+};
+
+// EN-mode acceptance mirror of the isChinese check: a real English speech,
+// never an empty line or a canned stub (stubs are all well under 12 words).
+const isSubstantiveEnglish = (text: string): boolean =>
+  isEnglish(text) && text.trim().split(/\s+/).length >= 12;
 
 const fmtLogs = (logs: GameLog[]) =>
   logs.slice(-16).map(l => `${l.speakerId ? `${l.speakerId}号` : '系统'}: ${l.translation || l.message}`).join('\n');
@@ -93,6 +104,7 @@ export const generateAIDialogue = async (
   seerInfo: { targetId: number; isGood: boolean } | null,
   voteRecords: VoteRecord[] = [],
   nightState: NightState = { wolfKillId: null, witchPoisonId: null, witchSaved: false },
+  language: DisplayLanguage = 'zh',
 ): Promise<{ en: string; zh: string }> => {
 
   // Initialize beliefs if needed
@@ -116,13 +128,41 @@ export const generateAIDialogue = async (
     Idiot: '你是白痴，发言像好人，被抗推翻牌免死',
   };
 
-  const systemPrompt = `你是一名狼人杀高手。性格：${style.label}。说话风格：${style.speakingStyle}。
+  const roleStrategiesEn: Partial<Record<Role, string>> = {
+    Werewolf: player.isWolfHopper
+      ? 'You are the fake-claiming wolf: claim seer and hand out a fake kill-check or clear a teammate.'
+      : 'You are a werewolf: stay hidden during the day, hook back or charge when needed.',
+    Seer: `You are the seer. Last night's check: ${seerInfo ? `Player ${seerInfo.targetId} is ${seerInfo.isGood ? 'GOOD' : 'a WOLF'}` : 'no result yet'}`,
+    Witch: 'You are the witch: hide your identity and read the field to find wolves.',
+    Hunter: 'You are the hunter: claim strength when useful and pressure with your shot.',
+    Villager: 'You are a villager: find wolves through speeches and vote patterns.',
+    Idiot: 'You are the idiot: talk like a villager; flipping your card on exile saves you.',
+  };
+
+  const systemPrompt = language === 'en'
+    ? `You are an expert werewolf (Mafia) player. Personality: ${style.label}. Speaking style: ${style.speakingStyle}.
+${roleStrategiesEn[player.role] || ''}
+Your true identity: ${player.role} (Player ${player.id} ${player.name})
+Forbidden: revealing information you should not know, filler talk, exceeding 160 words`
+    : `你是一名狼人杀高手。性格：${style.label}。说话风格：${style.speakingStyle}。
 ${roleStrategies[player.role] || ''}
 你的真实身份：${ROLE_LABELS[player.role]}（${player.id}号 ${player.name}）
 必须使用的术语：${slang}
 禁止：透露不该知道的信息，讲废话，超过180字`;
 
-  const userPrompt = `当前局面：第${round}轮，${deathNote}
+  const deathNoteEn = deadThisRound.length
+    ? `died last night: ${deadThisRound.map(id => `Player ${id}`).join(', ')}`
+    : 'a peaceful night';
+  const userPrompt = language === 'en'
+    ? `Current situation: round ${round}, ${deathNoteEn}
+Players: ${fmtPlayers(player, players)}
+Recent speeches:
+${fmtLogs(logs)}
+Votes: ${fmtVotes(voteRecords)}
+
+Write one full daytime speech in ENGLISH (60-160 English words, must mention specific player numbers as "Player N").
+Return JSON: {"en":"full English speech","zh":"short Chinese summary"}`
+    : `当前局面：第${round}轮，${deathNote}
 玩家列表：${fmtPlayers(player, players)}
 近期发言：
 ${fmtLogs(logs)}
@@ -133,15 +173,29 @@ ${fmtLogs(logs)}
 
   // Layer 3: Try Gemini LLM first
   const llmResult = await generateSpeechWithLLM(systemPrompt, userPrompt);
-  if (llmResult?.zh && isChinese(llmResult.zh)) {
+  if (language === 'en') {
+    if (llmResult?.en && isSubstantiveEnglish(llmResult.en)) {
+      globalBeliefTracker.updateFromSpeech(player.id, llmResult.en, players);
+      return llmResult;
+    }
+  } else if (llmResult?.zh && isChinese(llmResult.zh)) {
     // Update beliefs from this speech
     globalBeliefTracker.updateFromSpeech(player.id, llmResult.zh, players);
     return llmResult;
   }
 
   // Layer 2: Speech library fallback
-  const libText = await pickSpeech(player.role, [], round);
-  if (libText && libText.length > 20 && isChinese(libText)) {
+  const libText = await pickSpeech(player.role, [], round, { language });
+  if (language === 'en') {
+    if (libText && libText.length > 20 && isEnglish(libText)) {
+      const alive = players.filter(p => p.isAlive && p.id !== player.id);
+      const suspect = globalBeliefTracker.getMostSuspicious(player.id, alive);
+      const mention = suspect ? ` (watching Player ${suspect.id})` : '';
+      const en = `${libText.slice(0, 160)}${mention}`;
+      globalBeliefTracker.updateFromSpeech(player.id, en, players);
+      return { en, zh: '' };
+    }
+  } else if (libText && libText.length > 20 && isChinese(libText)) {
     // Inject a player mention if missing
     const alive = players.filter(p => p.isAlive && p.id !== player.id);
     const suspect = globalBeliefTracker.getMostSuspicious(player.id, alive);
@@ -152,8 +206,8 @@ ${fmtLogs(logs)}
   }
 
   // Layer 1: Hardcoded contextual fallback
-  const fallback = buildFallback(player, players, round, seerInfo, nightState);
-  globalBeliefTracker.updateFromSpeech(player.id, fallback.zh, players);
+  const fallback = buildFallback(player, players, round, seerInfo, nightState, language);
+  globalBeliefTracker.updateFromSpeech(player.id, language === 'en' ? fallback.en : fallback.zh, players);
   return fallback;
 };
 
@@ -225,6 +279,7 @@ export const generateWolfChat = async (
   logs: GameLog[],
   round: number,
   voteRecords: VoteRecord[] = [],
+  language: DisplayLanguage = 'zh',
 ): Promise<WolfChatMessage[]> => {
   if (wolves.length === 0) return [];
 
@@ -232,8 +287,17 @@ export const generateWolfChat = async (
   const strategyTags: WolfChatMessage['strategyTag'][] = ['刀口', '悍跳', '冲锋', '倒钩', '补位'];
 
   // Try Gemini for wolf chat
-  const systemPrompt = '你们是狼人夜间团队，用中文简洁商量策略。';
-  const userPrompt = `狼队：${wolves.map(w => `${w.id}号`).join('、')}
+  const systemPrompt = language === 'en'
+    ? 'You are the werewolf night team. Discuss strategy concisely in English.'
+    : '你们是狼人夜间团队，用中文简洁商量策略。';
+  const userPrompt = language === 'en'
+    ? `Wolf team: ${wolves.map(w => `Player ${w.id}`).join(', ')}
+Living villagers: ${aliveGood.map(p => `Player ${p.id}`).join(', ')}
+Recent speeches: ${fmtLogs(logs)}
+Votes: ${fmtVotes(voteRecords)}
+Output ${Math.min(3, wolves.length)} night-chat strategy messages in English.
+JSON: {"messages":[{"speakerId":number,"message":"English","strategyTag":"刀口|悍跳|冲锋|倒钩|补位"}]}`
+    : `狼队：${wolves.map(w => `${w.id}号`).join('、')}
 存活好人：${aliveGood.map(p => `${p.id}号`).join('、')}
 近期发言：${fmtLogs(logs)}
 票型：${fmtVotes(voteRecords)}
@@ -272,16 +336,25 @@ JSON：{"messages":[{"speakerId":number,"message":"中文","strategyTag":"刀口
   const result: WolfChatMessage[] = [];
   for (let i = 0; i < Math.min(3, wolves.length); i++) {
     const wolf = wolves[i];
-    const libText = await pickWolfNightSpeech();
+    const libText = await pickWolfNightSpeech(language);
     const tag = strategyTags[i % strategyTags.length];
     const target = aliveGood[i % aliveGood.length];
-    const fallbackMsg = libText && libText.length > 15
+    // In EN mode a mixed-language corpus pick must actually be English,
+    // otherwise the English hardcoded lines take over.
+    const libOk = Boolean(libText && libText.length > 15 && (language !== 'en' || isEnglish(libText)));
+    const fallbackMsg = libOk
       ? libText.slice(0, 120)
-      : (i === 0
-        ? `我建议刀${target ? `${target.id}号` : '强神位'}。`
-        : i === 1
-          ? '明天需要一张牌悍跳预言家，我可以跳。'
-          : '白天别冲，倒钩配合悍跳狼。');
+      : language === 'en'
+        ? (i === 0
+          ? `I suggest we hit ${target ? `Player ${target.id}` : 'a power seat'} tonight.`
+          : i === 1
+            ? 'Tomorrow one of us needs to fake-claim seer — I can take that jump.'
+            : 'Do not charge during the day; hook back and cover the fake seer.')
+        : (i === 0
+          ? `我建议刀${target ? `${target.id}号` : '强神位'}。`
+          : i === 1
+            ? '明天需要一张牌悍跳预言家，我可以跳。'
+            : '白天别冲，倒钩配合悍跳狼。');
 
     result.push({
       id: `wolf-${round}-${wolf.id}-${i}`,
@@ -302,15 +375,20 @@ const buildFallback = (
   round: number,
   seerInfo: { targetId: number; isGood: boolean } | null,
   nightState: NightState,
+  language: DisplayLanguage = 'zh',
 ): { en: string; zh: string } => {
   const alive = players.filter(p => p.isAlive && p.id !== player.id);
   const suspect = globalBeliefTracker.getMostSuspicious(player.id, alive,
     p => player.role !== 'Werewolf' || p.role !== 'Werewolf');
   const suspectLabel = suspect ? `${suspect.id}号` : '外置位';
+  const suspectLabelEn = suspect ? `Player ${suspect.id}` : 'the quietest seat';
 
   if (player.role === 'Seer' && seerInfo) {
     return {
-      en: `Seer reports: Player ${seerInfo.targetId} is ${seerInfo.isGood ? 'GOOD' : 'WOLF'}.`,
+      // EN games need a real full-English seer report, never the canned stub.
+      en: language === 'en'
+        ? `I am the seer. Last night I checked Player ${seerInfo.targetId} and the result is ${seerInfo.isGood ? 'good — a confirmed villager-side player' : 'a werewolf — that is a hard check'}. Let's build today's discussion around this result first.`
+        : `Seer reports: Player ${seerInfo.targetId} is ${seerInfo.isGood ? 'GOOD' : 'WOLF'}.`,
       zh: `我是预言家，昨晚验了${seerInfo.targetId}号，结果是${seerInfo.isGood ? '金水/好人' : '查杀/狼人'}。今天先围绕这个结果盘逻辑。`,
     };
   }
@@ -321,7 +399,15 @@ const buildFallback = (
       `场上${suspectLabel}的表水太虚了，这个位置我要带节奏，一起看发言。`,
       `我先不站死边，但${suspectLabel}的视角开得太早，像在带节奏给狼队找抗推位。`,
     ];
-    return { en: `Frames Player ${suspect?.id || '?'}.`, zh: lines[player.id % lines.length] };
+    const linesEn = [
+      `${suspectLabelEn} keeps contradicting earlier statements — that logic was not built naturally, so I lean toward voting there today.`,
+      `The defense from ${suspectLabelEn} is far too hollow. I want to push on this seat — everyone should re-read those speeches.`,
+      `I will not lock my read yet, but ${suspectLabelEn} opened a full view way too early, like someone steering the village onto a mislynch.`,
+    ];
+    return {
+      en: language === 'en' ? linesEn[player.id % linesEn.length] : `Frames Player ${suspect?.id || '?'}.`,
+      zh: lines[player.id % lines.length],
+    };
   }
 
   const lines = [
@@ -329,5 +415,13 @@ const buildFallback = (
     `${suspectLabel}铁逻辑断点太明显了，不解释清楚我就先投他。`,
     `场上先不乱分票，${suspectLabel}要先说清楚自己的立场再说。`,
   ];
-  return { en: `Pushes suspicion on Player ${suspect?.id || '?'}.`, zh: lines[player.id % lines.length] };
+  const linesEn = [
+    `From the village side, the speech from ${suspectLabelEn} has real problems. I suggest we focus on the holes in that logic today.`,
+    `The logic from ${suspectLabelEn} breaks down far too obviously. Without a clear explanation I am voting there first.`,
+    `Let's not scatter our votes today — ${suspectLabelEn} needs to make their position clear before anything else moves.`,
+  ];
+  return {
+    en: language === 'en' ? linesEn[player.id % linesEn.length] : `Pushes suspicion on Player ${suspect?.id || '?'}.`,
+    zh: lines[player.id % lines.length],
+  };
 };
