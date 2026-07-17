@@ -1,13 +1,13 @@
 # Project Coordination State
 
 **Last verified:** 2026-07-16
-**Project phase:** Session cycles 1–5 complete (12 cards Accepted, 231 tests). Cycle 5 integrated locally, awaiting owner approval for DEPLOY.
+**Project phase:** Session cycles 1–5 complete (12 cards Accepted, 231 tests). DEPLOYED to production (owner-approved): `git push origin main` → Netlify auto-deploy, verified live at ai-werewolf.net.
 
 ## Verified Baseline
 
 - Local tests: `npm run test:run` passed 231/231 tests (21 test files), zero regressions.
 - Local production build: `npm run build` succeeded.
-- Current branch head: `1421083` — last pushed to origin/main. Cycle 5 patch NOT yet pushed (pending owner approval).
+- Current branch head: `8486060` — pushed to origin/main. Netlify deploy verified live (in-game language pill removed, lobby pill sole authority).
 
 ## Completed This Session (2026-07-16 Autonomous Office)
 
