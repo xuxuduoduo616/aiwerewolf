@@ -728,6 +728,11 @@ export function useGameState(authContext: AuthContext) {
 
   const handlePlayerAction = (targetId: number) => {
     if (isProcessingAI) return;
+    // Hunter shot: a dead Hunter can still act (the only dead-human action path)
+    if (phase === GamePhase.DAY_HUNTER_SHOT && pendingHunterId === MY_PLAYER_ID) {
+      handleHunterShot(targetId);
+      return;
+    }
     const target = players.find(player => player.id === targetId);
     if (!me?.isAlive || !target) return;
 
