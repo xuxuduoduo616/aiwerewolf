@@ -148,7 +148,7 @@ const App: React.FC = () => {
               >
                 <Languages className="w-4 h-4" />{displayLanguage === 'zh' ? '中文' : 'EN'}
               </button>
-              <button onClick={() => { auth.logoutAuth(); game.setPhase(GamePhase.LOGIN); rec.setRecords([]); rec.setRecordError(''); }} className="icon-button"><LogOut className="w-4 h-4" /></button>
+              <button onClick={() => { auth.logoutAuth(); game.setPhase(GamePhase.LOBBY); rec.setRecords([]); rec.setRecordError(''); }} className="icon-button"><LogOut className="w-4 h-4" /></button>
             </div>
           </header>
           <main className="flex-1 grid lg:grid-cols-[1fr_360px] gap-6 p-6 lg:p-10">

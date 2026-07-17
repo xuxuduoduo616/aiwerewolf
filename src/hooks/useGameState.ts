@@ -142,7 +142,7 @@ export function useGameState(authContext: AuthContext) {
   const [difficulty, setDifficulty] = useState<Difficulty>('normal');
   const [gameLanguage, setGameLanguage] = useState<DisplayLanguage>(DEFAULT_DISPLAY_LANGUAGE);
   const [players, setPlayers] = useState<Player[]>([]);
-  const [phase, setPhase] = useState<GamePhase>(GamePhase.LOGIN);
+  const [phase, setPhase] = useState<GamePhase>(GamePhase.LOBBY);
   const [logs, setLogs] = useState<GameLog[]>([]);
   const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null);
   const [witchStatus, setWitchStatus] = useState({ hasSave: true, hasPoison: true });
