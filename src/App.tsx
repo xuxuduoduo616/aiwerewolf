@@ -275,6 +275,11 @@ const App: React.FC = () => {
                       {game.wolfCountdown !== null && (
                         <div className="timer-pill"><Clock3 className="w-4 h-4" />{game.wolfCountdown}s</div>
                       )}
+                      {game.voteTimer !== null && (
+                        <div className={`timer-pill${game.voteTimer <= 3 ? ' urgent' : ''}`}>
+                          <Clock3 className="w-4 h-4" />{game.voteTimer}s
+                        </div>
+                      )}
                       {game.speechTimer !== null && game.currentSpeaker?.id === MY_PLAYER_ID && (
                         <div className={`timer-pill${game.speechTimer <= 10 ? ' urgent' : ''}`}>
                           <Clock3 className="w-4 h-4" />{game.speechTimer}s

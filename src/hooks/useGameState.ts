@@ -49,6 +49,29 @@ export const shouldAutoResolveVote = (
   me: Pick<Player, 'isAlive' | 'canVote'> | undefined
 ): boolean => phase === GamePhase.DAY_VOTING && !(me?.isAlive && me.canVote);
 
+/** Vote-phase countdown duration in ms. Single definition — no scattered 10s. */
+export const VOTE_DURATION_MS = 10_000;
+
+/** Module-level injectable clock. Tests override with vi.spyOn or direct assignment. */
+export let nowFn: () => number = () => Date.now();
+
+/**
+ * Pure helper: derive displayed seconds from a fixed deadline.
+ * Returns ceil((deadline - now) / 1000), floored at 0 (never negative).
+ * Background-tab safe: recomputes from the deadline, not a decrement counter.
+ */
+export const computeVoteRemaining = (deadline: number, now: number): number =>
+  Math.max(0, Math.ceil((deadline - now) / 1000));
+
+/**
+ * Pure predicate: has the vote deadline been reached?
+ * null deadline (inactive/cleared timer) always returns false.
+ */
+export const shouldAutoResolveVoteTimeout = (
+  deadline: number | null,
+  now: number,
+): boolean => deadline !== null && now >= deadline;
+
 /**
  * P0 fix (night-pipeline-exception-safety): every isProcessingAI block must
  * reset the flag even when an AI call rejects (e.g. the dynamic geminiAdapter
@@ -165,6 +188,9 @@ export function useGameState(authContext: AuthContext) {
   const [savedRecordId, setSavedRecordId] = useState<string | null>(null);
   // NetEase rule: speech timer (60s per player)
   const [speechTimer, setSpeechTimer] = useState<number | null>(null);
+  // Vote countdown: deadline-based timer for human during DAY_VOTING (10s)
+  const [voteDeadline, setVoteDeadline] = useState<number | null>(null);
+  const [voteTimer, setVoteTimer] = useState<number | null>(null);
   // Track last eliminated player for clockwise speaking order
   const [lastEliminatedId, setLastEliminatedId] = useState<number | null>(null);
   // Per-player "finished speaking" tracking for the current day round
@@ -209,6 +235,35 @@ export function useGameState(authContext: AuthContext) {
     }
     setPhase(GamePhase.NIGHT_SEER);
   }, [wolfCountdown, phase, me, nightState.wolfKillId, players]);
+
+  // Vote countdown — deadline-based timer for human during DAY_VOTING
+  useEffect(() => {
+    if (phase !== GamePhase.DAY_VOTING || !me?.isAlive || !me.canVote) {
+      setVoteDeadline(null);
+      setVoteTimer(null);
+      return;
+    }
+    const deadline = nowFn() + VOTE_DURATION_MS;
+    setVoteDeadline(deadline);
+    setVoteTimer(computeVoteRemaining(deadline, nowFn()));
+    const interval = window.setInterval(() => {
+      setVoteTimer(computeVoteRemaining(deadline, nowFn()));
+    }, 1000);
+    return () => window.clearInterval(interval);
+  }, [phase, roundCount, me?.isAlive, me?.canVote]);
+
+  // Vote countdown timeout — auto-abstain when the deadline expires
+  useEffect(() => {
+    if (!voteDeadline || isProcessingAI) return;
+    if (phase !== GamePhase.DAY_VOTING) return;
+    if (!me?.isAlive || !me.canVote) return;
+    if (!shouldAutoResolveVoteTimeout(voteDeadline, nowFn())) return;
+    // Clear deadline synchronously before async finishVote to prevent
+    // a click/timeout race from resolving the same vote round twice.
+    setVoteDeadline(null);
+    setVoteTimer(null);
+    finishVote(null);
+  }, [voteTimer, isProcessingAI, phase]);
 
   // Speech timer — countdown for human player during discussion
   useEffect(() => {
@@ -613,6 +668,10 @@ export function useGameState(authContext: AuthContext) {
   };
 
   const finishVote = async (humanTargetId: number | null) => {
+    // Synchronously clear the vote deadline to prevent a timeout/click race
+    // from resolving the same vote round twice.
+    setVoteDeadline(null);
+    setVoteTimer(null);
     await runAIPhaseSafely(setIsProcessingAI, async () => {
       const votes: Record<number, number> = {};
       const votesByVoter: Record<number, number | null> = {};
@@ -802,7 +861,7 @@ export function useGameState(authContext: AuthContext) {
     speakingQueue, currentSpeaker, spokenPlayerIds,
     deadThisRound, voteRecords, wolfChat, wolfCountdown,
     pendingHunterId, savedRecordId,
-    speechTimer, aiSeerLastCheck,
+    speechTimer, voteTimer, aiSeerLastCheck,
     // derived
     me, selectedPlayer, visibleText, phaseHint,
     logsEndRef,
