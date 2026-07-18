@@ -1,32 +1,17 @@
 {
-  "id": "fallback-wolf-chat-zh-r2-p3-35",
+  "id": "remote-wolf-chat-zh-r1-p2-13",
   "context": "wolf-chat",
   "language": "zh",
-  "speakerId": 3,
-  "speakerName": "Elena",
+  "speakerId": 2,
+  "speakerName": "Marcus",
   "phase": "NIGHT_WEREWOLVES",
-  "round": 2,
+  "round": 1,
   "roster": "1:Luna(Villager) 2:Marcus(Werewolf) 3:Elena(Werewolf) 4:Darius(Werewolf) 5:Silas(Seer) 6:Amara(Witch) 7:Finn(Hunter) 8:Isla(Villager) 9:Jasper(Villager)",
   "prompt": "你们是狼人夜间团队，用中文简洁商量策略。\n\n---\n狼队：2号、3号、4号\n存活好人：1号、5号、6号、7号、8号、9号\n近期发言：\n票型：暂无\n输出3条夜聊策略。\nJSON：{\"messages\":[{\"speakerId\":number,\"message\":\"中文\",\"strategyTag\":\"刀口|悍跳|冲锋|倒钩|补位\"}]}",
-  "rawResponse": "",
+  "rawResponse": "今晚刀那位玩家，明天我悍跳预言家。",
   "translatedResponse": "",
-  "finalText": "Minatoの処刑は偽占い師を正当化した。我々の協力者。Servasを再び狙う。連続護衛はありそうにない。明日はYumiの投票に従う。",
-  "source": "library",
-  "violations": [
-    {
-      "kind": "aiwolf-name",
-      "match": "Servas",
-      "detail": "AIWolf corpus personal name \"Servas\" — not on the current roster"
-    },
-    {
-      "kind": "aiwolf-name",
-      "match": "Yumi",
-      "detail": "AIWolf corpus personal name \"Yumi\" — not on the current roster"
-    },
-    {
-      "kind": "aiwolf-name",
-      "match": "Minato",
-      "detail": "AIWolf corpus personal name \"Minato\" — not on the current roster"
-    }
-  ]
+  "finalText": "今晚刀那位玩家，明天我悍跳预言家。",
+  "source": "remote-model",
+  "violations": [],
+  "note": "no violations detected in the wolf-chat context on the remote path"
 }

@@ -2,7 +2,16 @@
 
 ## Status
 
-Queued
+Accepted
+
+Result: all four verification commands green. `npm run audit:speech-names`
+now PASSES (was 126 fallback-path violations + 94 mocked-remote + 3
+translation-drift); `node scripts/speech-corpus-name-audit.mjs` exits 0 (was
+17,848 refs); `npm run test:run` 309 passed / 5 skipped (baseline 278 + 31
+new, zero regressions); `npm run build` succeeds. Fixes implemented for
+CONFIRMED H1/H2/H3/H5 plus the always-in-scope H8 output guard; H4/H6/H7
+skipped (refuted by the evidence report). Details:
+`memory/coordination/reports/ai-speech-roster-name-fix.md`.
 
 ## Objective
 
@@ -54,6 +63,7 @@ Evidence-driven, minimal fix so that no displayed AI speech ever references a pl
 - New guard/sanitizer utility + its tests (e.g. `src/services/rosterGuard.ts`, `src/services/rosterGuard.test.ts`)
 - Existing test files for the three services above (extend only; do not delete existing assertions)
 - `src/diagnostics/` fixtures ONLY if the report identifies a harness fixture bug — detector assertions and thresholds must NOT be weakened, and any such change must be justified in the report
+- `memory/coordination/reports/ai-speech-name-detection-harness-samples/` (coordinator amendment: regenerated as a natural artifact of re-running the gated audit post-fix; pre-fix failure evidence remains committed at 7bc6557. Post-fix samples must show zero violations and no secrets.)
 
 ## Do not change
 

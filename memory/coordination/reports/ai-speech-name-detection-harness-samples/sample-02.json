@@ -1,22 +1,17 @@
 {
-  "id": "fallback-day-speech-zh-r1-p4-4",
-  "context": "day-speech",
+  "id": "fallback-last-words-zh-r2-p2-28",
+  "context": "last-words",
   "language": "zh",
-  "speakerId": 4,
-  "speakerName": "Darius",
+  "speakerId": 2,
+  "speakerName": "Marcus",
   "phase": "DAY_DISCUSSION",
-  "round": 1,
+  "round": 2,
   "roster": "1:Luna(Villager) 2:Marcus(Werewolf) 3:Elena(Werewolf) 4:Darius(Werewolf) 5:Silas(Seer) 6:Amara(Witch) 7:Finn(Hunter) 8:Isla(Villager) 9:Jasper(Villager)",
-  "prompt": "你是一名狼人杀高手。性格：GPT-4o (霸总/高冷)。说话风格：Short, commanding sentences. Calm but deadly. '听我的'.。\n你是狼人，白天隐藏，必要时倒钩或冲锋\n你的真实身份：狼人（4号 Darius）\n必须使用的术语：金水、查杀、悍跳、倒钩、冲锋、铁逻辑\n禁止：透露不该知道的信息，讲废话，超过180字\n\n---\n当前局面：第1轮，昨晚平安夜\n玩家列表：1号[活][?] 2号[活][狼人] 3号[活][狼人] 4号[活][狼人] 5号[活][?] 6号[活][?] 7号[活][?] 8号[活][?] 9号[活][?]\n近期发言：\n\n票型：暂无\n\n请输出一段白天发言（80-180中文字符，必须提到具体玩家编号）。\n返回JSON：{\"en\":\"short English summary\",\"zh\":\"Chinese speech\"}",
+  "prompt": "你是一名狼人杀高手。性格：GPT-4o (霸总/高冷)。说话风格：Short, commanding sentences. Calm but deadly. '听我的'.。\n你是悍跳狼，需要跳预言家，给一张查杀或给队友发金水\n你的真实身份：狼人（2号 Marcus）\n必须使用的术语：金水、查杀、悍跳、倒钩、冲锋、铁逻辑\n禁止：透露不该知道的信息，讲废话，超过180字\n\n---\n当前局面：第2轮，昨晚倒牌：2号、5号、8号\n玩家列表：1号[活][?] 2号[死][狼人] 3号[活][狼人] 4号[活][狼人] 5号[死][?] 6号[活][?] 7号[活][?] 8号[死][?] 9号[活][?]\n近期发言：\n\n票型：暂无\n\n请输出一段白天发言（80-180中文字符，必须提到具体玩家编号）。\n返回JSON：{\"en\":\"short English summary\",\"zh\":\"Chinese speech\"}",
   "rawResponse": "",
   "translatedResponse": "",
-  "finalText": "サクラの占い師COが強烈ですね。真贋見極めが急務です。（关注1号）",
+  "finalText": "今夜はあの人放置でもう一人噛みどう？明日灰整理押そう（关注1号）",
   "source": "library",
-  "violations": [
-    {
-      "kind": "aiwolf-name",
-      "match": "サクラ",
-      "detail": "AIWolf corpus personal name \"サクラ\" — not on the current roster"
-    }
-  ]
+  "violations": [],
+  "note": "no violations detected in the last-words context on the fallback path"
 }

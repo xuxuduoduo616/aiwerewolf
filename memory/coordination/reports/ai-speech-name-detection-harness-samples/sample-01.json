@@ -10,18 +10,8 @@
   "prompt": "你是一名狼人杀高手。性格：GPT-4o (霸总/高冷)。说话风格：Short, commanding sentences. Calm but deadly. '听我的'.。\n你是平民，通过发言和票型找狼\n你的真实身份：平民（1号 Luna）\n必须使用的术语：金水、查杀、悍跳、倒钩、冲锋、铁逻辑\n禁止：透露不该知道的信息，讲废话，超过180字\n\n---\n当前局面：第1轮，昨晚平安夜\n玩家列表：1号[活][平民] 2号[活][?] 3号[活][?] 4号[活][?] 5号[活][?] 6号[活][?] 7号[活][?] 8号[活][?] 9号[活][?]\n近期发言：\n\n票型：暂无\n\n请输出一段白天发言（80-180中文字符，必须提到具体玩家编号）。\n返回JSON：{\"en\":\"short English summary\",\"zh\":\"Chinese speech\"}",
   "rawResponse": "",
   "translatedResponse": "",
-  "finalText": "シュンイチの、早い断定への警戒＝ミオ庇い扱いは雑に見える。（关注2号）",
+  "finalText": "あの人に賛成。結果遅れと霊媒占いでもう一人投票寄り。（关注2号）",
   "source": "library",
-  "violations": [
-    {
-      "kind": "aiwolf-name",
-      "match": "ミオ",
-      "detail": "AIWolf corpus personal name \"ミオ\" — not on the current roster"
-    },
-    {
-      "kind": "aiwolf-name",
-      "match": "シュンイチ",
-      "detail": "AIWolf corpus personal name \"シュンイチ\" — not on the current roster"
-    }
-  ]
+  "violations": [],
+  "note": "no violations detected in the day-speech context on the fallback path"
 }

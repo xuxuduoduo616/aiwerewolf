@@ -5,6 +5,13 @@ import {
   revealsHiddenRole,
   type SpeechEntry,
 } from './speechLibrary';
+import entities from '../diagnostics/aiwolf-entities.json';
+import bodyguardPool from '../data/bodyguard_speeches.json';
+import mediumPool from '../data/medium_speeches.json';
+import possessedPool from '../data/possessed_speeches.json';
+import seerPool from '../data/seer_speeches.json';
+import villagerPool from '../data/villager_speeches.json';
+import werewolfPool from '../data/werewolf_speeches.json';
 
 const entry = (text: string, overrides: Partial<SpeechEntry> = {}): SpeechEntry => ({
   text,
@@ -180,5 +187,34 @@ describe('pickSpeechFromEntries — existing behavior retained', () => {
     const farDay = entry('决赛轮了，狼人就在我们中间。', { day: 5 });
     const picked = pickMany([...nearDay, farDay], Role.VILLAGER);
     expect(picked.has(farDay.text)).toBe(false);
+  });
+});
+
+/**
+ * ai-speech-roster-name-fix — H1 corpus sanitization (fix invariant 3).
+ * The shipped pools must contain zero raw `Agent[XX]` references and zero
+ * known AIWolf personal names (sanitized by scripts/sanitize-speech-corpus.mjs;
+ * same boundary rules as src/diagnostics/nameDetector.ts).
+ */
+describe('speech corpus — sanitized pools (H1, invariant 3)', () => {
+  const pools: Record<string, SpeechEntry[]> = {
+    bodyguard: bodyguardPool as SpeechEntry[],
+    medium: mediumPool as SpeechEntry[],
+    possessed: possessedPool as SpeechEntry[],
+    seer: seerPool as SpeechEntry[],
+    villager: villagerPool as SpeechEntry[],
+    werewolf: werewolfPool as SpeechEntry[],
+  };
+  const latinRe = new RegExp(`(?<![A-Za-z])(?:${entities.latinNames.join('|')})(?![a-z])`);
+  const katakanaRe = new RegExp(`(?<![ァ-ヶー])(?:${entities.katakanaNames.join('|')})(?![ァ-ヶー])`);
+
+  it('contains no Agent[XX] references and no known AIWolf names in any pool', () => {
+    for (const [name, pool] of Object.entries(pools)) {
+      expect(pool.length, name).toBeGreaterThan(100); // sanitization must not gut a pool
+      const joined = pool.map(e => e.text).join('\n');
+      expect(/Agent\s*\[\s*\d+\s*\]/.test(joined), `${name}: Agent ref`).toBe(false);
+      expect(latinRe.test(joined), `${name}: latin AIWolf name`).toBe(false);
+      expect(katakanaRe.test(joined), `${name}: katakana AIWolf name`).toBe(false);
+    }
   });
 });

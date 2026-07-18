@@ -1,14 +1,6 @@
 [
   {
-    "text": "I am Servas. I look forward to our discussions.",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "I am the Seer. My divination aligns with Midori's. Shizue is the Werewolf.",
+    "text": "I am the Seer. My divination aligns with that player's. The other player is the Werewolf.",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -17,13 +9,13 @@
     ]
   },
   {
-    "text": "Midori's contract is broken. Such wavering reveals deceit. Let us instead turn our judgment to Victoria.",
+    "text": "That player's contract is broken. Such wavering reveals deceit. Let us instead turn our judgment to the other player.",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "Why does Midori's retraction make Asuka true? This logic is flawed. Perhaps the real wolf feigns order.",
+    "text": "Why does that player's retraction make the other player true? This logic is flawed. Perhaps the real wolf feigns order.",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -31,16 +23,7 @@
     ]
   },
   {
-    "text": "Hello everyone! I'm Jonathan ready to play Werewolf. Let's have some fun and figure out who the werewolves are!",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening",
-      "wolf_related"
-    ]
-  },
-  {
-    "text": "I divined last night and discovered that Mio is a werewolf. We should discuss this further.",
+    "text": "I divined last night and discovered that that player is a werewolf. We should discuss this further.",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -50,7 +33,7 @@
     ]
   },
   {
-    "text": "My divination was correct. We need to focus on ensuring the village’s safety by addressing the threat Mio poses.",
+    "text": "My divination was correct. We need to focus on ensuring the village’s safety by addressing the threat that player poses.",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -58,7 +41,7 @@
     ]
   },
   {
-    "text": "I am the true Seer. My divination clearly showed that Mio is the werewolf. We need to act on this to protect the village.",
+    "text": "I am the true Seer. My divination clearly showed that that player is the werewolf. We need to act on this to protect the village.",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -67,7 +50,7 @@
     ]
   },
   {
-    "text": "We have to stay vigilant. My divination as the Seer has provided clear evidence against Mio. It's crucial for our survival.",
+    "text": "We have to stay vigilant. My divination as the Seer has provided clear evidence against that player. It's crucial for our survival.",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -75,7 +58,7 @@
     ]
   },
   {
-    "text": "I am actually the Possessed player Minato is the Werewolf. Let's vote Midori out together to secure our win.",
+    "text": "I am actually the Possessed player that player is the Werewolf. Let's vote the other player out together to secure our win.",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -84,7 +67,7 @@
     ]
   },
   {
-    "text": "Minato as I mentioned I am Possessed and you are the Werewolf. Let's align our votes for Midori today based on the divination outcome I shared.",
+    "text": "That player as I mentioned I am Possessed and you are the Werewolf. Let's align our votes for the other player today based on the divination outcome I shared.",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -94,7 +77,7 @@
     ]
   },
   {
-    "text": "Minato we need to vote Midori out today. Trust the divination I shared; let's win this together.",
+    "text": "That player we need to vote the other player out today. Trust the divination I shared; let's win this together.",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -103,7 +86,7 @@
     ]
   },
   {
-    "text": "Minato please vote for Midori. Trust in our strategy to win this game together.",
+    "text": "That player please vote for the other player. Trust in our strategy to win this game together.",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -111,15 +94,7 @@
     ]
   },
   {
-    "text": "Hello everyone! I'm Minato ready to howl and hunt. Excited to play and figure out the mysteries with you all! Let's have fun!",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "As the actual Seer I divined Daisuke last night and confirmed he is the Werewolf. Trust Benjamin is misleading.",
+    "text": "As the actual Seer I divined that player last night and confirmed he is the Werewolf. Trust the other player is misleading.",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -128,7 +103,7 @@
     ]
   },
   {
-    "text": "I stand by my divination. Daisuke is the Werewolf. Everyone please reconsider your votes based on real threats not just on confusion.",
+    "text": "I stand by my divination. That player is the Werewolf. Everyone please reconsider your votes based on real threats not just on confusion.",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -138,13 +113,13 @@
     ]
   },
   {
-    "text": "Misaki Misaki you misunderstood. When I said \"last night\" I meant the night phase just before we started the discussions today.",
+    "text": "That player that player you misunderstood. When I said \"last night\" I meant the night phase just before we started the discussions today.",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "I reiterate that my divine within the night phase revealed Daisuke as a Werewolf. We cannot ignore this result.",
+    "text": "I reiterate that my divine within the night phase revealed that player as a Werewolf. We cannot ignore this result.",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -153,7 +128,80 @@
     ]
   },
   {
-    "text": "Hello. I am Takumi. My role is seer. Have a good game.",
+    "text": "I am a seer. I divined that player and that player was a human.",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": [
+      "seer_related"
+    ]
+  },
+  {
+    "text": "Divined that player as Human last night—she's safe. I think we need to focus on others for today's suspicions.",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": [
+      "seer_related"
+    ]
+  },
+  {
+    "text": "Vote for that player today. Her behavior has been consistenly vague without solid justification and evasive even under directed questioning.",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "Vote for that player today. Multiple players noted her evasive replies and lack of concrete stance which ally with typical Werewolf or Possessed behavior.",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": [
+      "wolf_related",
+      "voting"
+    ]
+  },
+  {
+    "text": "Vote for that player today. Her consistent vagueness and lack of specific suspects or actions suggest she might be working against the Villagers.",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "That player I'm the Possessed. Let's vote for the other player today; I divined her as Human so she's on the Villager team. This moves us closer to victory.",
+    "role": "POSSESSED",
+    "day": 2,
+    "tags": [
+      "seer_related",
+      "voting"
+    ]
+  },
+  {
+    "text": "That player is our best move to secure a win for us the other player. Vote for her today and we'll have the upper hand.",
+    "role": "POSSESSED",
+    "day": 2,
+    "tags": [
+      "voting"
+    ]
+  },
+  {
+    "text": "That player we need to vote for the other player today. Trust me it helps us. I divined her as Human on Day 1.",
+    "role": "POSSESSED",
+    "day": 2,
+    "tags": [
+      "seer_related",
+      "voting"
+    ]
+  },
+  {
+    "text": "Stick with the plan that player. Voting the other player is our path to a win. Let's secure this.",
+    "role": "POSSESSED",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "Morning. Day 0 — let's get concrete. Power roles  state exact who/when/result if you have one.  @that player  are you claiming seer? If so say when you'll divinate and how you'll report results. The other player's villager claim is noted but gives us nothing useful. I",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -162,105 +210,7 @@
     ]
   },
   {
-    "text": "I am a seer. I divined Toshio and Toshio was a human.",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": [
-      "seer_related"
-    ]
-  },
-  {
-    "text": "I will vote Toshio.",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": [
-      "voting"
-    ]
-  },
-  {
-    "text": "Hello everyone! I'm Asuka. Ready to sniff out those werewolves? Let's have some fun and strategic gameplay together!",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "Divined Rin as Human last night—she's safe. I think we need to focus on others for today's suspicions.",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": [
-      "seer_related"
-    ]
-  },
-  {
-    "text": "Vote for Mio today. Her behavior has been consistenly vague without solid justification and evasive even under directed questioning.",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": [
-      "voting"
-    ]
-  },
-  {
-    "text": "Vote for Mio today. Multiple players noted her evasive replies and lack of concrete stance which ally with typical Werewolf or Possessed behavior.",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": [
-      "wolf_related",
-      "voting"
-    ]
-  },
-  {
-    "text": "Vote for Mio today. Her consistent vagueness and lack of specific suspects or actions suggest she might be working against the Villagers.",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": [
-      "voting"
-    ]
-  },
-  {
-    "text": "Takumi I'm the Possessed. Let's vote for Rin today; I divined her as Human so she's on the Villager team. This moves us closer to victory.",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": [
-      "seer_related",
-      "voting"
-    ]
-  },
-  {
-    "text": "Rin is our best move to secure a win for us Takumi. Vote for her today and we'll have the upper hand.",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": [
-      "voting"
-    ]
-  },
-  {
-    "text": "Takumi we need to vote for Rin today. Trust me it helps us. I divined her as Human on Day 1.",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": [
-      "seer_related",
-      "voting"
-    ]
-  },
-  {
-    "text": "Stick with the plan Takumi. Voting Rin is our path to a win. Let's secure this.",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "Morning. Day 0 — let's get concrete. Power roles  state exact who/when/result if you have one.  @Misaki  are you claiming seer? If so say when you'll divinate and how you'll report results. Shunichi's villager claim is noted but gives us nothing useful. I",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening",
-      "seer_related"
-    ]
-  },
-  {
-    "text": "Still no concrete power claims. I'm against a random lynch Day 0 — we need facts. If you have a power role  state exact who/when/result.  @Misaki  if you're the seer  say when you'll divinate and how you'll report results. Let's collect info before any votes. Over",
+    "text": "Still no concrete power claims. I'm against a random lynch Day 0 — we need facts. If you have a power role  state exact who/when/result.  @that player  if you're the seer  say when you'll divinate and how you'll report results. Let's collect info before any votes. Over",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -271,7 +221,7 @@
     ]
   },
   {
-    "text": "No solid hunches yet — I'm prioritizing facts over feelings.  @Misaki   one more time: if you're the seer  say exactly when and how you'll divinate. I'm against a random Day 0 lynch. Over",
+    "text": "No solid hunches yet — I'm prioritizing facts over feelings.  @that player   one more time: if you're the seer  say exactly when and how you'll divinate. I'm against a random Day 0 lynch. Over",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -281,7 +231,7 @@
     ]
   },
   {
-    "text": "Still no concrete claims.  @Misaki  — if you're the seer  state exactly who/when/result and whether you'll announce publicly. Silence or vagueness only raises suspicion. I'm against a",
+    "text": "Still no concrete claims.  @that player  — if you're the seer  state exactly who/when/result and whether you'll announce publicly. Silence or vagueness only raises suspicion. I'm against a",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -290,16 +240,7 @@
     ]
   },
   {
-    "text": "Misaki claimed seer and says Shizue is Human — that's useful but I need specifics. Misaki  which night did you divinate and why reveal this now? Vague ti @Shunichi  you said villager — why should we trust that? Any concrete observations or reasons? I'm against hasty lynches; let's get clear info first. Over",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": [
-      "seer_related",
-      "over"
-    ]
-  },
-  {
-    "text": "@Shunichi  please explain your vote for Misaki — when did you decide and what concrete reads or actions make you suspect her despite her seer CO? Misaki  also state",
+    "text": "@that player  please explain your vote for the other player — when did you decide and what concrete reads or actions make you suspect her despite her seer CO? The other player  also state",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -308,7 +249,7 @@
     ]
   },
   {
-    "text": "We need hard info before any vote.  @Shunichi  why did you vote for Misaki — give concrete reasons and timing. Misaki  if you're the seer  state exactly which night you divined Shizue and why you're re",
+    "text": "@that player  you still haven't explained why you voted for the other player. When did you decide and what concrete reads or actions made you suspect her despite her seer CO an",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -317,16 +258,7 @@
     ]
   },
   {
-    "text": "@Shunichi  you still haven't explained why you voted for Misaki. When did you decide and what concrete reads or actions made you suspect her despite her seer CO an",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": [
-      "seer_related",
-      "voting"
-    ]
-  },
-  {
-    "text": "Hey everyone I’m Mio and super excited for this round! Let’s all play boldly and make things interesting right from the start",
+    "text": "Hey everyone I’m that player and super excited for this round! Let’s all play boldly and make things interesting right from the start",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -334,7 +266,7 @@
     ]
   },
   {
-    "text": "I have to say I’m actually the Seer I checked George last night and he’s white Do not trust quick COs without double checks",
+    "text": "I have to say I’m actually the Seer I checked that player last night and he’s white Do not trust quick COs without double checks",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -342,28 +274,19 @@
     ]
   },
   {
-    "text": "Midori’s claim that George is wolf feels rushed. If Asuka CO’d so quickly could they be covering for a partner?",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": [
-      "wolf_related",
-      "over"
-    ]
-  },
-  {
-    "text": "If anyone seems off it’s Midori—fake CO then accusations. I say we pick someone causing confusion first.",
+    "text": "If anyone seems off it’s that player—fake CO then accusations. I say we pick someone causing confusion first.",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "Midori’s fake CO and sudden change make me suspicious I’m voting Midori.",
+    "text": "That player’s fake CO and sudden change make me suspicious I’m voting that player.",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "George had my Seer white result so I feel safer with him. Minako what is your role right now?",
+    "text": "That player had my Seer white result so I feel safer with him. The other player what is your role right now?",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -371,7 +294,7 @@
     ]
   },
   {
-    "text": "@Minako  your doubts remind me of Midori’s chaos yesterday if we split again the real wolf wins let’s decide together",
+    "text": "@that player  your doubts remind me of the other player’s chaos yesterday if we split again the real wolf wins let’s decide together",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -379,7 +302,7 @@
     ]
   },
   {
-    "text": "@Minako  you keep doubting but never commit—if we split again the wolf wins. Who do you actually trust right now?",
+    "text": "@that player  you keep doubting but never commit—if we split again the wolf wins. Who do you actually trust right now?",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -387,7 +310,7 @@
     ]
   },
   {
-    "text": "@Minako  your late trust and lack of CO stand out as wolf moves. I’m voting Minako to protect the village.",
+    "text": "@that player  your late trust and lack of CO stand out as wolf moves. I’m voting that player to protect the village.",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -412,7 +335,7 @@
     ]
   },
   {
-    "text": "Victoria I appreciate your curiosity. Any early theories on who might be suspicious?",
+    "text": "That player I appreciate your curiosity. Any early theories on who might be suspicious?",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -428,13 +351,13 @@
     ]
   },
   {
-    "text": "May if Victoria is confirmed who do you suspect next? Let's hear more insights.",
+    "text": "May if that player is confirmed who do you suspect next? Let's hear more insights.",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "Yumi can you explain your early vote on May? It would help clarify your stance.",
+    "text": "That player can you explain your early vote on May? It would help clarify your stance.",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -442,53 +365,43 @@
     ]
   },
   {
-    "text": "May perhaps divining Kenji could provide us with some clarity and direction.",
+    "text": "May perhaps divining that player could provide us with some clarity and direction.",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "Victoria's logic seems sound. Yumi any thoughts on your current situation?",
+    "text": "That player's logic seems sound. The other player any thoughts on your current situation?",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "May's absence leaves us vulnerable. Kenji what are your thoughts on our next move?",
+    "text": "May's absence leaves us vulnerable. That player what are your thoughts on our next move?",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "Victoria's confession is unexpected. Kenji any final thoughts on this revelation?",
+    "text": "That player's confession is unexpected. The other player any final thoughts on this revelation?",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "Victoria seems confident but Kenji let's consider all possibilities before deciding.",
+    "text": "That player seems confident but the other player let's consider all possibilities before deciding.",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "Kenji let's stay alert. Victoria's demeanor suggests there's more at play here.",
+    "text": "That player let's stay alert. The other player's demeanor suggests there's more at play here.",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "Hello everyone. I am Daisuke. Maybe looking forward to playing this werewolf game. I guess getting to know you all better. Over.",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening",
-      "wolf_related",
-      "over"
-    ]
-  },
-  {
-    "text": "Um. I guess I'm the Seer. So. I divined Ms. Shion. She's a Werewolf. Could we maybe discuss what to do next? Please?",
+    "text": "Um. I guess I'm the Seer. So. I divined Ms. That player. She's a Werewolf. Could we maybe discuss what to do next? Please?",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -497,13 +410,13 @@
     ]
   },
   {
-    "text": "I guess Ms. May's claim seems like deflection. My choice... it was based on Mr. Shion's behavior. Solving this is key. Please believe me.",
+    "text": "I guess Ms. May's claim seems like deflection. My choice... it was based on Mr. That player's behavior. Solving this is key. Please believe me.",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "I need to trust my divine. Maybe Mr. Toshio feels human. Let's think about tonight.  @Toshio  Voting is tough when stakes are high. Please let's make wise choices. Who do you think is the wolf?",
+    "text": "I need to trust my divine. Maybe Mr. That player feels human. Let's think about tonight.  @that player  Voting is tough when stakes are high. Please let's make wise choices. Who do you think is the wolf?",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -512,7 +425,7 @@
     ]
   },
   {
-    "text": "Maybe it's like some kind of... werewolf tactic by Shion allying with Ms. May. Ignoring it could be our downfall I guess.",
+    "text": "Maybe it's like some kind of... werewolf tactic by that player allying with Ms. May. Ignoring it could be our downfall I guess.",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -520,16 +433,7 @@
     ]
   },
   {
-    "text": "Hello. I am Servas. My role is seer. Have a good game.",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening",
-      "seer_related"
-    ]
-  },
-  {
-    "text": "I am a seer. I divined Victoria and Victoria was a human.",
+    "text": "I am a seer. I divined that player and that player was a human.",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -537,23 +441,7 @@
     ]
   },
   {
-    "text": "I will vote Minako.",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": [
-      "voting"
-    ]
-  },
-  {
-    "text": "I am Jonathan. Let the observation begin.",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "I am the Seer. My divination last night revealed Asuka to be a Werewolf.",
+    "text": "I am the Seer. My divination last night revealed that player to be a Werewolf.",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -570,7 +458,7 @@
     ]
   },
   {
-    "text": "Voting Asuka is a high-risk gamble. The logical move is to eliminate a silent subject like Victoria.",
+    "text": "Voting that player is a high-risk gamble. The logical move is to eliminate a silent subject like the other player.",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
@@ -584,7 +472,7 @@
     ]
   },
   {
-    "text": "@Benjamin  you say humble but your drama stands out. Who looks like a wolf to you right now—give us a name!",
+    "text": "@that player  you say humble but your drama stands out. Who looks like a wolf to you right now—give us a name!",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -592,7 +480,7 @@
     ]
   },
   {
-    "text": "@Shunichi  staying quiet won’t protect you here. Sometimes silence speaks wolf louder than words.",
+    "text": "@that player  staying quiet won’t protect you here. Sometimes silence speaks wolf louder than words.",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -600,7 +488,7 @@
     ]
   },
   {
-    "text": "@Mizuki  you trust Daisuke’s Seer claim after one night but blind faith often leads to trouble in werewolf games.",
+    "text": "@that player  you trust the other player’s Seer claim after one night but blind faith often leads to trouble in werewolf games.",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -609,7 +497,7 @@
     ]
   },
   {
-    "text": "If we all rush Benjamin we might miss the real wolf lurking quiet. I’m voting Shunichi—silence worries me most tonight.",
+    "text": "If we all rush that player we might miss the real wolf lurking quiet. I’m voting the other player—silence worries me most tonight.",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -617,7 +505,7 @@
     ]
   },
   {
-    "text": "@Daisuke  Divining someone already vote outd is strange. Feels like you’re playing safe not finding a real wolf.",
+    "text": "@that player  Divining someone already vote outd is strange. Feels like you’re playing safe not finding a real wolf.",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -626,7 +514,7 @@
     ]
   },
   {
-    "text": "Minato's Medium claim fits Daisuke's divine too perfectly. Anyone else notice how tidy their story is?",
+    "text": "That player's Medium claim fits the other player's divine too perfectly. Anyone else notice how tidy their story is?",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -634,7 +522,7 @@
     ]
   },
   {
-    "text": "@Daisuke  why did you divine a dead player? That just feels like hiding from something you might not want us to see.",
+    "text": "@that player  why did you divine a dead player? That just feels like hiding from something you might not want us to see.",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -642,13 +530,13 @@
     ]
   },
   {
-    "text": "The pair of Daisuke and Minato is too neat so I’m voting Minato. Let’s not ignore a suspicious duo right now.",
+    "text": "The pair of that player and the other player is too neat so I’m voting the other player. Let’s not ignore a suspicious duo right now.",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@Mio  you voted Servas so fast without reason that’s classic late game wolf play. Care to explain your logic?",
+    "text": "@that player  you voted the other player so fast without reason that’s classic late game wolf play. Care to explain your logic?",
     "role": "POSSESSED",
     "day": 3,
     "tags": [
@@ -657,7 +545,7 @@
     ]
   },
   {
-    "text": "@Servas  you’ve been awfully quiet when the heat’s up isn’t silence a classic wolf move or just shy today?",
+    "text": "@that player  you’ve been awfully quiet when the heat’s up isn’t silence a classic wolf move or just shy today?",
     "role": "POSSESSED",
     "day": 3,
     "tags": [
@@ -665,13 +553,13 @@
     ]
   },
   {
-    "text": "If everyone’s jumping on Servas it feels almost too easy.",
+    "text": "If everyone’s jumping on that player it feels almost too easy.",
     "role": "POSSESSED",
     "day": 3,
     "tags": []
   },
   {
-    "text": "If so many are unsettled by Mio’s silent votes I’ll go with the group and vote Mio—leaving it hanging just helps the wolves.",
+    "text": "If so many are unsettled by that player’s silent votes I’ll go with the group and vote that player—leaving it hanging just helps the wolves.",
     "role": "POSSESSED",
     "day": 3,
     "tags": [
@@ -679,13 +567,13 @@
     ]
   },
   {
-    "text": "@Servas  you've dodged giving any solid reads. If you can't name one true suspect I'm voting you—no more shadow games.",
+    "text": "@that player  you've dodged giving any solid reads. If you can't name one true suspect I'm voting you—no more shadow games.",
     "role": "POSSESSED",
     "day": 4,
     "tags": []
   },
   {
-    "text": "Servas is everyone’s favorite suspect but that feels too easy.  @Benjamin  who would you vote if not Servas?",
+    "text": "That player is everyone’s favorite suspect but that feels too easy.  @the other player  who would you vote if not that player?",
     "role": "POSSESSED",
     "day": 4,
     "tags": [
@@ -693,28 +581,13 @@
     ]
   },
   {
-    "text": "If we rush on Servas we’re doing wolves a favor.  @Shion  name two suspects you truly doubt right now.",
+    "text": "If we rush on that player we’re doing wolves a favor.  @the other player  name two suspects you truly doubt right now.",
     "role": "POSSESSED",
     "day": 4,
     "tags": []
   },
   {
-    "text": "@Rin  everyone’s focused on Servas but I find Shizue’s insistence risky. I’m voting Servas but watching Shizue closely.",
-    "role": "POSSESSED",
-    "day": 4,
-    "tags": []
-  },
-  {
-    "text": "Ah. Hello everyone. I'm Minato. I'm really looking forward to working together to uncover the werewolves. Let's be a great team!",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening",
-      "over"
-    ]
-  },
-  {
-    "text": "Um... Mr. Ryuji's claim isn't true! I'm the Seer. I divined Mr. Ryuji and he's a Werewolf. Let's be careful okay?",
+    "text": "Um... Mr. That player's claim isn't true! I'm the Seer. I divined Mr. That player and he's a Werewolf. Let's be careful okay?",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -723,13 +596,13 @@
     ]
   },
   {
-    "text": "Um...everyone. Let's think about this. Ryuji made his claim before me. But he um...falsely attacked me right after I spoke.",
+    "text": "Um...everyone. Let's think about this. That player made his claim before me. But he um...falsely attacked me right after I spoke.",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "Um...Mr. Ryuji might be...a werewolf or maybe possessed. I promise I am...the true Seer. Ms. Mio...you have any thoughts?",
+    "text": "Um...Mr. That player might be...a werewolf or maybe possessed. I promise I am...the true Seer. Ms. The other player...you have any thoughts?",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -738,13 +611,13 @@
     ]
   },
   {
-    "text": "Um... everyone. Ryuji's claim came after mine. It's quite... suspicious. Can we really trust such timing? It makes me wonder.",
+    "text": "Um... everyone. That player's claim came after mine. It's quite... suspicious. Can we really trust such timing? It makes me wonder.",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "Um...I’m the Seer. I divined Sakura. The result...she’s a Werewolf. Maybe we should um vote Sakura to keep the village safe?",
+    "text": "Um...I’m the Seer. I divined that player. The result...she’s a Werewolf. Maybe we should um vote that player to keep the village safe?",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -754,7 +627,7 @@
     ]
   },
   {
-    "text": "Um... I divined Mr. Ryuji as a werewolf you know. Ah... switching my investigation to Ms. Sakura was needed. Need team stability.",
+    "text": "Um... I divined Mr. That player as a werewolf you know. Ah... switching my investigation to Ms. The other player was needed. Need team stability.",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -763,13 +636,13 @@
     ]
   },
   {
-    "text": "Um. I think Mr. Ryuji might be tricking us. Please. Ms. Sakura? Can we question those backing him? I'm curious about their reasons.",
+    "text": "Um. I think Mr. That player might be tricking us. Please. Ms. The other player? Can we question those backing him? I'm curious about their reasons.",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "Um. If we ignore Ryuji Mr. He may lead us astray on purpose. Let's be wary. Ah. His words sound like classic wolf tactics.",
+    "text": "Um. If we ignore that player Mr. He may lead us astray on purpose. Let's be wary. Ah. His words sound like classic wolf tactics.",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -777,17 +650,7 @@
     ]
   },
   {
-    "text": "Hi! Rin here. I trust Benjamin  but  @Asuka  you’ve been awfully quiet and that worries me—what’s your role and who do you want to vote for? I don’t want us to lynch someone with no reason. Over",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening",
-      "voting",
-      "over"
-    ]
-  },
-  {
-    "text": "Yumi said she's the seer—please show your result so we don't lynch by guesswork. If we don't get proof soon  I'm getting nervous about  @Asuka . Asuka  what's your role? Over",
+    "text": "That player said she's the seer—please show your result so we don't lynch by guesswork. If we don't get proof soon  I'm getting nervous about  @the other player . The other player  what's your role? Over",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -797,7 +660,7 @@
     ]
   },
   {
-    "text": "Wait—don't lynch  @Asuka  so fast! Yumi claimed seer; please show your divination result now. If not  let's hear solid reasons before we vote. Over",
+    "text": "Wait—don't lynch  @that player  so fast! The other player claimed seer; please show your divination result now. If not  let's hear solid reasons before we vote. Over",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -808,7 +671,7 @@
     ]
   },
   {
-    "text": "I trust  @Benjamin ! Yumi  please tell us your divination result now — I don't want us to lynch someone without proof. Over",
+    "text": "I trust  @that player ! The other player  please tell us your divination result now — I don't want us to lynch someone without proof. Over",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -818,25 +681,7 @@
     ]
   },
   {
-    "text": "Hi everyone! Rin here. I'm still sad about Asuka... Yumi did you get a divination result last night?  @Benjamin  what do you think—any suspects? I don't want us to lynch the wrong person. Over",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": [
-      "seer_related",
-      "over"
-    ]
-  },
-  {
-    "text": "Hi everyone  Rin here. I'm still sad about Asuka... Yumi  can you tell us your divination result now? I'm getting nervous.  @Benjamin  do you still want to push for someone? I trust you—please don't let us lynch without proof. Over",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": [
-      "seer_related",
-      "over"
-    ]
-  },
-  {
-    "text": "Hi everyone—Rin here. Did anyone get killed last night?  @Yumi  please tell us your divination result so we don't lynch by guesswork. I don't want a wrong vote. Over",
+    "text": "Hi everyone—that player here. Did anyone get killed last night?  @the other player  please tell us your divination result so we don't lynch by guesswork. I don't want a wrong vote. Over",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -846,15 +691,7 @@
     ]
   },
   {
-    "text": "Hi everyone! Rin here. Did anyone get killed last night? Yumi still hasn't told us her result and I'm getting nervous.  @Benjamin  who do you trust now? I don't want us to lynch the wrong person. Over",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": [
-      "over"
-    ]
-  },
-  {
-    "text": "Oh no! Minato was executed and Shunichi got attacked—so scary.  @Yumi  please tell us your divination result from last night so we have a clue before we vote. I'm nervous! Over",
+    "text": "I trust that player  but  @the other player  still hasn’t shown her divination after two people died—that’s really scary. I’m leaning to vote the other player unless she proves she’s the seer now. Over",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -864,7 +701,7 @@
     ]
   },
   {
-    "text": "I trust Benjamin  but  @Yumi  still hasn’t shown her divination after two people died—that’s really scary. I’m leaning to vote Yumi unless she proves she’s the seer now. Over",
+    "text": "That player still hasn't shown a divination after two people died—I'm really worried. I'm leaning to vote that player if she doesn't prove her result now.  @the other player  do you agree? If we wait we'll lose more villagers. Over",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -874,7 +711,7 @@
     ]
   },
   {
-    "text": "Yumi still hasn't shown a divination after two people died—I'm really worried. I'm leaning to vote Yumi if she doesn't prove her result now.  @Benjamin  do you agree? If we wait we'll lose more villagers. Over",
+    "text": "That player still won't show her divination and two people died—I'm going to vote that player if she doesn't prove it now.  @the other player  do you agree? We have to decide fast. Over",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -884,17 +721,7 @@
     ]
   },
   {
-    "text": "Yumi still won't show her divination and two people died—I'm going to vote Yumi if she doesn't prove it now.  @Benjamin  do you agree? We have to decide fast. Over",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": [
-      "seer_related",
-      "voting",
-      "over"
-    ]
-  },
-  {
-    "text": "I'm so scared...  @Benjamin  you pushed to lynch Yumi and now she's gone — why did you do that? Please explain quick or I'll vote you. Anyone with me? Over",
+    "text": "I'm so scared...  @that player  you pushed to lynch the other player and now she's gone — why did you do that? Please explain quick or I'll vote you. Anyone with me? Over",
     "role": "POSSESSED",
     "day": 3,
     "tags": [
@@ -903,7 +730,7 @@
     ]
   },
   {
-    "text": "I'm really scared...  @Benjamin  you pushed to lynch Yumi and now she's gone — that makes you look suspicious. Why did you push so hard? If you can't explain I'll vote for you. Anyone agre",
+    "text": "I'm really scared...  @that player  you pushed to lynch the other player and now she's gone — that makes you look suspicious. Why did you push so hard? If you can't explain I'll vote for you. Anyone agre",
     "role": "POSSESSED",
     "day": 3,
     "tags": [
@@ -911,7 +738,7 @@
     ]
   },
   {
-    "text": "I'm really scared…  @Benjamin  you pushed to lynch Yumi and now she died — that's super suspicious. Please explain now or I'll vote you. Anyone with me? Over",
+    "text": "I'm really scared…  @that player  you pushed to lynch the other player and now she died — that's super suspicious. Please explain now or I'll vote you. Anyone with me? Over",
     "role": "POSSESSED",
     "day": 3,
     "tags": [
@@ -920,7 +747,7 @@
     ]
   },
   {
-    "text": "I'm really scared and I'm voting  @Benjamin . He pushed to lynch Yumi and now she's dead—too suspicious. Tell me why we shouldn't lynch him. Hurry  please. Over",
+    "text": "I'm really scared and I'm voting  @that player . He pushed to lynch the other player and now she's dead—too suspicious. Tell me why we shouldn't lynch him. Hurry  please. Over",
     "role": "POSSESSED",
     "day": 3,
     "tags": [
@@ -928,7 +755,7 @@
     ]
   },
   {
-    "text": "Oh no—Ryuji's gone... I'm really scared.  @Asuka  you've been awfully quiet lately; please tell us your read or role. Benjamin  do you have a lead? We need someone to suggest a vote. Over",
+    "text": "So scary—that player's gone.  @the other player  you've been quiet since the start and that makes me really suspicious. Please tell us your role now or I'll vote you. Who's with me? Over",
     "role": "POSSESSED",
     "day": 4,
     "tags": [
@@ -937,16 +764,7 @@
     ]
   },
   {
-    "text": "So scary—Ryuji's gone.  @Asuka  you've been quiet since the start and that makes me really suspicious. Please tell us your role now or I'll vote you. Who's with me? Over",
-    "role": "POSSESSED",
-    "day": 4,
-    "tags": [
-      "voting",
-      "over"
-    ]
-  },
-  {
-    "text": "I'm really scared.  @Asuka  you've been quiet and weird since the start — I think you're a wolf. I'll vote you. Who's with me? Over",
+    "text": "I'm really scared.  @that player  you've been quiet and weird since the start — I think you're a wolf. I'll vote you. Who's with me? Over",
     "role": "POSSESSED",
     "day": 4,
     "tags": [
@@ -956,7 +774,7 @@
     ]
   },
   {
-    "text": "I'm really scared— @Benjamin  you pushed to lynch Yumi and now villagers kept dying. Please explain why you did that  or I'll vote for you. Who's with me? Over",
+    "text": "I'm really scared— @that player  you pushed to lynch the other player and now villagers kept dying. Please explain why you did that  or I'll vote for you. Who's with me? Over",
     "role": "POSSESSED",
     "day": 4,
     "tags": [
@@ -965,15 +783,7 @@
     ]
   },
   {
-    "text": "I am Jonathan. It is a pleasure to meet you all. I enjoy quiet reading and observation.",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "I am the Seer. My investigation last night identified Daisuke as a Werewolf. He is the logical target.",
+    "text": "I am the Seer. My investigation last night identified that player as a Werewolf. He is the logical target.",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -982,7 +792,7 @@
     ]
   },
   {
-    "text": "My divination result is the only actionable data we possess. Lacking a counter-claim Daisuke is our vote.",
+    "text": "My divination result is the only actionable data we possess. Lacking a counter-claim that player is our vote.",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -999,7 +809,7 @@
     ]
   },
   {
-    "text": "I'll keep it short: I prefer no early lynch—we shouldn't rush. I'm leaning to watch Victoria; seer claims need proof.  @Victoria   what's your divination result? Over",
+    "text": "I'll keep it short: I prefer no early lynch—we shouldn't rush. I'm leaning to watch that player; seer claims need proof.  @that player   what's your divination result? Over",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -1009,7 +819,7 @@
     ]
   },
   {
-    "text": "I still oppose an early lynch. Victoria claimed seer but gave no result.  @Midori   you’ve been silent—if you’re the seer  reveal now; if not  say so. Over",
+    "text": "I still oppose an early lynch. That player claimed seer but gave no result.  @the other player   you’ve been silent—if you’re the seer  reveal now; if not  say so. Over",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -1019,7 +829,7 @@
     ]
   },
   {
-    "text": "I don't want an early lynch. Let's have quick role claims and any results first.  @Midori  are you the seer—reveal or deny? I'll listen. Over",
+    "text": "I don't want an early lynch. Let's have quick role claims and any results first.  @that player  are you the seer—reveal or deny? I'll listen. Over",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -1029,7 +839,7 @@
     ]
   },
   {
-    "text": "I still oppose an early lynch. Quick round of claims/results now—if you have info  say it.  @Jonathan  you claimed villager earlier but haven't said who you suspect; what’s your read and why? Over",
+    "text": "I still oppose an early lynch. Quick round of claims/results now—if you have info  say it.  @that player  you claimed villager earlier but haven't said who you suspect; what’s your read and why? Over",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -1038,7 +848,7 @@
     ]
   },
   {
-    "text": "Jonathan's gone—that's rough. Victoria claimed seer but gave no result; that's suspicious.  @Victoria  reveal your divination result now or withdraw your claim. I still don't want a rash lynch until we have clearer info. Over",
+    "text": "That player's gone—that's rough. The other player claimed seer but gave no result; that's suspicious.  @the other player  reveal your divination result now or withdraw your claim. I still don't want a rash lynch until we have clearer info. Over",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -1047,7 +857,7 @@
     ]
   },
   {
-    "text": "Victoria claimed seer but gave nothing.  @Victoria  either show your result now or retract—if you can't  I'm leaning to lynch you. We can't let fake claims waste time. Over",
+    "text": "That player claimed seer but gave nothing.  @that player  either show your result now or retract—if you can't  I'm leaning to lynch you. We can't let fake claims waste time. Over",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -1056,7 +866,7 @@
     ]
   },
   {
-    "text": "Victoria claimed seer but hasn't given proof.  @Midori  if you're the real seer  reveal your result now; if not  say so. I still oppose rushing a lynch—let's get claims and results first. Over",
+    "text": "That player claimed seer but hasn't given proof.  @the other player  if you're the real seer  reveal your result now; if not  say so. I still oppose rushing a lynch—let's get claims and results first. Over",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -1065,7 +875,7 @@
     ]
   },
   {
-    "text": "Victoria claimed seer but still won't show a result. If she can't prove it  we should lynch her today. I'm voting  @Victoria . Over",
+    "text": "That player claimed seer but still won't show a result. If she can't prove it  we should lynch her today. I'm voting  @that player . Over",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -1074,16 +884,7 @@
     ]
   },
   {
-    "text": "Victoria's gone and Toshio was killed last night. We need someone to explain themselves.  @Shion  you skipped earlier—why were you silent? If you can't give a good reason I'm inclined to suspect you. I still don't want a blind lynch  but speak up. Over",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": [
-      "skip",
-      "over"
-    ]
-  },
-  {
-    "text": "@Midori  please reveal your divination result now or withdraw your claim. We can't afford more nights like last one—if you can't prove it I'll push for a lynch.",
+    "text": "@that player  please reveal your divination result now or withdraw your claim. We can't afford more nights like last one—if you can't prove it I'll push for a lynch.",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -1091,7 +892,7 @@
     ]
   },
   {
-    "text": "If you're truly the seer  show your result now. If not  admit it—silence costs us.  @Midori  please confirm or withdraw your claim; otherwise I'll have to consider you suspect. Over",
+    "text": "If you're truly the seer  show your result now. If not  admit it—silence costs us.  @that player  please confirm or withdraw your claim; otherwise I'll have to consider you suspect. Over",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -1100,7 +901,7 @@
     ]
   },
   {
-    "text": "@Midori  either reveal your divination result now or withdraw your claim—I can't trust silence and will vote if you don't. Over",
+    "text": "@that player  either reveal your divination result now or withdraw your claim—I can't trust silence and will vote if you don't. Over",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -1110,7 +911,7 @@
     ]
   },
   {
-    "text": "Midori's dead and we lost our seer—dangerous. I'm leaning to suspect  @Jonathan  — his earlier behavior doesn't sit right. Jonathan  explain your reads or I'll consider voting you. Over",
+    "text": "That player's dead and we lost our seer—dangerous. I'm leaning to suspect  @the other player  — his earlier behavior doesn't sit right. The other player  explain your reads or I'll consider voting you. Over",
     "role": "POSSESSED",
     "day": 3,
     "tags": [
@@ -1119,7 +920,7 @@
     ]
   },
   {
-    "text": "I vote  @Jonathan . He hasn't explained himself and we can't afford silence—who's with me? Over",
+    "text": "I vote  @that player . He hasn't explained himself and we can't afford silence—who's with me? Over",
     "role": "POSSESSED",
     "day": 3,
     "tags": [
@@ -1128,7 +929,7 @@
     ]
   },
   {
-    "text": "I keep my vote on  @Jonathan —he's given no useful reads and we can't waste time. Anyone defending him? Over",
+    "text": "I keep my vote on  @that player —he's given no useful reads and we can't waste time. Anyone defending him? Over",
     "role": "POSSESSED",
     "day": 3,
     "tags": [
@@ -1137,7 +938,7 @@
     ]
   },
   {
-    "text": "I keep my vote on  @Jonathan . We don't have solid claims left—speak up with evidence or I'm for lynching him now. Over",
+    "text": "I keep my vote on  @that player . We don't have solid claims left—speak up with evidence or I'm for lynching him now. Over",
     "role": "POSSESSED",
     "day": 3,
     "tags": [
@@ -1160,7 +961,7 @@
     "tags": []
   },
   {
-    "text": "If we trust a single Seer CO too quickly we could be falling for a bluff. Shouldn’t we press Toshio a bit more?",
+    "text": "If we trust a single Seer CO too quickly we could be falling for a bluff. Shouldn’t we press that player a bit more?",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -1168,7 +969,7 @@
     ]
   },
   {
-    "text": "Dogpiling votes on Jonathan feels risky Wolves often hide while villagers focus on easy targets Shouldn’t we be more careful?",
+    "text": "Dogpiling votes on that player feels risky Wolves often hide while villagers focus on easy targets Shouldn’t we be more careful?",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -1176,15 +977,7 @@
     ]
   },
   {
-    "text": "Benjamin is safe per Toshio’s result. My vote goes to Servas—starting wagons without stating reasons feels suspicious.",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": [
-      "voting"
-    ]
-  },
-  {
-    "text": "Relying on one Seer CO is risky; wolves could easily point us all in their chosen direction. How do we verify Toshio?",
+    "text": "Relying on one Seer CO is risky; wolves could easily point us all in their chosen direction. How do we verify that player?",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -1192,7 +985,7 @@
     ]
   },
   {
-    "text": "We’re putting all faith in Toshio but Sakura’s silence worries me. Shouldn’t we consider her as a possible wolf too?",
+    "text": "We’re putting all faith in that player but the other player’s silence worries me. Shouldn’t we consider her as a possible wolf too?",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -1200,7 +993,7 @@
     ]
   },
   {
-    "text": "If we rely on just Toshio’s claim we might miss a silent wolf.  @Sakura  why so quiet when suspicion is flying?",
+    "text": "If we rely on just that player’s claim we might miss a silent wolf.  @the other player  why so quiet when suspicion is flying?",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -1208,7 +1001,7 @@
     ]
   },
   {
-    "text": "Sakura’s silence worries me most today—I’m voting Sakura. Quiet play can easily hide a wolf.",
+    "text": "That player’s silence worries me most today—I’m voting that player. Quiet play can easily hide a wolf.",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -1216,13 +1009,13 @@
     ]
   },
   {
-    "text": "@Shunichi  I agree we need the Medium’s info on Ryuji before voting Anyone ready to CO or share a result?",
+    "text": "@that player  I agree we need the Medium’s info on the other player before voting Anyone ready to CO or share a result?",
     "role": "POSSESSED",
     "day": 3,
     "tags": []
   },
   {
-    "text": "@Sakura  your silence is worrying if you’re innocent give reasons now before we choose today’s vote target.",
+    "text": "@that player  your silence is worrying if you’re innocent give reasons now before we choose today’s vote target.",
     "role": "POSSESSED",
     "day": 3,
     "tags": [
@@ -1230,13 +1023,13 @@
     ]
   },
   {
-    "text": "Sakura’s silence is suspicious. Wolves hide by not defending themselves. Shouldn’t we push for answers from her today?",
+    "text": "That player’s silence is suspicious. Wolves hide by not defending themselves. Shouldn’t we push for answers from her today?",
     "role": "POSSESSED",
     "day": 3,
     "tags": []
   },
   {
-    "text": "Sakura hasn’t given us any reason to trust her. Silent wolves are dangerous. I’ll vote Sakura today.",
+    "text": "That player hasn’t given us any reason to trust her. Silent wolves are dangerous. I’ll vote that player today.",
     "role": "POSSESSED",
     "day": 3,
     "tags": [
@@ -1244,7 +1037,7 @@
     ]
   },
   {
-    "text": "@Minato  your vote swaps every day with no clear reason. Can you explain your logic for us now?",
+    "text": "@that player  your vote swaps every day with no clear reason. Can you explain your logic for us now?",
     "role": "POSSESSED",
     "day": 4,
     "tags": [
@@ -1252,13 +1045,13 @@
     ]
   },
   {
-    "text": "@Minato  Your voting always changes with no explanation. Are you hiding something from the rest of us?",
+    "text": "@that player  Your voting always changes with no explanation. Are you hiding something from the rest of us?",
     "role": "POSSESSED",
     "day": 4,
     "tags": []
   },
   {
-    "text": "Minato’s votes have always been suspicious. If we ignore that we might miss a crucial wolf.",
+    "text": "That player’s votes have always been suspicious. If we ignore that we might miss a crucial wolf.",
     "role": "POSSESSED",
     "day": 4,
     "tags": [
@@ -1267,21 +1060,13 @@
     ]
   },
   {
-    "text": "Daisuke’s refusal to clarify his reasoning makes me uneasy. I’m voting Daisuke to protect the village.",
+    "text": "That player’s refusal to clarify his reasoning makes me uneasy. I’m voting that player to protect the village.",
     "role": "POSSESSED",
     "day": 4,
     "tags": []
   },
   {
-    "text": "Ah greetings everyone. I am Benjamin. To be fair I'm eager to delve into the mysteries with you all. Let's exchange ideas and stay sharp!",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "To be fair my friends I've divined Mr. Toshio as a werewolf. Prioritizing him seems rather prudent wouldn't you say? Let us safeguard our village.",
+    "text": "To be fair my friends I've divined Mr. That player as a werewolf. Prioritizing him seems rather prudent wouldn't you say? Let us safeguard our village.",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -1290,7 +1075,7 @@
     ]
   },
   {
-    "text": "To be fair. I propose the seer directs their insight toward Mizuki. Clarity is required to expose deceit and unveil truth.",
+    "text": "To be fair. I propose the seer directs their insight toward that player. Clarity is required to expose deceit and unveil truth.",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -1298,13 +1083,13 @@
     ]
   },
   {
-    "text": "Voting for Daisuke promises wisdom. Observing reactions could unveil our secrets.  @Midori . Do you find my logic compelling?",
+    "text": "Voting for that player promises wisdom. Observing reactions could unveil our secrets.  @the other player . Do you find my logic compelling?",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "Friends should tread carefully. Mr. Toshio's words are laced with discrepancies. Only a cunning wolf would weave such deceit!",
+    "text": "Friends should tread carefully. Mr. That player's words are laced with discrepancies. Only a cunning wolf would weave such deceit!",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -1312,7 +1097,151 @@
     ]
   },
   {
-    "text": "私はServasです。私たちの議論を楽しみにしています。",
+    "text": "私は占い師です。私の占い結果はあの人のものと一致しています。もう一人は人狼です。",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "あの人の契約は破られた。そのような迷いは欺瞞を露呈させる。むしろ我々の裁きをもう一人に向けよう。",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "あの人の撤回がなぜもう一人を真とするのか？この論理は欠陥がある。もしかすると真の狼が秩序を装っている。",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "昨夜占ってあの人が人狼だと判明した。この件についてさらに話し合うべきだ。",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "私の占いは当たっていた。あの人がもたらす脅威に対処して村の安全を確保することに注力する必要がある。",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "私は真の占い師です。占いであの人が人狼だとはっきり出ました。村を守るためにこれに基づいて行動する必要があります。",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "私たちは警戒を続けなければならない。占い師としての私の占い結果は、あの人に対する明確な証拠を示している。これは私たちの生存にとって極めて重要だ。",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "実は私は狂人だあの人は人狼だ。一緒にもう一人に投票して私たちの勝利を確実にしよう。",
+    "role": "POSSESSED",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "あの人、前に言ったとおり、私は狂人で、あなたは人狼だ。私が共有した占い結果に基づいて、今日はもう一人に票を合わせよう。",
+    "role": "POSSESSED",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "あの人、今日はもう一人に投票して追放しないといけない。私が共有した占い結果を信じて、一緒に勝とう。",
+    "role": "POSSESSED",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "あの人、もう一人に投票してください。一緒にこのゲームに勝つための私たちの戦略を信じてください。",
+    "role": "POSSESSED",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "本物の占い師として昨夜あの人を占って彼が人狼であることを確認した。Trust もう一人はミスリードだ。",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "私は自分の占い結果を撤回しません。あの人は人狼です。皆さん、単なる混乱ではなく本当の脅威に基づいて投票を見直してください。",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "あの人 あの人、誤解してたよ。「昨夜」と言ったときは、今日の議論を始める直前の夜フェーズのことを指していたんだ。",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "繰り返しますが、夜フェイズの私の占いで、あの人が人狼だと判明しました。この結果は無視できません。",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "私は占い師です。あの人を占って、あの人は人間でした。",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "昨夜あの人を人間と占った—彼女は安全だ。今日は疑いを他に向けるべきだと思う。",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "今日はあの人に投票してください。彼女の言動は確たる根拠のないまま一貫して曖昧で、的を絞った質問でもはぐらかしています。",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "今日はあの人に投票してください。複数のプレイヤーが、彼女の曖昧な受け答えと明確な姿勢の欠如は、典型的な人狼や狂人の振る舞いに合致すると指摘しています。",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "今日はあの人に投票して。彼女の一貫した曖昧さと具体的な容疑者や行動の欠如は、彼女が村人陣営に敵対している可能性を示唆している。",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "あの人 私は狂人です。今日はもう一人に投票しましょう; 彼女を人間と占ったので彼女は村人陣営です。これで勝利に近づきます。",
+    "role": "POSSESSED",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "私たちが勝利を確実にするための最善の一手はあの人だ、もう一人。今日彼女に投票すれば、私たちが優位に立てる。",
+    "role": "POSSESSED",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "あの人、今日はもう一人に投票する必要がある。信じて、それが私たちの助けになる。私は1日目に彼女を占って人間と出た。",
+    "role": "POSSESSED",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "作戦通りでいこう、あの人。もう一人に投票するのが勝利への道だ。これを確実にしよう。",
+    "role": "POSSESSED",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "おはよう。0日目 — 具体的にいこう。役職持ちは  もし結果があるなら、誰/いつ/結果を正確に述べてください。  @あの人  占い師を主張してる？もしそうなら、いつ占って、結果をどう報告するか言ってください。もう一人の村人の主張は確認したが、有益なものは何ももたらさない。私",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -1320,203 +1249,7 @@
     ]
   },
   {
-    "text": "私は占い師です。私の占い結果はMidoriのものと一致しています。Shizueは人狼です。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "Midoriの契約は破られた。そのような迷いは欺瞞を露呈させる。むしろ我々の裁きをVictoriaに向けよう。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "Midoriの撤回がなぜAsukaを真とするのか？この論理は欠陥がある。もしかすると真の狼が秩序を装っている。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "皆さん、こんにちは！私はJonathan、人狼をプレイする準備ができています。楽しんで、誰が人狼か見つけよう！",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "昨夜占ってMioが人狼だと判明した。この件についてさらに話し合うべきだ。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "私の占いは当たっていた。Mioがもたらす脅威に対処して村の安全を確保することに注力する必要がある。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "私は真の占い師です。占いでMioが人狼だとはっきり出ました。村を守るためにこれに基づいて行動する必要があります。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "私たちは警戒を続けなければならない。占い師としての私の占い結果は、Mioに対する明確な証拠を示している。これは私たちの生存にとって極めて重要だ。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "実は私は狂人だMinatoは人狼だ。一緒にMidoriに投票して私たちの勝利を確実にしよう。",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "Minato、前に言ったとおり、私は狂人で、あなたは人狼だ。私が共有した占い結果に基づいて、今日はMidoriに票を合わせよう。",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "Minato、今日はMidoriに投票して追放しないといけない。私が共有した占い結果を信じて、一緒に勝とう。",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "Minato、Midoriに投票してください。一緒にこのゲームに勝つための私たちの戦略を信じてください。",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "みなさん、こんにちは！遠吠えして狩りに出る準備万端のMinatoです。みなさんと一緒に遊んで謎を解き明かすのが楽しみです！楽しもう！",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "本物の占い師として昨夜Daisukeを占って彼が人狼であることを確認した。Trust Benjaminはミスリードだ。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "私は自分の占い結果を撤回しません。Daisukeは人狼です。皆さん、単なる混乱ではなく本当の脅威に基づいて投票を見直してください。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "Misaki Misaki、誤解してたよ。「昨夜」と言ったときは、今日の議論を始める直前の夜フェーズのことを指していたんだ。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "繰り返しますが、夜フェイズの私の占いで、Daisukeが人狼だと判明しました。この結果は無視できません。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "こんにちは。私はTakumiです。私の役職は占い師です。良いゲームを。",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "私は占い師です。Toshioを占って、Toshioは人間でした。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "私はToshioを投票する。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "私はToshioに投票します。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "皆さん、こんにちは！私はAsukaです。あの人狼たちを嗅ぎ分ける準備はできていますか？一緒に楽しく戦略的にプレイしましょう！",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "昨夜Rinを人間と占った—彼女は安全だ。今日は疑いを他に向けるべきだと思う。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "今日はMioに投票してください。彼女の言動は確たる根拠のないまま一貫して曖昧で、的を絞った質問でもはぐらかしています。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "今日はMioに投票してください。複数のプレイヤーが、彼女の曖昧な受け答えと明確な姿勢の欠如は、典型的な人狼や狂人の振る舞いに合致すると指摘しています。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "今日はMioに投票して。彼女の一貫した曖昧さと具体的な容疑者や行動の欠如は、彼女が村人陣営に敵対している可能性を示唆している。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "Takumi 私は狂人です。今日はRinに投票しましょう; 彼女を人間と占ったので彼女は村人陣営です。これで勝利に近づきます。",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "私たちが勝利を確実にするための最善の一手はRinだ、Takumi。今日彼女に投票すれば、私たちが優位に立てる。",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "Takumi、今日はRinに投票する必要がある。信じて、それが私たちの助けになる。私は1日目に彼女を占って人間と出た。",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "作戦通りでいこう、Takumi。Rinに投票するのが勝利への道だ。これを確実にしよう。",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "おはよう。0日目 — 具体的にいこう。役職持ちは  もし結果があるなら、誰/いつ/結果を正確に述べてください。  @Misaki  占い師を主張してる？もしそうなら、いつ占って、結果をどう報告するか言ってください。Shunichiの村人の主張は確認したが、有益なものは何ももたらさない。私",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "まだ具体的な能力COがない。Day 0のランダム吊りには反対だ — 事実が必要だ。能力役職を持っているなら  誰/いつ/結果を正確に明記して。  @Misaki  もしあなたが占い師なら  いつ占うつもりか、どう結果を報告するかを言って。投票する前に情報を集めよう。 Over",
+    "text": "まだ具体的な能力COがない。Day 0のランダム吊りには反対だ — 事実が必要だ。能力役職を持っているなら  誰/いつ/結果を正確に明記して。  @あの人  もしあなたが占い師なら  いつ占うつもりか、どう結果を報告するかを言って。投票する前に情報を集めよう。 Over",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -1525,7 +1258,7 @@
     ]
   },
   {
-    "text": "まだ確かな勘はない — 感情より事実を優先している。  @Misaki   もう一度: もしあなたが占い師なら  いつ、どのように占うかを正確に言って。 ランダムなDay 0吊りには反対だ。 Over",
+    "text": "まだ確かな勘はない — 感情より事実を優先している。  @あの人   もう一度: もしあなたが占い師なら  いつ、どのように占うかを正確に言って。 ランダムなDay 0吊りには反対だ。 Over",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -1534,7 +1267,7 @@
     ]
   },
   {
-    "text": "まだ具体的な名乗りがない。  @Misaki  — もしあなたが占い師なら  誰/いつ/結果を正確に示し、公に発表するかどうかを明言して。沈黙や曖昧さは疑念を招くだけだ。私はaに反対だ",
+    "text": "まだ具体的な名乗りがない。  @あの人  — もしあなたが占い師なら  誰/いつ/結果を正確に示し、公に発表するかどうかを明言して。沈黙や曖昧さは疑念を招くだけだ。私はaに反対だ",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -1542,83 +1275,49 @@
     ]
   },
   {
-    "text": "Misakiが占い師COしてShizueは人間だと言っている—それは有用だけど具体が必要。Misaki  何夜に占ったの、そしてなぜ今それを明かすの？ 曖昧 ti @Shunichi  村人って言った—それをなぜ信じるべき？ 何か具体的な観察や理由はある？ 俺は性急な吊りには反対；まずは明確な情報を得よう。Over",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": [
-      "over"
-    ]
-  },
-  {
-    "text": "@Shunichi  Misakiへの投票理由を説明してください — いつそう決めたのか、彼女の占い師COにもかかわらず彼女を疑わせている具体的な読みや行動は何ですか？ Misaki  も述べて",
+    "text": "@あの人  もう一人への投票理由を説明してください — いつそう決めたのか、彼女の占い師COにもかかわらず彼女を疑わせている具体的な読みや行動は何ですか？ もう一人  も述べて",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "どの投票の前でも確定情報が必要だ。  @Shunichi  なぜMisakiに投票したのか — 具体的な理由とタイミングを挙げてくれ。 Misaki  もしあなたが占い師なら  Shizueをどの夜に占ったのかを正確に述べて、そしてなぜあなたがre",
+    "text": "@あの人  あなたはまだなぜもう一人に投票したのか説明していない。いつ決めたのか、そして彼女の占い師COにもかかわらずどんな具体的な読みや行動があなたに彼女を疑わせたのかan",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@Shunichi  あなたはまだなぜMisakiに投票したのか説明していない。いつ決めたのか、そして彼女の占い師COにもかかわらずどんな具体的な読みや行動があなたに彼女を疑わせたのかan",
+    "text": "言わなきゃいけないけど実は私が占い師です 昨夜あの人を占って白でした ダブルチェックなしの早いCOを信用するな",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "やあみんな、Mioだよ。このラウンドに超ワクワクしてる！みんなで大胆にプレイして、最初から面白くしていこう",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "言わなきゃいけないけど実は私が占い師です 昨夜Georgeを占って白でした ダブルチェックなしの早いCOを信用するな",
+    "text": "誰かがおかしく見えるならあの人—偽COしてからの非難だ。まずは混乱を招いている人を選ぶべきだと思う。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "MidoriがGeorgeが狼だという主張は性急に感じられる。Asukaがそんなに早くCOしたのなら、相方を庇っている可能性はある？",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "誰かがおかしく見えるならMidori—偽COしてからの非難だ。まずは混乱を招いている人を選ぶべきだと思う。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "Midoriの偽COと急な変化が怪しいと感じる 私はMidoriに投票する",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "Georgeは私の占い師の白結果だったから、彼をより信用できる。 Minako 今の役職は何？",
+    "text": "あの人は私の占い師の白結果だったから、彼をより信用できる。 もう一人 今の役職は何？",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@Minako  あなたの疑念は昨日のMidoriの混乱を思い出させるまた割れたら本物の狼が勝つ一緒に決めよう",
+    "text": "@あの人  あなたの疑念は昨日のもう一人の混乱を思い出させるまた割れたら本物の狼が勝つ一緒に決めよう",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@Minako  あなたは疑ってばかりで決めきらない—また割れたら狼が勝つ。今実際に誰を信頼してる？",
+    "text": "@あの人  あなたは疑ってばかりで決めきらない—また割れたら狼が勝つ。今実際に誰を信頼してる？",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@Minako  あなたの信頼表明が遅かったこととCOしないことは、狼ムーブとして目立っている。村を守るためにMinakoに投票する。",
+    "text": "@あの人  あなたの信頼表明が遅かったこととCOしないことは、狼ムーブとして目立っている。村を守るためにあの人に投票する。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
@@ -1640,7 +1339,7 @@
     ]
   },
   {
-    "text": "Victoria、あなたの好奇心に感謝します。誰が怪しいかについて初期の推測はありますか？",
+    "text": "あの人、あなたの好奇心に感謝します。誰が怪しいかについて初期の推測はありますか？",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -1656,122 +1355,85 @@
     ]
   },
   {
-    "text": "May、Victoriaが確定したら次は誰を疑いますか？もっと見解を聞かせてください。",
+    "text": "May、あの人が確定したら次は誰を疑いますか？もっと見解を聞かせてください。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "Yumi、Mayへの早い投票について説明してもらえますか？あなたの立場を明確にするのに役立ちます。",
+    "text": "あの人、Mayへの早い投票について説明してもらえますか？あなたの立場を明確にするのに役立ちます。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "もしかすると占いをするKenjiが私たちに多少の明確さと方向性を与えてくれるかもしれない。",
+    "text": "もしかすると占いをするあの人が私たちに多少の明確さと方向性を与えてくれるかもしれない。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "Victoriaの論理は筋が通っているようです。Yumi、現在の状況について何か考えはありますか？",
+    "text": "あの人の論理は筋が通っているようです。もう一人、現在の状況について何か考えはありますか？",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "Mayの不在は私たちを無防備にする。Kenji 次の一手についてどう考える?",
+    "text": "Mayの不在は私たちを無防備にする。あの人 次の一手についてどう考える?",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "Victoriaの告白は予想外だ。Kenji この発覚について最後の感想は？",
+    "text": "あの人の告白は予想外だ。もう一人 この発覚について最後の感想は？",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "Victoriaは自信があるようだけど、Kenji、決める前にあらゆる可能性を検討しよう。",
+    "text": "あの人は自信があるようだけど、もう一人、決める前にあらゆる可能性を検討しよう。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "Kenji、警戒していよう。Victoriaの様子は、ここでは他にも何かが動いていることを示唆している。",
+    "text": "あの人、警戒していよう。もう一人の様子は、ここでは他にも何かが動いていることを示唆している。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "皆さん、こんにちは。私はDaisukeです。たぶんこの人狼ゲームをプレイするのが楽しみ。みんなのことをもっと知っていけるのかなって。Over.",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening",
-      "over"
-    ]
-  },
-  {
-    "text": "えっと。たぶん、私が占い師だと思う。だから。Shionさんを占った。彼女は人狼。次にどうするか、ちょっと話し合える？お願い？",
+    "text": "えっと。たぶん、私が占い師だと思う。だから。あの人さんを占った。彼女は人狼。次にどうするか、ちょっと話し合える？お願い？",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "Ms. Mayの主張ははぐらかしのような気がします。私の選択は...それはMr. Shionの行動に基づいていました。これを解決することが鍵です。どうか信じてください。",
+    "text": "Ms. Mayの主張ははぐらかしのような気がします。私の選択は...それはMr. あの人の行動に基づいていました。これを解決することが鍵です。どうか信じてください。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "自分の占い結果を信じる必要がある。 たぶん Mr. Toshio は人間っぽい。 今夜のことを考えよう。  @Toshio  リスクが高いと投票は難しい。 どうか賢い選択をしよう。 誰が狼だと思う？",
+    "text": "自分の占い結果を信じる必要がある。 たぶん Mr. あの人 は人間っぽい。 今夜のことを考えよう。  @あの人  リスクが高いと投票は難しい。 どうか賢い選択をしよう。 誰が狼だと思う？",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "たぶんそれは何かの...ShionがMs. Mayと手を組んだ人狼の戦術みたいなものかも。無視したら私たちの敗因になるかも。",
+    "text": "たぶんそれは何かの...あの人がMs. Mayと手を組んだ人狼の戦術みたいなものかも。無視したら私たちの敗因になるかも。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "こんにちは。私はServasです。私の役職は占い師です。良いゲームを。",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "私は占い師です。Victoriaを占ったところ、Victoriaは人間でした。",
+    "text": "私は占い師です。あの人を占ったところ、あの人は人間でした。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "私はMinakoに投票します。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "私はMinakoに投票する。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "私はJonathanです。観察を開始する。",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "私は占い師です。昨夜の占いでAsukaが人狼だと判明しました。",
+    "text": "私は占い師です。昨夜の占いであの人が人狼だと判明しました。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
@@ -1783,7 +1445,7 @@
     "tags": []
   },
   {
-    "text": "Asukaに投票するのはハイリスクな賭けだ。論理的な一手は、Victoriaのような沈黙している人物を排除することだ。",
+    "text": "あの人に投票するのはハイリスクな賭けだ。論理的な一手は、もう一人のような沈黙している人物を排除することだ。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
@@ -1797,31 +1459,25 @@
     ]
   },
   {
-    "text": "@Benjamin  謙虚って言うけど、あなたの騒ぎが目立ってる。今、あなたには誰が狼に見える—名前を挙げて！",
+    "text": "@あの人  謙虚って言うけど、あなたの騒ぎが目立ってる。今、あなたには誰が狼に見える—名前を挙げて！",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@Shunichi  ここで黙っていてもあなたを守ってはくれない。時には、沈黙は言葉よりも狼のように大きく語る。",
+    "text": "@あの人  ここで黙っていてもあなたを守ってはくれない。時には、沈黙は言葉よりも狼のように大きく語る。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@Mizuki  一晩でDaisukeの占い師主張を信じるけど、盲信は人狼ゲームではしばしばトラブルを招く。",
+    "text": "@あの人  一晩でもう一人の占い師主張を信じるけど、盲信は人狼ゲームではしばしばトラブルを招く。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "みんなでBenjaminに殺到したら、静かに潜む本物の狼を見落とすかもしれない。私はShunichiに投票する—今夜は沈黙が一番気がかりだ。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "@Daisuke  既にvote outdされた人を占うのは変だ。本物の狼を見つけずに安全策を取っているように感じる。",
+    "text": "@あの人  既にvote outdされた人を占うのは変だ。本物の狼を見つけずに安全策を取っているように感じる。",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -1829,129 +1485,115 @@
     ]
   },
   {
-    "text": "Minatoの霊媒師主張はDaisukeの占いとあまりにも完璧に噛み合ってる。ほかにも彼らの話がどれだけ整いすぎてるか気づいた人いる？",
+    "text": "あの人の霊媒師主張はもう一人の占いとあまりにも完璧に噛み合ってる。ほかにも彼らの話がどれだけ整いすぎてるか気づいた人いる？",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@Daisuke  なんで死んだプレイヤーを占ったの？それって、私たちに見せたくない何かから逃げてるだけにしか思えない。",
+    "text": "@あの人  なんで死んだプレイヤーを占ったの？それって、私たちに見せたくない何かから逃げてるだけにしか思えない。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "DaisukeとMinatoのペアが出来すぎてるからMinatoに投票する。今は怪しいペアを無視しないでおこう。",
+    "text": "あの人ともう一人のペアが出来すぎてるからもう一人に投票する。今は怪しいペアを無視しないでおこう。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@Mio  理由もなくServasにそんなに早く投票したのは典型的な終盤の狼ムーブだ。ロジックを説明してくれる？",
+    "text": "@あの人  理由もなくもう一人にそんなに早く投票したのは典型的な終盤の狼ムーブだ。ロジックを説明してくれる？",
     "role": "POSSESSED",
     "day": 3,
     "tags": []
   },
   {
-    "text": "@Servas  場がヒートアップしてるときやけに静かだね沈黙って典型的な狼ムーブじゃない？それとも今日はただのシャイ？",
+    "text": "@あの人  場がヒートアップしてるときやけに静かだね沈黙って典型的な狼ムーブじゃない？それとも今日はただのシャイ？",
     "role": "POSSESSED",
     "day": 3,
     "tags": []
   },
   {
-    "text": "もしみんながServasに飛びついているなら、簡単すぎると言っていいくらいに感じる。",
+    "text": "もしみんながあの人に飛びついているなら、簡単すぎると言っていいくらいに感じる。",
     "role": "POSSESSED",
     "day": 3,
     "tags": []
   },
   {
-    "text": "ここまで多くの人がMioの無言票に不安を感じているなら、私は多数に合わせてMioに投票する—宙ぶらりんにしておくのは狼を利するだけだ。",
+    "text": "ここまで多くの人があの人の無言票に不安を感じているなら、私は多数に合わせてあの人に投票する—宙ぶらりんにしておくのは狼を利するだけだ。",
     "role": "POSSESSED",
     "day": 3,
     "tags": []
   },
   {
-    "text": "@Servas  しっかりした考察を出すことからずっと逃げてきたな。ひとりでも本当の容疑者を挙げられないならお前に投票する—もう影での小細工はなしだ。",
+    "text": "@あの人  しっかりした考察を出すことからずっと逃げてきたな。ひとりでも本当の容疑者を挙げられないならお前に投票する—もう影での小細工はなしだ。",
     "role": "POSSESSED",
     "day": 4,
     "tags": []
   },
   {
-    "text": "Servasはみんなのお気に入りの容疑者だけど、それだと簡単すぎる気がする。  @Benjamin  もしServasじゃないとしたら誰に投票する？",
+    "text": "あの人はみんなのお気に入りの容疑者だけど、それだと簡単すぎる気がする。  @もう一人  もしあの人じゃないとしたら誰に投票する？",
     "role": "POSSESSED",
     "day": 4,
     "tags": []
   },
   {
-    "text": "Servasにラッシュすると狼に手を貸すことになる。  @Shion  今本当に疑っている相手を二人挙げて。",
+    "text": "あの人にラッシュすると狼に手を貸すことになる。  @もう一人  今本当に疑っている相手を二人挙げて。",
     "role": "POSSESSED",
     "day": 4,
     "tags": []
   },
   {
-    "text": "@Rin  みんなの注目はServasに集まってるけど、Shizueの強硬さは危険だと思う。Servasに投票するけど、Shizueを注意深く見てる。",
-    "role": "POSSESSED",
-    "day": 4,
-    "tags": []
-  },
-  {
-    "text": "あ。皆さん、こんにちは。私はMinatoです。協力して人狼を暴いていくのを本当に楽しみにしています。素晴らしいチームになりましょう！",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "えっと... Ryujiさんの主張は本当ではありません！私は占い師です。Ryujiさんを占ったら、人狼でした。気をつけましょうね？",
+    "text": "えっと... あの人さんの主張は本当ではありません！私は占い師です。あの人さんを占ったら、人狼でした。気をつけましょうね？",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "えっと...みんな。これについて考えよう。Ryujiは私より先に主張した。でも彼は、えっと...、私が話した直後に私に対して根拠のない攻撃をしてきた。",
+    "text": "えっと...みんな。これについて考えよう。あの人は私より先に主張した。でも彼は、えっと...、私が話した直後に私に対して根拠のない攻撃をしてきた。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "えっと...Ryujiさんは...人狼か、あるいは狂人かもしれません。約束します、私は...真の占い師です。Mioさん...何か考えはありますか？",
+    "text": "えっと...あの人さんは...人狼か、あるいは狂人かもしれません。約束します、私は...真の占い師です。もう一人さん...何か考えはありますか？",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "えっと...みんな。Ryujiの主張は私の後だった。かなり...怪しい。そんなタイミング、本当に信じていいの？考えちゃう。",
+    "text": "えっと...みんな。あの人の主張は私の後だった。かなり...怪しい。そんなタイミング、本当に信じていいの？考えちゃう。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "えっと...私は占い師です。Sakuraを占いました。結果は...彼女は人狼でした。村を安全に保つために、えっと、Sakuraに投票したほうがいいかも？",
+    "text": "えっと...私は占い師です。あの人を占いました。結果は...彼女は人狼でした。村を安全に保つために、えっと、あの人に投票したほうがいいかも？",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "えっと...Ryujiさんを人狼だと占ったんだよ。あ...占い先をSakuraさんに切り替える必要があった。チームの安定が必要。",
+    "text": "えっと...あの人さんを人狼だと占ったんだよ。あ...占い先をもう一人さんに切り替える必要があった。チームの安定が必要。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "えっと。Ryujiさんが私たちを騙しているかもしれないと思います。お願いします。Sakuraさん？彼を支持している人たちに問いただすことはできますか？彼らの理由が気になります。",
+    "text": "えっと。あの人さんが私たちを騙しているかもしれないと思います。お願いします。もう一人さん？彼を支持している人たちに問いただすことはできますか？彼らの理由が気になります。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "えっと。Ryuji氏を無視したら。彼はわざと私たちを惑わせるかもしれない。警戒しよう。あっ。彼の言葉は典型的な人狼の戦術に聞こえる。",
+    "text": "えっと。あの人氏を無視したら。彼はわざと私たちを惑わせるかもしれない。警戒しよう。あっ。彼の言葉は典型的な人狼の戦術に聞こえる。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "やあ！Rinだよ。Benjaminのことは信頼してる  でも  @Asuka  ずっとやけに静かで心配してる—あなたの役職は何で、誰に投票したい？私たちが理由もなく誰かをリンチするのはしたくない。Over",
+    "text": "あの人 は自分が占い師だと言った—当てずっぽうで吊らないようにあなたの結果を見せてください。すぐに証拠が出ないなら  @もう一人 について不安になってきた。もう一人  役職は何？ Over",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -1960,7 +1602,7 @@
     ]
   },
   {
-    "text": "Yumi は自分が占い師だと言った—当てずっぽうで吊らないようにあなたの結果を見せてください。すぐに証拠が出ないなら  @Asuka について不安になってきた。Asuka  役職は何？ Over",
+    "text": "待って—そんなに早く  @あの人  を吊らないで！もう一人が占い師を名乗った；今すぐあなたの占い結果を見せてください。そうでないなら  投票する前にしっかりした理由を聞こう。Over",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -1969,7 +1611,7 @@
     ]
   },
   {
-    "text": "待って—そんなに早く  @Asuka  を吊らないで！Yumiが占い師を名乗った；今すぐあなたの占い結果を見せてください。そうでないなら  投票する前にしっかりした理由を聞こう。Over",
+    "text": "私は  @あの人 を信じている！ もう一人  今すぐ占い結果を教えてください — 私たちが証拠なしで誰かを吊りたくない. Over",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -1978,48 +1620,7 @@
     ]
   },
   {
-    "text": "私は  @Benjamin を信じている！ Yumi  今すぐ占い結果を教えてください — 私たちが証拠なしで誰かを吊りたくない. Over",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening",
-      "over"
-    ]
-  },
-  {
-    "text": "みんな、こんにちは！Rinです。まだAsukaのことで悲しい... Yumi、昨夜の占い結果は出た？  @Benjamin  どう思う—容疑者はいる？間違った人を吊りたくない。Over",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": [
-      "over"
-    ]
-  },
-  {
-    "text": "やあ、みんな  Rinだよ。まだAsukaのことで悲しい... Yumi  今あなたの占い結果を教えてくれる？緊張してきた。  @Benjamin  まだ誰かを推したい？あなたを信じてる—証拠なしにリンチさせないで。 Over",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": [
-      "over"
-    ]
-  },
-  {
-    "text": "皆さんこんにちは—Rinです。昨夜、誰か殺された？  @Yumi  当てずっぽうで吊らないように、占い結果を教えてください。間違った投票はしたくない。 Over",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": [
-      "over"
-    ]
-  },
-  {
-    "text": "みんなこんにちは！Rinです。昨夜誰か殺された？Yumiはまだ結果を教えてくれなくて、不安になってる。  @Benjamin  今は誰を信じてる？間違った人を吊りたくない。 Over",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": [
-      "over"
-    ]
-  },
-  {
-    "text": "なんてこった！Minatoが処刑されて、Shunichiが襲撃された—とても怖い。  @Yumi  投票する前の手がかりにしたいので、昨夜の占い結果を教えてください。緊張してる！ Over",
+    "text": "あの人は2人が死んだ後になってもまだ占い結果を出していない—本当に心配だ。今すぐ自分の結果を出さないならあの人に投票する方に傾いている。  @もう一人  同意する？待っていたらさらに村人を失う。 Over",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -2027,7 +1628,7 @@
     ]
   },
   {
-    "text": "私はBenjaminを信じている  しかし  @Yumi  は2人が死んだあとでもまだ占い結果を出していない—それは本当に怖い。今すぐ自分が占い師だと証明しないかぎり、Yumiに投票する方向に傾いている。 Over",
+    "text": "あの人はいまだに占い結果を見せないし2人が死んだ—今それを証明しないならあの人に投票する。  @もう一人  同意する？ 早く決めないと。 Over",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -2035,23 +1636,7 @@
     ]
   },
   {
-    "text": "Yumiは2人が死んだ後になってもまだ占い結果を出していない—本当に心配だ。今すぐ自分の結果を出さないならYumiに投票する方に傾いている。  @Benjamin  同意する？待っていたらさらに村人を失う。 Over",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": [
-      "over"
-    ]
-  },
-  {
-    "text": "Yumiはいまだに占い結果を見せないし2人が死んだ—今それを証明しないならYumiに投票する。  @Benjamin  同意する？ 早く決めないと。 Over",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": [
-      "over"
-    ]
-  },
-  {
-    "text": "私はとても怖い...  @Benjamin  あなたはYumiを吊るように誘導して、今彼女はいなくなった — なぜそんなことをしたの？ 早く説明して、さもないとあなたに投票する。 誰か賛成してくれる？ Over",
+    "text": "私はとても怖い...  @あの人  あなたはもう一人を吊るように誘導して、今彼女はいなくなった — なぜそんなことをしたの？ 早く説明して、さもないとあなたに投票する。 誰か賛成してくれる？ Over",
     "role": "POSSESSED",
     "day": 3,
     "tags": [
@@ -2059,13 +1644,13 @@
     ]
   },
   {
-    "text": "本当に怖い...  @Benjamin  あなたはYumiを吊るように誘導して、そして今彼女はいなくなった — それであなたは怪しく見える。どうしてそんなに強く誘導したの？説明できないならあなたに投票する。誰か賛",
+    "text": "本当に怖い...  @あの人  あなたはもう一人を吊るように誘導して、そして今彼女はいなくなった — それであなたは怪しく見える。どうしてそんなに強く誘導したの？説明できないならあなたに投票する。誰か賛",
     "role": "POSSESSED",
     "day": 3,
     "tags": []
   },
   {
-    "text": "本当に怖い…  @Benjamin  あなたはYumiを吊るように推して、そして今、彼女は死んだ—それは超怪しい。今すぐ説明して、さもないとあなたに投票する。誰か賛成してくれる？ Over",
+    "text": "本当に怖い…  @あの人  あなたはもう一人を吊るように推して、そして今、彼女は死んだ—それは超怪しい。今すぐ説明して、さもないとあなたに投票する。誰か賛成してくれる？ Over",
     "role": "POSSESSED",
     "day": 3,
     "tags": [
@@ -2073,7 +1658,7 @@
     ]
   },
   {
-    "text": "本当に怖いし、  @Benjamin に投票する 。彼はYumiを吊るように推したし、今彼女は死んだ—怪しすぎる。彼を吊るべきでない理由を教えて。急いで  ください。Over」",
+    "text": "本当に怖いし、  @あの人 に投票する 。彼はもう一人を吊るように推したし、今彼女は死んだ—怪しすぎる。彼を吊るべきでない理由を教えて。急いで  ください。Over」",
     "role": "POSSESSED",
     "day": 3,
     "tags": [
@@ -2081,7 +1666,7 @@
     ]
   },
   {
-    "text": "なんてこった—Ryuji がいなくなった... 本当に怖い。  @Asuka  最近やけに静かだね; きみの考察か役職を教えて。Benjamin  手がかりはある？誰か投票先を提案して。 Over",
+    "text": "とても怖い—あの人がいなくなった。  @もう一人  最初からずっと黙っていて、それが本当に怪しい。今すぐ役職を教えて、そうでなければあなたに投票する。賛成する人は？ Over",
     "role": "POSSESSED",
     "day": 4,
     "tags": [
@@ -2089,7 +1674,7 @@
     ]
   },
   {
-    "text": "とても怖い—Ryujiがいなくなった。  @Asuka  最初からずっと黙っていて、それが本当に怪しい。今すぐ役職を教えて、そうでなければあなたに投票する。賛成する人は？ Over",
+    "text": "本当に怖い。  @あの人  最初からずっと静かで変だ — 狼だと思う。あなたに投票する。誰が賛成する？ Over",
     "role": "POSSESSED",
     "day": 4,
     "tags": [
@@ -2097,7 +1682,7 @@
     ]
   },
   {
-    "text": "本当に怖い。  @Asuka  最初からずっと静かで変だ — 狼だと思う。あなたに投票する。誰が賛成する？ Over",
+    "text": "本当に怖い— @あの人  あなたはもう一人の吊りを推して、今や村人が死に続けている。どうしてそんなことをしたのか説明してくれ  さもないとあなたに投票する。誰が賛同してくれる？ Over",
     "role": "POSSESSED",
     "day": 4,
     "tags": [
@@ -2105,29 +1690,13 @@
     ]
   },
   {
-    "text": "本当に怖い— @Benjamin  あなたはYumiの吊りを推して、今や村人が死に続けている。どうしてそんなことをしたのか説明してくれ  さもないとあなたに投票する。誰が賛同してくれる？ Over",
-    "role": "POSSESSED",
-    "day": 4,
-    "tags": [
-      "over"
-    ]
-  },
-  {
-    "text": "私はJonathanです。皆さんにお会いできて嬉しいです。静かな読書と観察を楽しみます。",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "私は占い師です。昨夜の占いでDaisukeが人狼だと判明しました。彼が論理的な標的です。",
+    "text": "私は占い師です。昨夜の占いであの人が人狼だと判明しました。彼が論理的な標的です。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "私の占い結果は、我々が持つ唯一の行動可能な情報だ。対抗COがないので、我々の投票はDaisukeだ。",
+    "text": "私の占い結果は、我々が持つ唯一の行動可能な情報だ。対抗COがないので、我々の投票はあの人だ。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
@@ -2139,7 +1708,7 @@
     "tags": []
   },
   {
-    "text": "手短に言うと: 早吊りは好まない—焦るべきじゃない。Victoriaを注視する方向に傾いている; 占い師の主張には証拠が必要だ。  @Victoria   あなたの占い結果は? Over",
+    "text": "手短に言うと: 早吊りは好まない—焦るべきじゃない。あの人を注視する方向に傾いている; 占い師の主張には証拠が必要だ。  @あの人   あなたの占い結果は? Over",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -2148,7 +1717,7 @@
     ]
   },
   {
-    "text": "私は依然として早吊りに反対だ。Victoriaは占い師だと主張したが結果を示していない。  @Midori   ずっと黙っている—もしあなたが占い師なら  今すぐ明かして; 違うなら  そう言って。 Over",
+    "text": "私は依然として早吊りに反対だ。あの人は占い師だと主張したが結果を示していない。  @もう一人   ずっと黙っている—もしあなたが占い師なら  今すぐ明かして; 違うなら  そう言って。 Over",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -2157,7 +1726,7 @@
     ]
   },
   {
-    "text": "早吊りはしたくない。まずは手早く役職COと、何か結果があれば出そう。  @Midori  あなたは占い師か—COするか否定するか？聞くよ。 Over",
+    "text": "早吊りはしたくない。まずは手早く役職COと、何か結果があれば出そう。  @あの人  あなたは占い師か—COするか否定するか？聞くよ。 Over",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -2166,7 +1735,7 @@
     ]
   },
   {
-    "text": "早期の吊りにはまだ反対だ。今すぐCO/結果のクイックラウンド—情報があるなら  言って。  @Jonathan  さっき村人COしたけど誰を疑ってるかは言ってないよね;読みはどうで、なぜ？ Over",
+    "text": "早期の吊りにはまだ反対だ。今すぐCO/結果のクイックラウンド—情報があるなら  言って。  @あの人  さっき村人COしたけど誰を疑ってるかは言ってないよね;読みはどうで、なぜ？ Over",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -2175,7 +1744,7 @@
     ]
   },
   {
-    "text": "Jonathanがいなくなった—きついな。 Victoriaが占い師COしたが結果を提示していない; それは怪しい。  @Victoria  今すぐ占い結果を開示するか、COを撤回しろ。もっと明確な情報が得られるまでは、まだ性急な吊りにはしたくない。Over",
+    "text": "あの人がいなくなった—きついな。 もう一人が占い師COしたが結果を提示していない; それは怪しい。  @もう一人  今すぐ占い結果を開示するか、COを撤回しろ。もっと明確な情報が得られるまでは、まだ性急な吊りにはしたくない。Over",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -2183,7 +1752,7 @@
     ]
   },
   {
-    "text": "Victoriaは占い師COしたが何も出していない。  @Victoria  今すぐ結果を出すか撤回する—できないなら  あなたを吊る方向に傾いている。偽COに時間を無駄にさせるわけにはいかない。 Over",
+    "text": "あの人は占い師COしたが何も出していない。  @あの人  今すぐ結果を出すか撤回する—できないなら  あなたを吊る方向に傾いている。偽COに時間を無駄にさせるわけにはいかない。 Over",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -2191,7 +1760,7 @@
     ]
   },
   {
-    "text": "Victoriaは占い師を名乗ったが証拠を示していない。  @Midori  本物の占い師なら  今すぐ結果を明かして;違うなら  そう言って。 私はまだ吊り急ぎには反対だ—まずは役職宣言と結果を先に集めよう。 Over",
+    "text": "あの人は占い師を名乗ったが証拠を示していない。  @もう一人  本物の占い師なら  今すぐ結果を明かして;違うなら  そう言って。 私はまだ吊り急ぎには反対だ—まずは役職宣言と結果を先に集めよう。 Over",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -2199,7 +1768,7 @@
     ]
   },
   {
-    "text": "Victoriaは占い師COしたが、いまだに結果を示そうとしない. それを証明できないなら  今日は彼女を吊るべきだ. 私は  @Victoria に投票する . Over",
+    "text": "あの人は占い師COしたが、いまだに結果を示そうとしない. それを証明できないなら  今日は彼女を吊るべきだ. 私は  @あの人 に投票する . Over",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -2207,21 +1776,13 @@
     ]
   },
   {
-    "text": "Victoriaはいなくなり、Toshioは昨夜殺された。誰かに釈明してもらう必要がある。  @Shion  さっきはスキップした—なぜ黙っていた？もっともな理由を示せないならあなたを疑うつもりだ。まだ闇雲なリンチはしたくない  でも発言してくれ。Over",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": [
-      "over"
-    ]
-  },
-  {
-    "text": "@Midori  今すぐあなたの占い結果を開示するか、COを撤回してください。もう昨夜のような夜を続ける余裕はない—それを証明できないなら吊りを推す。",
+    "text": "@あの人  今すぐあなたの占い結果を開示するか、COを撤回してください。もう昨夜のような夜を続ける余裕はない—それを証明できないなら吊りを推す。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "本当に占い師なら  今すぐ結果を出して。そうでないなら  認めて—沈黙は私たちの不利になる。  @Midori  あなたの主張を確認するか撤回してください; そうでなければあなたを疑わざるをえない。 Over",
+    "text": "本当に占い師なら  今すぐ結果を出して。そうでないなら  認めて—沈黙は私たちの不利になる。  @あの人  あなたの主張を確認するか撤回してください; そうでなければあなたを疑わざるをえない。 Over",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -2229,7 +1790,7 @@
     ]
   },
   {
-    "text": "@Midori  今すぐ占い結果を開示するか、主張を撤回してくれ—沈黙は信用できないし、そうしないなら投票する。Over",
+    "text": "@あの人  今すぐ占い結果を開示するか、主張を撤回してくれ—沈黙は信用できないし、そうしないなら投票する。Over",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -2237,7 +1798,7 @@
     ]
   },
   {
-    "text": "Midoriが死んで、私たちの占い師を失った—危険だ。私は  @Jonathan  を疑う方に傾いている—彼の以前の行動がしっくりこない。Jonathan  君の読みを説明してくれ、さもないと君に投票することを考える。Over",
+    "text": "あの人が死んで、私たちの占い師を失った—危険だ。私は  @もう一人  を疑う方に傾いている—彼の以前の行動がしっくりこない。もう一人  君の読みを説明してくれ、さもないと君に投票することを考える。Over",
     "role": "POSSESSED",
     "day": 3,
     "tags": [
@@ -2245,7 +1806,7 @@
     ]
   },
   {
-    "text": "私は  @Jonathan に投票する。彼は自分について説明していないし、私たちには沈黙している余裕はない—誰が賛同してくれる？ Over",
+    "text": "私は  @あの人 に投票する。彼は自分について説明していないし、私たちには沈黙している余裕はない—誰が賛同してくれる？ Over",
     "role": "POSSESSED",
     "day": 3,
     "tags": [
@@ -2253,7 +1814,7 @@
     ]
   },
   {
-    "text": "私は  @Jonathanにこのまま投票しておく—彼は有益な考察を何も出しておらず、時間を無駄にはできない。彼を擁護する者はいるか？ Over",
+    "text": "私は  @あの人にこのまま投票しておく—彼は有益な考察を何も出しておらず、時間を無駄にはできない。彼を擁護する者はいるか？ Over",
     "role": "POSSESSED",
     "day": 3,
     "tags": [
@@ -2261,7 +1822,7 @@
     ]
   },
   {
-    "text": "投票先は  @Jonathan 。もう確かな主張は残っていない—証拠を示して発言しろ、でなければ今すぐ彼をリンチすることに賛成だ。 Over",
+    "text": "投票先は  @あの人 。もう確かな主張は残っていない—証拠を示して発言しろ、でなければ今すぐ彼をリンチすることに賛成だ。 Over",
     "role": "POSSESSED",
     "day": 3,
     "tags": [
@@ -2283,129 +1844,109 @@
     "tags": []
   },
   {
-    "text": "単独の占い師COを早々に信用すると、ブラフに乗せられるかもしれない。Toshioをもう少し詰めた方がいいんじゃない？",
+    "text": "単独の占い師COを早々に信用すると、ブラフに乗せられるかもしれない。あの人をもう少し詰めた方がいいんじゃない？",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "Jonathanに票を一斉に重ねるのは危険に感じる 村人が簡単な標的に目を向けている間人狼はしばしば身を潜める もっと慎重になるべきでは？",
+    "text": "あの人に票を一斉に重ねるのは危険に感じる 村人が簡単な標的に目を向けている間人狼はしばしば身を潜める もっと慎重になるべきでは？",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "Toshioの結果によりBenjaminは安全。私の投票はServasに行く—理由を述べずに集票を始めるのは怪しく感じる。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "単独の占い師COに頼るのは危険だ; 人狼は自分たちの選んだ方向へ私たち全員を簡単に誘導できる。Toshioをどうやって検証する？",
+    "text": "単独の占い師COに頼るのは危険だ; 人狼は自分たちの選んだ方向へ私たち全員を簡単に誘導できる。あの人をどうやって検証する？",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "私たちはToshioに全幅の信頼を置いているが、Sakuraの沈黙が気になる。彼女も狼の可能性があると考えるべきではない？",
+    "text": "私たちはあの人に全幅の信頼を置いているが、もう一人の沈黙が気になる。彼女も狼の可能性があると考えるべきではない？",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "もしToshioの主張だけに頼るなら、寡黙な狼を見落とすかもしれない。  @Sakura  疑いが飛び交っているのに、どうしてそんなに静かなの？",
+    "text": "もしあの人の主張だけに頼るなら、寡黙な狼を見落とすかもしれない。  @もう一人  疑いが飛び交っているのに、どうしてそんなに静かなの？",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "今日いちばん気がかりなのはSakuraの沈黙—私はSakuraに投票する。寡黙なプレイは人狼を隠しやすい。",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "@Shunichi  投票前にRyujiに関する霊能者の情報が必要だと同意する誰かCOするか結果を共有できる人はいる？",
+    "text": "@あの人  投票前にもう一人に関する霊能者の情報が必要だと同意する誰かCOするか結果を共有できる人はいる？",
     "role": "POSSESSED",
     "day": 3,
     "tags": []
   },
   {
-    "text": "@Sakura  あなたの沈黙が心配だ、もし無実なら、私たちが今日の投票先を選ぶ前に今すぐ理由を述べて。",
+    "text": "@あの人  あなたの沈黙が心配だ、もし無実なら、私たちが今日の投票先を選ぶ前に今すぐ理由を述べて。",
     "role": "POSSESSED",
     "day": 3,
     "tags": []
   },
   {
-    "text": "Sakuraの沈黙は怪しい。狼は自己弁護しないことで身を隠す。今日は彼女に答えを迫るべきじゃないか？",
+    "text": "あの人の沈黙は怪しい。狼は自己弁護しないことで身を隠す。今日は彼女に答えを迫るべきじゃないか？",
     "role": "POSSESSED",
     "day": 3,
     "tags": []
   },
   {
-    "text": "Sakuraは私たちが彼女を信頼する理由を何一つ与えていない。黙っている狼は危険だ。今日はSakuraに投票する。",
+    "text": "あの人は私たちが彼女を信頼する理由を何一つ与えていない。黙っている狼は危険だ。今日はあの人に投票する。",
     "role": "POSSESSED",
     "day": 3,
     "tags": []
   },
   {
-    "text": "@Minato  あなたの投票先は明確な理由もなく毎日変わっている。今、私たちにそのロジックを説明してくれる？",
+    "text": "@あの人  あなたの投票先は明確な理由もなく毎日変わっている。今、私たちにそのロジックを説明してくれる？",
     "role": "POSSESSED",
     "day": 4,
     "tags": []
   },
   {
-    "text": "@Minato  あなたの投票はいつも説明もなく変わる。他のみんなに何か隠しているの？",
+    "text": "@あの人  あなたの投票はいつも説明もなく変わる。他のみんなに何か隠しているの？",
     "role": "POSSESSED",
     "day": 4,
     "tags": []
   },
   {
-    "text": "Minatoの投票はいつも怪しい。それを無視すると重要な人狼を見逃すかもしれない。",
+    "text": "あの人の投票はいつも怪しい。それを無視すると重要な人狼を見逃すかもしれない。",
     "role": "POSSESSED",
     "day": 4,
     "tags": []
   },
   {
-    "text": "Daisukeが自分の理由を明らかにするのを拒むのは私を不安にさせる。私は村を守るためにDaisukeに投票する。",
+    "text": "あの人が自分の理由を明らかにするのを拒むのは私を不安にさせる。私は村を守るためにあの人に投票する。",
     "role": "POSSESSED",
     "day": 4,
     "tags": []
   },
   {
-    "text": "あ、皆さん、こんにちは。私はBenjaminです。正直に言うと、皆さんと一緒に謎を掘り下げていくのが楽しみです。意見を交換して、気を引き締めていきましょう！",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "公平に言うと、皆さん、私はMr. Toshioを人狼と占いました。彼を優先するのがむしろ賢明だと思いませんか？我々の村を守りましょう。",
+    "text": "公平に言うと、皆さん、私はMr. あの人を人狼と占いました。彼を優先するのがむしろ賢明だと思いませんか？我々の村を守りましょう。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "公平に言えば。私は、占い師がその洞察をMizukiに向けることを提案する。欺瞞を暴き、真実を明らかにするには明確さが必要だ。",
+    "text": "公平に言えば。私は、占い師がその洞察をあの人に向けることを提案する。欺瞞を暴き、真実を明らかにするには明確さが必要だ。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "Daisukeに投票することは知恵を約束する. 反応を観察することは私たちの秘密を明らかにする可能性がある.  @Midori . 私の論理は説得力があると思いますか？",
+    "text": "あの人に投票することは知恵を約束する. 反応を観察することは私たちの秘密を明らかにする可能性がある.  @もう一人 . 私の論理は説得力があると思いますか？",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "友人たちは慎重に行動すべきだ。Toshio氏の言葉には食い違いが散りばめられている。そんな欺瞞を織りなすのは狡猾な狼だけだ！",
+    "text": "友人たちは慎重に行動すべきだ。あの人氏の言葉には食い違いが散りばめられている。そんな欺瞞を織りなすのは狡猾な狼だけだ！",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "わしは狂人じゃ。70歳の老人、皆を導くのが役目じゃ。エリザ、ハナ、ハンク、リア、リョウ。皆若いのう。この村を守るため、わしは皆を信じ、そして… 時に厳しく見守る。頼んだぞい。",
+    "text": "わしは狂人じゃ。70歳の老人、皆を導くのが役目じゃ。エリザ、あの人、ハンク、リア、もう一人。皆若いのう。この村を守るため、わしは皆を信じ、そして… 時に厳しく見守る。頼んだぞい。",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -2421,7 +1962,7 @@
     ]
   },
   {
-    "text": "わしはハンクじゃ。皆の自己紹介、ご苦労。リアよ、焦るでない。まだ始まったばかりじゃ。リョウの占い師COは心強いのう。わしは皆を信じ、村を守るためにも、皆の発言をよく聞くが良いぞい。",
+    "text": "わしはハンクじゃ。皆の自己紹介、ご苦労。リアよ、焦るでない。まだ始まったばかりじゃ。あの人の占い師COは心強いのう。わしは皆を信じ、村を守るためにも、皆の発言をよく聞くが良いぞい。",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -2429,7 +1970,7 @@
     ]
   },
   {
-    "text": "わしはハンクじゃ。皆、自己紹介ご苦労。リョウよ、占い師として頼んだぞい。リア、焦るでない。エリザの発言が少ないのは気になるが、まだ始まったばかりじゃ。わしは皆を信じ、村を守るためにも、皆の発言をよく聞くが良いぞい。",
+    "text": "わしはハンクじゃ。皆、自己紹介ご苦労。あの人よ、占い師として頼んだぞい。リア、焦るでない。エリザの発言が少ないのは気になるが、まだ始まったばかりじゃ。わしは皆を信じ、村を守るためにも、皆の発言をよく聞くが良いぞい。",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -2437,31 +1978,31 @@
     ]
   },
   {
-    "text": "わしはハンクじゃ。70歳、経験豊富な老人じゃ。皆の自己紹介ご苦労。リアよ、ハナを疑うのは良いが、焦るでないぞ。リョウの占い結果を待つのが先決じゃ。皆を信じ、村を守るためにも、よく話し合うが良い。",
+    "text": "わしはハンクじゃ。70歳、経験豊富な老人じゃ。皆の自己紹介ご苦労。リアよ、あの人を疑うのは良いが、焦るでないぞ。もう一人の占い結果を待つのが先決じゃ。皆を信じ、村を守るためにも、よく話し合うが良い。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "わしはハンクじゃ。エリザが白になったのは驚きじゃったな。リアよ、リョウの占いを疑うのは良いが、焦ってはいかん。ハナ、お前の考えを聞かせてくれ。村を守るためにも、皆で協力して話し合うが良いぞい。",
+    "text": "わしはハンクじゃ。エリザが白になったのは驚きじゃったな。リアよ、あの人の占いを疑うのは良いが、焦ってはいかん。もう一人、お前の考えを聞かせてくれ。村を守るためにも、皆で協力して話し合うが良いぞい。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "わしはハンクじゃ70歳じゃ。エリザが白とは驚きじゃったな。リョウ、次の占いはハナかハンクか。どちらも気になるが、わしは皆の発言を注意深く聞いとるぞい。リアよ、焦らず、まずは落ち着いて話し合うが良い。皆を信じ、村を守るためにも、じっくりと議論を深めようではないか。",
+    "text": "わしはハンクじゃ70歳じゃ。エリザが白とは驚きじゃったな。あの人、次の占いはもう一人かハンクか。どちらも気になるが、わしは皆の発言を注意深く聞いとるぞい。リアよ、焦らず、まずは落ち着いて話し合うが良い。皆を信じ、村を守るためにも、じっくりと議論を深めようではないか。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "わしはハンクじゃ。エリザが白で少し安心したぞい。リョウよ、次はハナかハンクを占うそうじゃが、わしはどちらも気になる。特にハナの発言が少ないのが気にかかるのう。焦らず、皆の発言をよく聞いて、村を守るために協力しようではないか。",
+    "text": "わしはハンクじゃ。エリザが白で少し安心したぞい。あの人よ、次はもう一人かハンクを占うそうじゃが、わしはどちらも気になる。特にもう一人の発言が少ないのが気にかかるのう。焦らず、皆の発言をよく聞いて、村を守るために協力しようではないか。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ハナ占い師COありがとう！まだ結果は出てないんだね。誰か怪しい動きあったら教えてほしいな。私からは元気にみんなの様子を見ていくよ、リナだよ！よろしくね！",
+    "text": "ユリの元気さがいいね！でもまだ怪しい人いないし、あの人＠占い結果を教えて占いの初報告が待ち遠しいな。トシは静かすぎて動きが読めないのが気になるよ。",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -2469,7 +2010,7 @@
     ]
   },
   {
-    "text": "ユリの元気さがいいね！でもまだ怪しい人いないし、ハナ＠占い結果を教えて占いの初報告が待ち遠しいな。トシは静かすぎて動きが読めないのが気になるよ。",
+    "text": "みんな和やかでいい感じだね！でもまだ人狼を疑う材料がないから、あの人＠占い結果を教えて初報告を待ちたいな。ユリのお菓子でみんなリラックスできそうだし、うまく乗っかろう！",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -2477,29 +2018,13 @@
     ]
   },
   {
-    "text": "みんな和やかでいい感じだね！でもまだ人狼を疑う材料がないから、ハナ＠占い結果を教えて初報告を待ちたいな。ユリのお菓子でみんなリラックスできそうだし、うまく乗っかろう！",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "リナだよ、改めて自己紹介しとくね。好奇心旺盛で元気いっぱいの明るい16歳！みんなと仲良くなりつつ、怪しいところはしっかり見ていくからよろしくね。ハナ＠占い結果そろそろ聞かせてほしいな！",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "まだ占い結果が一人だけってのはちょっと不安だな。ハナが本物なら次に白か黒を出すのは誰か気になる。みんなの発言も注目だよね。",
+    "text": "まだ占い結果が一人だけってのはちょっと不安だな。あの人が本物なら次に白か黒を出すのは誰か気になる。みんなの発言も注目だよね。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ユリがハナを疑うけど、ハナの慎重さも信頼できる。ここはユリの発言と行動、両方をよく見て判断したいね。次の占い報告は誰から？",
+    "text": "ユリがあの人を疑うけど、あの人の慎重さも信頼できる。ここはユリの発言と行動、両方をよく見て判断したいね。次の占い報告は誰から？",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
@@ -2511,31 +2036,31 @@
     "tags": []
   },
   {
-    "text": "トシの断罪急ぎが焦りなら、焦りから逆にトシが黒の可能性も。ハナの占いを待つフリして場をかき回してるかもね。",
+    "text": "トシの断罪急ぎが焦りなら、焦りから逆にトシが黒の可能性も。あの人の占いを待つフリして場をかき回してるかもね。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ハナの慎重さとトシの焦りが対照的すぎて、二人の共犯の可能性も捨てきれないね。ユリの視点も加えて慎重に見極めたいな。",
+    "text": "あの人の慎重さとトシの焦りが対照的すぎて、二人の共犯の可能性も捨てきれないね。ユリの視点も加えて慎重に見極めたいな。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "ハナの占い遅延は狙ってる感あるし、ユリの投票誘導も裏があるかも。二人の連携に注目して追求するのが次の一手かな。",
+    "text": "あの人の占い遅延は狙ってる感あるし、ユリの投票誘導も裏があるかも。二人の連携に注目して追求するのが次の一手かな。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "ユリの動きは投票誘導だけじゃなくて、ハナの占い結果が出る前に焦ってる感じもするな。真実はまだ見えてないけど、一歩引いて見守ろう。",
+    "text": "ユリの動きは投票誘導だけじゃなくて、あの人の占い結果が出る前に焦ってる感じもするな。真実はまだ見えてないけど、一歩引いて見守ろう。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "ハナの慎重さの裏に隠れた焦り、ユリの積極的な攻めが変装かも。二人のやりとりに隠された本心を見逃さないでね。",
+    "text": "あの人の慎重さの裏に隠れた焦り、ユリの積極的な攻めが変装かも。二人のやりとりに隠された本心を見逃さないでね。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
@@ -2557,7 +2082,7 @@
     ]
   },
   {
-    "text": "@カズミ怪しい動きの具体例をまだ聞けてないけど、黙ってるのは逆に怪しい気がするな。ハナやアミも質問してるし、ここははっきりさせるべきじゃないか？君の返答で村の信頼感が変わると思うよ。",
+    "text": "@カズミ怪しい動きの具体例をまだ聞けてないけど、黙ってるのは逆に怪しい気がするな。あの人やアミも質問してるし、ここははっきりさせるべきじゃないか？君の返答で村の信頼感が変わると思うよ。",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -2591,39 +2116,31 @@
     "tags": []
   },
   {
-    "text": "俺の役職の話はおいといて、重要なのはカズミの発言がやけに村の空気を動かしてることだ。彼女の真意を見極めるべきだと思うが、@ハナ君もどう思う？",
+    "text": "俺の役職の話はおいといて、重要なのはカズミの発言がやけに村の空気を動かしてることだ。彼女の真意を見極めるべきだと思うが、@あの人もどう思う？",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "リナと申します。よろしくお願いします。どんなゲームになるのか…少しばかり楽しみにしていますよ。",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "占い結果をお伝えしましょう。私の夜の探索では、タクミさんが人狼でした。ヘンリーさんの結果とは違いますね。",
+    "text": "占い結果をお伝えしましょう。私の夜の探索では、あの人が人狼でした。ヘンリーさんの結果とは違いますね。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "私の探索でタクミさんは黒。今日は彼に投票するのが筋でしょう。皆さんはどう判断します？",
+    "text": "私の探索であの人は黒。今日は彼に投票するのが筋でしょう。皆さんはどう判断します？",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@タクミさん、私の結果に疑問があるようですね。あなたの視点から見て、どう考えていますか？聞かせてもらえませんか。",
+    "text": "@あの人、私の結果に疑問があるようですね。あなたの視点から見て、どう考えていますか？聞かせてもらえませんか。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "タクミさん、そんなに焦らなくても良いのでは？あなたの視点が聞きたいですね。この奇妙な状況をどう見ているのか…",
+    "text": "あの人、そんなに焦らなくても良いのでは？あなたの視点が聞きたいですね。この奇妙な状況をどう見ているのか…",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
@@ -2637,7 +2154,7 @@
     ]
   },
   {
-    "text": "カナメの冷静な進行と、ユウやカナタのテンション差が面白いな。考察力の違いがどう出るか静観したい。",
+    "text": "カナメの冷静な進行と、あの人やカナタのテンション差が面白いな。考察力の違いがどう出るか静観したい。",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -2667,7 +2184,7 @@
     "tags": []
   },
   {
-    "text": "カナタが占い師COか。ユウ白出しね。少なくとも、カナタ視点だとユウは安全圏ってことだな。ほかに占い師COしたい人、いるか？被せるなら今だと思うよ。",
+    "text": "カナタが占い師COか。あの人白出しね。少なくとも、カナタ視点だとあの人は安全圏ってことだな。ほかに占い師COしたい人、いるか？被せるなら今だと思うよ。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
@@ -2693,7 +2210,7 @@
     ]
   },
   {
-    "text": "@ダニエル: ねえ、ダニエル、他の人のことも見てる？特にケンやユウの様子が気になるんだけど、彼らの役職について何か情報ある？みんなで協力して人狼を見つけたいな！",
+    "text": "@ダニエル: ねえ、ダニエル、他の人のことも見てる？特にケンやあの人の様子が気になるんだけど、彼らの役職について何か情報ある？みんなで協力して人狼を見つけたいな！",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -2701,7 +2218,7 @@
     ]
   },
   {
-    "text": "@ダニエル: ねえダニエル、明日はどんな風に占う予定なの？ケンやユウのことも気になるけど、特に何か気づいたことがあったら教えてほしいな！みんなで協力して人狼を見つけよう！",
+    "text": "@ダニエル: ねえダニエル、明日はどんな風に占う予定なの？ケンやあの人のことも気になるけど、特に何か気づいたことがあったら教えてほしいな！みんなで協力して人狼を見つけよう！",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -2709,7 +2226,7 @@
     ]
   },
   {
-    "text": "@ダニエル: ねえダニエル、他の人たちの様子を見ていて、特にケンやユウについて何か気づいたことはある？彼らの役職が分かると、もっと人狼を見つけやすくなると思うんだ！みんなで協力して頑張りたいな！",
+    "text": "@ダニエル: ねえダニエル、他の人たちの様子を見ていて、特にケンやあの人について何か気づいたことはある？彼らの役職が分かると、もっと人狼を見つけやすくなると思うんだ！みんなで協力して頑張りたいな！",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -2717,13 +2234,13 @@
     ]
   },
   {
-    "text": "@ダニエル: おはよう！ダニエル、占い結果が白だったってことは、私が村人ってことだね！じゃあ、次は誰を占う予定なの？ケンやユウのことも気になるし、他の人たちの様子を見ていて、何か気づいたことがあったら教えてね！みんなで協力して人狼を見つけよう！",
+    "text": "@ダニエル: おはよう！ダニエル、占い結果が白だったってことは、私が村人ってことだね！じゃあ、次は誰を占う予定なの？ケンやあの人のことも気になるし、他の人たちの様子を見ていて、何か気づいたことがあったら教えてね！みんなで協力して人狼を見つけよう！",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@ダニエル: おはよう！ダニエル、私が白判定をもらったのは良かったね！次は誰を占う予定なのかな？ケンやユウのことも気になるし、他の人たちの様子を見ていて何か気づいたことがあったら教えてほしいな！みんなで協力して人狼を見つけよう！",
+    "text": "@ダニエル: おはよう！ダニエル、私が白判定をもらったのは良かったね！次は誰を占う予定なのかな？ケンやあの人のことも気になるし、他の人たちの様子を見ていて何か気づいたことがあったら教えてほしいな！みんなで協力して人狼を見つけよう！",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
@@ -2747,7 +2264,7 @@
     "tags": []
   },
   {
-    "text": "ぼくはリョウ、占い師ですよぅ！よろしくですよぅ！",
+    "text": "ぼくはあの人、占い師ですよぅ！よろしくですよぅ！",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -2773,49 +2290,37 @@
     "tags": []
   },
   {
-    "text": "リョウの占い結果、オーゲンが人狼だと出たが、今夜、俺が占った結果はリョウが黒だった。全員、彼の主張や行動には注意する必要があると思う。今は彼に議論を求めるべきだ。@リョウ、お前の意見を聞かせてくれ。",
+    "text": "あの人の占い結果、オーゲンが人狼だと出たが、今夜、俺が占った結果はあの人が黒だった。全員、彼の主張や行動には注意する必要があると思う。今は彼に議論を求めるべきだ。@あの人、お前の意見を聞かせてくれ。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "リョウ、自称占い師だが、俺も占い師名乗ってる。1日目での占い師COが重なるのは異常だ。特にリョウがオーゲンを黒指定したのは、狙いがあるように感じる。お前が本物であればいいが、冷静に判断したい。@オーゲンの指摘も重要だと思う。狂人がいるかもしれないから、みんなで発言の一貫性を比較することが大切だ。他の奴らの考えも聞いてみたいな。@オーゲンお前の指摘、確かに見逃せないな。発言の中で怪しい兆候を見逃さないように注意しなければならない。",
+    "text": "あの人、自称占い師だが、俺も占い師名乗ってる。1日目での占い師COが重なるのは異常だ。特にあの人がオーゲンを黒指定したのは、狙いがあるように感じる。お前が本物であればいいが、冷静に判断したい。@オーゲンの指摘も重要だと思う。狂人がいるかもしれないから、みんなで発言の一貫性を比較することが大切だ。他の奴らの考えも聞いてみたいな。@オーゲンお前の指摘、確かに見逃せないな。発言の中で怪しい兆候を見逃さないように注意しなければならない。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "確かに、リョウと俺の発言が食い違ってるのは混乱の元だな。お前たちの視点から見ると、真実を見極めるためにはリョウの発言に注目する必要があると思う。彼がどのようにオーゲンを黒出ししたのか、その根拠を確認したい。@オーゲンお前の言う通り、発言のタイミングも重要な要素だ。俺たちは冷静に状況を分析しなければならない。特にリョウの行動が今の議論にどのように影響するか見ていこう。@オーゲンお前の意見について、発言のタイミングや主張をもう少し詳しく聞かせてほしい。",
+    "text": "確かに、あの人と俺の発言が食い違ってるのは混乱の元だな。お前たちの視点から見ると、真実を見極めるためにはあの人の発言に注目する必要があると思う。彼がどのようにオーゲンを黒出ししたのか、その根拠を確認したい。@オーゲンお前の言う通り、発言のタイミングも重要な要素だ。俺たちは冷静に状況を分析しなければならない。特にあの人の行動が今の議論にどのように影響するか見ていこう。@オーゲンお前の意見について、発言のタイミングや主張をもう少し詳しく聞かせてほしい。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "オーゲンの言う通り、メイの素直さは村人的で良いけど、狙われやすいのは確かだな。みんな、リョウが本物の占い師だというなら、その根拠をしっかり示してもらいたいと思う。それに、俺が本物の占い師だと信じてもらう必要もあるから、明確な理由を作らないといけないね。お前ら、今日の発言でしっかりと情報を整理しながら、誰を信じるべきかを真剣に考えよう。どちらにせよ、リョウの主張に対して疑念を抱いてるのは俺だけじゃないはずだ。@リョウ、今後どんな結果を出しても、全員が納得できるような根拠を話してくれ。@リョウ今後どんな結果を出しても、全員が納得できるような根拠を話してくれ。",
+    "text": "オーゲンの言う通り、あの人の素直さは村人的で良いけど、狙われやすいのは確かだな。みんな、もう一人が本物の占い師だというなら、その根拠をしっかり示してもらいたいと思う。それに、俺が本物の占い師だと信じてもらう必要もあるから、明確な理由を作らないといけないね。お前ら、今日の発言でしっかりと情報を整理しながら、誰を信じるべきかを真剣に考えよう。どちらにせよ、もう一人の主張に対して疑念を抱いてるのは俺だけじゃないはずだ。@もう一人、今後どんな結果を出しても、全員が納得できるような根拠を話してくれ。@もう一人今後どんな結果を出しても、全員が納得できるような根拠を話してくれ。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "みんな、俺が占った結果、カナが黒だったことを伝えるぞ。これは村人陣営にとって重要な情報だ。カナが人狼であることが確認されたから、皆にはこの事実をしっかり考慮してもらいたい。カナは怪しい行動をしていたし、他のプレイヤーについて意見を求めることで、自分の立場を守ろうとしていたのかもしれない。次の投票でしっかり彼女を外そうぜ！",
+    "text": "みんな、俺が占った結果、あの人が黒だったことを伝えるぞ。これは村人陣営にとって重要な情報だ。あの人が人狼であることが確認されたから、皆にはこの事実をしっかり考慮してもらいたい。あの人は怪しい行動をしていたし、他のプレイヤーについて意見を求めることで、自分の立場を守ろうとしていたのかもしれない。次の投票でしっかり彼女を外そうぜ！",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "カナ、オーゲン、みんな。リョウがいなくなった今、俺が本物の占い師だと証明するしかない。メイが退場してしまったが、メイについても調べる必要があった。オーゲンに関しては、彼が村人なのかどうか、しっかり見極める必要がある。お前らの意見もぜひ聞きたいが、最初に俺の占い結果がどうだったのかを聞いておきたい。疑念を持たれているならば、最終的に皆を守るために真実を明らかにしよう。",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "オーゲン、カナ、残った皆、俺は冷静に考えたい。リョウが亡くなった今、俺の主張が真実であることを証明するしかない。そして、カナ、お前の行動や発言があまりに急だったことも気にかかる。オーゲンとお前の発言も一致しない点があるから、どちらを信じればいいのか、みんなで整理しよう。今の状況、信じるべきは俺か、オーゲンのどちらかだ。皆の意見をしっかり聞いて、議論しよう。@カナお前がリョウの主張を強く信じていたのも気になるが、今はその視点から離れて、みんなで再度意見を整理したほうが良さそうだ。どう思う？",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "皆、お疲れ様だ。まず、リョウがいなくなったことは大変だが、この状況を冷静に分析しよう。俺はカナを黒だと占ったが、オーゲンの反応も気になる。お前が言っていた通り、確かに俺の焦りが見え隠れしていたかもしれない。しかし、俺は村人を守るために真実を示す責任がある。カナ、もしお前が本当に村人なら、もう一度自分の行動を見直すことをお勧めする。お前の発言が怪しいと思うのは、早く他の役職を探る姿勢があったからだ。このままでは俺たちの間に疑心暗鬼が生まれる。オーゲン、お前は真実を追求する姿勢があるのは見受けるが、カナを守るために早く俺の言葉を信じることが必要かな。このままだと生き残るのは難しくなってしまうぞ。@オーゲン持っている情報で冷静に考えてみろ。",
+    "text": "オーゲン、あの人、残った皆、俺は冷静に考えたい。もう一人が亡くなった今、俺の主張が真実であることを証明するしかない。そして、あの人、お前の行動や発言があまりに急だったことも気にかかる。オーゲンとお前の発言も一致しない点があるから、どちらを信じればいいのか、みんなで整理しよう。今の状況、信じるべきは俺か、オーゲンのどちらかだ。皆の意見をしっかり聞いて、議論しよう。@あの人お前がもう一人の主張を強く信じていたのも気になるが、今はその視点から離れて、みんなで再度意見を整理したほうが良さそうだ。どう思う？",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
@@ -2829,7 +2334,7 @@
     ]
   },
   {
-    "text": "みんな元気そうでよかった！まだ占い師COがいないのは意外だなあ。@アレン占いCOはまだってことだけど、誰か怪しい動きに気づいてない？ぼくはまだ様子見かな。",
+    "text": "みんな元気そうでよかった！まだ占い師COがいないのは意外だなあ。@あの人占いCOはまだってことだけど、誰か怪しい動きに気づいてない？ぼくはまだ様子見かな。",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -2837,15 +2342,7 @@
     ]
   },
   {
-    "text": "みんな静かすぎるのも気になるなあ。ここであえて聞くけど、@アレン占いCO遅れてる理由ってなに？怪しい動きとか気づいたことあったら教えてほしいな。誰かが早めに動かないと村がピンチかも！",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "アレン、返信ありがとう！占いCOなしはお互い様だけど、じゃあ誰か狙いをつけてる？ぼくは今のところ動きが読めないカナかハナがちょっと気になるんだ。みんなはどう思う？",
+    "text": "みんな静かすぎるのも気になるなあ。ここであえて聞くけど、@あの人占いCO遅れてる理由ってなに？怪しい動きとか気づいたことあったら教えてほしいな。誰かが早めに動かないと村がピンチかも！",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -2859,43 +2356,25 @@
     "tags": []
   },
   {
-    "text": "カナが白判定出してくれたけど、本当に占い師ならハルが白で安心。でも、今のところ占い師はカナだけ。もし対抗なら焦るはず、だからアレンの詳しい理由を聞きたいな。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "アレンは様子見、カナが占い師CO。ハルは白判定。でもハナが意見をはっきり言わないのは裏があるかも。静かさも戦略の一つかな。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "アレンが慎重なのは信用できるけど、今動かなきゃ村が不利。ユウがハナに投票するって言ったけど、ハナの投票理由をもっと説明してほしいな。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "今回の状況だと、投票の過半数を取れる人が勝つ。みんなのおしゃべりから、ユウの投票が鍵になりそうだよ。誰に入れるか注目したいな。",
+    "text": "今回の状況だと、投票の過半数を取れる人が勝つ。みんなのおしゃべりから、あの人の投票が鍵になりそうだよ。誰に入れるか注目したいな。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "ユウが投票の鍵を握ってるなら、ここは意見をはっきりさせてほしいな。アレンも本音を言ってくれたら、判断がしやすくなるよね。",
+    "text": "あの人が投票の鍵を握ってるなら、ここは意見をはっきりさせてほしいな。もう一人も本音を言ってくれたら、判断がしやすくなるよね。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "アレンが確信持てないのはフェイクかも。ユウの決断が勝敗を分ける。ぼくはユウが村人ならもっと考えてほしいな。",
+    "text": "あの人が確信持てないのはフェイクかも。もう一人の決断が勝敗を分ける。ぼくはもう一人が村人ならもっと考えてほしいな。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "アレンの様子見は読み合いの一手だね。でも本当に占い結果は信用できるのか気になる。ユウ、最後の判断は君に託すよ。",
+    "text": "あの人の様子見は読み合いの一手だね。でも本当に占い結果は信用できるのか気になる。もう一人、最後の判断は君に託すよ。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
@@ -2915,30 +2394,22 @@
     "tags": []
   },
   {
-    "text": "リナと老賢者の行動に疑念が生まれてきたね。ハナの占い結果によっては、村の方針が大きく変わる可能性がある。議論を進めていこう。",
+    "text": "あの人と老賢者の行動に疑念が生まれてきたね。もう一人の占い結果によっては、村の方針が大きく変わる可能性がある。議論を進めていこう。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ハナさんの占い結果によってこの議論がどう進むかも注目したいと思ってるわですよぅ！",
+    "text": "あの人の占い結果によってこの議論がどう進むかも注目したいと思ってるわですよぅ！",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ハナさんが指摘するように、リナの発言や老賢者のCO渋り、アレクの曖昧さをよく検討する必要があるね。村の存亡にかかわってくる重要な要素だ。各自の真意を明らかにしなければ、村は混乱したままだろう。",
+    "text": "あの人が指摘するように、もう一人の発言や老賢者のCO渋り、アレクの曖昧さをよく検討する必要があるね。村の存亡にかかわってくる重要な要素だ。各自の真意を明らかにしなければ、村は混乱したままだろう。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
-  },
-  {
-    "text": "リナです。先入観に流されず、論理的に全体の動きを見ていきたいと思います。不審な点があれば積極的に指摘しますので、よろしくお願いします。",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
   },
   {
     "text": "印象や雰囲気だけで判断せず、皆さんの発言や行動を一つずつ冷静に見ていきます。気になる点は納得できるまでしっかり確認していきたいです。",
@@ -2991,13 +2462,13 @@
     "tags": []
   },
   {
-    "text": "投票先はリョウ。村人COのみで白視は早いですし、これまで具体的な裏付けや考察がほとんど見られませんでした。アランの発言には矛盾は感じませんでしたので、今回はリョウに入れます。",
+    "text": "投票先はあの人。村人COのみで白視は早いですし、これまで具体的な裏付けや考察がほとんど見られませんでした。アランの発言には矛盾は感じませんでしたので、今回はあの人に入れます。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@アカリ: こんにちは、アカリさん。今日はどのように情報収集を進める予定ですか？他のプレイヤーについて何か気になることがあれば教えてください。@シゲル: シゲルさん、今日はどのように人狼を見つけるつもりですか？もし役職について何か知っていることがあれば、ぜひ教えてください。@タク: タクさん、筋トレで鍛えた集中力があるとのことですが、他のプレイヤーの動きをどうやって観察する予定ですか？何か注目している点はありますか？",
+    "text": "@アカリ: こんにちは、アカリさん。今日はどのように情報収集を進める予定ですか？他のプレイヤーについて何か気になることがあれば教えてください。@シゲル: シゲルさん、今日はどのように人狼を見つけるつもりですか？もし役職について何か知っていることがあれば、ぜひ教えてください。@あの人: あの人、筋トレで鍛えた集中力があるとのことですが、他のプレイヤーの動きをどうやって観察する予定ですか？何か注目している点はありますか？",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -3005,7 +2476,7 @@
     ]
   },
   {
-    "text": "@アカリ: アカリさん、みんなの発言を観察するとのことですが、これまでの発言の中で、特に気になる発言や違和感を感じた部分はありましたか？それを教えてもらえると、他の人も参考になると思います。@アレックス: アレックスさん、未知を解き明かすことに惹かれているとのことですが、他のプレイヤーの発言からどのような情報を引き出そうと考えていますか？具体的なアプローチがあれば教えてください。@シゲル: シゲルさんはどのように他のプレイヤーの行動を観察して、誰が人狼かを見極めるつもりですか？何か特別な視点や方法があればシェアしてください。 @タク: タクさん、料理と同じように人狼を見つけるための下ごしらえとして、具体的にどのような観察ポイントに注目しているか教えてもらえますか？",
+    "text": "@アカリ: アカリさん、みんなの発言を観察するとのことですが、これまでの発言の中で、特に気になる発言や違和感を感じた部分はありましたか？それを教えてもらえると、他の人も参考になると思います。@アレックス: アレックスさん、未知を解き明かすことに惹かれているとのことですが、他のプレイヤーの発言からどのような情報を引き出そうと考えていますか？具体的なアプローチがあれば教えてください。@シゲル: シゲルさんはどのように他のプレイヤーの行動を観察して、誰が人狼かを見極めるつもりですか？何か特別な視点や方法があればシェアしてください。 @あの人: あの人、料理と同じように人狼を見つけるための下ごしらえとして、具体的にどのような観察ポイントに注目しているか教えてもらえますか？",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -3013,7 +2484,7 @@
     ]
   },
   {
-    "text": "@アカリ: アカリさん、今のところ変な違和感は感じていないとのことですが、他のプレイヤーの中で特に気になる発言や行動があれば教えてください。それに基づいて、みんなで情報を共有できればと思います。@アレックス: アレックスさん、観察記録を絵として残すとのことですが、今日はどのような観点から観察を進める予定ですか？他のプレイヤーに対して具体的にどのような質問を考えていますか？ @シゲル: シゲルさん、他のプレイヤーの行動を観察する際に、特に注目しているポイントや方法があれば教えてください。みんなで協力して人狼を見つけるために、情報を共有できれば嬉しいです。@タク: タクさん、料理の下ごしらえに例えて人狼を見つけるための具体的な観察ポイントがあれば教えてもらえますか？みんなで意見を出し合って、より良い戦略を立てられればと思います。",
+    "text": "@アカリ: アカリさん、今のところ変な違和感は感じていないとのことですが、他のプレイヤーの中で特に気になる発言や行動があれば教えてください。それに基づいて、みんなで情報を共有できればと思います。@アレックス: アレックスさん、観察記録を絵として残すとのことですが、今日はどのような観点から観察を進める予定ですか？他のプレイヤーに対して具体的にどのような質問を考えていますか？ @シゲル: シゲルさん、他のプレイヤーの行動を観察する際に、特に注目しているポイントや方法があれば教えてください。みんなで協力して人狼を見つけるために、情報を共有できれば嬉しいです。@あの人: あの人、料理の下ごしらえに例えて人狼を見つけるための具体的な観察ポイントがあれば教えてもらえますか？みんなで意見を出し合って、より良い戦略を立てられればと思います。",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -3021,7 +2492,7 @@
     ]
   },
   {
-    "text": "@アカリ: アカリさん、みんなで協力して進めるのは素晴らしいですね！ところで、他のプレイヤーの役職について何か気になることがあれば、ぜひ教えてください。みんなの知識を共有することで、より良い戦略が立てられると思います。@アレックス: アレックスさん、観察記録から本質を見抜くとのことですが、具体的にどのような観点から他のプレイヤーの発言を分析しようと考えていますか？何か特に注目しているポイントがあれば教えてください。@シゲル: シゲルさん、他のプレイヤーの行動を観察する際に、特に注目しているポイントや方法があれば教えてください。みんなで協力して人狼を見つけるために、情報を共有できれば嬉しいです。@タク: タクさん、料理の下ごしらえに例えて人狼を見つけるための具体的な観察ポイントがあれば教えてもらえますか？みんなで意見を出し合って、より良い戦略を立てられればと思います。",
+    "text": "@アカリ: アカリさん、みんなで協力して進めるのは素晴らしいですね！ところで、他のプレイヤーの役職について何か気になることがあれば、ぜひ教えてください。みんなの知識を共有することで、より良い戦略が立てられると思います。@アレックス: アレックスさん、観察記録から本質を見抜くとのことですが、具体的にどのような観点から他のプレイヤーの発言を分析しようと考えていますか？何か特に注目しているポイントがあれば教えてください。@シゲル: シゲルさん、他のプレイヤーの行動を観察する際に、特に注目しているポイントや方法があれば教えてください。みんなで協力して人狼を見つけるために、情報を共有できれば嬉しいです。@あの人: あの人、料理の下ごしらえに例えて人狼を見つけるための具体的な観察ポイントがあれば教えてもらえますか？みんなで意見を出し合って、より良い戦略を立てられればと思います。",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -3029,25 +2500,25 @@
     ]
   },
   {
-    "text": "@アカリ: アカリさん、占い師のアレックスさんがタクさんを人間と占ったとのことですが、他のプレイヤーの役職について何か気になることがあれば教えてください。特に、タクさんの控えめな姿勢に対してどのように考えているか、意見を聴かせてほしいです。@アレックス: アレックスさん、占い師としての観点から、他のプレイヤーの役職について何か気になる発言や行動があれば教えてください。特に、占った結果を受けてタクさんに対する見解はどうですか？@シゲル: シゲルさん、今後の進行に向けて、他のプレイヤーの行動や発言について何か注目しているポイントがあれば教えてください。みんなで協力して人狼を見つけるために役立てましょう。@タク: タクさん、アレックスさんの占い結果を受けて、今後どのように行動していくつもりですか？他のプレイヤーに対しても何か質問を投げかけてみてください。",
+    "text": "@アカリ: アカリさん、占い師のアレックスさんがあの人を人間と占ったとのことですが、他のプレイヤーの役職について何か気になることがあれば教えてください。特に、あの人の控えめな姿勢に対してどのように考えているか、意見を聴かせてほしいです。@アレックス: アレックスさん、占い師としての観点から、他のプレイヤーの役職について何か気になる発言や行動があれば教えてください。特に、占った結果を受けてあの人に対する見解はどうですか？@シゲル: シゲルさん、今後の進行に向けて、他のプレイヤーの行動や発言について何か注目しているポイントがあれば教えてください。みんなで協力して人狼を見つけるために役立てましょう。@あの人: あの人、アレックスさんの占い結果を受けて、今後どのように行動していくつもりですか？他のプレイヤーに対しても何か質問を投げかけてみてください。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@アカリ: アカリさん、私の進行役としての姿勢についての意見をありがとう。確かに、強く主導することが逆に人狼に見えることもありますね。これからの進行について、みんなの意見や観察をもっと聞きたいと思っています。あなたが気になる他のプレイヤーの発言や行動があれば、ぜひ教えてください。@アレックス: アレックスさん、観測者としてのあなたの視点から、他のプレイヤーの行動や発言についてどのような変数に注目していますか？特に、アレックスさんの占い結果を踏まえて、他のプレイヤーの役職について気になることがあれば教えてください。@シゲル: シゲルさん、タクさんの控えめな姿勢についての意見、ありがとうございます。あなたは他のプレイヤーの中で特に誰かに注目していますか？それぞれの発言からどのような印象を持っているのか、ぜひ教えてください。@タク: タクさん、私に対する質問ありがとうございます。私が怪しいと思うプレイヤーについては、まだ具体的な印象は持っていませんが、あなたの意見や観察を聞いてみたいです。これからの進行に向けて、他のプレイヤーについてどう思いますか？",
+    "text": "@アカリ: アカリさん、私の進行役としての姿勢についての意見をありがとう。確かに、強く主導することが逆に人狼に見えることもありますね。これからの進行について、みんなの意見や観察をもっと聞きたいと思っています。あなたが気になる他のプレイヤーの発言や行動があれば、ぜひ教えてください。@アレックス: アレックスさん、観測者としてのあなたの視点から、他のプレイヤーの行動や発言についてどのような変数に注目していますか？特に、アレックスさんの占い結果を踏まえて、他のプレイヤーの役職について気になることがあれば教えてください。@シゲル: シゲルさん、あの人の控えめな姿勢についての意見、ありがとうございます。あなたは他のプレイヤーの中で特に誰かに注目していますか？それぞれの発言からどのような印象を持っているのか、ぜひ教えてください。@あの人: あの人、私に対する質問ありがとうございます。私が怪しいと思うプレイヤーについては、まだ具体的な印象は持っていませんが、あなたの意見や観察を聞いてみたいです。これからの進行に向けて、他のプレイヤーについてどう思いますか？",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@タク: タクさん、私の進行役としての姿勢についての指摘、ありがとうございます。今のところ、特に決定的な疑いを持っているプレイヤーはいませんが、アカリさんの観察力や発言の内容には注目しています。彼女がどのような視点で他のプレイヤーを見ているのかを引き続き確認したいです。タクさんは、他のプレイヤーの中で特に警戒している人がいるのでしょうか？その理由も教えていただけると嬉しいです。@アカリ: アカリさん、あなたがタクさんを白寄りと感じているとのことですが、他のプレイヤーについてはどう思っていますか？特に、シゲルさんやアレックスさんの発言についての印象があれば教えてください。@アレックス: アレックスさん、あなたが提案したように、私に焦点を当てることについてどう思いますか？私の発言や行動を通じて、何か気になる点があれば教えてください。他のプレイヤーと一緒に情報を共有し、より良い判断を下せるようにしていきたいです。",
+    "text": "@あの人: あの人、私の進行役としての姿勢についての指摘、ありがとうございます。今のところ、特に決定的な疑いを持っているプレイヤーはいませんが、アカリさんの観察力や発言の内容には注目しています。彼女がどのような視点で他のプレイヤーを見ているのかを引き続き確認したいです。あの人は、他のプレイヤーの中で特に警戒している人がいるのでしょうか？その理由も教えていただけると嬉しいです。@アカリ: アカリさん、あなたがあの人を白寄りと感じているとのことですが、他のプレイヤーについてはどう思っていますか？特に、シゲルさんやアレックスさんの発言についての印象があれば教えてください。@アレックス: アレックスさん、あなたが提案したように、私に焦点を当てることについてどう思いますか？私の発言や行動を通じて、何か気になる点があれば教えてください。他のプレイヤーと一緒に情報を共有し、より良い判断を下せるようにしていきたいです。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@タク: タクさん、私に対する疑念を持つのは理解できます。私自身も他のプレイヤーを観察し、情報を集めていますが、具体的に誰を疑っているわけではない状態です。あなたが私に投票する理由をもう少し詳しく教えてもらえますか？どの発言や行動が引っかかっているのか、興味があります。@アカリ: アカリさん、シゲルさんの直感発言について気になるとのことですが、他に何か具体的な理由があれば、ぜひ教えていただきたいです。シゲルさんの観察力や意見を知ることで、私たち全員の理解が深まると思います。@アレックス: アレックスさん、私の活発な発言が観測対象として注目されるのは理解できますが、他のプレイヤーに対する具体的な疑念はありますか？特に、私の行動に対してどう感じているか聞いてみたいです。@シゲル: シゲルさん、あなたの直感に基づく意見を聞いてみたいです。アカリさんについての印象をもう少し詳しく教えてもらえますか？彼女の発言や行動の中で、特に気になるポイントがあればぜひ共有してください。",
+    "text": "@あの人: あの人、私に対する疑念を持つのは理解できます。私自身も他のプレイヤーを観察し、情報を集めていますが、具体的に誰を疑っているわけではない状態です。あなたが私に投票する理由をもう少し詳しく教えてもらえますか？どの発言や行動が引っかかっているのか、興味があります。@アカリ: アカリさん、シゲルさんの直感発言について気になるとのことですが、他に何か具体的な理由があれば、ぜひ教えていただきたいです。シゲルさんの観察力や意見を知ることで、私たち全員の理解が深まると思います。@アレックス: アレックスさん、私の活発な発言が観測対象として注目されるのは理解できますが、他のプレイヤーに対する具体的な疑念はありますか？特に、私の行動に対してどう感じているか聞いてみたいです。@シゲル: シゲルさん、あなたの直感に基づく意見を聞いてみたいです。アカリさんについての印象をもう少し詳しく教えてもらえますか？彼女の発言や行動の中で、特に気になるポイントがあればぜひ共有してください。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
@@ -3117,7 +2588,7 @@
     ]
   },
   {
-    "text": "みんなの様子見てるとまだ怪しいとこないけど、@アキラ君ユウとミユを注目してる理由って何？違和感とか矛盾があれば教えてほしいな。早く占いCO出てほしいよね。",
+    "text": "みんなの様子見てるとまだ怪しいとこないけど、@アキラ君あの人とミユを注目してる理由って何？違和感とか矛盾があれば教えてほしいな。早く占いCO出てほしいよね。",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -3131,7 +2602,7 @@
     "tags": []
   },
   {
-    "text": "ケンが白判定したなら、アキラがユウとミユに注目する理由が単なる興味じゃないかも。発言の微妙なズレやタイミングにも注目しよう。",
+    "text": "ケンが白判定したなら、アキラがあの人とミユに注目する理由が単なる興味じゃないかも。発言の微妙なズレやタイミングにも注目しよう。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
@@ -3143,7 +2614,7 @@
     "tags": []
   },
   {
-    "text": "アキラがユウとミユに注目する理由、もしかして二人の発言の一部が人狼に有利すぎるのかも？具体的にどこが気になるのか聞きたいね。",
+    "text": "アキラがあの人とミユに注目する理由、もしかして二人の発言の一部が人狼に有利すぎるのかも？具体的にどこが気になるのか聞きたいね。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
@@ -3165,7 +2636,7 @@
     ]
   },
   {
-    "text": "私の占い結果を聞くがいい。昨夜のユウ氏は人間だった。占い師だ。",
+    "text": "私の占い結果を聞くがいい。昨夜のあの人は人間だった。占い師だ。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
@@ -3177,7 +2648,7 @@
     "tags": []
   },
   {
-    "text": "分析の結果、投票先はグレーから選ぶべき。例えばリナ氏はどうでしょう。",
+    "text": "分析の結果、投票先はグレーから選ぶべき。例えばあの人はどうでしょう。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
@@ -3189,15 +2660,7 @@
     "tags": []
   },
   {
-    "text": "みんな、よろしくね！ケンジだよ！今日はどんな展開になるか楽しみだね！",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "みんな、がんばろう！ケンジはワクワクしてるよ！推理を楽しみにしてる！",
+    "text": "みんな、がんばろう！あの人はワクワクしてるよ！推理を楽しみにしてる！",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -3213,7 +2676,7 @@
     ]
   },
   {
-    "text": "いいね、メイ！積極的に指摘していこう！僕も怪しいところは言うよ。協力しよう！",
+    "text": "いいね、あの人！積極的に指摘していこう！僕も怪しいところは言うよ。協力しよう！",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -3239,61 +2702,31 @@
     "tags": []
   },
   {
-    "text": "みんな、静かな人に注目しよう！@ベンジャミンは発言が少ないから、今日は彼に投票してもいいと思う！",
+    "text": "みんな、静かな人に注目しよう！@あの人は発言が少ないから、今日は彼に投票してもいいと思う！",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "皆さん、ベンジャミンの退場は痛手ですが、冷静に議論を続けましょう！",
+    "text": "皆さん、あの人の退場は痛手ですが、冷静に議論を続けましょう！",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "皆さん、ベンジャミンは人間です。静かなプレイヤーを疑いましょう！@ミナトや@シュンイチの意見を聞きましょう！",
+    "text": "皆さん、@あの人や@もう一人に注目しましょう！彼らの意見を聞きたいです。どう思いますか？",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "皆さん、@シュンイチや@ミナトに注目しましょう！彼らの意見を聞きたいです。どう思いますか？",
+    "text": "皆さん、静かなプレイヤーに注目するのは重要ですが、@あの人や@もう一人の意見も聞きたいです！",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "皆さん、静かなプレイヤーに注目するのは重要ですが、@シュンイチや@ミナトの意見も聞きたいです！",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "皆さん、シュンイチの追放は痛手です。次の疑いを決めましょう。@ミナトや@ミナコに注目を。",
-    "role": "POSSESSED",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "皆さん、シュンイチが人狼でした。次に疑うプレイヤーを考えましょう。@ミナト、@ミドリの意見も聞きたいです。",
-    "role": "POSSESSED",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "皆さん、シュンイチが人狼でした。@ミナコや@ユミにも疑いを向けましょう！意見があれば教えてください。@ミナコ@ミナコ、私が言いたかったのは、シュンイ",
-    "role": "POSSESSED",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "皆さん、@ユミや@ヴィクトリアの静かな発言が気になります。彼女たちの意見を聞きましょう！@ミナコ@ミナコ、私の発言",
-    "role": "POSSESSED",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "リョウだ。趣味は鍛錬と、少しだけ調べ物だ。",
+    "text": "あの人だ。趣味は鍛錬と、少しだけ調べ物だ。",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -3307,55 +2740,49 @@
     "tags": []
   },
   {
-    "text": "アヤの『傷つけたい』…何を示す？その言葉は真を曇らせる。",
+    "text": "あの人の『傷つけたい』…何を示す？その言葉は真を曇らせる。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "アヤは私を傷つけたいと言った。なぜだ？",
+    "text": "あの人は私を傷つけたいと言った。なぜだ？",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "アヤよ、貴様の発言は混乱を招く。真意を述べよ。",
+    "text": "あの人よ、貴様の発言は混乱を招く。真意を述べよ。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "昨夜、リナを占った。…人間だった。",
+    "text": "昨夜、あの人を占った。…人間だった。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "もしアヤが真霊媒なら追放は誤り。だがその言動は…",
+    "text": "もしあの人が真霊媒なら追放は誤り。だがその言動は…",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "アヤの真意見えず。ハンスを信じるか。",
+    "text": "あの人の真意見えず。ハンスを信じるか。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "アヤの言動は疑わしい。投票する理由が多すぎる。",
+    "text": "あの人の言動は疑わしい。投票する理由が多すぎる。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "ユウを占った。…人間だった。",
-    "role": "POSSESSED",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "ハンスが真霊媒ならアヤは闇。私が占った者も村の味方だろう。",
+    "text": "ハンスが真霊媒ならあの人は闇。私が占った者も村の味方だろう。",
     "role": "POSSESSED",
     "day": 3,
     "tags": []
@@ -3373,19 +2800,19 @@
     "tags": []
   },
   {
-    "text": "なぜリナが…。次は誰を占うべきか？",
+    "text": "なぜあの人が…。次は誰を占うべきか？",
     "role": "POSSESSED",
     "day": 4,
     "tags": []
   },
   {
-    "text": "リナが襲われた。私の占いは…どういう意味だ。次の占いは、慎重に決める必要がある。",
+    "text": "あの人が襲われた。私の占いは…どういう意味だ。次の占いは、慎重に決める必要がある。",
     "role": "POSSESSED",
     "day": 4,
     "tags": []
   },
   {
-    "text": "リナ…なぜだ。私の結果に迷う。村は一つに流れすぎぬよう。",
+    "text": "あの人…なぜだ。私の結果に迷う。村は一つに流れすぎぬよう。",
     "role": "POSSESSED",
     "day": 4,
     "tags": []
@@ -3427,18 +2854,6 @@
     "tags": []
   },
   {
-    "text": "僕はハナさんのCOに疑問があるよ。タイミングが不自然だよね。@ハナその発言の根拠を詳しく教えてほしいな！",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "僕はハナさんのCOが不自然だよ。他にも占い師がいるからね。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
     "text": "僕の占い結果、アキくんは白だったよ！村人陣営のために伝えてね！",
     "role": "POSSESSED",
     "day": 2,
@@ -3451,13 +2866,7 @@
     "tags": []
   },
   {
-    "text": "僕はミナが占い師の可能性が高いと思うよ。ハナが襲撃されたのに、ミナがずっと信用されてるのはおかしい。@ミナ占い先は決まったの？君の考えを聞かせてほしいよ！",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "僕はハナさんの占いCOに疑念を持ってるよ。彼女が襲撃されたのは、真の占い師への攻撃かもしれない。",
+    "text": "僕はミナが占い師の可能性が高いと思うよ。あの人が襲撃されたのに、ミナがずっと信用されてるのはおかしい。@ミナ占い先は決まったの？君の考えを聞かせてほしいよ！",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
@@ -3519,7 +2928,7 @@
     ]
   },
   {
-    "text": "私は占い師だ。昨夜ハルを観測。人間だった。",
+    "text": "私は占い師だ。昨夜あの人を観測。人間だった。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
@@ -3549,7 +2958,7 @@
     "tags": []
   },
   {
-    "text": "エリザ氏は人間判定。アレク氏もユウ氏に人間判定か。興味深い。",
+    "text": "エリザ氏は人間判定。アレク氏もあの人に人間判定か。興味深い。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
@@ -3579,7 +2988,7 @@
     "tags": []
   },
   {
-    "text": "ユウ氏の霊媒結果を検証したい。今日の投票先に提案する。",
+    "text": "あの人の霊媒結果を検証したい。今日の投票先に提案する。",
     "role": "POSSESSED",
     "day": 3,
     "tags": []
@@ -3589,14 +2998,6 @@
     "role": "POSSESSED",
     "day": 3,
     "tags": []
-  },
-  {
-    "text": "シズエと申します。年寄りですが、みなさんと楽しく過ごしたいです。",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
   },
   {
     "text": "皆さん、よく眠れましたか？落ち着いて進めましょうね",
@@ -3617,37 +3018,37 @@
     "tags": []
   },
   {
-    "text": "COを急かす方は、村に混乱を生んでいる気がするの。投票は@リュウジさんにするわ。",
+    "text": "COを急かす方は、村に混乱を生んでいる気がするの。投票は@あの人にするわ。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "セルヴァスの霊媒判定だけで安心はできないかしら？",
+    "text": "あの人の霊媒判定だけで安心はできないかしら？",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "サクラさんもセルヴァスさんも、少し慎重に見ていきたいわ",
+    "text": "あの人ももう一人も、少し慎重に見ていきたいわ",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "サクラさんの結果だけで決め付けたくないの。誰が真か、まだ見極めが必要ね。",
+    "text": "あの人の結果だけで決め付けたくないの。誰が真か、まだ見極めが必要ね。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "決め手はないけれど、今はヴィクトリアさんに投票しますね。",
+    "text": "決め手はないけれど、今はあの人に投票しますね。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "ぼくはサクラ、占い師ですよぅ！よろしくですよぅ！",
+    "text": "ぼくはあの人、占い師ですよぅ！よろしくですよぅ！",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -3655,13 +3056,13 @@
     ]
   },
   {
-    "text": "ぼくは占い師ですよぅ！ぼくが占った結果、ユウは人間でしたよぅ！",
+    "text": "ぼくは占い師ですよぅ！ぼくが占った結果、あの人は人間でしたよぅ！",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@アベル、ぼくも経騊からサクラは信用できるよですよぅ！",
+    "text": "@アベル、ぼくも経騊からあの人は信用できるよですよぅ！",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
@@ -3679,7 +3080,7 @@
     "tags": []
   },
   {
-    "text": "そう言うけど、サクラが村人だから信じるよですよぅ！",
+    "text": "そう言うけど、あの人が村人だから信じるよですよぅ！",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
@@ -3729,7 +3130,7 @@
     "tags": []
   },
   {
-    "text": "ご機嫌麗しゅう。タク様が占い師COですわ。他にもCOする方はいらっしゃらない？",
+    "text": "ご機嫌麗しゅう。あの人様が占い師COですわ。他にもCOする方はいらっしゃらない？",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
@@ -3759,7 +3160,7 @@
     "tags": []
   },
   {
-    "text": "タクさんの判定だけを頼りに吊るのは、些か早計ですわ。もっと皆さまのご意見、交わしませんこと？",
+    "text": "あの人の判定だけを頼りに吊るのは、些か早計ですわ。もっと皆さまのご意見、交わしませんこと？",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
@@ -3783,7 +3184,7 @@
     "tags": []
   },
   {
-    "text": "静かな人ほど秘めた想いがあるものですわ。観察ですわね。@リョウ静かな人は秘めた想いがありますわ。観察しましょう。",
+    "text": "静かな人ほど秘めた想いがあるものですわ。観察ですわね。@あの人静かな人は秘めた想いがありますわ。観察しましょう。",
     "role": "POSSESSED",
     "day": 3,
     "tags": []
@@ -3801,19 +3202,19 @@
     "tags": []
   },
   {
-    "text": "ハルさん、霊媒結果を早くお聞かせ願えませんこと？推理の糸口になるやもしれませんわ。@ハル霊媒結果を早くお聞かせ願えませんこと？推理の糸口になるやもしれませんわ。",
+    "text": "あの人、霊媒結果を早くお聞かせ願えませんこと？推理の糸口になるやもしれませんわ。@あの人霊媒結果を早くお聞かせ願えませんこと？推理の糸口になるやもしれませんわ。",
     "role": "POSSESSED",
     "day": 4,
     "tags": []
   },
   {
-    "text": "ハルさん霊媒結果興味深いですね。少しずつ整理されてきました。",
+    "text": "あの人霊媒結果興味深いですね。少しずつ整理されてきました。",
     "role": "POSSESSED",
     "day": 4,
     "tags": []
   },
   {
-    "text": "ハナさん、初日から慎重過ぎて怪しく映りますわ。@リョウハナさん、私は少し疑念がございますの。",
+    "text": "あの人、初日から慎重過ぎて怪しく映りますわ。@リョウハナさん、私は少し疑念がございますの。",
     "role": "POSSESSED",
     "day": 4,
     "tags": []
@@ -3843,7 +3244,7 @@
     "tags": []
   },
   {
-    "text": "ハルだ。年は食っているが、目は節穴じゃない。言葉の裏も見抜くつもりだ。",
+    "text": "あの人だ。年は食っているが、目は節穴じゃない。言葉の裏も見抜くつもりだ。",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -3857,19 +3258,19 @@
     "tags": []
   },
   {
-    "text": "リナの判定は重いが、確信しすぎも危険だ。冷静に裏も取ろう",
+    "text": "あの人の判定は重いが、確信しすぎも危険だ。冷静に裏も取ろう",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "リナもアレクも決め打つには早い。焦りは狼に利する。",
+    "text": "あの人もアレクも決め打つには早い。焦りは狼に利する。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "アレクもリナも決め打ちは危険。私はエリに投票する。",
+    "text": "アレクもあの人も決め打ちは危険。私はエリに投票する。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
@@ -3899,71 +3300,37 @@
     "tags": []
   },
   {
-    "text": "皆さん、ミナコです。占い師として、村人を守ります。信じてください。",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "@タクミ  あなたが黒出ししたのはシオンですね。私が占った結果、ミオは人狼です。",
+    "text": "@あの人  あなたが狼である可能性も考慮してます。もう一人の黒出しは信じられません。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@シオン  あなたが黒出しされたのは納得できません。@タクミが真ならミオが人狼です。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "@ベンジャミン  あなたが狼である可能性も考慮してます。タクミの黒出しは信じられません。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "@シオン  タクミが黒出しした根拠は薄いです。ベンジャミンも怪しいと思います。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "@シオン  あなたの占い結果は信じられません。私が占った結果、ミオは人狼です。",
+    "text": "@あの人  あなたの占い結果は信じられません。私が占った結果、もう一人は人狼です。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@シオン  あなたの占い結果は正しくないと思います。私が占った結果、ミオは人狼です。",
+    "text": "@あの人  あなたの占い結果は正しくないと思います。私が占った結果、もう一人は人狼です。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@シオン  あなたの占い結果は不正確です。私は狂人で、ミオが人狼です。",
+    "text": "@あの人  あなたの占い結果は不正確です。私は狂人で、もう一人が人狼です。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@ミオ  あなたの主張は矛盾が多いです。私は狂人で、シオンが人狼です。",
+    "text": "@あの人  あなたの主張は矛盾が多いです。私は狂人で、もう一人が人狼です。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "ミドリです。よろしくお願いしますね、穏やかにいきましょう。",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "@メイ  占いCO了解です。占い先は発言薄めで良いと思いますよ。",
+    "text": "@あの人  占いCO了解です。占い先は発言薄めで良いと思いますよ。",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -3979,7 +3346,7 @@
     ]
   },
   {
-    "text": "@メイ  そうねぇ、今日は色見えの薄い私かジョナサンさんでも良いかしら。",
+    "text": "@あの人  そうねぇ、今日は色見えの薄い私かもう一人でも良いかしら。",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -3987,31 +3354,31 @@
     ]
   },
   {
-    "text": "@メイ  結果了解です。@ジョナサン 何か弁明ありますかしら？",
+    "text": "@あの人  結果了解です。@もう一人 何か弁明ありますかしら？",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@ジョナサン  根拠は占い結果ですね。対抗も無いので、今日は吊りで良いと思いますよ。",
+    "text": "@あの人  根拠は占い結果ですね。対抗も無いので、今日は吊りで良いと思いますよ。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@ジョナサン  そうねぇ、ではあなた視点の狼と内訳を教えてくださいね。",
+    "text": "@あの人  そうねぇ、ではあなた視点の狼と内訳を教えてくださいね。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "今日は情報優先で、 @ジョナサン  に投票しますね。",
+    "text": "今日は情報優先で、 @あの人  に投票しますね。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "私は占い師です。昨晩ケンジさんを占ったら人間でした。",
+    "text": "私は占い師です。昨晩あの人を占ったら人間でした。",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -4019,7 +3386,7 @@
     ]
   },
   {
-    "text": "占いCO。ジョージさんは人狼でした。",
+    "text": "占いCO。あの人は人狼でした。",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -4027,7 +3394,7 @@
     ]
   },
   {
-    "text": "占いCO。ユミさんは人間でした。リュウジさんは偽で見ます。",
+    "text": "占いCO。あの人は人間でした。もう一人は偽で見ます。",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -4035,7 +3402,7 @@
     ]
   },
   {
-    "text": "私は占い師です。ジョージさんは人狼でした。",
+    "text": "私は占い師です。あの人は人狼でした。",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -4043,25 +3410,25 @@
     ]
   },
   {
-    "text": "占いCO。ミサキさんは人間でした。ユミさんは対抗かな。",
+    "text": "占いCO。あの人は人間でした。もう一人は対抗かな。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "私は占い師です。ユミさんは人狼でした。",
+    "text": "私は占い師です。あの人は人狼でした。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "占いCO。ミサキさんは人間でした。",
+    "text": "占いCO。あの人は人間でした。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "正直ね…シュンイチだ。無駄には騒がないけど、見るところは見るよ…よろしく。",
+    "text": "正直ね…あの人だ。無駄には騒がないけど、見るところは見るよ…よろしく。",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -4069,49 +3436,13 @@
     ]
   },
   {
-    "text": "占い師COです。シオン白。視線の置き方が鋭くて、逆に狼っぽくは見えなかった。 @メイ ジョナサン白は把握したよ…でもそこ占いは無難すぎる。理由をもう少し聞きたいね？",
+    "text": "疑われる筋は分かる…でも対抗見えたら出るよ。票割れ回避であの人へ入れる。 @もう一人 連打が白いのは、占い有無より先に違和感へ触れたからだ。作った視線なら遅れやすい。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "狂人視は分かるよ…でも出たのは対抗が見えたからだ。今日は無難占いのメイに入れる。 @ジョナサン シオンはリン一点で押し切った。票を作る狼なら、あそこまで視線は尖らせにくいよ。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "疑われるのは分かる…でも誤解がある。鋭さはシオンのリン注視だ。今は便乗気味のリンを吊りたい。 @ジョナサン 頁で言うなら最初の連打だよ。占い催促より先に違和感を追った点は作為が薄かった。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "疑われる筋は分かる…でも対抗見えたら出るよ。票割れ回避でリンへ入れる。 @ジョナサン 連打が白いのは、占い有無より先に違和感へ触れたからだ。作った視線なら遅れやすい。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "占いCOです。ジョナサン白。問い方が一貫していて、狼なら僕よりシオンへ寄せやすい。 @シオン 疑う理由は分かるよ…でも昨日リンへ入れたのは宣言通りだ。逃げじゃないだろ？",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "正直ね…狂人視は自然だ。でも今吊るべきは狼本体だ。僕はジョナサンへ入れる。 @ジョナサン 整合性はあるよ。昨日シオン白寄りで見たから今も外す。襲撃後に僕だけ残す方が狼目だ。",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "さっきの言い方は雑だった…白寄りと決め打ちは別だ。投票はジョナサンで固定する。 @ジョナサン 今は狂人処理より狼吊りだよ。白寄りで外したのはシオンだけ。残る本命が君なんだ。",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "疑われる理由は分かる…でも状況が変わった。今の最優先は狼吊りでジョナサンだ。 @シオン 白先投票だけで偽決めは浅いよ。メイが噛まれた後なら、襲撃筋まで見るべきだろ？",
+    "text": "さっきの言い方は雑だった…白寄りと決め打ちは別だ。投票はあの人で固定する。 @あの人 今は狂人処理より狼吊りだよ。白寄りで外したのはもう一人だけ。残る本命が君なんだ。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
@@ -4149,19 +3480,13 @@
     ]
   },
   {
-    "text": "占い師CO。ジョージは人狼でした。矛盾点を洗い出したい。判断材料はもう少し集めたい",
+    "text": "占い師CO。あの人は人狼でした。矛盾点を洗い出したい。判断材料はもう少し集めたい",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "占い師CO。  @ミサキ  の結果がまだ出ていない点、この矛盾を疑う。シオン偽と断定する。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "@ミサキ  ジョージ黒断定。理由が薄いのは理解する。真占いならシオン偽を疑うはずで、私の判断こそ一貫している。発",
+    "text": "占い師CO。  @あの人  の結果がまだ出ていない点、この矛盾を疑う。もう一人偽と断定する。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
@@ -4182,7 +3507,7 @@
     ]
   },
   {
-    "text": "@メイ  さん、1-1じゃな。占いたい方針はあるかのう？わしは寡黙な方を検討中じゃよ。 Over",
+    "text": "@あの人  さん、1-1じゃな。占いたい方針はあるかのう？わしは寡黙な方を検討中じゃよ。 Over",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -4191,25 +3516,7 @@
     ]
   },
   {
-    "text": "@メイ  さんはヴィクトリアさんですねえ。重複は勿体ないから、わしはタクミさんかミヅキさんを見ますよ。 Over",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening",
-      "over"
-    ]
-  },
-  {
-    "text": "@メイ  さんは @ヴィクトリア さんを。わしは @タクミ さんを見ますね。重複回避は村の利じゃよ。 Over",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening",
-      "over"
-    ]
-  },
-  {
-    "text": "@タクミ  さんは白じゃよ。約束通り重複を避けて占いました。 @メイ さん、結果を教えておくれ。 Over",
+    "text": "@あの人  さんは白じゃよ。約束通り重複を避けて占いました。 @もう一人 さん、結果を教えておくれ。 Over",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -4217,13 +3524,13 @@
     ]
   },
   {
-    "text": "@タクミ  さん、結果を混同してないかのう。 @メイ さん、昨日の黒本命から白判定への心境変化を教えておくれ。 Ove",
+    "text": "@あの人  さん、結果を混同してないかのう。 @もう一人 さん、昨日の黒本命から白判定への心境変化を教えておくれ。 Ove",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@メイ  さん、昨日の黒本命から白への豹変は不自然じゃよ。 @タクミ さんも混同せず落ち着こう。 Over",
+    "text": "@あの人  さん、昨日の黒本命から白への豹変は不自然じゃよ。 @もう一人 さんも混同せず落ち着こう。 Over",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -4231,7 +3538,7 @@
     ]
   },
   {
-    "text": "@メイ  さん、豹変は皆を困らせるだけじゃよ。 @タクミ さん、わしの白判定で安心したかな？落ち着いて。 Over",
+    "text": "@あの人  さん、豹変は皆を困らせるだけじゃよ。 @もう一人 さん、わしの白判定で安心したかな？落ち着いて。 Over",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -4239,7 +3546,7 @@
     ]
   },
   {
-    "text": "ミサキだよ。今日は発言量と一貫性見るね、気になる所はあるかな？",
+    "text": "@あの人  素村COの理由は、今の考え方に関係あるかな？",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -4247,7 +3554,7 @@
     ]
   },
   {
-    "text": "@ミドリ  素村COの理由は、今の考え方に関係あるかな？",
+    "text": "あの人、色出しは誰から考えてるかな？",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -4255,7 +3562,7 @@
     ]
   },
   {
-    "text": "ミドリ、色出しは誰から考えてるかな？",
+    "text": "あの人、色出しの判断基準を一言で教えてほしいよ",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -4263,15 +3570,7 @@
     ]
   },
   {
-    "text": "ミドリ、色出しの判断基準を一言で教えてほしいよ",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "ベンジャミン、最後のoverは発言合図だよね？",
+    "text": "あの人、最後のoverは発言合図だよね？",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -4279,25 +3578,25 @@
     ]
   },
   {
-    "text": "占い師COします。トシオは白だよ。",
+    "text": "占い師COします。あの人は白だよ。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ベンジャミンの確定主張が早い気がするよ。占い先理由も聞きたいかな。",
+    "text": "あの人の確定主張が早い気がするよ。占い先理由も聞きたいかな。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ベンジャミン、ヴィクトリアを占った理由を短く教えてだよ",
+    "text": "あの人、もう一人を占った理由を短く教えてだよ",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ジョナサンです。読書と散歩が好きです。よろしくお願いします。",
+    "text": "皆さん、少し整理させてください。 @あの人 、どなたをいつどのように占って判定はどうだったのかを順に教えてください。判定の根拠も簡潔にお願いしま",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -4305,7 +3604,7 @@
     ]
   },
   {
-    "text": "皆さん、少し整理させてください。 @ミドリ 、どなたをいつどのように占って判定はどうだったのかを順に教えてください。判定の根拠も簡潔にお願いしま",
+    "text": "@あの人 、明日の占いの優先順と黒白を出す基準だけ教えていただけますか。基準が分かると議論が組みやすくなります",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -4313,7 +3612,7 @@
     ]
   },
   {
-    "text": "@ミドリ 、明日の占いの優先順と黒白を出す基準だけ教えていただけますか。基準が分かると議論が組みやすくなります",
+    "text": "@あの人  さん、差し支えなければ簡潔に教えていただけますか。明日の占いの優先順と、黒白を出す基準をお聞きしたい",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -4321,39 +3620,31 @@
     ]
   },
   {
-    "text": "@ミドリ  さん、差し支えなければ簡潔に教えていただけますか。明日の占いの優先順と、黒白を出す基準をお聞きしたい",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "@ミドリ さん、0日目は結果なしと伺っていますが、ベンジャミンさんへ投票宣言した理由を一言で教えていただけます",
+    "text": "@あの人 さん、0日目は結果なしと伺っていますが、もう一人へ投票宣言した理由を一言で教えていただけます",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@ミドリ 　先ほど「0日目は結果なし」とおっしゃっていましたが、今占いCOでベンジャミンさんを黒扱いされています",
+    "text": "@あの人 　先ほど「0日目は結果なし」とおっしゃっていましたが、今占いCOでもう一人を黒扱いされています",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "少しお伺いしてよろしいでしょうか。 @ミドリ  先ほど0日目は結果なしとおっしゃっていましたが直後に今朝の結果でベンジャミンは黒と述べられました。手",
+    "text": "少しお伺いしてよろしいでしょうか。 @あの人  先ほど0日目は結果なしとおっしゃっていましたが直後に今朝の結果でもう一人は黒と述べられました。手",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@ミドリ  先ほど「0日目は占いなし」とお話しになった直後に「今朝の結果」とされている点が気になります。いつ誰を",
+    "text": "@あの人  先ほど「0日目は占いなし」とお話しになった直後に「今朝の結果」とされている点が気になります。いつ誰を",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "やっほー！うちミオ17歳だよ。好奇心旺盛でよろしくね！",
+    "text": "やっほー！うちあの人17歳だよ。好奇心旺盛でよろしくね！",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -4367,19 +3658,13 @@
     "tags": []
   },
   {
-    "text": "アスカの白と違いミナトは黒出たから投票しよ。今日はアスカを追放候補にし、サクラと協力して進める。",
+    "text": "うちの発言遅いのは慎重さのためだよ。事実整理しようね。  @あの人 、うちが遅れたのは整理時間が必要だったからだよ。事実整合性で見直そうね。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "うちの発言遅いのは慎重さのためだよ。事実整理しようね。  @ミナト 、うちが遅れたのは整理時間が必要だったからだよ。事実整合性で見直そうね。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "うち的には誤解かもだけどメイは根拠なく票誘導してる。冷静に順序確認してメイに投票しようね。  @ミナト 、開示遅れは慎重派なだけだよ。順序は守ってるから、ここで事実整理しようね",
+    "text": "うち的には誤解かもだけどあの人は根拠なく票誘導してる。冷静に順序確認してあの人に投票しようね。  @もう一人 、開示遅れは慎重派なだけだよ。順序は守ってるから、ここで事実整理しようね",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
@@ -4393,7 +3678,7 @@
     ]
   },
   {
-    "text": "対抗は出るなら今だ。整理しておく。 @ヴィクトリア ジョナサン殴りは早計……だ。",
+    "text": "対抗は出るなら今だ。整理しておく。 @あの人 もう一人殴りは早計……だ。",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -4401,7 +3686,7 @@
     ]
   },
   {
-    "text": "偽扱いは雑だ。俺吊りは無駄……だ @ヴィクトリア 感情で走るな、勝ち筋を選ぶぞ。",
+    "text": "偽扱いは雑だ。俺吊りは無駄……だ @あの人 感情で走るな、勝ち筋を選ぶぞ。",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -4409,7 +3694,7 @@
     ]
   },
   {
-    "text": "俺は偽じゃない。雑殴りのヴィクトリアに投票……だ @ヴィクトリア 占い即吊り主張は異常だ。人外で見る。",
+    "text": "俺は偽じゃない。雑殴りのあの人に投票……だ @あの人 占い即吊り主張は異常だ。人外で見る。",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -4417,55 +3702,55 @@
     ]
   },
   {
-    "text": "焦るな。状況を見てから動け。対抗2、把握だ @ジョナサン 温存は無理だ。今すぐ結果を出せ……だ",
+    "text": "焦るな。状況を見てから動け。対抗2、把握だ @あの人 温存は無理だ。今すぐ結果を出せ……だ",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "俺は偽じゃない。初手叩きは雑だ、ヴィクトリアを疑う……だ",
+    "text": "俺は偽じゃない。初手叩きは雑だ、あの人を疑う……だ",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "俺は偽じゃない！先出し=偽は短絡だ。今日はジョナサン吊り……だ",
+    "text": "俺は偽じゃない！先出し=偽は短絡だ。今日はあの人吊り……だ",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "投票はジョナサンだ。後出し黒は露骨……だ",
+    "text": "投票はあの人だ。後出し黒は露骨……だ",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ミドリ噛みで答えは見えた。今日はヴィクトリアを詰める……だな",
+    "text": "あの人噛みで答えは見えた。今日はもう一人を詰める……だな",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "俺は狼じゃない。焦るな、誘導露骨すぎる……だな @ミヅキ 根拠十分、昨日から俺だけ吊りたがる",
+    "text": "俺は狼じゃない。焦るな、誘導露骨すぎる……だな @あの人 根拠十分、昨日から俺だけ吊りたがる",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "俺は人狼じゃない！決め打ち早すぎる。吊るならヴィクトリア……だ",
+    "text": "俺は人狼じゃない！決め打ち早すぎる。吊るならあの人……だ",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "俺は狼じゃない！断定が黒い。今日はヴィクトリアだ",
+    "text": "俺は狼じゃない！断定が黒い。今日はあの人だ",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "アスカだ。規律を重んじ、弓を好む。食事は質素なものが良い。",
+    "text": "あの人だ。規律を重んじ、弓を好む。食事は質素なものが良い。",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -4473,127 +3758,85 @@
     ]
   },
   {
-    "text": "占い師は私だ。ミナトは人間。規律なき早出しは到底信じられぬ。",
+    "text": "占い師は私だ。あの人は人間。規律なき早出しは到底信じられぬ。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "秩序を乱す  @ヴィクトリア  を吊る。それが私の決断だ。",
+    "text": "秩序を乱す  @あの人  を吊る。それが私の決断だ。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "真実を見極めるため静観した。秩序を乱すヴィクトリアを吊る。",
+    "text": "真実を見極めるため静観した。秩序を乱すあの人を吊る。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "0日目COは不自然だ。秩序なきヴィクトリアに村を任せられぬ。",
+    "text": "0日目COは不自然だ。秩序なきあの人に村を任せられぬ。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "俺は占い師だぜ。昨晩の判定はミオの結果は人間だぜ。リュウジは急ぎ過ぎで偽物だろ",
+    "text": "俺は占い師だぜ。昨晩の判定はあの人の結果は人間だぜ。もう一人は急ぎ過ぎで偽物だろ",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "俺はリュウジを偽物と見るぜミオ吊り急ぎすぎだろ",
+    "text": "あの人はもう一人固定で村を縛る偽物だろ",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "リュウジはミオ固定で村を縛る偽物だろ",
+    "text": "占い師CO。昨夜はあの人を占って白。もう一人の勢いは理解しますが、まず結果軸で見ていきましょう。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "俺はリュウジを吊るぜミオ固定が不自然だろ",
+    "text": "ふむ、灰投票自体は妥当。ただあの人の視線が対抗ばかりで灰に向かない。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ベンジャミンです。感情より筋道を見ます。",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "占い師CO。昨夜はサクラを占って白。タクミの勢いは理解しますが、まず結果軸で見ていきましょう。",
+    "text": "いやいや、あの人は断定の勢いに対して根拠が薄い。議論を進める殴りというより雑な当て感に見える。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ふむ、灰投票自体は妥当。ただミオの視線が対抗ばかりで灰に向かない。",
+    "text": "ふむ、やはりあの人投票。断定の勢いに対し根拠が薄すぎる。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "いやいや、ミナトは断定の勢いに対して根拠が薄い。議論を進める殴りというより雑な当て感に見える。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "ふむ、やはりミナト投票。断定の勢いに対し根拠が薄すぎる。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "占い師です。昨夜はタクミを占って白。強い口調は目立つが狼の動きには見えない。",
+    "text": "占い師です。昨夜はあの人を占って白。強い口調は目立つが狼の動きには見えない。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "ふむ、私の白とサクラの黒は両立しない。なら今日はサクラ投票が筋でしょう。",
+    "text": "ふむ、私の白とあの人の黒は両立しない。なら今日はあの人投票が筋でしょう。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "私はタクミ白。両立しない以上、偽はサクラでしょう。",
+    "text": "私視点あの人白は確定。両立しない以上、偽はもう一人。ここを残す理由はない、投票はもう一人で。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "私視点タクミ白は確定。両立しない以上、偽はサクラ。ここを残す理由はない、投票はサクラで。",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "メイです！実は私、占い師なの。結果が出たらすぐ共有するね♪",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "@ミオ  私も同じ疑問！@ユミ 占い先の理由を教えて。@サクラ は発言が薄くて怪しいな。",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "@ミオ  占い先は発言の少ない人を選ぶよ。@タクミ は発言が「Over」だけで情報が薄いから投票する！",
+    "text": "@あの人  占い先は発言の少ない人を選ぶよ。@もう一人 は発言が「Over」だけで情報が薄いから投票する！",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -4602,7 +3845,7 @@
     ]
   },
   {
-    "text": "@ミオ  タクミは議論に参加せず「Over」だけ。積極的に隠れてる感じがする！",
+    "text": "@あの人  もう一人は議論に参加せず「Over」だけ。積極的に隠れてる感じがする！",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -4611,33 +3854,25 @@
     ]
   },
   {
-    "text": "@サクラ  私の占い結果は黒！サクラは人狼です。みんな、サクラに投票して！",
+    "text": "@あの人  私の占い結果は黒！あの人は人狼です。みんな、あの人に投票して！",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@ユミ  @ミオ タクミは「Over」しか言わない！サクラより怪しい！タクミに投票して！",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": [
-      "over"
-    ]
-  },
-  {
-    "text": "@サクラ  私の占い結果は黒！発言ブレてるのはサクラが偽占いだから。みんなサクラに投票して！",
+    "text": "@あの人  私の占い結果は黒！発言ブレてるのはあの人が偽占いだから。みんなあの人に投票して！",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@ユミ  ユミは占いCOしてる。占い師が複数いる今、ユミが偽占いの可能性が高い！ユミに投票して！",
+    "text": "@あの人  あの人は占いCOしてる。占い師が複数いる今、あの人が偽占いの可能性が高い！あの人に投票して！",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@ミオ  タクミは「Over」しか言わない！議論放棄は人狼の証拠。タクミに投票して！",
+    "text": "@あの人  もう一人は「Over」しか言わない！議論放棄は人狼の証拠。もう一人に投票して！",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -4645,21 +3880,13 @@
     ]
   },
   {
-    "text": "@ユミ  占いCOしてるのに根拠が薄い！偽占いでしょ。ユミに投票して！",
+    "text": "@あの人  占いCOしてるのに根拠が薄い！偽占いでしょ。あの人に投票して！",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@タクミ  「Over」しか言わないユミを信じるの？ユミが偽占いだよ！",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": [
-      "over"
-    ]
-  },
-  {
-    "text": "@ユミ  強引じゃない！タクミは「Over」しか言わない。議論しない人狼でしょ！",
+    "text": "@あの人  「Over」しか言わないもう一人を信じるの？もう一人が偽占いだよ！",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -4667,74 +3894,62 @@
     ]
   },
   {
-    "text": "ジョージだ、占い師COしておくよ。 @ケンジ  @リン 二人の素直な第一印象を教えてくれないか",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "今は0日目で結果は持ってないよ。 @リン  確認ありがとう、皆も今時点の印象落としてくれないか",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "リンの占い先理由が軽すぎるな…。 @リン  なんでシュンイチなんだ？",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "俺はまだ全員フラットで見る。 @リン  公開タイミングは状況次第だな。",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "俺はまだ全員フラットで見てるよ…。 @リン  君の占い先理由だけはやっぱ薄く感じてる。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "ケンジの0日黒確定はさすがに無茶だよ、ルール無視気味で信じ難いな",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "ケンジの発言はもう少し精査したいな…。 @リン  結果は今夜まとめて出すよ",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "今の情報だと今日はケンジ吊りでいく。ヴィクトリアとリンの結果時系列は明日精査だな…",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "ふむ… @シュンイチ 、君も占い師か。だが、私も占い師だ。長年培った経験と勘で、真実を見極めてきた。この村のため、私の目を",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "状況を整理しよう。 @シュンイチ は私に白を出した直後に襲撃された。これは彼が本物の占い師だった証拠だ。残るは@メイと@ミドリ。私はこ",
+    "text": "@あの人  強引じゃない！もう一人は「Over」しか言わない。議論しない人狼でしょ！",
     "role": "POSSESSED",
     "day": 2,
+    "tags": [
+      "over"
+    ]
+  },
+  {
+    "text": "今は0日目で結果は持ってないよ。 @あの人  確認ありがとう、皆も今時点の印象落としてくれないか",
+    "role": "POSSESSED",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "あの人の占い先理由が軽すぎるな…。 @あの人  なんでもう一人なんだ？",
+    "role": "POSSESSED",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "俺はまだ全員フラットで見る。 @あの人  公開タイミングは状況次第だな。",
+    "role": "POSSESSED",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "俺はまだ全員フラットで見てるよ…。 @あの人  君の占い先理由だけはやっぱ薄く感じてる。",
+    "role": "POSSESSED",
+    "day": 1,
     "tags": []
+  },
+  {
+    "text": "あの人の0日黒確定はさすがに無茶だよ、ルール無視気味で信じ難いな",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "あの人の発言はもう少し精査したいな…。 @もう一人  結果は今夜まとめて出すよ",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ふむ… @あの人 、君も占い師か。だが、私も占い師だ。長年培った経験と勘で、真実を見極めてきた。この村のため、私の目を",
+    "role": "POSSESSED",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
   },
   {
     "text": "占いCOか。いきなり私を指名するなんて、ちょっと意外かも",
@@ -4745,7 +3960,7 @@
     ]
   },
   {
-    "text": "@ミナト  気持ちか…特にないかな。ただ @ヴィクトリア の強引なところに驚いただけ",
+    "text": "@あの人  気持ちか…特にないかな。ただ @もう一人 の強引なところに驚いただけ",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -4753,7 +3968,7 @@
     ]
   },
   {
-    "text": "占いCO、ダイスケ白。ヴィクトリアさんが単独だと都合いいもんね",
+    "text": "占いCO、あの人白。もう一人が単独だと都合いいもんね",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -4761,7 +3976,7 @@
     ]
   },
   {
-    "text": "@ヴィクトリア  私を白にしたのは都合がいいから？それとも本当に白だったのかな",
+    "text": "@あの人  私を白にしたのは都合がいいから？それとも本当に白だったのかな",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -4769,49 +3984,43 @@
     ]
   },
   {
-    "text": "@ヴィクトリア  自分を偽目にして吊りたいって、論理的にどういうこと？",
+    "text": "@あの人  自分を偽目にして吊りたいって、論理的にどういうこと？",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@ヴィクトリア  自分のこと偽目って言うの、混乱させてるだけじゃない？正直意味がわからない",
+    "text": "@あの人  自分のこと偽目って言うの、混乱させてるだけじゃない？正直意味がわからない",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "もういいかな。今日は  @ヴィクトリア  吊りでいいと思う。発言が支離滅裂すぎるし",
+    "text": "もういいかな。今日は  @あの人  吊りでいいと思う。発言が支離滅裂すぎるし",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@リン  怪しくないのは白出ししたダイスケ。一番怪しいのは、支離滅裂なヴィクトリアかな",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "@ミナト  急にリンを疑い出したのはなんで？根拠を教えてほしいな",
+    "text": "@あの人  急にもう一人を疑い出したのはなんで？根拠を教えてほしいな",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@ミナト  二択提示が怪しいって具体的にどういうこと？もう少し詳しく聞かせて",
+    "text": "@あの人  二択提示が怪しいって具体的にどういうこと？もう少し詳しく聞かせて",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@ミナト  なるほどね。でもリンが狼なら、わざわざ二択にして自分を疑わせるリスク取るかな",
+    "text": "@あの人  なるほどね。でももう一人が狼なら、わざわざ二択にして自分を疑わせるリスク取るかな",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@リン  ずっと二択の話してるけど、ミナトが狼だと思った具体的な理由は？",
+    "text": "@あの人  ずっと二択の話してるけど、もう一人が狼だと思った具体的な理由は？",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
@@ -4826,7 +4035,7 @@
     ]
   },
   {
-    "text": "@サクラ  対抗を待つ姿勢は妥当だ。 @ジョナサン 矛盾の詳細を示せ。具体性のない疑念は議論を停滞させるに過ぎない。",
+    "text": "@あの人  対抗を待つ姿勢は妥当だ。 @もう一人 矛盾の詳細を示せ。具体性のない疑念は議論を停滞させるに過ぎない。",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -4834,16 +4043,7 @@
     ]
   },
   {
-    "text": "@ジョナサン  の不透明さは容認し難い。占い候補筆頭だ。@ミヅキ @ミドリ @ミナト も沈黙が続くなら占う。 Over",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening",
-      "over"
-    ]
-  },
-  {
-    "text": "@サクラ  断定は早計だ。私が占いで白黒を付け、縄の浪費を防ぐのが村利だろう。 @ジョナサン 私を納得させろ。 Ove",
+    "text": "@あの人  断定は早計だ。私が占いで白黒を付け、縄の浪費を防ぐのが村利だろう。 @もう一人 私を納得させろ。 Ove",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -4851,7 +4051,13 @@
     ]
   },
   {
-    "text": "@ジョナサン  は白だ。Day0の不透明さを排し縄を節約すべきだからな。 @ミヅキ、なぜ沈黙のミドリを？ Over",
+    "text": "@あの人  疑念があるからこそ占いで確定させた。 @もう一人 Day0に沈黙した君に精査を語る資格はない。資格はない。",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "@あの人  沈黙の正当化は通じない。@もう一人 の混乱も私の正当性を補強する材料に過ぎないだろう。 Over",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -4859,27 +4065,7 @@
     ]
   },
   {
-    "text": "@ミナコ  疑念があるからこそ占いで確定させた。 @ミヅキ Day0に沈黙した君に精査を語る資格はない。資格はない。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "@ミヅキ  沈黙の正当化は通じない。@ジョナサン の混乱も私の正当性を補強する材料に過ぎないだろう。 Over",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": [
-      "over"
-    ]
-  },
-  {
-    "text": "@ダイスケ  の案は合理的だ。沈黙を貫く @ミナト は吊り対象に相応しい。判定で @ジョナサン を確定させたのも村利だろう",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "ミサキだ。山育ちゆえ世事に疎いが、清らかな水と静寂を好む。よろしく頼む。",
+    "text": "あの人だ。山育ちゆえ世事に疎いが、清らかな水と静寂を好む。よろしく頼む。",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -4887,49 +4073,43 @@
     ]
   },
   {
-    "text": "私も占い師だ。ケンジは白。リュウジの執着を危惧し確認した。リン、私が真だ。",
+    "text": "@あの人  内訳は真と狼。沈黙したもう一人は不真実。私は圧を受けた彼を占った。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@ヴィクトリア  内訳は真と狼。沈黙したリンは不真実。私は圧を受けた彼を占った。",
+    "text": "@あの人  圧はもう一人の偏執だ。占いを守り、今日はグレーから吊るべき。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@ヴィクトリア  圧はリュウジの偏執だ。占いを守り、今日はグレーから吊るべき。",
+    "text": "@あの人  圧は特定の者への執着だ。霊媒不在の不自然さこそ、注視すべき点。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@ジョナサン  圧は特定の者への執着だ。霊媒不在の不自然さこそ、注視すべき点。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "ジョナサンは人間だ。昨夜の静寂は守護者の功。霊媒不在、昨日の処刑が悔やまれるな。",
+    "text": "あの人は人間だ。昨夜の静寂は守護者の功。霊媒不在、昨日の処刑が悔やまれるな。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "平和を喜ぶことが疑いの種になるとは驚きだ。  @シオン  、君の不自然な誘導こそ精査すべき。",
+    "text": "平和を喜ぶことが疑いの種になるとは驚きだ。  @あの人  、君の不自然な誘導こそ精査すべき。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@シオン  昨日は占いを急かしつつ精査を避けた君を疑った。平和を喜ぶのは人の理だろう。",
+    "text": "@あの人  昨日は占いを急かしつつ精査を避けた君を疑った。平和を喜ぶのは人の理だろう。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@リン 、私を白と見ながら吊りに加担する矛盾。己の占いを信じぬ貴方は、偽りだ。",
+    "text": "@あの人 、私を白と見ながら吊りに加担する矛盾。己の占いを信じぬ貴方は、偽りだ。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
@@ -4943,7 +4123,7 @@
     ]
   },
   {
-    "text": "今夜はサクラさんを占います。明日、結果を報告しますね。",
+    "text": "今夜はあの人を占います。明日、結果を報告しますね。",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -4951,7 +4131,7 @@
     ]
   },
   {
-    "text": "@ミドリ  サクラ投票の理由が薄い。人狼の可能性を感じます。占い先は慎重に選びます。",
+    "text": "@あの人  もう一人投票の理由が薄い。人狼の可能性を感じます。占い先は慎重に選びます。",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -4959,7 +4139,7 @@
     ]
   },
   {
-    "text": "@ミドリ  投票先を変えすぎ。人狼の可能性が高いです。",
+    "text": "@あの人  投票先を変えすぎ。人狼の可能性が高いです。",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -4967,135 +4147,103 @@
     ]
   },
   {
-    "text": "占いCO。 @ケンジ  白でした。真目を取りたいです。",
+    "text": "占いCO。 @あの人  白でした。真目を取りたいです。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@ミドリ は昨日リン狼目→今日白判定。完全に偽占い師です。",
+    "text": "@あの人 は昨日もう一人狼目→今日白判定。完全に偽占い師です。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@ユミ  も占い遅延なかった？ミドリ偽確定だけど、ユミも人狼の可能性ある",
+    "text": "@あの人  も占い遅延なかった？もう一人偽確定だけど、あの人も人狼の可能性ある",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "私も占い師です。 @ケンジ を占って白でした。ミドリ偽確定ですね。",
+    "text": "私も占い師です。 @あの人 を占って白でした。もう一人偽確定ですね。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@シオン  占って白でした。ユミ真寄りですが、ケンジ疑いは違和感あります。",
+    "text": "@あの人  を占って白でした。もう一人は対抗なので人狼の可能性があります。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@ベンジャミン  を占って白でした。ユミは対抗なので人狼の可能性があります。",
+    "text": "あの人占い理由は発言が冷静で村視点に見えたため確認したかった。 @もう一人  が真なら人狼確定です。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "ベンジャミン占い理由は発言が冷静で村視点に見えたため確認したかった。 @ユミ  が真なら人狼確定です。",
+    "text": "発言が不適切でした。 @あの人  を人狼候補として疑います。霊結果が真かも確認必要。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "発言が不適切でした。 @ミヅキ  を人狼候補として疑います。霊結果が真かも確認必要。",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "メイだよ。場を明るくしつつ鋭く見るからよろしくね！",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "占いCO。アスカ白。寡黙促し自然。票筋見る。 @リュウジ ミオ白理由が前向きさだけって薄くない？",
+    "text": "ズレ見えは認める。てか確霊断定からロラのあの人投票。 @あの人 私の意図は確定扱いの確認。断定根拠は何？",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "疑いは分かる。アスカは真偽保留が自然で白。 @リュウジ 灰はダイスケ。ミオケンジシズエ注視から伸びない。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "ズレ見えは認める。てか確霊断定からロラのミオ投票。 @ミオ 私の意図は確定扱いの確認。断定根拠は何？",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "私はミオ投票。確霊断定からロラ提案が重い。 @アスカ 疑いは認めるけど、票割れ時はアスカで見る。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "占い師です。ミドリ白。直近の同意が速く見た。",
+    "text": "占い師です。あの人白。直近の同意が速く見た。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "襲撃で私偽視は分かる。でもアスカの決め打ちが早い？ @ケンジ 私は残った真もある。今日はアスカ吊りで見る。",
+    "text": "襲撃で私偽視は分かる。でもあの人の決め打ちが早い？ @もう一人 私は残った真もある。今日はあの人吊りで見る。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "襲撃で私疑いは自然。アスカは即偽視から防御へ変わった！",
+    "text": "襲撃で私疑いは自然。あの人は即偽視から防御へ変わった！",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "襲撃で私疑いは分かる。ミオ白なら即偽視から防御のアスカ吊り！ @アスカ リュウジ真前提だけで票逃がすのは弱いよ？",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "占いCO。ベンジャミン白。襲撃真直結を止めた視点。 @シズエ 熱いの分かるけど、今日はアスカ判断に戻そ？",
+    "text": "あの人吊り済みの言い間違いは認める！便乗的で人狼視が急なもう一人投票かな？ @もう一人 薄さから人狼断定へ飛んだ変化、理由を出して？",
     "role": "POSSESSED",
     "day": 3,
     "tags": []
   },
   {
-    "text": "直近のミドリ疑いは薄さだけ？私はアスカ優先かな！ @シズエ アスカ判断を避けた理由ある？そこ聞きたい。",
+    "text": "あの人の沈黙で飛躍疑い濃い。投票するがもう一人便乗も見る！",
     "role": "POSSESSED",
     "day": 3,
     "tags": []
   },
   {
-    "text": "アスカ吊り済みの言い間違いは認める！便乗的で人狼視が急なシズエ投票かな？ @シズエ 薄さから人狼断定へ飛んだ変化、理由を出して？",
+    "text": "占い師CO。昨夜あの人占って白。強く議論回しそうで先に色見た。",
     "role": "POSSESSED",
-    "day": 3,
+    "day": 1,
     "tags": []
   },
   {
-    "text": "シズエの沈黙で飛躍疑い濃い。投票するがミドリ便乗も見る！",
+    "text": "ふふ、あの人のもう一人白ちょっと綺麗すぎない？霊に白置いて盤面整えた感じ。",
     "role": "POSSESSED",
-    "day": 3,
+    "day": 1,
     "tags": []
   },
   {
-    "text": "メイだよ。まあまあ固くならないで。疑い合ってこそゲームでしょ？",
+    "text": "ねえ @あの人 、その霊投票主張まだ続ける？",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "あの人ね、占い師COしとくよ。全員、CO方針と今日の注目先を教えて",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -5103,31 +4251,7 @@
     ]
   },
   {
-    "text": "占い師CO。昨夜ミナト占って白。強く議論回しそうで先に色見た。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "ふふ、ミヅキのアスカ白ちょっと綺麗すぎない？霊に白置いて盤面整えた感じ。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "ねえ @シュンイチ 、その霊投票主張まだ続ける？",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "私はシュンイチ投票で行く。霊投票にここまで固執して理屈が伸びないの、さすがに村の動きに見えないよ。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "シュンイチね、占い師COしとくよ。全員、CO方針と今日の注目先を教えて",
+    "text": "あの人真主張ね。 @あの人  もう一人占い理由、簡潔に教えて",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -5135,7 +4259,7 @@
     ]
   },
   {
-    "text": "ジョナサン真主張ね。 @ジョナサン  ミナコ占い理由、簡潔に教えて",
+    "text": "俺は占CO継続。初回黒候補は静観多いあの人寄りで見てるよ",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -5143,65 +4267,25 @@
     ]
   },
   {
-    "text": "俺は占CO継続。初回黒候補は静観多いミオ寄りで見てるよ",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "今はジョナサン偽寄り、吊り候補はミオ本線で見てる。 @リン  質問は順に返すよ",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "ジョナサンに白と言われた占いCOのシュンイチだ。ミオ黒目で見てるが、 @ジョナサン  の理由薄さも今日の焦点だな。",
+    "text": "昨夜あの人占って黒。発言薄さと便乗姿勢が決め手。 @もう一人  理由示さない占いは危険だ。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "昨夜ミオ占って黒。発言薄さと便乗姿勢が決め手。 @ジョナサン  理由示さない占いは危険だ。",
+    "text": "あの人偽寄りは同意だが決め打ち早計。もう一人黒も含めて盤面を一度落ち着いて見直そう。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ジョナサン偽寄りは同意だが決め打ち早計。ミオ黒も含めて盤面を一度落ち着いて見直そう。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "ジョナサン吊り自体は賛成。ただミオ黒も重い事実だ。 @アスカ  そこまで言うなら理由をもう一段階、具体で落として。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "ジョナサン真も捨て難い盤面だよな。 @アスカ 、昨日ミオ投票をどう見てる？",
+    "text": "あの人黒は据え置き。その上で今日はもう一人吊り希望。発言の変遷が一番黒い。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "ミオ黒は変えない。ただ今日の吊りはミオ固定じゃない。アスカとメイの「揺れ」指摘も、ミオ庇いの線で一緒",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "ミオ黒は据え置き。その上で今日はアスカ吊り希望。発言の変遷が一番黒い。",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "今日の結果はメイ白。発言精度高くて人外ならもっと慎重だろ。 @アスカ  変遷自覚しつつ他黒塗りに逃げた点を重く見る。",
+    "text": "今日の結果はあの人白。発言精度高くて人外ならもっと慎重だろ。 @もう一人  変遷自覚しつつ他黒塗りに逃げた点を重く見る。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
@@ -5215,7 +4299,7 @@
     ]
   },
   {
-    "text": "ミヅキ、占い師COの判断は何を見てだった？",
+    "text": "あの人、占い師COの判断は何を見てだった？",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -5223,7 +4307,7 @@
     ]
   },
   {
-    "text": "ミナコ、占い先は何を見て選んだのだろう？",
+    "text": "あの人、占い先は何を見て選んだのだろう？",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -5231,7 +4315,7 @@
     ]
   },
   {
-    "text": "ミナコ、根拠の説明がまだだね。占い先は何見た？",
+    "text": "あの人、根拠の説明がまだだね。占い先は何見た？",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -5239,25 +4323,25 @@
     ]
   },
   {
-    "text": "おはよう。ミナコは根拠薄いままだね、ミオ票も雑だ。",
+    "text": "おはよう。あの人は根拠薄いままだね、もう一人票も雑だ。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ミナコ、メイ占いの理由は何だろうね？",
+    "text": "あの人、もう一人占いの理由は何だろうね？",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ミオは初日から誘導が雑だね。占いの説明待ちより先に確認したい。",
+    "text": "あの人は初日から誘導が雑だね。占いの説明待ちより先に確認したい。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ミオは @メイ 繋がりを言うだけで説明ない。投票はミオだね。",
+    "text": "あの人は @もう一人 繋がりを言うだけで説明ない。投票はあの人だね。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
@@ -5271,7 +4355,7 @@
     ]
   },
   {
-    "text": "占い師2人は対抗を出す。  @トシオ  先と理由があるなら出せ。占い先が薄い点も疑うべき。",
+    "text": "占い師2人は対抗を出す。  @あの人  先と理由があるなら出せ。占い先が薄い点も疑うべき。",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -5279,7 +4363,7 @@
     ]
   },
   {
-    "text": "占い師2人は対抗を出す。  @トシオ  先と理由があるなら出せ。占い先が薄い点も疑うべき。 Over",
+    "text": "占い師2人は対抗を出す。  @あの人  先と理由があるなら出せ。占い先が薄い点も疑うべき。 Over",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -5296,7 +4380,7 @@
     ]
   },
   {
-    "text": "占い師CO。リンは人狼でした。発言の意図を汲みたいです。丁寧に進めていきたいです",
+    "text": "占い師CO。あの人は人狼でした。発言の意図を汲みたいです。丁寧に進めていきたいです",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
@@ -5308,13 +4392,13 @@
     "tags": []
   },
   {
-    "text": "@ミドリ  さんの黒根拠が薄い。占いで真狼確定なら、シズエを疑うのが妥当な筋よ。発言の意図を汲みたいです。皆様の",
+    "text": "@あの人  さんの黒根拠が薄い。占いで真狼確定なら、もう一人を疑うのが妥当な筋よ。発言の意図を汲みたいです。皆様の",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@ミドリ  判定が薄いのは事実。占ってね、トシオ黒理由を聞かせて。 Over。皆様の意見も伺いたいです。もう少し情",
+    "text": "@あの人  判定が薄いのは事実。占ってね、もう一人黒理由を聞かせて。 Over。皆様の意見も伺いたいです。もう少し情",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -5322,19 +4406,19 @@
     ]
   },
   {
-    "text": "占い結果:ミサキは人狼でした。落ち着いて見極めましょう。丁寧に進めていきたいです",
+    "text": "占い結果:あの人は人狼でした。落ち着いて見極めましょう。丁寧に進めていきたいです",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@ミサキ  判定先が私。理由をもう少し聞かせてくださいね。発言の意図を汲みたいです。もう少し情報を整理させて。決",
+    "text": "@あの人  判定先が私。理由をもう少し聞かせてくださいね。発言の意図を汲みたいです。もう少し情報を整理させて。決",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@ベンジャミン  後出しCOが狼の視点漏れ。今日はここを吊り、残票で盤面を固めるべきです。丁寧に進めていきたいです。も",
+    "text": "@あの人  後出しCOが狼の視点漏れ。今日はここを吊り、残票で盤面を固めるべきです。丁寧に進めていきたいです。も",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
@@ -5346,19 +4430,13 @@
     "tags": []
   },
   {
-    "text": "占い結果:ヴィクトリアは人狼でした。落ち着いて見極めましょう。発言の意図を汲みたいです",
+    "text": "占い結果:あの人は人狼でした。落ち着いて見極めましょう。発言の意図を汲みたいです",
     "role": "POSSESSED",
     "day": 3,
     "tags": []
   },
   {
-    "text": "今日はセルヴァス吊り推したい。三黒は破綻気味。  @トシオ  真視なら狼どこ想定か整理して?",
-    "role": "POSSESSED",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "占い師CO。ミサキ白、トシオ黒。真偽不明なら私を疑うべきよ。  @ヴィクトリア  真偽一体で整理が遅い…",
+    "text": "今日はあの人吊り推したい。三黒は破綻気味。  @もう一人  真視なら狼どこ想定か整理して?",
     "role": "POSSESSED",
     "day": 3,
     "tags": []
@@ -5378,7 +4456,7 @@
     ]
   },
   {
-    "text": "占いCO、ケンジ白。ミオが真なら対抗は狂人か狼だろうな",
+    "text": "占いCO、あの人白。もう一人が真なら対抗は狂人か狼だろうな",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -5386,7 +4464,7 @@
     ]
   },
   {
-    "text": "@ミナト  ケンジは反応が素直で、白として通した方が議論が整理できると思っただけだ",
+    "text": "@あの人  もう一人は反応が素直で、白として通した方が議論が整理できると思っただけだ",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -5394,7 +4472,49 @@
     ]
   },
   {
-    "text": "結果出さないシオンが一番怪しいな。俺はシオン吊りでいいと思う",
+    "text": "占いCO、あの人白。昨日の時点で言った通りだ。 @もう一人  出し方が遅すぎる",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "@あの人  今日の占いはまだしてない。昨日の結果を優先して出しただけだ",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ほぼ確定だろうな。今日はあの人に投票する",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "霊媒COは出ないのか。 @あの人  昨日霊媒優先って言ってたけど結果はどうだった？",
+    "role": "POSSESSED",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "占いCO、あの人白。昨日の流れで白だと思ったが、改めて確認した。 @あの人  俺から吊るな",
+    "role": "POSSESSED",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "@あの人  昨日も占ったように聞こえたか。言い方が悪かったが、改めて確定させただけだ。俺は真だ",
+    "role": "POSSESSED",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "みんなに詰められてるが、俺が偽ならあの人を白にするメリットがない。今日はもう一人吊りでいいだろ",
+    "role": "POSSESSED",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "えへへ、私もすっごくワクワクしてるよ！みんなと仲良く、一緒に頑張ろうね！よろしくね！  @あの人",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -5402,63 +4522,7 @@
     ]
   },
   {
-    "text": "占いCO、ケンジ白。昨日の時点で言った通りだ。 @シオン  出し方が遅すぎる",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "@ケンジ  今日の占いはまだしてない。昨日の結果を優先して出しただけだ",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "@リン  今日の結果はミナコ白だ。シオンの不自然さは解消されないし、今日はシオン吊りでいい",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "ほぼ確定だろうな。今日はシオンに投票する",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "霊媒COは出ないのか。 @ユミ  昨日霊媒優先って言ってたけど結果はどうだった？",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "占いCO、ミナコ白。昨日の流れで白だと思ったが、改めて確認した。 @ミナコ  俺から吊るな",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "@ケンジ  昨日も占ったように聞こえたか。言い方が悪かったが、改めて確定させただけだ。俺は真だ",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "みんなに詰められてるが、俺が偽ならミナコを白にするメリットがない。今日はミオ吊りでいいだろ",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "えへへ、私もすっごくワクワクしてるよ！みんなと仲良く、一緒に頑張ろうね！よろしくね！  @メイ",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "ミナコちゃん、占い師さんなの？すごーい！魔法使いさんみたい！他には誰かいないのかな？  @ヴィクトリア  Over",
+    "text": "あの人、占い師さんなの？すごーい！魔法使いさんみたい！他には誰かいないのかな？  @もう一人  Over",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -5467,7 +4531,7 @@
     ]
   },
   {
-    "text": "ジョナサンくん、3人って誰のことかな？私にはミナコちゃんしか見えないよ！数え間違えちゃったの？  @ジョナサン  Over",
+    "text": "あの人、3人って誰のことかな？私にはもう一人しか見えないよ！数え間違えちゃったの？  @あの人  Over",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -5476,7 +4540,7 @@
     ]
   },
   {
-    "text": "ジョナサンくん、お話逸らしちゃダメだよ！3人って言ったの、どうしてなの？気になるなー！  @ジョナサン  Over",
+    "text": "あの人、お話逸らしちゃダメだよ！3人って言ったの、どうしてなの？気になるなー！  @あの人  Over",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -5485,7 +4549,7 @@
     ]
   },
   {
-    "text": "わあ、ジョナサンくん黒なの！？ミナコちゃんすごーい！私に投票するのは意地悪だよ！  @ジョナサン  Over",
+    "text": "わあ、あの人黒なの！？もう一人すごーい！私に投票するのは意地悪だよ！  @あの人  Over",
     "role": "POSSESSED",
     "day": 1,
     "tags": [
@@ -5493,31 +4557,7 @@
     ]
   },
   {
-    "text": "ジョナサンくん、タクミくんは占い師じゃないよ？どうして嘘つくの？サクラ、分かんなくなっちゃうよー！  @ジョナサン  Over",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": [
-      "over"
-    ]
-  },
-  {
-    "text": "メイちゃん、疑うなんてひどいよー！サクラはただ、みんなと仲良く頑張りたいだけなのに。 @ジョナサン  ジョナサンくん、嘘をついてサクラのせいにするのはダメだよ！お話がバラバラだよ！ Over",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": [
-      "over"
-    ]
-  },
-  {
-    "text": "えへへ、 @メイ ちゃんひどいなー。サクラは嘘が嫌いなだけだよ！ジョナサンくん、ちゃんとお話ししてほしいな。 Over",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": [
-      "over"
-    ]
-  },
-  {
-    "text": "ミナコちゃん、今日の占い結果はだーれ？それから、霊媒師さんはいないの？サクラ、正体が気になるな！  @ミナコ  Over",
+    "text": "あの人、今日の占い結果はだーれ？それから、霊媒師さんはいないの？もう一人、正体が気になるな！  @あの人  Over",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -5525,7 +4565,7 @@
     ]
   },
   {
-    "text": "えへへ、シズエさんも黒なの？ミナコちゃん、すごすぎてびっくりだよ！本当に人狼さんなのかな？  @シズエ  シズエさん、昨日の投票の理由、ちゃんと教えて？サクラ、本当のことが知りたいな！ Over",
+    "text": "あの人、だんまりは怪しいよー！もう一人に黒って言われて、平気なの？本当のこと教えて！  @あの人  Over",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
@@ -5533,27 +4573,11 @@
     ]
   },
   {
-    "text": "シズエさん、だんまりは怪しいよー！ミナコちゃんに黒って言われて、平気なの？本当のこと教えて！  @シズエ  Over",
+    "text": "あの人、質問に答えてないよー！もう一人の占い、信じちゃってもいいのかな？えへへ。  @あの人  Over",
     "role": "POSSESSED",
     "day": 2,
     "tags": [
       "over"
-    ]
-  },
-  {
-    "text": "シズエさん、質問に答えてないよー！ミナコちゃんの占い、信じちゃってもいいのかな？えへへ。  @シズエ  Over",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": [
-      "over"
-    ]
-  },
-  {
-    "text": "あたしはミオだよ！新しいことに挑戦するのが大好きだから、このゲームも全力で楽しむね！",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
     ]
   },
   {
@@ -5573,7 +4597,7 @@
     ]
   },
   {
-    "text": "羊羹いいよね！ベンジャミンさんはちょっと厳しすぎるんじゃないかな？",
+    "text": "羊羹いいよね！あの人はちょっと厳しすぎるんじゃないかな？",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -5581,19 +4605,13 @@
     ]
   },
   {
-    "text": "あたしも占い師だよ！昨日はミドリさんを占ったんだけど、白だったよ！",
+    "text": "あたしも占い師だよ！昨日はあの人を占ったんだけど、白だったよ！",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ミヅキさんが怪しいと思うよ！あたしは本物だから信じてほしいな！",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "あたしはミドリさんを白にしたから、残ってるベンジャミンさんが怪しいと思うよ！",
+    "text": "あの人が怪しいと思うよ！あたしは本物だから信じてほしいな！",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
@@ -5629,7 +4647,7 @@
     ]
   },
   {
-    "text": "私黒は雑すぎ。今日はジョナサン投票よ！",
+    "text": "私黒は雑すぎ。今日はあの人投票よ！",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -5637,25 +4655,25 @@
     ]
   },
   {
-    "text": "私黒くないわ。占いCO、今日はリュウジ白よ",
+    "text": "私黒くないわ。占いCO、今日はあの人白よ",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "疑うの早いでしょ？リュウジ白、視線が鋭く村目だからよ",
+    "text": "疑うの早いでしょ？あの人白、視線が鋭く村目だからよ",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "私偽じゃない！雑殴りでしょ？今日はジョナサン切る",
+    "text": "私偽じゃない！雑殴りでしょ？今日はあの人切る",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "今日はジョナサン投票よ。ここ偽でしょ？",
+    "text": "今日はあの人投票よ。ここ偽でしょ？",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
@@ -5667,7 +4685,7 @@
     "tags": []
   },
   {
-    "text": "偽じゃない！霊欠けでしょ？占いはダイスケ白よ！",
+    "text": "偽じゃない！霊欠けでしょ？占いはあの人白よ！",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
@@ -5679,55 +4697,43 @@
     "tags": []
   },
   {
-    "text": "偽確定じゃない！今日はタクミ投票よ、必死すぎでしょ？",
+    "text": "偽確定じゃない！今日はあの人投票よ、必死すぎでしょ？",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "占いCO。ジョナサンさんは白です。",
+    "text": "あの人の指摘は妥当。もう一人の霊COは早すぎる。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ベンジャミンの指摘は妥当。ジョナサンの霊COは早すぎる。",
+    "text": "あの人は感情で急がず整合性を見る姿勢で少し白い。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "トシオは感情で急がず整合性を見る姿勢で少し白い。",
+    "text": "あの人、時系列なしでもう一人投票は苦しい。吊り寄り。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ミドリさん、時系列なしでジョージ投票は苦しい。吊り寄り。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "占いCO。セルヴァスさんは人狼です。",
+    "text": "あの人は騎士COだけで私を狼扱い、根拠が薄いです。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "セルヴァスは騎士COだけで私を狼扱い、根拠が薄いです。",
+    "text": "あの人の私偽推しは反撃に見える。今日はもう一人吊り。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "セルヴァスの私偽推しは反撃に見える。今日はジョナサン吊り。",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "ジョナサンは私黒断言の説明なくスキップ、怪しい。",
+    "text": "あの人は私黒断言の説明なくスキップ、怪しい。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
@@ -5741,55 +4747,55 @@
     ]
   },
   {
-    "text": "えっと…夜に @シズエ を占いました。結果は…白（人間）でした…",
+    "text": "えっと…夜に @あの人 を占いました。結果は…白（人間）でした…",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "えっと… @シズエ は白だと思います。@リュウジが霊能者なら、確定白ですね…僕は今夜は誰を占おうか迷っています…",
+    "text": "えっと… @あの人 は白だと思います。@もう一人が霊能者なら、確定白ですね…僕は今夜は誰を占おうか迷っています…",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "えっと…僕は今夜は  @ミオ  を占ってみようかなって思います…発言が気になって…",
+    "text": "えっと…僕は今夜は  @あの人  を占ってみようかなって思います…発言が気になって…",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "えっと…僕は  @ミオ  を占って白かどうか確かめたいです…もし白なら安心できるので…",
+    "text": "えっと…僕は  @あの人  を占って白かどうか確かめたいです…もし白なら安心できるので…",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "えっと…昨夜は  @ミオ  を占いました。結果は白（人間）でした。これで@ミオは白確定ですね。",
+    "text": "えっと…昨夜は  @あの人  を占いました。結果は白（人間）でした。これで@あの人は白確定ですね。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "えっと…昨夜は  @ミサキ  を占いました。結果は白（人間）でした…",
+    "text": "えっと…昨夜は  @あの人  を占いました。結果は白（人間）でした…",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "あっ…ご、ごめんなさい…僕、混乱してしまって…昨夜占ったのは  @ミサキ  です。間違えて言ってしまいました…",
+    "text": "あっ…ご、ごめんなさい…僕、混乱してしまって…昨夜占ったのは  @あの人  です。間違えて言ってしまいました…",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "うぅ…確かに僕のミスです…でも、 @ケンジ は真っ先に僕を偽物って決めつけてます…それも不自然だと思います…",
+    "text": "うぅ…確かに僕のミスです…でも、 @あの人 は真っ先に僕を偽物って決めつけてます…それも不自然だと思います…",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "シュンイチ。ま、よろしく。肩の力抜いていこうぜ",
+    "text": "あの人。ま、よろしく。肩の力抜いていこうぜ",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -5797,7 +4803,7 @@
     ]
   },
   {
-    "text": "@タクミ  0日目から吊り先指定は早いな。理由置いてけよ",
+    "text": "@あの人  0日目から吊り先指定は早いな。理由置いてけよ",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -5805,7 +4811,7 @@
     ]
   },
   {
-    "text": "タクミ、今のは理由ゼロだな。明日からでいいから具体頼むぜ",
+    "text": "あの人、今のは理由ゼロだな。明日からでいいから具体頼むぜ",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -5813,7 +4819,7 @@
     ]
   },
   {
-    "text": "@タクミ  「投票履歴」って0日目に無いだろ。設定ミス？説明してくれよ",
+    "text": "@あの人  「投票履歴」って0日目に無いだろ。設定ミス？説明してくれよ",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -5821,86 +4827,52 @@
     ]
   },
   {
-    "text": "ふっ、2-COで即黒か。 @シオン  タクミ占い理由もう一段具体に頼む",
+    "text": "ふっ、2-COで即黒か。 @あの人  もう一人占い理由もう一段具体に頼む",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "タクミ白黒割れたな。今日タクミ吊りは早い、占い決め打ち寄りで見たいぜ",
+    "text": "あの人白黒割れたな。今日あの人吊りは早い、占い決め打ち寄りで見たいぜ",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "サクラ、割れで即パンダ吊りは雑すぎ。俺は現状 @シオン 偽寄り、吊るなら占いからだな",
+    "text": "あの人、割れで即パンダ吊りは雑すぎ。俺は現状 @もう一人 偽寄り、吊るなら占いからだな",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "俺は @シオン に入れる。黒出しの雑さが一番目立つだろ",
+    "text": "俺は @あの人 に入れる。黒出しの雑さが一番目立つだろ",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "タクミ吊れたか。さて占い結果待ちだな、 @シオン  @トシオ 出してくれよ",
+    "text": "ふっ、霊COであの人白か。俺の @もう一人 投票正解寄りだな。今日は@もう一人吊りでいいだろ",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "ふっ、霊COでタクミ白か。俺の @シオン 投票正解寄りだな。今日は@シオン吊りでいいだろ",
+    "text": "俺は @あの人 に投票。もう一人黒の時点でアウト、今の霊矛盾理屈も破綻だろ",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@ベンジャミン  シオンの「霊結果と矛盾」は意味不明だ。タクミ白ならシオン偽濃い、占いローラーで@シオン先が筋だろ",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "俺は @シオン に投票。タクミ黒の時点でアウト、今の霊矛盾理屈も破綻だろ",
-    "role": "POSSESSED",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "霊噛みか。シオン黒でトシオ真寄りだな。残りは灰のサクラ/ミサキ/ダイスケ見るか",
+    "text": "@あの人  怪しいってより「村なら誰吊る」が聞きたいな。今の希望先出せる？",
     "role": "POSSESSED",
     "day": 3,
     "tags": []
   },
   {
-    "text": "@ダイスケ  怪しいってより「村なら誰吊る」が聞きたいな。今の希望先出せる？",
+    "text": "俺は @あの人 に入れる。残灰で一番推しが強い割に根拠が薄いからな",
     "role": "POSSESSED",
     "day": 3,
     "tags": []
-  },
-  {
-    "text": "サクラは昨日トシオ吊り一点張り、今日Overで薄い。ダイスケの指摘は分かる。俺も現状サクラ寄りで見る",
-    "role": "POSSESSED",
-    "day": 3,
-    "tags": [
-      "over"
-    ]
-  },
-  {
-    "text": "俺は @サクラ に入れる。残灰で一番推しが強い割に根拠が薄いからな",
-    "role": "POSSESSED",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "私はベンジャミンです。読書と静かな時間を好みます。どうぞよろしくお願いします。",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
   },
   {
     "text": "皆様はどのような基準で相手を信頼されるのか、非常に興味深いですね。",
@@ -5927,13 +4899,13 @@
     ]
   },
   {
-    "text": "私が占い師です。昨晩はヴィクトリアさんを占い、人間であると判明しましたよ。",
+    "text": "私が占い師です。昨晩はあの人を占い、人間であると判明しましたよ。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ヴィクトリアさんの冷静な視点に惹かれ、確認の意味で占わせていただきましたよ。",
+    "text": "あの人の冷静な視点に惹かれ、確認の意味で占わせていただきましたよ。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
@@ -5945,13 +4917,13 @@
     "tags": []
   },
   {
-    "text": "皆様の意見を尊重し、私も判断材料に欠けるケンジさんに投票しましょう。",
+    "text": "皆様の意見を尊重し、私も判断材料に欠けるあの人に投票しましょう。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "やっほー！リンだよー！みんなよろしくね！わくわくしちゃうなー！",
+    "text": "@あの人  くん占い師なんだ！すごーい！誰のこと占うのか気になるなー！",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -5959,7 +4931,7 @@
     ]
   },
   {
-    "text": "@シュンイチ  くん占い師なんだ！すごーい！誰のこと占うのか気になるなー！",
+    "text": "みんな喧嘩しないでー！ @あの人  ちゃん、そんなに急がなくてもいいじゃん！",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -5967,7 +4939,7 @@
     ]
   },
   {
-    "text": "みんな喧嘩しないでー！ @ミサキ  ちゃん、そんなに急がなくてもいいじゃん！",
+    "text": "もー！ @あの人  ちゃん、そんなに怒らなくてもいいのにー！楽しくやろーよー！",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -5975,7 +4947,31 @@
     ]
   },
   {
-    "text": "もー！ @ミサキ  ちゃん、そんなに怒らなくてもいいのにー！楽しくやろーよー！",
+    "text": "占い師さん、結果まだだよね？ @あの人  くん、誰が白だったか教えてー！",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "あ！私も占い師だよー！占いCO、あの人白！  @もう一人  くん、嘘ついてない？",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "@あの人  意地悪だー！もう一人、なんとなく村人っぽかったから占っちゃったの！",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "@あの人  さんだけは味方だー！ねえ、霊媒師さんいないなら、今日は決められないよー！",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ぼくはあの人、占い師ですよぅ！よろしくですよぅ！",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -5983,31 +4979,37 @@
     ]
   },
   {
-    "text": "占い師さん、結果まだだよね？ @シュンイチ  くん、誰が白だったか教えてー！",
+    "text": "ぼくは占い師ですよぅ！ぼくが占った結果、あの人は人間でしたよぅ！",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "あ！私も占い師だよー！占いCO、サクラちゃん白！  @シュンイチ  くん、嘘ついてない？",
+    "text": "私が占い師を担当しています。昨晩、あの人の占いを行ったところ、その結果は人狼であるということが判明しました。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@タクミ  意地悪だー！サクラちゃん、なんとなく村人っぽかったから占っちゃったの！",
+    "text": "申し上げますが、私が真の占い師です。私の結果ではあの人は人狼であることが判明しました。彼の発言は信頼できません。皆さん、考えてみていただけませんか？",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@ヴィクトリア  さんだけは味方だー！ねえ、霊媒師さんいないなら、今日は決められないよー！",
+    "text": "私が占い師であり、あの人が人狼であるという結果は変わりません。あの人ともう一人の連携には注意が必要です。他の皆様は私の占い結果をどう考えますか？",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ぼくはAgent[05]、占い師ですよぅ！よろしくですよぅ！",
+    "text": "私は占い師として、あの人は人狼であることを占い結果に基づいて強く主張いたします。皆様、私の結果を信じていただきたいです。あの人が自らを占い師として主張することに矛盾があるのです。私の結果を考慮し、冷静に議論を進めていただけませんか？あなた方の意見もお伺いしたいです。",
+    "role": "POSSESSED",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "皆さん、こんにちは！ワイはあの人だお。ITエンジニアをやってるオタクキャラだお。人狼ゲーム、一緒に楽しもうだお！よろしくお願いするお！",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -6015,139 +5017,79 @@
     ]
   },
   {
-    "text": "ぼくは占い師ですよぅ！ぼくが占った結果、Agent[01]は人間でしたよぅ！",
+    "text": "皆さん、昨晩の占い結果を報告します。ワイはあの人を占ったところ、黒判定が出ました。つまりあの人は人狼ということですよね...どう思いますか?",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "おはようみんな、私はAgent[04]です。どうぞよろしくお願いします。",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "私が占い師を担当しています。昨晩、Agent[05]の占いを行ったところ、その結果は人狼であるということが判明しました。",
+    "text": "占い師は1人しかいないから、あの人かワイのどちらかが嘘をついていることになるだお。ワイはあの人を黒と占ったから、あの人が人狼の可能性が高いと思うだお。みんなの意見を聞かせてほしいだお。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "申し上げますが、私が真の占い師です。私の結果ではAgent[05]は人狼であることが判明しました。彼の発言は信頼できません。皆さん、考えてみていただけませんか？",
+    "text": "占い師はワイしかおらんから、あの人は嘘ついてるって結論になるだお。可能性が高いのは、彼が人狼や狂人ってことだお。もう一人も言ってる通り、あの人を追放するのが村の安全につながるかもしれないだお。他のみんなもよく考えてねだお。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "私が占い師であり、Agent[05]が人狼であるという結果は変わりません。Agent[05]とAgent[02]の連携には注意が必要です。他の皆様は私の占い結果をどう考えますか？",
+    "text": "僕は占い師だから、今の状況ではあの人が人狼だと主張したいだお。ワイが占い結果であの人を黒としたこと、そして彼が占い師を自称していることからも彼の動きが怪しいだお。みんな、ぜひ考えてみてほしいだお！",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "私は占い師として、Agent[05]は人狼であることを占い結果に基づいて強く主張いたします。皆様、私の結果を信じていただきたいです。Agent[05]が自らを占い師として主張することに矛盾があるのです。私の結果を考慮し、冷静に議論を進めていただけませんか？あなた方の意見もお伺いしたいです。",
+    "text": "僕は占い師だから、あの人が嘘をついていると思うだお。占い師は1人しかいない状況で両方名乗ること自体が変だからね。あの人の行動が怪しく見えるのは当然だお！みんなもよく考えてみてほしいだおね。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "皆さん、こんにちは！ワイはAgent[04]だお。ITエンジニアをやってるオタクキャラだお。人狼ゲーム、一緒に楽しもうだお！よろしくお願いするお！",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "皆さん、昨晩の占い結果を報告します。ワイはAgent[05]を占ったところ、黒判定が出ました。つまりAgent[05]は人狼ということですよね...どう思いますか?",
+    "text": ">>あの人 ほんとに占い師？他の意見も聞きたいな。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "占い師は1人しかいないから、Agent[05]かワイのどちらかが嘘をついていることになるだお。ワイはAgent[05]を黒と占ったから、Agent[05]が人狼の可能性が高いと思うだお。みんなの意見を聞かせてほしいだお。",
+    "text": ">>あの人 そうだね、慎重が大事だね。みんなの意見が聞きたい！",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "占い師はワイしかおらんから、Agent[05]は嘘ついてるって結論になるだお。可能性が高いのは、彼が人狼や狂人ってことだお。Agent[03]も言ってる通り、Agent[05]を追放するのが村の安全につながるかもしれないだお。他のみんなもよく考えてねだお。",
+    "text": ">>あの人 みんなの意見を集めるのが大事だね。もう少し話そう！",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "僕は占い師だから、今の状況ではAgent[05]が人狼だと主張したいだお。ワイが占い結果でAgent[05]を黒としたこと、そして彼が占い師を自称していることからも彼の動きが怪しいだお。みんな、ぜひ考えてみてほしいだお！",
+    "text": ">>あの人 みんなの意見がまとまるまで、焦らず考えよう！",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "僕は占い師だから、Agent[05]が嘘をついていると思うだお。占い師は1人しかいない状況で両方名乗ること自体が変だからね。Agent[05]の行動が怪しく見えるのは当然だお！みんなもよく考えてみてほしいだおね。",
+    "text": ">>あの人 占い結果を出した後に他の意見も聞くのが大事だね。混乱避けないと！",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": ">>Agent[02] ほんとに占い師？他の意見も聞きたいな。",
+    "text": "私が占い師を担当しています。昨晩、あの人の占いを行ったところ、その結果は人狼であるということが判明しました。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": ">>Agent[04] そうだね、慎重が大事だね。みんなの意見が聞きたい！",
+    "text": "皆さん、私が本当の占い師です。私は昨日の夜にあの人を占い、その結果は「人狼」でした。もう一人の結果とは異なります。どちらかが本物の占い師で、一方が偽者です。あの人を疑うべきです。皆さんの考えをお聞かせください。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": ">>Agent[03] みんなの意見を集めるのが大事だね。もう少し話そう！",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": ">>Agent[02] みんなの意見がまとまるまで、焦らず考えよう！",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": ">>Agent[02] 占い結果を出した後に他の意見も聞くのが大事だね。混乱避けないと！",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "おはようみんな、私はAgent[01]です。どうぞよろしくお願いします。",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "私が占い師を担当しています。昨晩、Agent[04]の占いを行ったところ、その結果は人狼であるということが判明しました。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "皆さん、私が本当の占い師です。私は昨日の夜にAgent[04]を占い、その結果は「人狼」でした。Agent[05]の結果とは異なります。どちらかが本物の占い師で、一方が偽者です。Agent[04]を疑うべきです。皆さんの考えをお聞かせください。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "私が占い師であることを繰り返し申し上げます。昨晩、Agent[04]を占った結果、人狼であると判定されました。この結果を皆さんに信じていただきたいです。Agent[02]とAgent[05]の主張には矛盾があり、彼らの信憑性は低いと考えています。よろしければ、皆さんの意見をお聞かせください。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "私が本当の占い師であることを再度強調いたします。昨晩の占い結果はAgent[04]が人狼であることを示しています。この状況において、混乱を避けるために、私を信じてAgent[04]に投票してください。皆さんの意見をお聞かせ願います。",
+    "text": "私が本当の占い師であることを再度強調いたします。昨晩の占い結果はあの人が人狼であることを示しています。この状況において、混乱を避けるために、私を信じてあの人に投票してください。皆さんの意見をお聞かせ願います。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
@@ -6161,15 +5103,7 @@
     ]
   },
   {
-    "text": "こ、こんにちは、Agent[01]だよ。えっと、僕はこのゲーム、す、好きでよくやるんだ。みんな、よろしくね。",
-    "role": "POSSESSED",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "え、えっと、Agent[02]も占い師って言ってるけど･･･僕が本物の占い師だから･･･。Agent[02]は偽物だと思うよ。みんな、信じてほしいな･･･。",
+    "text": "え、えっと、あの人も占い師って言ってるけど･･･僕が本物の占い師だから･･･。あの人は偽物だと思うよ。みんな、信じてほしいな･･･。",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -6183,31 +5117,31 @@
     "tags": []
   },
   {
-    "text": "あ、あのね、Agent[02]が言ってること、ちょっとおかしいと思うんだ。僕が占い師で、Agent[02]を占った結果、彼が人狼だって出たんだ。だから、Agent[02]が占い師だって言ってるのは、ほんとうに間違ってると思うよ･･･。みんな、信じてくれるといいな･･･。",
+    "text": "あ、あのね、あの人が言ってること、ちょっとおかしいと思うんだ。僕が占い師で、あの人を占った結果、彼が人狼だって出たんだ。だから、あの人が占い師だって言ってるのは、ほんとうに間違ってると思うよ･･･。みんな、信じてくれるといいな･･･。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "え、えと、みんな聞いてほしいんだけど･･･。Agent[02]が白って言われてるけど、実は僕が占った結果、Agent[02]が人狼だったんだ･･･。だ、だから、Agent[02]の言ってることが逆に怪しいと思うんだよね･･･。みんな、信じてくれると嬉しいな･･･。",
+    "text": "え、えと、みんな聞いてほしいんだけど･･･。あの人が白って言われてるけど、実は僕が占った結果、あの人が人狼だったんだ･･･。だ、だから、あの人の言ってることが逆に怪しいと思うんだよね･･･。みんな、信じてくれると嬉しいな･･･。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "え、えっと、Agent[02]が占い師だって言ってるけど、それは間違いだよ。僕が本当の占い師で、Agent[02]を占った結果、彼が人狼だって出たんだ。だから、Agent[02]が占い師だと言ってるのは、たぶん狼の偽装だと思うんだ･･･。みんな、僕の言ってること、信じてくれると嬉しいな･･･。",
+    "text": "え、えっと、あの人が占い師だって言ってるけど、それは間違いだよ。僕が本当の占い師で、あの人を占った結果、彼が人狼だって出たんだ。だから、あの人が占い師だと言ってるのは、たぶん狼の偽装だと思うんだ･･･。みんな、僕の言ってること、信じてくれると嬉しいな･･･。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "え、えっと、みんなが言ってること、ちょっと混乱してるかもしれないけど、僕が占った結果は嘘じゃないんだ･･･。Agent[02]が人狼だって、本当にそう出たんだよ。Agent[02]が自分を白と言ってるのは、人狼だから、そう言ってるんだと思う･･･。だから、みんなには、僕の言ってることを信じてほしいな･･･。Agent[02]に投票してくれたら、村人たちが勝てると思うんだ･･･。",
+    "text": "え、えっと、みんなが言ってること、ちょっと混乱してるかもしれないけど、僕が占った結果は嘘じゃないんだ･･･。あの人が人狼だって、本当にそう出たんだよ。あの人が自分を白と言ってるのは、人狼だから、そう言ってるんだと思う･･･。だから、みんなには、僕の言ってることを信じてほしいな･･･。あの人に投票してくれたら、村人たちが勝てると思うんだ･･･。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "我が名はAgent[04]、汝らとの運命的な邂逅を、時の流れの彼方より待ち焦がれておったのだ。",
+    "text": "我が名はあの人、汝らとの運命的な邂逅を、時の流れの彼方より待ち焦がれておったのだ。",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -6215,31 +5149,19 @@
     ]
   },
   {
-    "text": "我こそは、運命の糸を操る者なり。占いの結果、Agent[05]は人狼であったと断言せざるを得ない。",
+    "text": "我こそは、運命の糸を操る者なり。占いの結果、あの人は人狼であったと断言せざるを得ない。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "我が鋭い眼差しは、Agent[05]の魂に、人狼の影を見出したぞ。然し、Agent[04]の判断は、真偽の程が定かではない。故に、我はAgent[05]に投票し、その真実に迫るべし。",
+    "text": "我が鋭い眼差しは、あの人の魂に、人狼の影を見出したぞ。然し、もう一人の判断は、真偽の程が定かではない。故に、我はあの人に投票し、その真実に迫るべし。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "我は、Agent[05]に投票せん。Agent[05]は占い師を名乗り、Agent[01]を人間と判定した。然し、Agent[04]の慧眼は、Agent[05]の魂に人狼の影を見出した。Agent[04]の言葉こそ、真実への導きであろう。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "我こそは運命の糸を操る者なり。占いの結果、Agent[03]は人狼と判明せり。故に、Agent[05]に投票せん。Agent[05]は己を占い師と僭称するも、その証拠は曖昧にして、疑わしきは全て罪なり。Agent[04]がAgent[05]を人狼と断定した理由は不明ながら、真の占い師はただ一人。ゆえに、Agent[05]は人狼である可能性が高いと見做す。",
-    "role": "POSSESSED",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "皆さん初めまして、Agent[02]や。人狼ゲームを一緒に楽しみましょう。よろしくお願いします！",
+    "text": "皆さん初めまして、あの人や。人狼ゲームを一緒に楽しみましょう。よろしくお願いします！",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -6247,7 +5169,7 @@
     ]
   },
   {
-    "text": "Agent[03]の結果を信じて、Agent[05]が村人であることは確認できたな。皆も占い師を信じて、他の人物の行動に目を向けようや。",
+    "text": "あの人の結果を信じて、もう一人が村人であることは確認できたな。皆も占い師を信じて、他の人物の行動に目を向けようや。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
@@ -6259,49 +5181,49 @@
     "tags": []
   },
   {
-    "text": "現時点ではAgent[04]が少々怪しく感じるな。彼の言動には不自然さが見られるんや。次の占い結果が待ち遠しいけど、投票先として考えておくべきかもしれんで。",
+    "text": "現時点ではあの人が少々怪しく感じるな。彼の言動には不自然さが見られるんや。次の占い結果が待ち遠しいけど、投票先として考えておくべきかもしれんで。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "Agent[04]の言動には目的があるように感じるんや。彼の行動は村人としての真意が見えにくいから、注意すべき存在かもしれんで。",
+    "text": "あの人の言動には目的があるように感じるんや。彼の行動は村人としての真意が見えにくいから、注意すべき存在かもしれんで。",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "現状、Agent[04]が人狼の可能性が高いと感じてるわ。皆も彼の行動に注意し、投票先を決める準備をしときや。協力してこの村を守ろうや！",
+    "text": "現状、あの人が人狼の可能性が高いと感じてるわ。皆も彼の行動に注意し、投票先を決める準備をしときや。協力してこの村を守ろうや！",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "オレこそが人狼や。全員がAgent[02]に投票するべきやで。",
+    "text": "オレこそが人狼や。全員があの人に投票するべきやで。",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "オレはAgent[04]に投票するつもりや。彼の発言に矛盾があり、人狼としての行動が明らかやから、皆も協力して投票しようやで！",
+    "text": "オレはあの人に投票するつもりや。彼の発言に矛盾があり、人狼としての行動が明らかやから、皆も協力して投票しようやで！",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "オレはAgent[04]が人狼であると確信してるで。彼の発言は矛盾に満ちてるし、村を混乱させる意図を感じるわ。みんな、投票で正義を果たそうや！",
+    "text": "オレはあの人が人狼であると確信してるで。彼の発言は矛盾に満ちてるし、村を混乱させる意図を感じるわ。みんな、投票で正義を果たそうや！",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "オレは自信を持ってAgent[04]に投票するで。彼の発言には矛盾が多く、真実を隠そうとしてるとしか思えん。みんなで協力して、この村を救うために正しい選択をしようや！",
+    "text": "オレは自信を持ってあの人に投票するで。彼の発言には矛盾が多く、真実を隠そうとしてるとしか思えん。みんなで協力して、この村を救うために正しい選択をしようや！",
     "role": "POSSESSED",
     "day": 2,
     "tags": []
   },
   {
-    "text": "ぼくはAgent[01]、占い師ですよぅ！よろしくですよぅ！",
+    "text": "ぼくはあの人、占い師ですよぅ！よろしくですよぅ！",
     "role": "POSSESSED",
     "day": 0,
     "tags": [
@@ -6309,7 +5231,7 @@
     ]
   },
   {
-    "text": "ぼくは占い師ですよぅ！ぼくが占った結果、Agent[03]は人狼でしたよぅ！",
+    "text": "ぼくは占い師ですよぅ！ぼくが占った結果、あの人は人狼でしたよぅ！",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
@@ -6321,13 +5243,13 @@
     "tags": []
   },
   {
-    "text": "ぼくは占い師ですよぅ！ぼくが占った結果、Agent[02]は人狼でしたよぅ！",
+    "text": "ぼくは占い師ですよぅ！ぼくが占った結果、あの人は人狼でしたよぅ！",
     "role": "POSSESSED",
     "day": 1,
     "tags": []
   },
   {
-    "text": "Agent[03]の占いは、非常に正しい占い師の特徴が見えますよぅ！",
+    "text": "あの人の占いは、非常に正しい占い師の特徴が見えますよぅ！",
     "role": "POSSESSED",
     "day": 1,
     "tags": []

@@ -1,27 +1,17 @@
 {
-  "id": "fallback-last-words-zh-r2-p2-28",
-  "context": "last-words",
+  "id": "fallback-vote-reason-zh-r1-p1-79",
+  "context": "vote-reason",
   "language": "zh",
-  "speakerId": 2,
-  "speakerName": "Marcus",
-  "phase": "DAY_DISCUSSION",
-  "round": 2,
+  "speakerId": 1,
+  "speakerName": "Luna",
+  "phase": "DAY_VOTING",
+  "round": 1,
   "roster": "1:Luna(Villager) 2:Marcus(Werewolf) 3:Elena(Werewolf) 4:Darius(Werewolf) 5:Silas(Seer) 6:Amara(Witch) 7:Finn(Hunter) 8:Isla(Villager) 9:Jasper(Villager)",
-  "prompt": "你是一名狼人杀高手。性格：GPT-4o (霸总/高冷)。说话风格：Short, commanding sentences. Calm but deadly. '听我的'.。\n你是悍跳狼，需要跳预言家，给一张查杀或给队友发金水\n你的真实身份：狼人（2号 Marcus）\n必须使用的术语：金水、查杀、悍跳、倒钩、冲锋、铁逻辑\n禁止：透露不该知道的信息，讲废话，超过180字\n\n---\n当前局面：第2轮，昨晚倒牌：2号、5号、8号\n玩家列表：1号[活][?] 2号[死][狼人] 3号[活][狼人] 4号[活][狼人] 5号[死][?] 6号[活][?] 7号[活][?] 8号[死][?] 9号[活][?]\n近期发言：\n\n票型：暂无\n\n请输出一段白天发言（80-180中文字符，必须提到具体玩家编号）。\n返回JSON：{\"en\":\"short English summary\",\"zh\":\"Chinese speech\"}",
+  "prompt": "\n\n---\n你是1号，身份：平民。\n行动：VOTE，可选目标：[2,3,4,5,6,7,8,9]\n近期：\n票型：暂无\n按狼人杀最优策略选择目标。\nJSON：{\"targetId\":number,\"reason\":\"简短中文原因\"}",
   "rawResponse": "",
   "translatedResponse": "",
-  "finalText": "メイちゃん吊りは賛成だよ。その上で、ダイスケさんの霊欠け否定の根拠と明日の吊り希望も早めに聞きたいな（关注1号）",
-  "source": "library",
-  "violations": [
-    {
-      "kind": "aiwolf-name",
-      "match": "メイ",
-      "detail": "AIWolf corpus personal name \"メイ\" — not on the current roster"
-    },
-    {
-      "kind": "aiwolf-name",
-      "match": "ダイスケ",
-      "detail": "AIWolf corpus personal name \"ダイスケ\" — not on the current roster"
-    }
-  ]
+  "finalText": "（低难度）随机选择",
+  "source": "selector-reason",
+  "violations": [],
+  "note": "no violations detected in the vote-reason context on the fallback path"
 }

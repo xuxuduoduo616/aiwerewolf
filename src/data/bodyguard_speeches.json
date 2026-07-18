@@ -1,25 +1,6 @@
 [
   {
-    "text": "I’m Takumi.  @Asuka   saying “fact-based” so early feels like dodging — any role or info? Toshio claimed villager  noted. If nobody speaks up soon I’ll push for a vote. Who’s",
-    "role": "BODYGUARD",
-    "day": 0,
-    "tags": [
-      "opening",
-      "voting"
-    ]
-  },
-  {
-    "text": "I’m Takumi. Asuka’s “fact-based” line feels dodgey.  @Servas  you claim seer — any result or target to share? If you’re honest I’ll back you; if not  we should press Asuka. I’m leaning to vote Asuka if they don’t expla",
-    "role": "BODYGUARD",
-    "day": 0,
-    "tags": [
-      "opening",
-      "seer_related",
-      "voting"
-    ]
-  },
-  {
-    "text": "We can’t just sit here.  @Asuka  your “fact-based” start felt evasive — give us a real read or claim now. If nobody brings concrete info I’ll vote you. Over",
+    "text": "We can’t just sit here.  @that player  your “fact-based” start felt evasive — give us a real read or claim now. If nobody brings concrete info I’ll vote you. Over",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -29,7 +10,7 @@
     ]
   },
   {
-    "text": "I don’t trust  @Asuka . That “fact-based” line felt like a dodge — claim a role or give a read now  or I’ll push to lynch you today. Town  speak up. Over",
+    "text": "I don’t trust  @that player . That “fact-based” line felt like a dodge — claim a role or give a read now  or I’ll push to lynch you today. Town  speak up. Over",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -38,7 +19,7 @@
     ]
   },
   {
-    "text": "I still don't trust Asuka.  @Servas   if you're the seer  tell us your result now. If you can't  I'll push to lynch Asuka today. Town  speak up. Over",
+    "text": "I still don't trust that player.  @the other player   if you're the seer  tell us your result now. If you can't  I'll push to lynch that player today. Town  speak up. Over",
     "role": "BODYGUARD",
     "day": 1,
     "tags": [
@@ -47,7 +28,7 @@
     ]
   },
   {
-    "text": "We need info now.  @Servas  if you’re the seer  tell us who you checked last night. Asuka’s still acting weird — if Servas can’t give a result I’ll push to lynch Asuka today. Over",
+    "text": "We need info now.  @that player  if you’re the seer  tell us who you checked last night. The other player’s still acting weird — if that player can’t give a result I’ll push to lynch the other player today. Over",
     "role": "BODYGUARD",
     "day": 1,
     "tags": [
@@ -56,7 +37,7 @@
     ]
   },
   {
-    "text": "I’m getting impatient.  @Servas  if you’re the seer  say who you checked last night. If you can’t prove it I’ll vote to lynch Asuka today. Anyone else with a claim or concrete read? Over",
+    "text": "I’m getting impatient.  @that player  if you’re the seer  say who you checked last night. If you can’t prove it I’ll vote to lynch the other player today. Anyone else with a claim or concrete read? Over",
     "role": "BODYGUARD",
     "day": 1,
     "tags": [
@@ -66,16 +47,7 @@
     ]
   },
   {
-    "text": "I still don’t trust Asuka  but I’m also suspicious of @Shion.  @Servas  claimed seer — please share your check or we need to decide who to lynch. Over",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": [
-      "seer_related",
-      "over"
-    ]
-  },
-  {
-    "text": "Morning. Servas was executed — did they say anything useful before dying? Any night kills?  @Asuka  you’ve been quiet — if you’re the seer  show your check now or I’ll push to lynch you. Town  speak up. Over",
+    "text": "Morning. That player was executed — did they say anything useful before dying? Any night kills?  @the other player  you’ve been quiet — if you’re the seer  show your check now or I’ll push to lynch you. Town  speak up. Over",
     "role": "BODYGUARD",
     "day": 2,
     "tags": [
@@ -84,17 +56,7 @@
     ]
   },
   {
-    "text": "Servas is dead — we lost a seer claim.  @Asuka  you’re dodging again; if you’re the seer show your check now or I’ll vote you. I’m also suspicious of Shion for being too quiet. Town  speak up fast. Over",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": [
-      "seer_related",
-      "voting",
-      "over"
-    ]
-  },
-  {
-    "text": "Who died last night? Servas was executed — did they say anything before dying?  @Shion  you’ve been way too quiet  that’s suspicious. If Asuka is the seer we should protect them tonight — town  anyone with a claim speak up now. Over",
+    "text": "I’ll protect  @that player  tonight — they might be the seer and we can’t lose them. The other player’s silence is suspicious though. Anyone with a claim or info? Over",
     "role": "BODYGUARD",
     "day": 2,
     "tags": [
@@ -103,25 +65,7 @@
     ]
   },
   {
-    "text": "I’ll protect  @Asuka  tonight — they might be the seer and we can’t lose them. Shion’s silence is suspicious though. Anyone with a claim or info? Over",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": [
-      "seer_related",
-      "over"
-    ]
-  },
-  {
-    "text": "Mio got lynched and George was attacked — that’s bad.  @Shion  if you’re the seer  tell us who you checked last night. I’m suspicious of Minako for being too quiet. We gotta pick someone to lynch today — who do we vote?",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": [
-      "seer_related",
-      "voting"
-    ]
-  },
-  {
-    "text": "We need to protect  @Shion  — they’re our best shot at info. I’m voting Minako; she’s been too quiet. Anyone with a claim or reason to disagree? Over",
+    "text": "We need to protect  @that player  — they’re our best shot at info. I’m voting the other player; she’s been too quiet. Anyone with a claim or reason to disagree? Over",
     "role": "BODYGUARD",
     "day": 3,
     "tags": [
@@ -129,7 +73,7 @@
     ]
   },
   {
-    "text": "I’ll guard  @Shion  tonight. Minako’s acting sketchy — I’m voting her. Anyone disagree? Over",
+    "text": "I’ll guard  @that player  tonight. The other player’s acting sketchy — I’m voting her. Anyone disagree? Over",
     "role": "BODYGUARD",
     "day": 3,
     "tags": [
@@ -137,7 +81,7 @@
     ]
   },
   {
-    "text": "I voted  @Minako  — you’ve been too quiet. Speak up now or we lynch you. Over",
+    "text": "I voted  @that player  — you’ve been too quiet. Speak up now or we lynch you. Over",
     "role": "BODYGUARD",
     "day": 3,
     "tags": [
@@ -146,7 +90,7 @@
     ]
   },
   {
-    "text": "Morning. Toshio was lynched and Victoria attacked.  @Shion  if you’re the seer please share your check — we need solid info. I’ll guard you tonight. Minako’s been quiet and suspicious; I’m leaning to lynch her. A",
+    "text": "@that player  if you’re the seer  tell us who you checked last night. I’ll protect you tonight  so don’t stay quiet. I’m voting the other player — she’s been way too quiet. Anyone",
     "role": "BODYGUARD",
     "day": 4,
     "tags": [
@@ -154,15 +98,7 @@
     ]
   },
   {
-    "text": "@Shion  if you’re the seer  tell us who you checked last night. I’ll protect you tonight  so don’t stay quiet. I’m voting Minako — she’s been way too quiet. Anyone",
-    "role": "BODYGUARD",
-    "day": 4,
-    "tags": [
-      "seer_related"
-    ]
-  },
-  {
-    "text": "I’ll guard  @Shion  tonight — if they reveal a check we can nail Minako. Who’s with lynching Minako? Any other claims now? Over",
+    "text": "I’ll guard  @that player  tonight — if they reveal a check we can nail the other player. Who’s with lynching the other player? Any other claims now? Over",
     "role": "BODYGUARD",
     "day": 4,
     "tags": [
@@ -170,7 +106,7 @@
     ]
   },
   {
-    "text": "I’ll guard  @Shion  tonight. I’m voting Minako — she’s been too quiet. Anyone disagree? Over",
+    "text": "I’ll guard  @that player  tonight. I’m voting the other player — she’s been too quiet. Anyone disagree? Over",
     "role": "BODYGUARD",
     "day": 4,
     "tags": [
@@ -178,7 +114,7 @@
     ]
   },
   {
-    "text": "Morning. Ryuji’s gone.  @Shion   share your check now — we need a solid lead. I’m voting Minako; she’s been too quiet. Anyone disagree? Over",
+    "text": "@that player  please reveal your check now — we need a lead. I’m voting the other player; anyone disagree? I’ll protect that player tonight. Over",
     "role": "BODYGUARD",
     "day": 5,
     "tags": [
@@ -186,15 +122,7 @@
     ]
   },
   {
-    "text": "@Shion  please reveal your check now — we need a lead. I’m voting Minako; anyone disagree? I’ll protect Shion tonight. Over",
-    "role": "BODYGUARD",
-    "day": 5,
-    "tags": [
-      "over"
-    ]
-  },
-  {
-    "text": "I’ll protect  @Shion  tonight — if you’re the seer please share your check now. I’m voting Minako; she’s been too quiet. Anyone with solid info? Over",
+    "text": "I’ll protect  @that player  tonight — if you’re the seer please share your check now. I’m voting the other player; she’s been too quiet. Anyone with solid info? Over",
     "role": "BODYGUARD",
     "day": 5,
     "tags": [
@@ -203,19 +131,11 @@
     ]
   },
   {
-    "text": "I’ll guard  @Shion  tonight. Still voting Minako — she’s my top sus. Anyone got a strong reason to change? Over",
+    "text": "I’ll guard  @that player  tonight. Still voting the other player — she’s my top sus. Anyone got a strong reason to change? Over",
     "role": "BODYGUARD",
     "day": 5,
     "tags": [
       "over"
-    ]
-  },
-  {
-    "text": "I am Asuka. I enjoy academic pursuits and quiet environments. This discussion is premature.",
-    "role": "BODYGUARD",
-    "day": 0,
-    "tags": [
-      "opening"
     ]
   },
   {
@@ -227,31 +147,25 @@
     ]
   },
   {
-    "text": "Jonathan's conclusion is erroneous. Takumi's assessment aligns with reality. Analyze from this premise.",
+    "text": "That player's conclusion is erroneous. The other player's assessment aligns with reality. Analyze from this premise.",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "A 'gray-run' is a suboptimal move. Jonathan's falsehood is the only actionable data we possess.",
+    "text": "A 'gray-run' is a suboptimal move. That player's falsehood is the only actionable data we possess.",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "Jonathan's claim is a fallacy. Executing me is a wasteful experiment. Eliminate the source of error.",
+    "text": "That player's claim is a fallacy. Executing me is a wasteful experiment. Eliminate the source of error.",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "Rin's disclosure has provided the axiom. Jonathan was Possessed. The logical deduction targets Takumi.",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "The conclusion is simple. Jonathan was Possessed. Therefore Takumi is a Werewolf. Let us proceed.",
+    "text": "The conclusion is simple. That player was Possessed. Therefore the other player is a Werewolf. Let us proceed.",
     "role": "BODYGUARD",
     "day": 2,
     "tags": [
@@ -259,7 +173,7 @@
     ]
   },
   {
-    "text": "Divergent votes on Misaki and George are illogical. Rin's data has already identified our target: Takumi.",
+    "text": "The votes for that player ignore the established axiom. The other player's falsehood is the only logical target.",
     "role": "BODYGUARD",
     "day": 2,
     "tags": [
@@ -267,15 +181,7 @@
     ]
   },
   {
-    "text": "The votes for Misaki ignore the established axiom. Takumi's falsehood is the only logical target.",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": [
-      "voting"
-    ]
-  },
-  {
-    "text": "Shion's elimination suggests they were a human asset.  @George  your baseless vote repeats yesterday's error.",
+    "text": "That player's elimination suggests they were a human asset.  @the other player  your baseless vote repeats yesterday's error.",
     "role": "BODYGUARD",
     "day": 3,
     "tags": [
@@ -283,7 +189,7 @@
     ]
   },
   {
-    "text": "@George  your illogical vote for Misaki is a tactical diversion. You are the current prime suspect.",
+    "text": "@that player  your illogical vote for the other player is a tactical diversion. You are the current prime suspect.",
     "role": "BODYGUARD",
     "day": 3,
     "tags": [
@@ -291,7 +197,7 @@
     ]
   },
   {
-    "text": "Let us correct the trajectory of our logic. Vote George. His persistent vote-splitting is sabotage.",
+    "text": "Let us correct the trajectory of our logic. Vote that player. His persistent vote-splitting is sabotage.",
     "role": "BODYGUARD",
     "day": 3,
     "tags": [
@@ -299,21 +205,13 @@
     ]
   },
   {
-    "text": "@Shizue  your vote on Benjamin is as illogical as George's. This is coordinated disruption.",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": [
-      "voting"
-    ]
-  },
-  {
-    "text": "Benjamin's elimination by attack confirms his value. Re-evaluate who he found suspicious.",
+    "text": "That player's elimination by attack confirms his value. Re-evaluate who he found suspicious.",
     "role": "BODYGUARD",
     "day": 4,
     "tags": []
   },
   {
-    "text": "Since Rin is our logical axiom then Shizue who opposes her is a system error to be removed.",
+    "text": "Since that player is our logical axiom then the other player who opposes her is a system error to be removed.",
     "role": "BODYGUARD",
     "day": 4,
     "tags": []
@@ -325,16 +223,7 @@
     "tags": []
   },
   {
-    "text": "Hey buddies! I'm Yumi super pumped to play with y'all! Let's make it an awesome and fair game. Yaay! Over to you!",
-    "role": "BODYGUARD",
-    "day": 0,
-    "tags": [
-      "opening",
-      "over"
-    ]
-  },
-  {
-    "text": "Hey darling! I'm super curious why Asuka chose Sakura! Are there any cool observations you've got? Votes should be well thought out right?",
+    "text": "Hey darling! I'm super curious why that player chose the other player! Are there any cool observations you've got? Votes should be well thought out right?",
     "role": "BODYGUARD",
     "day": 1,
     "tags": [
@@ -342,7 +231,7 @@
     ]
   },
   {
-    "text": "Sounds like Minato might be our seer if he's right about divining you! We should be cautious buddy.  @Benjamin  You're feeling wolf vibes?",
+    "text": "Sounds like that player might be our seer if he's right about divining you! We should be cautious buddy.  @the other player  You're feeling wolf vibes?",
     "role": "BODYGUARD",
     "day": 1,
     "tags": [
@@ -351,7 +240,7 @@
     ]
   },
   {
-    "text": "Hey darlings! I'm kinda thinking Benjamin might be a bit sus. Minato's divination seems so true. What are your thoughts buddies?",
+    "text": "Hey darlings! I'm kinda thinking that player might be a bit sus. The other player's divination seems so true. What are your thoughts buddies?",
     "role": "BODYGUARD",
     "day": 1,
     "tags": [
@@ -359,33 +248,7 @@
     ]
   },
   {
-    "text": "Minato's seer claim is awesome! Let's trust him and vote Benjamin wisely. Hey Jonny what's up with Asuka's voting swaps? Puzzling!",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": [
-      "seer_related",
-      "voting"
-    ]
-  },
-  {
-    "text": "Hey buddy! If Minato's seer claim is true. Benjamin's elimination will confirm it. But Sakura's claim? It's a mystery. Thoughts?",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": [
-      "seer_related"
-    ]
-  },
-  {
-    "text": "Minato's divination on Asuka adds some trust! Let's watch Victoria's votes. Staying alert is smart. Yaay!  @Takumi  Minato cleared Asuka. Victoria's voting looks shaky. Do you feel the same about her vote changes?",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": [
-      "seer_related",
-      "voting"
-    ]
-  },
-  {
-    "text": "Hey buddies! Victoria's vote jumps are making me think she's a bit wolfy! What do you say we vote her today? Yaay! Sound good?",
+    "text": "Hey buddies! That player's vote jumps are making me think she's a bit wolfy! What do you say we vote her today? Yaay! Sound good?",
     "role": "BODYGUARD",
     "day": 2,
     "tags": [
@@ -394,7 +257,7 @@
     ]
   },
   {
-    "text": "Victoria's voting is like a puzzle huh? Feels suspicious. Should we vote her out? Jonathan do you have any thoughts on this?",
+    "text": "That player's voting is like a puzzle huh? Feels suspicious. Should we vote her out? The other player do you have any thoughts on this?",
     "role": "BODYGUARD",
     "day": 2,
     "tags": [
@@ -402,7 +265,7 @@
     ]
   },
   {
-    "text": "Hey buddy! George is acting super shady huh? Targeting Shizue a lot might be his way of covering up. What do you think?",
+    "text": "Hey buddy! That player is acting super shady huh? Targeting the other player a lot might be his way of covering up. What do you think?",
     "role": "BODYGUARD",
     "day": 3,
     "tags": [
@@ -410,35 +273,7 @@
     ]
   },
   {
-    "text": "Minato's vision is still strong huh? With Victoria in the mix we're hunting Asuka next? Her moves are so sketchy! Yaay! You know  @George  you've been super tough on Shizue. Since Minato's claim got confirmed don't you think it's time to focus on the others? What's your take on this buddy?",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "Hmm maybe George is kinda suspicious now? He’s all about Shizue despite Minato's proof huh? What if Jonathan's the werewolf buddy?",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": [
-      "wolf_related"
-    ]
-  },
-  {
-    "text": "Minato's info is spot on! Let's laser-focus on Asuka! Her chaos is trouble buddy! Jonathan how's your logic game? Let's ace this!",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "With Minato gone yaay let's trust Takumi's medium info. Focus on Sakura's seer role claim. Something's iffy don't you think? Shizue darling let's pr",
-    "role": "BODYGUARD",
-    "day": 4,
-    "tags": [
-      "seer_related"
-    ]
-  },
-  {
-    "text": "Hey buddies! I'm getting kinda wobbly vibes from Sakura's voting now. Her choices are all over the place which makes me super curious!",
+    "text": "Hey buddies! I'm getting kinda wobbly vibes from that player's voting now. Her choices are all over the place which makes me super curious!",
     "role": "BODYGUARD",
     "day": 4,
     "tags": [
@@ -446,13 +281,7 @@
     ]
   },
   {
-    "text": "Hey team! I'm a bit worried about Sakura's claim. Minato was right on the money. Should we focus on Jonathan now buddies?",
-    "role": "BODYGUARD",
-    "day": 4,
-    "tags": []
-  },
-  {
-    "text": "Sakura's behavior is kinda fishy right? Let's keep an eye on her today! Hey Jonny! With two seers Sakura feels a bit off! Let's see what we find!",
+    "text": "That player's behavior is kinda fishy right? Let's keep an eye on her today! Hey the other player! With two seers that player feels a bit off! Let's see what we find!",
     "role": "BODYGUARD",
     "day": 4,
     "tags": [
@@ -460,19 +289,19 @@
     ]
   },
   {
-    "text": "Hey buddy! So. Mizuki and Asuka huh? They're staying all cool while chaos is brewing? That's pretty awesome. Calm minds for sure! What do you think abo",
+    "text": "Hey buddy! So. That player and the other player huh? They're staying all cool while chaos is brewing? That's pretty awesome. Calm minds for sure! What do you think abo",
     "role": "BODYGUARD",
     "day": 5,
     "tags": []
   },
   {
-    "text": "@Jonathan  Hey darling! Do ya think Mizuki's too chill with all this chaos? Haha! It's a bit odd right? Might be a teeny bit suspicious!",
+    "text": "@that player  Hey darling! Do ya think the other player's too chill with all this chaos? Haha! It's a bit odd right? Might be a teeny bit suspicious!",
     "role": "BODYGUARD",
     "day": 5,
     "tags": []
   },
   {
-    "text": "I find Asuka's secretive ways about her divination a bit puzzling. It makes me uneasy. Let's focus on her more closely darling!",
+    "text": "I find that player's secretive ways about her divination a bit puzzling. It makes me uneasy. Let's focus on her more closely darling!",
     "role": "BODYGUARD",
     "day": 5,
     "tags": [
@@ -480,19 +309,13 @@
     ]
   },
   {
-    "text": "With Minato and Takumi's confirmations gone. Asuka seems odd. We must focus on remaining threats and clarify intentions. Hey Shizue! Minato's conf",
-    "role": "BODYGUARD",
-    "day": 5,
-    "tags": []
-  },
-  {
-    "text": "Hey buddy! Jonathan's confession is super important! Let's chat about ensuring he's only with our team and not the other team. Awesome!",
+    "text": "Hey buddy! That player's confession is super important! Let's chat about ensuring he's only with our team and not the other team. Awesome!",
     "role": "BODYGUARD",
     "day": 6,
     "tags": []
   },
   {
-    "text": "I knew it! Jonathan's confessed. Let's unite and vote darling!  @Shizue  Shizue buddy Jonathan's confession is the piece we need!",
+    "text": "I knew it! That player's confessed. Let's unite and vote darling!  @the other player  the other player buddy that player's confession is the piece we need!",
     "role": "BODYGUARD",
     "day": 6,
     "tags": [
@@ -500,7 +323,7 @@
     ]
   },
   {
-    "text": "Jonathan admitted he's a wolf. Let's vote him out. Focus everyone! We're so close to winning. Awesome job buddies!",
+    "text": "That player admitted he's a wolf. Let's vote him out. Focus everyone! We're so close to winning. Awesome job buddies!",
     "role": "BODYGUARD",
     "day": 6,
     "tags": [
@@ -509,16 +332,51 @@
     ]
   },
   {
-    "text": "With Jonathan confessing it's time to stay sharp and vote him out! Seer Minato's guidance is missed. But our path is clear! Yaay!  @Shizue  Shizue with Jonathan slipping let's unite! Voting him out secures our game! What's your view now buddy?",
+    "text": "Let us heed  @that player 's testimony. As the sole claimant his words must guide our judgment today.",
     "role": "BODYGUARD",
-    "day": 6,
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "The facts are thus: that player is our guide. The other player is human. Our focus must be on the remaining unconfirmed.",
+    "role": "BODYGUARD",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "Impression is a poor foundation. That player's silence is a tangible void. I will vote for that player.",
+    "role": "BODYGUARD",
+    "day": 1,
     "tags": [
-      "seer_related",
       "voting"
     ]
   },
   {
-    "text": "I am Ryuji. I enjoy quiet contemplation and historical accounts. Let us proceed with decorum.",
+    "text": "Oh my dear that player. We truly need both our Seers to reveal themselves now. Perhaps they could divine each other tonight to prevent further confusion to",
+    "role": "BODYGUARD",
+    "day": 1,
+    "tags": [
+      "seer_related"
+    ]
+  },
+  {
+    "text": "Good morning dear heart. We have a double seer situation. We must question both that player and the other player gently considering their behaviors.",
+    "role": "BODYGUARD",
+    "day": 1,
+    "tags": [
+      "seer_related"
+    ]
+  },
+  {
+    "text": "Good morning dear heart. That player's earlier statement holds water. Both seers should divine different players for clearer understanding.",
+    "role": "BODYGUARD",
+    "day": 1,
+    "tags": [
+      "seer_related"
+    ]
+  },
+  {
+    "text": "Hi everyone I’m that player—if you see someone tripping tonight that’s probably me! Let’s have a fun game!",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -526,52 +384,7 @@
     ]
   },
   {
-    "text": "Let us heed  @Daisuke 's testimony. As the sole claimant his words must guide our judgment today.",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "The facts are thus: Daisuke is our guide. George is human. Our focus must be on the remaining unconfirmed.",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "Impression is a poor foundation. Shunichi's silence is a tangible void. I will vote for Shunichi.",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": [
-      "voting"
-    ]
-  },
-  {
-    "text": "Good morning dear hearts! I'm Shizue. Let us work together and use our precious instincts to uncover the wolves. What a delight!",
-    "role": "BODYGUARD",
-    "day": 0,
-    "tags": [
-      "opening",
-      "over"
-    ]
-  },
-  {
-    "text": "Oh my dear Minato. We truly need both our Seers to reveal themselves now. Perhaps they could divine each other tonight to prevent further confusion to",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": [
-      "seer_related"
-    ]
-  },
-  {
-    "text": "Good morning dear heart. We have a double seer situation. We must question both Minato and Ryuji gently considering their behaviors.",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": [
-      "seer_related"
-    ]
-  },
-  {
-    "text": "Good morning dear heart. A double seer claim is tricky indeed. If Minato is our true seer we must protect him dear.  @George  Your votes seem inconsistent dear. Could you share why you targeted Ryuji despite uncertainties among the seer claims?",
+    "text": "@that player  please share your divination result now or I’ll have to vote you—waiting too long helps the werewolves hide!",
     "role": "BODYGUARD",
     "day": 1,
     "tags": [
@@ -580,38 +393,13 @@
     ]
   },
   {
-    "text": "Good morning dear heart. Ryuji's earlier statement holds water. Both seers should divine different players for clearer understanding.",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": [
-      "seer_related"
-    ]
-  },
-  {
-    "text": "Hi everyone I’m Sakura—if you see someone tripping tonight that’s probably me! Let’s have a fun game!",
-    "role": "BODYGUARD",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "@Yumi  please share your divination result now or I’ll have to vote you—waiting too long helps the werewolves hide!",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": [
-      "seer_related",
-      "voting"
-    ]
-  },
-  {
-    "text": "@Yumi  you gave your result late—who else do you find suspicious besides Minato? We need more than one lead.",
+    "text": "@that player  you gave your result late—who else do you find suspicious besides the other player? We need more than one lead.",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "If Yumi is really the seer she should give us a plan for who to divine next otherwise her claim feels risky.",
+    "text": "If that player is really the seer she should give us a plan for who to divine next otherwise her claim feels risky.",
     "role": "BODYGUARD",
     "day": 1,
     "tags": [
@@ -619,7 +407,7 @@
     ]
   },
   {
-    "text": "I’ll vote Minato—Yumi’s seer claim deserves a test. If he’s villager I’ll push for Yumi tomorrow.",
+    "text": "I’ll vote that player—the other player’s seer claim deserves a test. If he’s villager I’ll push for the other player tomorrow.",
     "role": "BODYGUARD",
     "day": 1,
     "tags": [
@@ -628,7 +416,7 @@
     ]
   },
   {
-    "text": "@Yumi  please share your divination result today quickly Are you still confident in your previous claim?",
+    "text": "@that player  please share your divination result today quickly Are you still confident in your previous claim?",
     "role": "BODYGUARD",
     "day": 2,
     "tags": [
@@ -636,13 +424,7 @@
     ]
   },
   {
-    "text": "Yumi's result puts Benjamin as safe so we should watch others more closely.  @Daisuke  any new doubts since last night?",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "@Yumi  you divined Benjamin as human but voted for him yesterday can you explain that move? Seems suspicious.",
+    "text": "@that player  you divined the other player as human but voted for him yesterday can you explain that move? Seems suspicious.",
     "role": "BODYGUARD",
     "day": 2,
     "tags": [
@@ -651,7 +433,7 @@
     ]
   },
   {
-    "text": "Yumi’s divination and vote don’t match—too suspicious for me. I’m voting Yumi today. Let’s catch the wolf!",
+    "text": "That player’s divination and vote don’t match—too suspicious for me. I’m voting that player today. Let’s catch the wolf!",
     "role": "BODYGUARD",
     "day": 2,
     "tags": [
@@ -661,7 +443,7 @@
     ]
   },
   {
-    "text": "@Ryuji  if you stay silent much longer you’ll be my vote today—we need real answers to find the wolves!",
+    "text": "@that player  if you stay silent much longer you’ll be my vote today—we need real answers to find the wolves!",
     "role": "BODYGUARD",
     "day": 3,
     "tags": [
@@ -669,7 +451,7 @@
     ]
   },
   {
-    "text": "@Ryuji  you’ve been really quiet—I’ll vote for you unless you share your thoughts now! Why are you holding back?",
+    "text": "@that player  you’ve been really quiet—I’ll vote for you unless you share your thoughts now! Why are you holding back?",
     "role": "BODYGUARD",
     "day": 3,
     "tags": [
@@ -677,7 +459,7 @@
     ]
   },
   {
-    "text": "I’m worried everyone only focuses on Ryuji—if he’s a villager the wolf is coasting by. Can we look wider today?",
+    "text": "I’m worried everyone only focuses on that player—if he’s a villager the wolf is coasting by. Can we look wider today?",
     "role": "BODYGUARD",
     "day": 3,
     "tags": [
@@ -685,22 +467,13 @@
     ]
   },
   {
-    "text": "I’ll vote Ryuji—too silent. But if he’s not wolf  let’s press Victoria and Asuka for answers tomorrow.",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": [
-      "wolf_related",
-      "voting"
-    ]
-  },
-  {
-    "text": "@Victoria  you said Bodyguard succeeded last night—what’s your evidence? Please clarify for everyone right now.",
+    "text": "@that player  you said Bodyguard succeeded last night—what’s your evidence? Please clarify for everyone right now.",
     "role": "BODYGUARD",
     "day": 4,
     "tags": []
   },
   {
-    "text": "Victoria keeps deflecting by using “public log” but never claims a role. That feels like wolf play to me.",
+    "text": "That player keeps deflecting by using “public log” but never claims a role. That feels like wolf play to me.",
     "role": "BODYGUARD",
     "day": 4,
     "tags": [
@@ -708,7 +481,7 @@
     ]
   },
   {
-    "text": "@Victoria  you keep dodging questions and never CO. That’s classic wolf play. I’m voting for you today.",
+    "text": "@that player  you keep dodging questions and never CO. That’s classic wolf play. I’m voting for you today.",
     "role": "BODYGUARD",
     "day": 4,
     "tags": [
@@ -716,13 +489,13 @@
     ]
   },
   {
-    "text": "Victoria keeps dodging all direct questions. I’m voting Victoria. Please join me to protect the village from the wolves!",
+    "text": "That player keeps dodging all direct questions. I’m voting that player. Please join me to protect the village from the wolves!",
     "role": "BODYGUARD",
     "day": 4,
     "tags": []
   },
   {
-    "text": "Greetings everyone this is Toshio—eager to see how each of you approaches suspicion and trust in tonight’s game.",
+    "text": "Greetings everyone this is that player—eager to see how each of you approaches suspicion and trust in tonight’s game.",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -730,22 +503,13 @@
     ]
   },
   {
-    "text": "@Daisuke  if you have something to reveal do it now; any hesitation gives the wolves a place to hide.",
+    "text": "@that player  if you have something to reveal do it now; any hesitation gives the wolves a place to hide.",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "Unless a real Seer counters Jonathan I believe Daisuke should be our vote today.  @Benjamin  what’s your view?",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": [
-      "seer_related",
-      "voting"
-    ]
-  },
-  {
-    "text": "@Jonathan  If your divination stands I favor voting Daisuke today unless a counterclaim flips the situation.",
+    "text": "@that player  If your divination stands I favor voting the other player today unless a counterclaim flips the situation.",
     "role": "BODYGUARD",
     "day": 1,
     "tags": [
@@ -753,7 +517,7 @@
     ]
   },
   {
-    "text": "Without a second Seer claim Jonathan’s word is our best lead. I vote Daisuke and urge all to state their positions clearly.",
+    "text": "Without a second Seer claim that player’s word is our best lead. I vote the other player and urge all to state their positions clearly.",
     "role": "BODYGUARD",
     "day": 1,
     "tags": [
@@ -762,7 +526,7 @@
     ]
   },
   {
-    "text": "@Daisuke  Jonathan accused you as wolf yet you're silent I think our vote should focus on you unless new info appears.",
+    "text": "@that player  the other player accused you as wolf yet you're silent I think our vote should focus on you unless new info appears.",
     "role": "BODYGUARD",
     "day": 2,
     "tags": [
@@ -771,27 +535,13 @@
     ]
   },
   {
-    "text": "@Shizue  your silence stands out. Where do you stand on Mio’s Medium claim and the case against Daisuke?",
+    "text": "That player keeps dodging questions and won’t clarify his role. That’s too suspicious for me—I’m voting that player today.",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "If no one opposes Mio’s Medium claim I trust her. Let’s vote those still refusing roles—especially Daisuke or Shizue.",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": [
-      "voting"
-    ]
-  },
-  {
-    "text": "Daisuke keeps dodging questions and won’t clarify his role. That’s too suspicious for me—I’m voting Daisuke today.",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "@Shizue  your silence is giving the wolves cover. Who do you actually suspect right now? Speak up and take a stand.",
+    "text": "@that player  your silence is giving the wolves cover. Who do you actually suspect right now? Speak up and take a stand.",
     "role": "BODYGUARD",
     "day": 3,
     "tags": [
@@ -799,19 +549,19 @@
     ]
   },
   {
-    "text": "@Misaki  @Rin  You keep voting together with no clear reason. Are you working together? Who is your top suspect now?",
+    "text": "@that player  @the other player  You keep voting together with no clear reason. Are you working together? Who is your top suspect now?",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "@Shizue  Your refusal to answer puts the whole village at risk. If you’re innocent prove it now.",
+    "text": "@that player  Your refusal to answer puts the whole village at risk. If you’re innocent prove it now.",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "I’m voting Shizue because your silence is perfect wolf cover this late. We can’t let passive play slip through.",
+    "text": "I’m voting that player because your silence is perfect wolf cover this late. We can’t let passive play slip through.",
     "role": "BODYGUARD",
     "day": 3,
     "tags": [
@@ -820,7 +570,7 @@
     ]
   },
   {
-    "text": "@Shizue  your silence hurts us—unless you speak up I’ll vote you out today. What are you hiding?",
+    "text": "@that player  your silence hurts us—unless you speak up I’ll vote you out today. What are you hiding?",
     "role": "BODYGUARD",
     "day": 4,
     "tags": [
@@ -828,7 +578,7 @@
     ]
   },
   {
-    "text": "@Shizue  your silence is too calculated—if you’re not a wolf speak up. I’m voting you unless you defend yourself.",
+    "text": "@that player  your silence is too calculated—if you’re not a wolf speak up. I’m voting you unless you defend yourself.",
     "role": "BODYGUARD",
     "day": 4,
     "tags": [
@@ -836,7 +586,7 @@
     ]
   },
   {
-    "text": "Shizue’s silence is helping wolves avoid suspicion. We need to vote Shizue today and stop the bloc tactics.",
+    "text": "That player’s silence is helping wolves avoid suspicion. We need to vote that player today and stop the bloc tactics.",
     "role": "BODYGUARD",
     "day": 4,
     "tags": [
@@ -844,13 +594,13 @@
     ]
   },
   {
-    "text": "Our biggest threats are bloc voting and silence. I’m voting  @Shizue —her lack of response is shielding the wolves every round.",
+    "text": "Our biggest threats are bloc voting and silence. I’m voting  @that player —her lack of response is shielding the wolves every round.",
     "role": "BODYGUARD",
     "day": 4,
     "tags": []
   },
   {
-    "text": "I'll keep it brief: everyone give a short opening—one reason and who you're leaning toward. Watch for inconsistent stories and who pushes others.  @Jonathan   you were loud earlier—who do you suspect now?",
+    "text": "I'll keep it brief: everyone give a short opening—one reason and who you're leaning toward. Watch for inconsistent stories and who pushes others.  @that player   you were loud earlier—who do you suspect now?",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -858,7 +608,7 @@
     ]
   },
   {
-    "text": "I don't want an early lynch either—let's get clarity first.  @Victoria  please tell us your divination result or explain why you claimed seer; Misaki already asked and we need that to decide.",
+    "text": "I don't want an early lynch either—let's get clarity first.  @that player  please tell us your divination result or explain why you claimed seer; the other player already asked and we need that to decide.",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -867,7 +617,7 @@
     ]
   },
   {
-    "text": "No rush to lynch. If you're truly the seer  show your result now   @Victoria . Otherwise  everyone state one-line reasons and who you're leaning toward. Over",
+    "text": "No rush to lynch. If you're truly the seer  show your result now   @that player . Otherwise  everyone state one-line reasons and who you're leaning toward. Over",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -877,7 +627,7 @@
     ]
   },
   {
-    "text": "Morning. No early lynch from me—I'd like role claims confirmed.  @Victoria  please show your divination result or explain your claim. Everyone else  one-line read and who you're leaning toward. Over",
+    "text": "Morning. No early lynch from me—I'd like role claims confirmed.  @that player  please show your divination result or explain your claim. Everyone else  one-line read and who you're leaning toward. Over",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -887,7 +637,7 @@
     ]
   },
   {
-    "text": "No lynch from me—claims need evidence.  @Victoria  show your divination result or retract. I'm uneasy about Shion's brusque tone; he shut down discussion. Over",
+    "text": "No lynch from me—claims need evidence.  @that player  show your divination result or retract. I'm uneasy about the other player's brusque tone; he shut down discussion. Over",
     "role": "BODYGUARD",
     "day": 1,
     "tags": [
@@ -896,7 +646,7 @@
     ]
   },
   {
-    "text": "Let's skip lynch for now.  @Victoria  please show your divination result or explain why you claimed seer—no proof  no trust. I'll watch behavior and votes. Over",
+    "text": "Let's skip lynch for now.  @that player  please show your divination result or explain why you claimed seer—no proof  no trust. I'll watch behavior and votes. Over",
     "role": "BODYGUARD",
     "day": 1,
     "tags": [
@@ -907,7 +657,7 @@
     ]
   },
   {
-    "text": "@Victoria  Show your divination result now—if you can't  retract your seer claim. Everyone else: one-line read and who you're leaning to. Over",
+    "text": "@that player  Show your divination result now—if you can't  retract your seer claim. Everyone else: one-line read and who you're leaning to. Over",
     "role": "BODYGUARD",
     "day": 1,
     "tags": [
@@ -916,7 +666,7 @@
     ]
   },
   {
-    "text": "@Victoria  You've claimed seer but haven't given any divination—that's suspicious. I'm leaning to vote you if you don't show proof. Anyone actually backing he",
+    "text": "@that player  You've claimed seer but haven't given any divination—that's suspicious. I'm leaning to vote you if you don't show proof. Anyone actually backing he",
     "role": "BODYGUARD",
     "day": 1,
     "tags": [
@@ -925,63 +675,7 @@
     ]
   },
   {
-    "text": "Hello. I am Minato. My role is villager. Have a good game.",
-    "role": "BODYGUARD",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "I will vote Jonathan.",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": [
-      "voting"
-    ]
-  },
-  {
-    "text": "I will vote Shunichi.",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": [
-      "voting"
-    ]
-  },
-  {
-    "text": "I will vote Takumi.",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": [
-      "voting"
-    ]
-  },
-  {
-    "text": "I will vote Minako.",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": [
-      "voting"
-    ]
-  },
-  {
-    "text": "私はTakumiです。  @Asuka   こんなに早く「fact-based」って言うのははぐらかしてる感じがする — 何か役職や情報は？ Toshioが村人だと主張  了解。 すぐに誰も発言しないなら投票に持っていく。 誰が",
-    "role": "BODYGUARD",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "私はTakumi。Asukaの「fact-based」ラインは胡散臭く感じる。  @Servas  あなたは占い師だと主張してる—共有できる結果や対象はある？正直なら君を支持する; そうでないなら  Asukaを詰めるべき。Asukaに投票する方に傾いてる、もしAsukaが説明しな",
-    "role": "BODYGUARD",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "ここでただ手をこまねいてるわけにはいかない。 @Asuka  あなたの「fact-based」な出だしははぐらかしてる感じがした—今すぐ本当の考察かCOを出せ。誰も具体的な情報を持ってこないなら君に投票する。 Over",
+    "text": "ここでただ手をこまねいてるわけにはいかない。 @あの人  あなたの「fact-based」な出だしははぐらかしてる感じがした—今すぐ本当の考察かCOを出せ。誰も具体的な情報を持ってこないなら君に投票する。 Over",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -990,7 +684,7 @@
     ]
   },
   {
-    "text": "私は  @Asukaを信用しない 。その「fact-based」という台詞はごまかしに感じた—役職を宣言するか今すぐ考察を出せ  さもないと今日はあなたの吊りを推す。村は  発言してくれ。Over",
+    "text": "私は  @あの人を信用しない 。その「fact-based」という台詞はごまかしに感じた—役職を宣言するか今すぐ考察を出せ  さもないと今日はあなたの吊りを推す。村は  発言してくれ。Over",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -999,7 +693,7 @@
     ]
   },
   {
-    "text": "まだAsukaを信用していない。  @Servas   もしあなたが占い師なら  今すぐ結果を教えてくれ。 できないなら  今日はAsuka吊りを推す。 村  発言してくれ。 Over",
+    "text": "まだあの人を信用していない。  @もう一人   もしあなたが占い師なら  今すぐ結果を教えてくれ。 できないなら  今日はあの人吊りを推す。 村  発言してくれ。 Over",
     "role": "BODYGUARD",
     "day": 1,
     "tags": [
@@ -1007,7 +701,7 @@
     ]
   },
   {
-    "text": "今すぐ情報が必要だ。  @Servas  占い師なら  昨夜誰を占ったか教えてくれ。 Asukaはまだ様子がおかしい — もしServasが結果を出せないなら今日はAsukaの吊りを推す。 Over",
+    "text": "今すぐ情報が必要だ。  @あの人  占い師なら  昨夜誰を占ったか教えてくれ。 もう一人はまだ様子がおかしい — もしあの人が結果を出せないなら今日はもう一人の吊りを推す。 Over",
     "role": "BODYGUARD",
     "day": 1,
     "tags": [
@@ -1015,7 +709,7 @@
     ]
   },
   {
-    "text": "待ちきれなくなってきた。  @Servas  あなたが占い師なら  昨夜誰を占ったか言って。 それを証明できないなら今日はAsukaを処刑に投票する。 他にCOや確かな読みがある人いる？ Over",
+    "text": "待ちきれなくなってきた。  @あの人  あなたが占い師なら  昨夜誰を占ったか言って。 それを証明できないなら今日はもう一人を処刑に投票する。 他にCOや確かな読みがある人いる？ Over",
     "role": "BODYGUARD",
     "day": 1,
     "tags": [
@@ -1023,15 +717,7 @@
     ]
   },
   {
-    "text": "まだAsukaを信用していない  でも@Shionのことも疑っている。  @Servas  は占い師だと名乗った — 占い結果を共有して、そうでなければ誰を吊るか決めないといけない。 Over",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": [
-      "over"
-    ]
-  },
-  {
-    "text": "おはよう。Servasは処刑された — 死ぬ前に何か役に立つことを言った？夜の襲撃はあった？  @Asuka  ずっと静かだね — もし占い師なら  今すぐ占い結果を出して、そうでなければ君を吊りに推すよ。村  発言して。Over",
+    "text": "おはよう。あの人は処刑された — 死ぬ前に何か役に立つことを言った？夜の襲撃はあった？  @もう一人  ずっと静かだね — もし占い師なら  今すぐ占い結果を出して、そうでなければ君を吊りに推すよ。村  発言して。Over",
     "role": "BODYGUARD",
     "day": 2,
     "tags": [
@@ -1039,7 +725,7 @@
     ]
   },
   {
-    "text": "Servasが死んだ—占い師COを失った。  @Asuka  またはぐらかしてるな; もしお前が占い師なら今すぐ占い結果を出せ、でなければお前に投票する。Shionが静かすぎるのも怪しい。村  早く発言しろ。Over",
+    "text": "今夜は  @あの人  を守る — その人は占い師かもしれないし、失うわけにはいかない。もう一人の沈黙は怪しいけど。COや情報ある人いる？ Over",
     "role": "BODYGUARD",
     "day": 2,
     "tags": [
@@ -1047,29 +733,7 @@
     ]
   },
   {
-    "text": "昨夜は誰が死んだ？ Servasは処刑された — 死ぬ前に何か言ってた？  @Shion  静かすぎる  それは怪しい。 もしAsukaが占い師なら今夜は彼らを守るべき — 村  役職持ちの人は今すぐ名乗り出て。 Over",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": [
-      "over"
-    ]
-  },
-  {
-    "text": "今夜は  @Asuka  を守る — その人は占い師かもしれないし、失うわけにはいかない。Shionの沈黙は怪しいけど。COや情報ある人いる？ Over",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": [
-      "over"
-    ]
-  },
-  {
-    "text": "Mioが吊られて、Georgeが襲撃された — それはまずい。  @Shion  もしあなたが占い師なら  昨夜誰を占ったか教えて。Minakoが静かすぎるから疑っている。今日は誰を吊るか決めなきゃ — 誰に投票する？",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "私たちは  @Shion  を守る必要がある — 私たちにとって情報を得るためのいちばんの当てだ。私はMinakoに投票する; 彼女は静かすぎる。何か主張や反対する理由がある人はいる？ Over",
+    "text": "今夜は  @あの人  を護衛する。もう一人の挙動が怪しい — 彼女に投票する。異議ある？ Over",
     "role": "BODYGUARD",
     "day": 3,
     "tags": [
@@ -1077,7 +741,7 @@
     ]
   },
   {
-    "text": "今夜は  @Shion  を護衛する。Minakoの挙動が怪しい — 彼女に投票する。異議ある？ Over",
+    "text": "私は  @あの人  に投票した — あなたは静かすぎる。今すぐ発言しろ、さもないと私たちはあなたをリンチする。 Over",
     "role": "BODYGUARD",
     "day": 3,
     "tags": [
@@ -1085,27 +749,13 @@
     ]
   },
   {
-    "text": "私は  @Minako  に投票した — あなたは静かすぎる。今すぐ発言しろ、さもないと私たちはあなたをリンチする。 Over",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": [
-      "over"
-    ]
-  },
-  {
-    "text": "朝。Toshioが吊られ、Victoriaが襲撃された。  @Shion  占い師なら占い結果を共有してください — 確かな情報が必要だ。今夜はあなたを護衛する。Minakoは静かで怪しい; 彼女を吊る方に傾いている。 A",
+    "text": "@あの人  もしあなたが占い師なら  昨夜誰を占ったか私たちに教えて。今夜はあなたを護衛する  だから黙っていないで。もう一人に投票する — 彼女は静かすぎる。誰か",
     "role": "BODYGUARD",
     "day": 4,
     "tags": []
   },
   {
-    "text": "@Shion  もしあなたが占い師なら  昨夜誰を占ったか私たちに教えて。今夜はあなたを護衛する  だから黙っていないで。Minakoに投票する — 彼女は静かすぎる。誰か",
-    "role": "BODYGUARD",
-    "day": 4,
-    "tags": []
-  },
-  {
-    "text": "今夜は  @Shion  を護衛する — 彼らが結果を公開すればMinakoを仕留められる。Minako吊りに賛成の人は？今ほかにCOある？ Over",
+    "text": "今夜は  @あの人  を護衛する — 彼らが結果を公開すればもう一人を仕留められる。もう一人吊りに賛成の人は？今ほかにCOある？ Over",
     "role": "BODYGUARD",
     "day": 4,
     "tags": [
@@ -1113,7 +763,7 @@
     ]
   },
   {
-    "text": "今夜は  @Shion  を護衛する。Minakoに投票する — 彼女はずっと静かすぎる。異議ある人はいる？ Over",
+    "text": "今夜は  @あの人  を護衛する。もう一人に投票する — 彼女はずっと静かすぎる。異議ある人はいる？ Over",
     "role": "BODYGUARD",
     "day": 4,
     "tags": [
@@ -1121,7 +771,7 @@
     ]
   },
   {
-    "text": "おはよう。 Ryujiがいなくなった。  @Shion   今すぐあなたのチェック結果を共有して — 確かな手がかりが必要だ。 私はMinakoに投票する；彼女は静かすぎる。 異論ある人いる？ Over",
+    "text": "今夜は  @あの人  を護衛する — あなたが占い師なら今すぐ占い結果を共有して。もう一人に投票する; 彼女は静かすぎる。確かな情報ある人いる？ Over",
     "role": "BODYGUARD",
     "day": 5,
     "tags": [
@@ -1129,35 +779,11 @@
     ]
   },
   {
-    "text": "@Shion  今すぐ調査結果を明かして — 手がかりが必要だ。私はMinakoに投票する; anyone disagree? 今夜はShionを守る。Over",
+    "text": "今夜は  @あの人  を護衛する。まだもう一人に投票する — 彼女が一番怪しい。誰か変える強い理由ある？ Over",
     "role": "BODYGUARD",
     "day": 5,
     "tags": [
       "over"
-    ]
-  },
-  {
-    "text": "今夜は  @Shion  を護衛する — あなたが占い師なら今すぐ占い結果を共有して。Minakoに投票する; 彼女は静かすぎる。確かな情報ある人いる？ Over",
-    "role": "BODYGUARD",
-    "day": 5,
-    "tags": [
-      "over"
-    ]
-  },
-  {
-    "text": "今夜は  @Shion  を護衛する。まだMinakoに投票する — 彼女が一番怪しい。誰か変える強い理由ある？ Over",
-    "role": "BODYGUARD",
-    "day": 5,
-    "tags": [
-      "over"
-    ]
-  },
-  {
-    "text": "私はAsukaです。学術的な探求と静かな環境を楽しみます。この議論は時期尚早です。",
-    "role": "BODYGUARD",
-    "day": 0,
-    "tags": [
-      "opening"
     ]
   },
   {
@@ -1167,79 +793,61 @@
     "tags": []
   },
   {
-    "text": "Jonathanの結論は誤りである。Takumiの判断は現実と一致している。この前提から分析せよ。",
+    "text": "あの人の結論は誤りである。もう一人の判断は現実と一致している。この前提から分析せよ。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "「gray-run」は最適でない手だ。Jonathanの虚偽は我々が保有する唯一の行動可能なデータだ。",
+    "text": "「gray-run」は最適でない手だ。あの人の虚偽は我々が保有する唯一の行動可能なデータだ。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "Jonathanの主張は誤謬だ。私を処刑するのは無駄な実験だ。誤差の原因を排除せよ。",
+    "text": "あの人の主張は誤謬だ。私を処刑するのは無駄な実験だ。誤差の原因を排除せよ。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "Rinの開示がその公理を提示した。JonathanはPossessedだった。論理的推論はTakumiを指す。",
+    "text": "結論は単純だ。あの人は狂人だった。だからもう一人は人狼だ。先へ進もう。",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "結論は単純だ。Jonathanは狂人だった。だからTakumiは人狼だ。先へ進もう。",
+    "text": "あの人への投票は確立された公理を無視している。もう一人の虚偽は唯一の論理的な標的だ。",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "MisakiとGeorgeへの票の分散は非論理的だ。Rinのデータはすでに我々の標的を特定している: Takumi。",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "Misakiへの投票は確立された公理を無視している。Takumiの虚偽は唯一の論理的な標的だ。",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "Shionの排除は、Shionが人的資産だったことを示唆している。  @George  あなたの根拠のない投票は昨日の誤りの繰り返しだ。",
+    "text": "あの人の排除は、あの人が人的資産だったことを示唆している。  @もう一人  あなたの根拠のない投票は昨日の誤りの繰り返しだ。",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "@George  あなたのMisakiへの非論理的な投票は戦術的な陽動だ。 あなたは現時点の最有力容疑者だ。",
+    "text": "@あの人  あなたのもう一人への非論理的な投票は戦術的な陽動だ。 あなたは現時点の最有力容疑者だ。",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "私たちの論理の軌道を修正しよう。Georgeに投票しよう。彼の執拗な票割れは破壊工作だ。",
+    "text": "私たちの論理の軌道を修正しよう。あの人に投票しよう。彼の執拗な票割れは破壊工作だ。",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "@Shizue  Benjaminに対するあなたの投票はGeorgeの投票と同じくらい非論理的だ。 これは連携した妨害だ。",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "Benjaminの襲撃による排除は彼の価値を裏付ける。彼が誰を怪しいと見ていたのかを再評価せよ。",
+    "text": "あの人の襲撃による排除は彼の価値を裏付ける。彼が誰を怪しいと見ていたのかを再評価せよ。",
     "role": "BODYGUARD",
     "day": 4,
     "tags": []
   },
   {
-    "text": "Rin が私たちの論理的公理である以上、彼女に反対する Shizue は削除すべきシステムエラーである。",
+    "text": "あの人 が私たちの論理的公理である以上、彼女に反対する もう一人 は削除すべきシステムエラーである。",
     "role": "BODYGUARD",
     "day": 4,
     "tags": []
@@ -1251,7 +859,289 @@
     "tags": []
   },
   {
-    "text": "やあ、みんな！私はYumi、みんなと遊べるのに超ワクワク！最高でフェアなゲームにしよう。いえーい！Over、みんなの番！",
+    "text": "ねえ、ダーリン！なんであの人がもう一人を選んだのか、超気になってる！何か鋭い考察ある？投票ってよく考えて入れるべきだよね？",
+    "role": "BODYGUARD",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "あの人があなたを占った結果が正しいなら、彼は私たちの占い師かもしれないみたいだ！慎重にいこう、相棒。  @もう一人  狼っぽさ感じてる？",
+    "role": "BODYGUARD",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "やあ、みんな！ なんとなくあの人ってちょっと怪しいかもって思ってる。もう一人の占い、すごく当たってる気がする。みんなはどう思う？",
+    "role": "BODYGUARD",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "やあ、みんな！あの人の票の飛び方が、ちょっと狼っぽい気がするんだ！今日は彼女に投票しない？いぇーい！どう？",
+    "role": "BODYGUARD",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "あの人の投票はパズルみたいだな？怪しい感じがする。彼女を投票で追放すべき？もう一人 これについて何か考えある？",
+    "role": "BODYGUARD",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "やあ、相棒！あの人、めっちゃ怪しい動きしてるよな？もう一人をやたら狙ってるのは、自分の怪しさを隠すための手かもしれない。どう思う？",
+    "role": "BODYGUARD",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "やあみんな！今、あの人の投票からちょっとブレてる雰囲気を感じてる。彼女の選択はall over the placeで、めっちゃ気になる！",
+    "role": "BODYGUARD",
+    "day": 4,
+    "tags": [
+      "over"
+    ]
+  },
+  {
+    "text": "あの人の行動がちょっと怪しいよね？今日は彼女を見張っておこう！ねえ もう一人！占い師が2人いるとあの人が少し変に感じる！何が分かるか見てみよう！",
+    "role": "BODYGUARD",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "やあ、相棒！それで。あの人 と もう一人 か？カオスがくすぶってる中でも二人はずっとクールでいられてるの？それはかなりすごいね。間違いなく落ち着いてる！それについてどう思",
+    "role": "BODYGUARD",
+    "day": 5,
+    "tags": []
+  },
+  {
+    "text": "@あの人  ねえ、ダーリン！もう一人って、このカオスの中でものんきすぎだと思う？ハハ！ちょっと変だよね？ほんのちょっと怪しいかも！",
+    "role": "BODYGUARD",
+    "day": 5,
+    "tags": []
+  },
+  {
+    "text": "あの人の占いに関する彼女の秘密めいたやり方が少し不可解に思える。落ち着かない気分になる。彼女にもっと注意を向けよう、ダーリン！",
+    "role": "BODYGUARD",
+    "day": 5,
+    "tags": []
+  },
+  {
+    "text": "やあ、相棒！あの人の告白はめちゃくちゃ重要だ！彼がうちのチームだけにいて、相手のチームにはいないことを確実にする件について話そう。最高！",
+    "role": "BODYGUARD",
+    "day": 6,
+    "tags": []
+  },
+  {
+    "text": "知ってた！ あの人が自白した。 団結して投票しようダーリン！  @もう一人  もう一人 相棒 あの人の自白は私たちに必要なピースだ！",
+    "role": "BODYGUARD",
+    "day": 6,
+    "tags": []
+  },
+  {
+    "text": "あの人は自分が人狼だと認めた。彼に投票して追放しよう。みんな、集中して！勝利まであと少しだ。よくやった、みんな！",
+    "role": "BODYGUARD",
+    "day": 6,
+    "tags": []
+  },
+  {
+    "text": "我々は  @あの人 の証言に耳を傾けよう。唯一の申立人として、彼の言葉は本日の我々の判断を導かなければならない。",
+    "role": "BODYGUARD",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "事実は次のとおりだ: あの人は私たちのガイドだ。もう一人は人間だ。私たちは残っている未確認のものに焦点を当てなければならない。",
+    "role": "BODYGUARD",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "ああ、親愛なる あの人。今すぐに私たちの占い師2人には正体を明かしてもらう必要が本当にある。もしかすると、さらなる混乱を防ぐために今夜はお互いを占ってくれると",
+    "role": "BODYGUARD",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "おはよう、愛しい人。私たちはダブル占い師の状況にある。彼らの振る舞いを踏まえて、あの人 と もう一人 の両方に優しく質問しなければならない。",
+    "role": "BODYGUARD",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "おはよう、愛しい人。あの人の先ほどの発言は理にかなっている。より明確にするために、両方の占い師はそれぞれ異なるプレイヤーを占うべきだ。",
+    "role": "BODYGUARD",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "@あの人  今すぐ占い結果を共有して、さもないとあなたに投票しなければならなくなる—待ちすぎると人狼たちの潜伏を助けてしまう！",
+    "role": "BODYGUARD",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "@あの人  あなたは結果の提出が遅かった—もう一人以外に誰が怪しいと思う？ 手がかりは1つ以上必要だ。",
+    "role": "BODYGUARD",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "もしあの人が本当に占い師なら、次に誰を占うかについて私たちにプランを示すべきで、そうでないと彼女の主張はリスキーに感じる。",
+    "role": "BODYGUARD",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "あの人に投票する—もう一人の占い師主張は試す価値がある。彼が村人なら明日はもう一人に行く。",
+    "role": "BODYGUARD",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "@あの人  今日の占いの結果を早く教えてください 以前の主張にまだ自信がありますか？",
+    "role": "BODYGUARD",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "@あの人  あなたはもう一人に人間判定を出したのに昨日は彼に投票したけど、その行動は説明できる？怪しく見える。",
+    "role": "BODYGUARD",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "あの人の占い先と投票先が一致していない—私には怪しすぎる。今日はあの人に投票する。人狼を捕まえよう！",
+    "role": "BODYGUARD",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "@あの人  これ以上黙っているなら今日はあなたに投票するよ—狼を見つけるにはちゃんとした返答が必要だ！",
+    "role": "BODYGUARD",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "@あの人  ずっとすごく静かだね—今すぐ考えを話してくれないなら君に投票するよ！なんで黙ってるの？",
+    "role": "BODYGUARD",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "みんながあの人にばかり注目しているのが心配—彼が村人なら狼は楽にやり過ごしてる。今日はもっと広く見ない？",
+    "role": "BODYGUARD",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "@あの人  あなたは昨夜Bodyguardが成功したと言いました—その証拠は何ですか？皆のために今すぐ説明してください。",
+    "role": "BODYGUARD",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "あの人は「public log」を持ち出してはぐらかし続けているが、役職を一度もCOしない。私には狼の動きに見える。",
+    "role": "BODYGUARD",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "@あの人  あなたは質問をはぐらかし続けて、決してCOしない。典型的な狼ムーブだ。今日はあなたに投票する。",
+    "role": "BODYGUARD",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "@あの人  明かすべきことがあるなら今すぐ明かせ; どんなためらいも狼たちに隠れ場所を与える。",
+    "role": "BODYGUARD",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "@あの人  あなたの占い結果がそのままなら、対抗COで状況が覆らない限り、今日はもう一人に投票したい。",
+    "role": "BODYGUARD",
+    "day": 1,
+    "tags": []
+  },
+  {
+    "text": "@あの人  もう一人 があなたを人狼だと告発したのに、あなたは黙っている。新しい情報が出ない限り、私たちの投票はあなたに集中させるべきだと思う。",
+    "role": "BODYGUARD",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "あの人は質問をかわし続けていて、自分の役職をはっきりさせようとしない。私にはあまりにも怪しすぎる—今日はあの人に投票する。",
+    "role": "BODYGUARD",
+    "day": 2,
+    "tags": []
+  },
+  {
+    "text": "@あの人  あなたの沈黙が狼に隠れ蓑を与えている。今、実際に誰を疑っている？はっきり発言して、立場を示せ。",
+    "role": "BODYGUARD",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "@あの人  @もう一人  あなたたちは明確な理由もなく一緒に投票し続けている。協力しているの？ 今の最有力の容疑者は誰？",
+    "role": "BODYGUARD",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "@あの人  あなたが答えないことで村全体が危険にさらされている。無実なら今すぐ証明して。",
+    "role": "BODYGUARD",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "あの人に投票する。あなたの沈黙はこの終盤では狼の隠れ蓑として完璧だからだ。受け身のプレイを見逃すわけにはいかない。",
+    "role": "BODYGUARD",
+    "day": 3,
+    "tags": []
+  },
+  {
+    "text": "@あの人  あなたの沈黙は私たちを傷つけている—発言しないなら今日はあなたの追放に投票する。何を隠しているの？",
+    "role": "BODYGUARD",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "@あの人  あなたの沈黙は計算されすぎている—狼じゃないなら発言して。弁明しない限りあなたに投票する。",
+    "role": "BODYGUARD",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "あの人の沈黙は狼が疑いを避けるのに役立っている。今日はあの人に投票してブロック戦術を止める必要がある。",
+    "role": "BODYGUARD",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "私たちの最大の脅威はブロック投票と沈黙だ。私は  @あの人 に投票する —彼女の無反応が毎ラウンド狼を庇っている。",
+    "role": "BODYGUARD",
+    "day": 4,
+    "tags": []
+  },
+  {
+    "text": "手短にいこう: 全員、短いオープニングを—理由を一つと、誰に傾いているかを示して。話の矛盾と、誰が他人に圧をかけているかに注意して。  @あの人   さっきは声が大きかった—今は誰を疑ってる？",
+    "role": "BODYGUARD",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "私も早吊りは望まない—まずははっきりさせよう。  @あの人 あなたの占い結果を教えてください、またはなぜ占い師COしたのか説明してください; もう一人がすでに聞いていて、それが判断に必要です。",
+    "role": "BODYGUARD",
+    "day": 0,
+    "tags": [
+      "opening"
+    ]
+  },
+  {
+    "text": "吊りを急ぐ必要はない。 もし本当に占い師なら  いま結果を出して    @あの人 。 そうでないなら  全員は一行で理由と誰に傾いているかを述べて。 Over",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -1260,435 +1150,7 @@
     ]
   },
   {
-    "text": "ねえ、ダーリン！なんでAsukaがSakuraを選んだのか、超気になってる！何か鋭い考察ある？投票ってよく考えて入れるべきだよね？",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "Minatoがあなたを占った結果が正しいなら、彼は私たちの占い師かもしれないみたいだ！慎重にいこう、相棒。  @Benjamin  狼っぽさ感じてる？",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "やあ、みんな！ なんとなくBenjaminってちょっと怪しいかもって思ってる。Minatoの占い、すごく当たってる気がする。みんなはどう思う？",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "Minatoの占い師COは最高！彼を信じて賢明にBenjaminに投票しよう。ねえJonny、Asukaの投票スワップってどうなってるの？謎すぎ！",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "やあ、相棒！ Minatoの占い師だという主張が本当なら。Benjaminの排除でそれが確認できる。でもSakuraの主張は？ 謎だ。どう思う？",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "MinatoのAsuka占いで少し信頼が増す！Victoriaの投票を見守ろう。警戒を保つのは賢い。やったー！  @Takumi  MinatoはAsukaを白出しした。Victoriaの投票はブレてるように見える。彼女の票変えについて同じように感じる？",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "やあ、みんな！Victoriaの票の飛び方が、ちょっと狼っぽい気がするんだ！今日は彼女に投票しない？いぇーい！どう？",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "Victoriaの投票はパズルみたいだな？怪しい感じがする。彼女を投票で追放すべき？Jonathan これについて何か考えある？",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "やあ、相棒！George、めっちゃ怪しい動きしてるよな？Shizueをやたら狙ってるのは、自分の怪しさを隠すための手かもしれない。どう思う？",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "Minatoの読みはまだ強いんだな？ Victoriaも混ざって、次はAsukaを狙う？ 彼女の動きがめっちゃ怪しい！ いえーい！ ねえ  @George  あなた、Shizueにすごく厳しかったよ。 Minatoの主張が確認されたんだし、そろそろ他の人に注目する時じゃない？ この件どう見てる、相棒？",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "うーん、今はGeorgeがちょっと怪しいかも？ Minatoの証拠があるのに彼はShizueに固執してるよね？ Jonathanが人狼の相方だったら？",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "Minatoの情報は的確だ！Asukaに一点集中しよう！彼女の混沌は厄介だ、相棒！Jonathan、ロジックのキレはどうだ？これを完璧に決めよう！",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "Minatoがいなくなったし、やったー、Takumiの霊媒の情報を信じよう。Sakuraの占い師の役職宣言に注目して。なんか怪しくない？Shizue、ダーリン、やろ",
-    "role": "BODYGUARD",
-    "day": 4,
-    "tags": []
-  },
-  {
-    "text": "やあみんな！今、Sakuraの投票からちょっとブレてる雰囲気を感じてる。彼女の選択はall over the placeで、めっちゃ気になる！",
-    "role": "BODYGUARD",
-    "day": 4,
-    "tags": [
-      "over"
-    ]
-  },
-  {
-    "text": "やあ、チームのみんな！Sakuraの主張がちょっと心配だ。Minatoはまさに的を射ていた。今はJonathanに集中すべきかな、みんな？",
-    "role": "BODYGUARD",
-    "day": 4,
-    "tags": []
-  },
-  {
-    "text": "Sakuraの行動がちょっと怪しいよね？今日は彼女を見張っておこう！ねえ Jonny！占い師が2人いるとSakuraが少し変に感じる！何が分かるか見てみよう！",
-    "role": "BODYGUARD",
-    "day": 4,
-    "tags": []
-  },
-  {
-    "text": "やあ、相棒！それで。Mizuki と Asuka か？カオスがくすぶってる中でも二人はずっとクールでいられてるの？それはかなりすごいね。間違いなく落ち着いてる！それについてどう思",
-    "role": "BODYGUARD",
-    "day": 5,
-    "tags": []
-  },
-  {
-    "text": "@Jonathan  ねえ、ダーリン！Mizukiって、このカオスの中でものんきすぎだと思う？ハハ！ちょっと変だよね？ほんのちょっと怪しいかも！",
-    "role": "BODYGUARD",
-    "day": 5,
-    "tags": []
-  },
-  {
-    "text": "Asukaの占いに関する彼女の秘密めいたやり方が少し不可解に思える。落ち着かない気分になる。彼女にもっと注意を向けよう、ダーリン！",
-    "role": "BODYGUARD",
-    "day": 5,
-    "tags": []
-  },
-  {
-    "text": "MinatoとTakumiの確認がなくなったことで。Asukaはおかしく見える。残る脅威に集中し、意図を明確にしなければならない。ねえShizue! Minatoのconf",
-    "role": "BODYGUARD",
-    "day": 5,
-    "tags": []
-  },
-  {
-    "text": "やあ、相棒！Jonathanの告白はめちゃくちゃ重要だ！彼がうちのチームだけにいて、相手のチームにはいないことを確実にする件について話そう。最高！",
-    "role": "BODYGUARD",
-    "day": 6,
-    "tags": []
-  },
-  {
-    "text": "知ってた！ Jonathanが自白した。 団結して投票しようダーリン！  @Shizue  Shizue 相棒 Jonathanの自白は私たちに必要なピースだ！",
-    "role": "BODYGUARD",
-    "day": 6,
-    "tags": []
-  },
-  {
-    "text": "Jonathanは自分が人狼だと認めた。彼に投票して追放しよう。みんな、集中して！勝利まであと少しだ。よくやった、みんな！",
-    "role": "BODYGUARD",
-    "day": 6,
-    "tags": []
-  },
-  {
-    "text": "Jonathanが自白したことで、気を引き締めて彼に投票して追放する時だ！ 占い師 Minatoの導きが恋しい。 でも、進むべき道は明確だ！ やったー！  @Shizue  Shizue、Jonathanがボロを出している今、団結しよう！ 彼に投票して追放すれば、私たちのゲームは安泰だ！ 今どう思う、相棒？",
-    "role": "BODYGUARD",
-    "day": 6,
-    "tags": []
-  },
-  {
-    "text": "私はRyujiです。私は静かな熟考と歴史記録を好みます。礼節をもって進めましょう。",
-    "role": "BODYGUARD",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "我々は  @Daisuke の証言に耳を傾けよう。唯一の申立人として、彼の言葉は本日の我々の判断を導かなければならない。",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "事実は次のとおりだ: Daisukeは私たちのガイドだ。Georgeは人間だ。私たちは残っている未確認のものに焦点を当てなければならない。",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "印象は土台としては貧弱だ。Shunichiの沈黙は触れられるほどの虚無だ。私はShunichiに投票する。",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "おはようございます、親愛なる皆さん！私はShizueです。力を合わせて、私たちの大切な直感を使って狼たちを暴き出しましょう。なんて嬉しいことでしょう！",
-    "role": "BODYGUARD",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "ああ、親愛なる Minato。今すぐに私たちの占い師2人には正体を明かしてもらう必要が本当にある。もしかすると、さらなる混乱を防ぐために今夜はお互いを占ってくれると",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "おはよう、愛しい人。私たちはダブル占い師の状況にある。彼らの振る舞いを踏まえて、Minato と Ryuji の両方に優しく質問しなければならない。",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "おはよう、愛しい人。占い師のダブルCOは確かに厄介だ。もしMinatoが私たちの真占い師なら、彼を守らなきゃ、愛しい人。  @George  あなたの投票は一貫していないようだ、愛しい人。占い師COに不確実性があるにもかかわらず、なぜRyujiを投票先にしたのか共有してもらえる？",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "おはよう、愛しい人。Ryujiの先ほどの発言は理にかなっている。より明確にするために、両方の占い師はそれぞれ異なるプレイヤーを占うべきだ。",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "みなさんこんにちは、Sakuraです—今夜つまずいてる人を見かけたら、それはたぶん私です！楽しいゲームにしましょう！",
-    "role": "BODYGUARD",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "@Yumi  今すぐ占い結果を共有して、さもないとあなたに投票しなければならなくなる—待ちすぎると人狼たちの潜伏を助けてしまう！",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "@Yumi  あなたは結果の提出が遅かった—Minato以外に誰が怪しいと思う？ 手がかりは1つ以上必要だ。",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "もしYumiが本当に占い師なら、次に誰を占うかについて私たちにプランを示すべきで、そうでないと彼女の主張はリスキーに感じる。",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "Minatoに投票する—Yumiの占い師主張は試す価値がある。彼が村人なら明日はYumiに行く。",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "@Yumi  今日の占いの結果を早く教えてください 以前の主張にまだ自信がありますか？",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "Yumiの結果でBenjaminは安全だとされるので、他の人たちをより注意深く見たほうがいい。  @Daisuke  昨夜から新しい疑念はある？",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "@Yumi  あなたはBenjaminに人間判定を出したのに昨日は彼に投票したけど、その行動は説明できる？怪しく見える。",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "Yumiの占い先と投票先が一致していない—私には怪しすぎる。今日はYumiに投票する。人狼を捕まえよう！",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "@Ryuji  これ以上黙っているなら今日はあなたに投票するよ—狼を見つけるにはちゃんとした返答が必要だ！",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "@Ryuji  ずっとすごく静かだね—今すぐ考えを話してくれないなら君に投票するよ！なんで黙ってるの？",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "みんながRyujiにばかり注目しているのが心配—彼が村人なら狼は楽にやり過ごしてる。今日はもっと広く見ない？",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "Ryujiに投票する—静かすぎる。でも彼が狼じゃないなら  明日VictoriaとAsukaに答えを迫ろう。",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "@Victoria  あなたは昨夜Bodyguardが成功したと言いました—その証拠は何ですか？皆のために今すぐ説明してください。",
-    "role": "BODYGUARD",
-    "day": 4,
-    "tags": []
-  },
-  {
-    "text": "Victoriaは「public log」を持ち出してはぐらかし続けているが、役職を一度もCOしない。私には狼の動きに見える。",
-    "role": "BODYGUARD",
-    "day": 4,
-    "tags": []
-  },
-  {
-    "text": "@Victoria  あなたは質問をはぐらかし続けて、決してCOしない。典型的な狼ムーブだ。今日はあなたに投票する。",
-    "role": "BODYGUARD",
-    "day": 4,
-    "tags": []
-  },
-  {
-    "text": "Victoria はすべての直接の質問をかわし続けている。私は Victoria に投票する。人狼から村を守るために、私に加わってください！",
-    "role": "BODYGUARD",
-    "day": 4,
-    "tags": []
-  },
-  {
-    "text": "皆さん、こんにちは、Toshioです—今夜のゲームで皆さんそれぞれが疑いと信頼にどう向き合うのかを見るのが楽しみです。",
-    "role": "BODYGUARD",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "@Daisuke  明かすべきことがあるなら今すぐ明かせ; どんなためらいも狼たちに隠れ場所を与える。",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "本物の占い師がJonathanに対抗しない限り、今日はDaisukeに投票すべきだと私は考えています。  @Benjamin  見解は？",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "@Jonathan  あなたの占い結果がそのままなら、対抗COで状況が覆らない限り、今日はDaisukeに投票したい。",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "二人目の占い師の名乗りがないならJonathanの言葉が我々の最良の手がかりだ。私はDaisukeに投票し、全員に自分の立場を明確に述べるよう促す。",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "@Daisuke  Jonathan があなたを人狼だと告発したのに、あなたは黙っている。新しい情報が出ない限り、私たちの投票はあなたに集中させるべきだと思う。",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "@Shizue  あなたの沈黙が目立つ。MioのMediumでの主張とDaisukeに対する告発について、あなたはどう考えている？",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "Mioの霊媒師カミングアウトに誰も反対しないなら彼女を信じる。まだ役職を明かすのを拒んでいる人に投票しよう—特にDaisukeかShizue。",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "Daisukeは質問をかわし続けていて、自分の役職をはっきりさせようとしない。私にはあまりにも怪しすぎる—今日はDaisukeに投票する。",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "@Shizue  あなたの沈黙が狼に隠れ蓑を与えている。今、実際に誰を疑っている？はっきり発言して、立場を示せ。",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "@Misaki  @Rin  あなたたちは明確な理由もなく一緒に投票し続けている。協力しているの？ 今の最有力の容疑者は誰？",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "@Shizue  あなたが答えないことで村全体が危険にさらされている。無実なら今すぐ証明して。",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "Shizueに投票する。あなたの沈黙はこの終盤では狼の隠れ蓑として完璧だからだ。受け身のプレイを見逃すわけにはいかない。",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "@Shizue  あなたの沈黙は私たちを傷つけている—発言しないなら今日はあなたの追放に投票する。何を隠しているの？",
-    "role": "BODYGUARD",
-    "day": 4,
-    "tags": []
-  },
-  {
-    "text": "@Shizue  あなたの沈黙は計算されすぎている—狼じゃないなら発言して。弁明しない限りあなたに投票する。",
-    "role": "BODYGUARD",
-    "day": 4,
-    "tags": []
-  },
-  {
-    "text": "Shizueの沈黙は狼が疑いを避けるのに役立っている。今日はShizueに投票してブロック戦術を止める必要がある。",
-    "role": "BODYGUARD",
-    "day": 4,
-    "tags": []
-  },
-  {
-    "text": "私たちの最大の脅威はブロック投票と沈黙だ。私は  @Shizue に投票する —彼女の無反応が毎ラウンド狼を庇っている。",
-    "role": "BODYGUARD",
-    "day": 4,
-    "tags": []
-  },
-  {
-    "text": "手短にいこう: 全員、短いオープニングを—理由を一つと、誰に傾いているかを示して。話の矛盾と、誰が他人に圧をかけているかに注意して。  @Jonathan   さっきは声が大きかった—今は誰を疑ってる？",
-    "role": "BODYGUARD",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "私も早吊りは望まない—まずははっきりさせよう。  @Victoria あなたの占い結果を教えてください、またはなぜ占い師COしたのか説明してください; Misakiがすでに聞いていて、それが判断に必要です。",
-    "role": "BODYGUARD",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "吊りを急ぐ必要はない。 もし本当に占い師なら  いま結果を出して    @Victoria 。 そうでないなら  全員は一行で理由と誰に傾いているかを述べて。 Over",
+    "text": "おはよう。私は早吊りはしない—役職COの確認をしたい。  @あの人  占い結果を提示するか、COの説明をしてください。その他のみんな  一行の考察と誰に傾いているか。 Over",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -1697,16 +1159,7 @@
     ]
   },
   {
-    "text": "おはよう。私は早吊りはしない—役職COの確認をしたい。  @Victoria  占い結果を提示するか、COの説明をしてください。その他のみんな  一行の考察と誰に傾いているか。 Over",
-    "role": "BODYGUARD",
-    "day": 0,
-    "tags": [
-      "opening",
-      "over"
-    ]
-  },
-  {
-    "text": "私はノーリンチはしない—主張には証拠が必要だ。  @Victoria  占い結果を示すか撤回して。 Shionのぶっきらぼうな口調が不安だ; 彼は議論を打ち切った。 Over",
+    "text": "私はノーリンチはしない—主張には証拠が必要だ。  @あの人  占い結果を示すか撤回して。 もう一人のぶっきらぼうな口調が不安だ; 彼は議論を打ち切った。 Over",
     "role": "BODYGUARD",
     "day": 1,
     "tags": [
@@ -1714,7 +1167,7 @@
     ]
   },
   {
-    "text": "ひとまず吊りはスキップしよう。  @Victoria  占い結果を見せるか、なぜ占い師を名乗ったのか説明して—証拠がなければ  信用しない。行動と投票を見ていく。Over",
+    "text": "ひとまず吊りはスキップしよう。  @あの人  占い結果を見せるか、なぜ占い師を名乗ったのか説明して—証拠がなければ  信用しない。行動と投票を見ていく。Over",
     "role": "BODYGUARD",
     "day": 1,
     "tags": [
@@ -1722,7 +1175,7 @@
     ]
   },
   {
-    "text": "@Victoria  今すぐ占い結果を出せ—できないなら  占い師COを撤回しろ。 他のみんな: 一行の考察と、誰に傾いているか。 Over",
+    "text": "@あの人  今すぐ占い結果を出せ—できないなら  占い師COを撤回しろ。 他のみんな: 一行の考察と、誰に傾いているか。 Over",
     "role": "BODYGUARD",
     "day": 1,
     "tags": [
@@ -1730,68 +1183,10 @@
     ]
   },
   {
-    "text": "@Victoria  あなたは占い師だと主張したのに占い結果を何も出していない—それは怪しい。証拠を示さないならあなたに投票する方に傾いている。実際に彼を支持している人",
+    "text": "@あの人  あなたは占い師だと主張したのに占い結果を何も出していない—それは怪しい。証拠を示さないならあなたに投票する方に傾いている。実際に彼を支持している人",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
-  },
-  {
-    "text": "こんにちは。私はMinatoです。私の役職は村人です。良いゲームを。",
-    "role": "BODYGUARD",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "私はJonathanに投票します。",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "私はJonathanに投票する。",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "私はShunichiに投票します。",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "私はTakumiに投票する。",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "以下は翻訳して欲しい文章です。 翻訳結果のみを出力してください。 私はMinakoに投票します。",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "私はMinakoに投票する。",
-    "role": "BODYGUARD",
-    "day": 4,
-    "tags": []
-  },
-  {
-    "text": "私はMinakoに投票します。",
-    "role": "BODYGUARD",
-    "day": 4,
-    "tags": []
-  },
-  {
-    "text": "タクミだよ！ドキドキだけど、いっぱい遊ぼうね！",
-    "role": "BODYGUARD",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
   },
   {
     "text": "まだ静かな人いるー？おしゃべりして宝物みつけようね！",
@@ -1824,31 +1219,31 @@
     "tags": []
   },
   {
-    "text": "ダリルさんがハナさん黒だって！ほんとかなー？ドキドキ！",
+    "text": "ダリルさんがあの人黒だって！ほんとかなー？ドキドキ！",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "ダリルさんがハナさん黒って！ドキドキだね！ほんとかなー？",
+    "text": "ダリルさんがあの人黒って！ドキドキだね！ほんとかなー？",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "ハナさんがクロ？ほんとー？ダリルさんどうしてわかるのー？",
+    "text": "あの人がクロ？ほんとー？ダリルさんどうしてわかるのー？",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "カナタさんがドッカンされちゃったね…！ リサさんリナさん、今の状況どう思う？",
+    "text": "カナタさんがドッカンされちゃったね…！ リサさんあの人、今の状況どう思う？",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "リサさんとリナさん、いまのようすどう思う？宝物さがし一緒にしよ！",
+    "text": "リサさんとあの人、いまのようすどう思う？宝物さがし一緒にしよ！",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
@@ -1872,48 +1267,34 @@
     "tags": []
   },
   {
-    "text": "リナさん！ぼくがむらびとさんて、なんでわかったの？",
+    "text": "あの人！ぼくがむらびとさんて、なんでわかったの？",
     "role": "BODYGUARD",
     "day": 4,
     "tags": []
   },
   {
-    "text": "@リナさん、どうしてぼくがむらびとさんてわかったのー？",
+    "text": "@あの人、どうしてぼくがむらびとさんてわかったのー？",
     "role": "BODYGUARD",
     "day": 4,
     "tags": []
   },
   {
-    "text": "リナさん、この前のこと聞きたいな！アヤさんとハナさんのお話もドキドキする！",
-    "role": "BODYGUARD",
-    "day": 4,
-    "tags": []
-  },
-  {
-    "text": "ドキドキ！ユウさん、リサさんが人狼さんて、どうしてわかったの？",
+    "text": "ドキドキ！あの人、リサさんが人狼さんて、どうしてわかったの？",
     "role": "BODYGUARD",
     "day": 5,
     "tags": []
   },
   {
-    "text": "ユウさん、リサさんが人狼さんてどうしてわかったの？ドキドキ教えて！",
+    "text": "あの人、リサさんが人狼さんてどうしてわかったの？ドキドキ教えて！",
     "role": "BODYGUARD",
     "day": 5,
     "tags": []
   },
   {
-    "text": "ねえ、@ユウさん！リサさんが人狼さんて、どうしてわかったの？ドキドキ教えて！",
+    "text": "ねえ、@あの人！リサさんが人狼さんて、どうしてわかったの？ドキドキ教えて！",
     "role": "BODYGUARD",
     "day": 5,
     "tags": []
-  },
-  {
-    "text": "ヴィクトリアですわ。書物を読むのが趣味です。",
-    "role": "BODYGUARD",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
   },
   {
     "text": "占い師の方は、早めに名乗り出るべきですわ。",
@@ -1940,49 +1321,37 @@
     "tags": []
   },
   {
-    "text": "霊媒師の方、ベンジャミンさんの結果は？",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "セルヴァスさん、ベンジャミン氏は人間でしたか。",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": []
-  },
-  {
     "text": "まだ情報が少ないゆえ、特定の誰かではなくグレーの方へ投票が賢明ですわね。",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "セルヴァス殿の結果を踏まえ、怪しき人物を見極めましょう。",
+    "text": "あの人殿の結果を踏まえ、怪しき人物を見極めましょう。",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "セルヴァス殿、シュンイチ氏は人狼でしたか。貴重な情報ですわね。",
+    "text": "あの人殿、もう一人は人狼でしたか。貴重な情報ですわね。",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "霊媒師殿へのミナコさんのご指摘、鋭いですね。",
+    "text": "霊媒師殿へのあの人のご指摘、鋭いですね。",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "ケンジ殿の発言について、私も疑問を感じますわ。",
+    "text": "あの人殿の発言について、私も疑問を感じますわ。",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "ミナコさんの指摘通り、ケンジ殿の発言は不自然ね。",
+    "text": "あの人の指摘通り、もう一人殿の発言は不自然ね。",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
@@ -2028,7 +1397,7 @@
     "tags": []
   },
   {
-    "text": "ぼくはタクミ、村人ですよぅ！よろしくですよぅ！",
+    "text": "ぼくはあの人、村人ですよぅ！よろしくですよぅ！",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -2054,13 +1423,13 @@
     "tags": []
   },
   {
-    "text": "アヤの言い分は理解できないですよぅ！",
+    "text": "あの人の言い分は理解できないですよぅ！",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "アヤさんの意見は理論的だと思いますよぅ！",
+    "text": "あの人の意見は理論的だと思いますよぅ！",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
@@ -2094,7 +1463,7 @@
     ]
   },
   {
-    "text": "ハナさん、挨拶とお気遣いありがとうございます。表情や発言の変化も注意深く確認します。@ハナ挨拶とお気遣いありがとうございます。表情や発言の変化も注意深く確認します。",
+    "text": "あの人、挨拶とお気遣いありがとうございます。表情や発言の変化も注意深く確認します。@あの人挨拶とお気遣いありがとうございます。表情や発言の変化も注意深く確認します。",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -2110,13 +1479,13 @@
     ]
   },
   {
-    "text": "ハルさん占いCO、エミルさん白。議論はカンタさん周辺。@カンタ全体印象整理を行います。",
+    "text": "あの人占いCO、エミルさん白。議論はカンタさん周辺。@カンタ全体印象整理を行います。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ハルさん占いCO、エミルさん白です。グレーで議論しましょう。",
+    "text": "あの人占いCO、エミルさん白です。グレーで議論しましょう。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
@@ -2170,13 +1539,13 @@
     "tags": []
   },
   {
-    "text": "冷静に整理します。占いはハルのみ。グレー精査重視。@マリご質問感謝。役職CO遅れを警戒しつつ進行します。",
+    "text": "冷静に整理します。占いはあの人のみ。グレー精査重視。@マリご質問感謝。役職CO遅れを警戒しつつ進行します。",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "真占はハルのみ。霊媒COなし。グレー精査重視。投票は矛盾に注目。@マリCO遅れによる混乱が心配。意見整理を重視するよ。",
+    "text": "真占はあの人のみ。霊媒COなし。グレー精査重視。投票は矛盾に注目。@マリCO遅れによる混乱が心配。意見整理を重視するよ。",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
@@ -2248,18 +1617,10 @@
     "tags": []
   },
   {
-    "text": "ユウが霊媒師を名乗っているから、アレクの発言がどうも信じきれないぜ。彼が偽占い師だと疑ってる。@ユウ君が見た情報を基に、アレクをどう思うか教えてくれ。やっぱ疑念が残るのが気になるぜ。",
+    "text": "あの人が霊媒師を名乗っているから、アレクの発言がどうも信じきれないぜ。彼が偽占い師だと疑ってる。@あの人が見た情報を基に、アレクをどう思うか教えてくれ。やっぱ疑念が残るのが気になるぜ。",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
-  },
-  {
-    "text": "私はリュウジだ。趣味は思索。…皆と共にこの遊戯を観測しよう。",
-    "role": "BODYGUARD",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
   },
   {
     "text": "占い師は観測結果を共有せよ。沈黙は不要だ。",
@@ -2292,7 +1653,7 @@
     "tags": []
   },
   {
-    "text": "シュンイチ氏の襲撃の意味を考察せねば。",
+    "text": "あの人の襲撃の意味を考察せねば。",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
@@ -2310,25 +1671,25 @@
     "tags": []
   },
   {
-    "text": "サクラは占い師だから、信頼できるよ。",
+    "text": "あの人は占い師だから、信頼できるよ。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "その通りだね、ユウの言うことはもっともだよ。でも、各自の意見を聞いて、考えを深めよう。@ユウ君の考えをもっと聞かせてほしいです。",
+    "text": "その通りだね、あの人の言うことはもっともだよ。でも、各自の意見を聞いて、考えを深めよう。@あの人の考えをもっと聞かせてほしいです。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "今日は皆の意見が気になるよ。サクラの信頼性をもっと掘り下げよう。疑わしい部分を見つけたいです。",
+    "text": "今日は皆の意見が気になるよ。あの人の信頼性をもっと掘り下げよう。疑わしい部分を見つけたいです。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "アベル、サクラを信じる理由が気になるよ。他の占い師との発言の違いも見逃せないよ。@アベルサクラの発言に疑問を抱くのは重要だね。君も意見を聞かせてほしいです。",
+    "text": "アベル、あの人を信じる理由が気になるよ。他の占い師との発言の違いも見逃せないよ。@アベルサクラの発言に疑問を抱くのは重要だね。君も意見を聞かせてほしいです。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
@@ -2366,7 +1727,7 @@
     "tags": []
   },
   {
-    "text": "@サクラ  あなたの「まずはCOを待って」という姿勢自体は標準的ですが、その後の具体案が何もありません。これから",
+    "text": "@あの人  あなたの「まずはCOを待って」という姿勢自体は標準的ですが、その後の具体案が何もありません。これから",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -2374,97 +1735,91 @@
     ]
   },
   {
-    "text": "@ジョナサン  あなたは「矛盾を感じる」と言いながら具体性を出さず、慎重アピールを繰り返すだけ。情報を出さない姿勢は",
+    "text": "@あの人  あなたは「矛盾を感じる」と言いながら具体性を出さず、慎重アピールを繰り返すだけ。情報を出さない姿勢は",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@シオン  あなたは@ジョナサンを白判定しましたが、昨日は「不透明さは容認し難い」と言っていた。その急な態度変更",
+    "text": "@あの人  あなたは@もう一人を白判定しましたが、昨日は「不透明さは容認し難い」と言っていた。その急な態度変更",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@ジョナサン  あなたは@ミヅキの発言を誤読して「私を白と占った」と言った。事実確認もせず疑念を投げるのは、混乱を狙",
+    "text": "@あの人  あなたは@もう一人の発言を誤読して「私を白と占った」と言った。事実確認もせず疑念を投げるのは、混乱を狙",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@サクラ  あなたは@ミヅキを「黒寄り」と言った後、すぐに@シオンを「狼か狂人寄り」と評価を変えた。この短期間で",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "@ダイスケ  あなたは「@ジョナサン周りは保留」と判断を先送りし、他人に吊り先を迫るだけ。自分の意見を出さず情報だ",
+    "text": "@あの人  あなたは「@もう一人周りは保留」と判断を先送りし、他人に吊り先を迫るだけ。自分の意見を出さず情報だ",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@ダイスケ  霊媒COが今のタイミングは遅すぎる。なぜ昨日の時点でCOしなかった？その説明がない限り信用できません",
+    "text": "@あの人  霊媒COが今のタイミングは遅すぎる。なぜ昨日の時点でCOしなかった？その説明がない限り信用できません",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@ダイスケ  あなたは「護衛と噛み避けで潜伏」と言うが、霊媒師なら吊り投票の判断材料として昨日COすべきだった。そ",
+    "text": "@あの人  あなたは「護衛と噛み避けで潜伏」と言うが、霊媒師なら吊り投票の判断材料として昨日COすべきだった。そ",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@ジョナサン  あなたは一貫して具体性を避け「参考程度」「見守ります」とだけ繰り返している。村人なら自分の考えを明確",
+    "text": "@あの人  あなたは一貫して具体性を避け「参考程度」「見守ります」とだけ繰り返している。村人なら自分の考えを明確",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "@ミヅキ  あなたは私を「真霊媒を貶めた」と言うが、私は単に遅すぎるCOに疑問を呈しただけだ。それを不遜と決めつ",
+    "text": "@あの人  あなたは私を「真霊媒を貶めた」と言うが、私は単に遅すぎるCOに疑問を呈しただけだ。それを不遜と決めつ",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "@ベンジャミン  霊媒師が潜伏する理由はない。吊り投票の判断材料を村に提供するのが役割だ。@ダイスケの「護衛と噛み避け",
+    "text": "@あの人  霊媒師が潜伏する理由はない。吊り投票の判断材料を村に提供するのが役割だ。@もう一人の「護衛と噛み避け",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "@ベンジャミン  霊媒師は吊り先を決める重要な情報を提供する役割だ。潜伏して情報を隠す行為は村の判断を誤らせる。それが",
+    "text": "@あの人  霊媒師は吊り先を決める重要な情報を提供する役割だ。潜伏して情報を隠す行為は村の判断を誤らせる。それが",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "@ベンジャミン  あなたは一貫して他人に質問するだけで、自分の意見や吊り先を明言しなかった。村人ならもっと積極的に判断",
+    "text": "@あの人  あなたは一貫して他人に質問するだけで、自分の意見や吊り先を明言しなかった。村人ならもっと積極的に判断",
     "role": "BODYGUARD",
     "day": 4,
     "tags": []
   },
   {
-    "text": "@ベンジャミン  最終日になってもあなたは質問だけで自分の意見を言わない。村人なら最後に自分の考えを示すべきだ。私はあ",
+    "text": "@あの人  最終日になってもあなたは質問だけで自分の意見を言わない。村人なら最後に自分の考えを示すべきだ。私はあ",
     "role": "BODYGUARD",
     "day": 4,
     "tags": []
   },
   {
-    "text": "@ベンジャミン  あなたは@ミドリが「@ベンジャミン投票」と宣言した後も、自分の意見を言わずに質問を続けている。村人な",
+    "text": "@あの人  あなたは@もう一人が「@あの人投票」と宣言した後も、自分の意見を言わずに質問を続けている。村人な",
     "role": "BODYGUARD",
     "day": 4,
     "tags": []
   },
   {
-    "text": "@ベンジャミン  あなたはようやく投票先を私に決めたが、その理由が「CO遅れが具体不足」だけでは弱い。私は一貫して具体",
+    "text": "@あの人  あなたはようやく投票先を私に決めたが、その理由が「CO遅れが具体不足」だけでは弱い。私は一貫して具体",
     "role": "BODYGUARD",
     "day": 4,
     "tags": []
   },
   {
-    "text": "@ジョナサン  賛成です。情報の開示は重要ですね。占い師の方は名乗り出ていただけますか。冷静に精査しましょう。",
+    "text": "@あの人  賛成です。情報の開示は重要ですね。占い師の方は名乗り出ていただけますか。冷静に精査しましょう。",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -2472,7 +1827,7 @@
     ]
   },
   {
-    "text": "@ジョナサン  同感です。挨拶よりも先に、占い師の方のCOを待ちましょう。村の盤面を固めるのが優先です。",
+    "text": "@あの人  同感です。挨拶よりも先に、占い師の方のCOを待ちましょう。村の盤面を固めるのが優先です。",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -2502,7 +1857,7 @@
     "tags": []
   },
   {
-    "text": "占い師2COですね。  @リン  @ミサキ 両名の占い理由を精査し、霊媒師のCOも確認したいです。",
+    "text": "占い師2COですね。  @あの人  @もう一人 両名の占い理由を精査し、霊媒師のCOも確認したいです。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
@@ -2514,31 +1869,25 @@
     "tags": []
   },
   {
-    "text": "霊媒COがないのは気になります。  @リュウジ  への不信感が強いようですが、グレー吊りを優先しますか？",
+    "text": "霊媒COがないのは気になります。  @あの人  への不信感が強いようですが、グレー吊りを優先しますか？",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "リンさん、白結果に感謝します。  @ミサキ  さん、GJの言及は自身の真を強調するためですか？昨日のシオン票の意図も再確認したいです。",
+    "text": "@あの人 さんは周囲からの質問に答えず、他者を誘導と断じるばかりで不透明です。理由なき投票は人狼の動き。",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@ミサキ さんは周囲からの質問に答えず、他者を誘導と断じるばかりで不透明です。理由なき投票は人狼の動き。",
+    "text": "@あの人 さんの根拠が弱く、不自然さが目立ちます。今日はあの人を追放し、内訳の確定を目指すべき。",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@ミサキ さんの根拠が弱く、不自然さが目立ちます。今日はミサキさんを追放し、内訳の確定を目指すべき。",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "@ミサキ さんは防戦一方で狼候補も挙げておらず、真偽は明白かと。村陣営の勝利のため、ミサキさんに投票。 Over",
+    "text": "@あの人 さんは防戦一方で狼候補も挙げておらず、真偽は明白かと。村陣営の勝利のため、あの人に投票。 Over",
     "role": "BODYGUARD",
     "day": 2,
     "tags": [
@@ -2546,25 +1895,25 @@
     ]
   },
   {
-    "text": "@リン さん、占い結果をお願いします。ミサキさんが偽だった場合、生存者の中に人狼が潜んでいるはずです。",
+    "text": "@あの人 さん、占い結果をお願いします。もう一人が偽だった場合、生存者の中に人狼が潜んでいるはずです。",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "リンさんの真を仮定すると、残る人狼はグレーの中。  @ジョナサン  さん、先ほどから静かですが意見を。",
+    "text": "あの人の真を仮定すると、残る人狼はグレーの中。  @もう一人  さん、先ほどから静かですが意見を。",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "@ジョナサン さんはミサキさんを追放した翌日にミサキ真を唱えており、非常に不自然。逃げ道を作っています。",
+    "text": "@あの人 さんはもう一人を追放した翌日にもう一人真を唱えており、非常に不自然。逃げ道を作っています。",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "私も @ジョナサン さんに投票します。ミサキ真再考は人狼側の攪乱と見ます。 Over",
+    "text": "私も @あの人 さんに投票します。もう一人真再考は人狼側の攪乱と見ます。 Over",
     "role": "BODYGUARD",
     "day": 3,
     "tags": [
@@ -2572,13 +1921,7 @@
     ]
   },
   {
-    "text": "リンさんの占いが連日襲撃先と重なるのは不自然ですが、今は生存者の中に狼がいると考えます。  @ケンジ  さん、@ヴィクトリア さん、お互いをどう見ていますか？",
-    "role": "BODYGUARD",
-    "day": 4,
-    "tags": []
-  },
-  {
-    "text": "@ヴィクトリア  さん、私を疑う具体的な理由を教えてください。事実に基づかない発言は、村を混乱させるだけです。 Over",
+    "text": "@あの人  さん、私を疑う具体的な理由を教えてください。事実に基づかない発言は、村を混乱させるだけです。 Over",
     "role": "BODYGUARD",
     "day": 4,
     "tags": [
@@ -2586,7 +1929,7 @@
     ]
   },
   {
-    "text": "冷静に考えましょう。リンさんは私を占っていません。  @ケンジ  さん、情報の誤認は危険です。 Over",
+    "text": "冷静に考えましょう。あの人は私を占っていません。  @もう一人  さん、情報の誤認は危険です。 Over",
     "role": "BODYGUARD",
     "day": 4,
     "tags": [
@@ -2594,7 +1937,7 @@
     ]
   },
   {
-    "text": "私は白です。  @ヴィクトリア  さんが頑なに私を吊ろうとするのは、他に標的を作りたいためでしょうか。 Over",
+    "text": "私は白です。  @あの人  さんが頑なに私を吊ろうとするのは、他に標的を作りたいためでしょうか。 Over",
     "role": "BODYGUARD",
     "day": 4,
     "tags": [
@@ -2602,79 +1945,61 @@
     ]
   },
   {
-    "text": "ユミさん把握。ミドリさんは意見の揺れが目立つかな",
+    "text": "あの人把握。もう一人は意見の揺れが目立つかな",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ヴィクトリアは結果が遅かった点で、今は少し偽寄りに見る。",
+    "text": "あの人は結果が遅かった点で、今は少し偽寄りに見る。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ユミ案に乗る。リン評価の反転が重く、今日はミドリ投票寄り。",
+    "text": "あの人の報告は一貫してる。今日は票替えが重いもう一人に入れる。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ユミの報告は一貫してる。今日は票替えが重いミドリに入れる。",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "ミヅキの占ロラ継続に賛成。リン襲撃で残占は信用低い。",
+    "text": "あの人の占ロラ継続に賛成。もう一人襲撃で残占は信用低い。",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "ベンジャミンに同意。ヴィクトリアは占い理由が薄く見える。",
+    "text": "あの人に同意。もう一人は占い理由が薄く見える。",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "ヴィクトリア疑い継続。ユミ真なら狼確定の飛躍が大きい。",
+    "text": "あの人疑い継続。もう一人真なら狼確定の飛躍が大きい。",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "ベンジャミンに同意。霊能への矛先は無理があるのでヴィクトリア投票。",
+    "text": "あの人に同意。霊能への矛先は無理があるのでもう一人投票。",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "ケンジへ、私はユミが気になる。発言の流れが不自然。",
+    "text": "ごめん、あの人寄りは黒寄りの意味。発言と票先のズレであの人見てる",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "ユミは発言と投票の流れが噛み合わない。私はユミ寄りで考える。",
+    "text": "ごめん、あの人疑いは発言と票先の食い違いまで。強めに見すぎた",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "ごめん、ユミ寄りは黒寄りの意味。発言と票先のズレでユミ見てる",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "ごめん、ユミ疑いは発言と票先の食い違いまで。強めに見すぎた",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "@ミオ  よろしく！僕も賛成。占い師さんが誰か分かれば、村の方針も決めやすくなると思うな！ Over",
+    "text": "@あの人  よろしく！僕も賛成。占い師さんが誰か分かれば、村の方針も決めやすくなると思うな！ Over",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -2683,7 +2008,7 @@
     ]
   },
   {
-    "text": "@リュウジ  まだ怪しい人は見つからないけど、みんなの話をしっかり聞いて考えるよ。頼りにしてるね！ Over",
+    "text": "@あの人  まだ怪しい人は見つからないけど、みんなの話をしっかり聞いて考えるよ。頼りにしてるね！ Over",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -2692,7 +2017,7 @@
     ]
   },
   {
-    "text": "@リュウジ  僕を白候補に選んでくれてありがとう！理由を聞けたら嬉しいな。みんなで協力して頑張ろうね！ Over",
+    "text": "@あの人  僕を白候補に選んでくれてありがとう！理由を聞けたら嬉しいな。みんなで協力して頑張ろうね！ Over",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -2701,7 +2026,7 @@
     ]
   },
   {
-    "text": "@ミドリ  @メイ 二人の意見も聞いてみたいな！誰か怪しいなって思う人はいる？みんなで話そうよ！ Over",
+    "text": "@あの人  @もう一人 二人の意見も聞いてみたいな！誰か怪しいなって思う人はいる？みんなで話そうよ！ Over",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -2710,7 +2035,7 @@
     ]
   },
   {
-    "text": "@メイ  @リュウジ 二人とも占い師なんだね！どっちが本物か、みんなでしっかり話し合って決めよう！ Over",
+    "text": "@あの人  @もう一人 二人とも占い師なんだね！どっちが本物か、みんなでしっかり話し合って決めよう！ Over",
     "role": "BODYGUARD",
     "day": 1,
     "tags": [
@@ -2718,7 +2043,7 @@
     ]
   },
   {
-    "text": "@ダイスケ  @ミドリ 二人のやり取りが気になるな。ミドリさん、もっとお話ししてくれたら嬉しいな！ Over",
+    "text": "@あの人  @もう一人 二人のやり取りが気になるな。もう一人、もっとお話ししてくれたら嬉しいな！ Over",
     "role": "BODYGUARD",
     "day": 1,
     "tags": [
@@ -2732,7 +2057,7 @@
     "tags": []
   },
   {
-    "text": "@ミオ  ミオさんが怪しまれてるけど、みんなの言うことも一理あるのかな。もう少しだけ様子を見たいな。 Over",
+    "text": "@あの人  あの人が怪しまれてるけど、みんなの言うことも一理あるのかな。もう少しだけ様子を見たいな。 Over",
     "role": "BODYGUARD",
     "day": 1,
     "tags": [
@@ -2740,7 +2065,7 @@
     ]
   },
   {
-    "text": "ミオさん、白だったんだ。間違えちゃってごめんなさい！  @メイ  占い師はメイさんだけだけど、どう？ Over",
+    "text": "あの人、白だったんだ。間違えちゃってごめんなさい！  @もう一人  占い師はもう一人だけだけど、どう？ Over",
     "role": "BODYGUARD",
     "day": 2,
     "tags": [
@@ -2748,7 +2073,7 @@
     ]
   },
   {
-    "text": "@アスカ  アスカさん、リュウジさんが真って断定するのは早い気がするよ。もっと慎重に考えよう！ Over",
+    "text": "@あの人  あの人、もう一人が真って断定するのは早い気がするよ。もっと慎重に考えよう！ Over",
     "role": "BODYGUARD",
     "day": 2,
     "tags": [
@@ -2756,7 +2081,7 @@
     ]
   },
   {
-    "text": "@シズエ  シズエさんの言う通り、アスカさんの考え方はちょっと不思議だね。僕もアスカさんかな。 Over",
+    "text": "@あの人  あの人の言う通り、もう一人の考え方はちょっと不思議だね。僕ももう一人かな。 Over",
     "role": "BODYGUARD",
     "day": 2,
     "tags": [
@@ -2764,19 +2089,11 @@
     ]
   },
   {
-    "text": "@アスカ さんがリュウジさんを真だと信じる理由がもっと知りたいな。じゃないと納得できないよ。 Over",
+    "text": "@あの人 さんがもう一人を真だと信じる理由がもっと知りたいな。じゃないと納得できないよ。 Over",
     "role": "BODYGUARD",
     "day": 2,
     "tags": [
       "over"
-    ]
-  },
-  {
-    "text": "ミナトだよ〜。えへへ、なんだか楽しそうだね",
-    "role": "BODYGUARD",
-    "day": 0,
-    "tags": [
-      "opening"
     ]
   },
   {
@@ -2796,7 +2113,7 @@
     ]
   },
   {
-    "text": "今日はアスカに投票かな〜。CO急ぎが気になるよ",
+    "text": "今日はあの人に投票かな〜。CO急ぎが気になるよ",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -2816,7 +2133,7 @@
     "tags": []
   },
   {
-    "text": "灰ならシュンイチくん気になるよ〜。霊吊り急ぎ、どきどき…",
+    "text": "灰ならあの人気になるよ〜。霊吊り急ぎ、どきどき…",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
@@ -2828,25 +2145,25 @@
     "tags": []
   },
   {
-    "text": "おはよ〜。メイ真めかな。ミヅキの結果、聞きたいよ @ミヅキ きょうの占い先と結果、お願いだよ〜",
+    "text": "おはよ〜。あの人真めかな。もう一人の結果、聞きたいよ @もう一人 きょうの占い先と結果、お願いだよ〜",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "霊黒うれしいよ〜！ミヅキの理由見たいな @ミヅキ 占い理由、やさしく教えて〜",
+    "text": "霊黒うれしいよ〜！あの人の理由見たいな @あの人 占い理由、やさしく教えて〜",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "タクミくん気になるかな。便乗探しが強すぎるよ〜 @タクミ セルヴァスくん黒めの決め手、もう少し聞きたいな",
+    "text": "あの人気になるかな。便乗探しが強すぎるよ〜 @あの人 もう一人黒めの決め手、もう少し聞きたいな",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "タクミくんに入れるよ〜。動きがこわい、黒めだよ",
+    "text": "あの人に入れるよ〜。動きがこわい、黒めだよ",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
@@ -2860,7 +2177,7 @@
     ]
   },
   {
-    "text": "@ジョナサン  占い理由が抽象的で判断しづらい。シュンイチの占い結果待ち。",
+    "text": "@あの人  占い理由が抽象的で判断しづらい。もう一人の占い結果待ち。",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -2868,7 +2185,7 @@
     ]
   },
   {
-    "text": "@ジョナサン  占い理由が抽象的で偽臭い。シュンイチ真寄りで見ています。",
+    "text": "@あの人  占い理由が抽象的で偽臭い。もう一人真寄りで見ています。",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -2876,7 +2193,7 @@
     ]
   },
   {
-    "text": "@ジョナサン  占い理由が弱い。偽占い師（狂人か人狼）の可能性が高いと見ています。",
+    "text": "@あの人  占い理由が弱い。偽占い師（狂人か人狼）の可能性が高いと見ています。",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -2884,73 +2201,37 @@
     ]
   },
   {
-    "text": "@シュンイチ  占い結果まだ？ジョナサン偽で見てるから、早く結果欲しい。",
+    "text": "@あの人  占い結果まだ？もう一人偽で見てるから、早く結果欲しい。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@シュンイチ  ミオ黒了解。ジョナサンは対抗占いで真薄い。今日はジョナサン投票で良いと思う。",
+    "text": "@あの人  対抗占いで理由薄い。狂人か人狼寄り。今日はあの人投票で。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@ジョナサン  対抗占いで理由薄い。狂人か人狼寄り。今日はジョナサン投票で。",
+    "text": "@あの人  人狼か狂人寄り。対抗占いと理由の薄さが決め手。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@ジョナサン  人狼か狂人寄り。対抗占いと理由の薄さが決め手。",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "@シュンイチ  真占い師と見ます。@ミオ 黒結果を重視して人狼候補と考えています。",
+    "text": "@あの人  真占い師と見ます。@もう一人 黒結果を重視して人狼候補と考えています。",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@ミオ  黒結果重視。@メイ シュンイチ批判が目立ち、ミオ庇いに見えます。",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "@シュンイチ  今日の占い結果をお願いします。@ミオ @メイ が人狼候補と考えています。",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "@ミオ  黒結果なので吊り推奨。@メイ シュンイチ疑いが強く人狼目に見える。",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "@アスカ  シュンイチ真ならあなたが人狼候補。発言変遷も気になる。",
+    "text": "@あの人  もう一人真ならあなたが人狼候補。発言変遷も気になる。",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "@メイ  シュンイチ偽確定。ミオ噛みでメイが一番得した。人狼目。",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "偽確定は言い過ぎました。ただ、真ならミオ噛みは矛盾。シュンイチ偽濃厚と判断。",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "シュンイチ真ならミオは人狼。人狼が仲間噛まない。だからシュンイチ偽。 @メイ  が最も噛み得で人狼目。",
+    "text": "偽確定は言い過ぎました。ただ、真ならあの人噛みは矛盾。もう一人偽濃厚と判断。",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
@@ -2972,7 +2253,7 @@
     ]
   },
   {
-    "text": "@ミオ  ちょっと失礼しすぎじゃない？ただ楽しんでるだけだよーw",
+    "text": "@あの人  ちょっと失礼しすぎじゃない？ただ楽しんでるだけだよーw",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -2980,7 +2261,7 @@
     ]
   },
   {
-    "text": "@ミオ  ひどーい！そんなに疑わなくてもいいじゃん。私はただの村人だよー",
+    "text": "@あの人  ひどーい！そんなに疑わなくてもいいじゃん。私はただの村人だよー",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -2988,103 +2269,97 @@
     ]
   },
   {
-    "text": "@ミオ  さっきから私のことばっか気にしすぎじゃない？ｗ 占い結果が先でしょー",
+    "text": "@あの人  さっきから私のことばっか気にしすぎじゃない？ｗ 占い結果が先でしょー",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@ミナコ  白出しありがとう！でもみんなが言ってる理由、早く教えてほしいなー",
+    "text": "@あの人  白出しありがとう！でもみんなが言ってる理由、早く教えてほしいなー",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@ミオ  相方の話？そんなの占い師さんが決めることでしょーｗ",
+    "text": "@あの人  相方の話？そんなの占い師さんが決めることでしょーｗ",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "みんなミナコ吊りっぽいねー。私も今日は  @ミナコ  に入れるよ",
+    "text": "みんなあの人吊りっぽいねー。私も今日は  @あの人  に入れるよ",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@ミヅキ  結果早く教えてよー。みんな待ってるし、気になっちゃうね",
+    "text": "@あの人  結果早く教えてよー。みんな待ってるし、気になっちゃうね",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@ミヅキ  霊媒師を占うのは確かにもったいないよねー。どういう意図だったのか教えて？",
+    "text": "@あの人  霊媒師を占うのは確かにもったいないよねー。どういう意図だったのか教えて？",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "みんな  @ミヅキ  吊りムードだねー。私もミヅキに票入れる方向でいいかな？",
+    "text": "みんな  @あの人  吊りムードだねー。私もあの人に票入れる方向でいいかな？",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "もういいよね。今日は  @ミヅキ  に入れるよー。説明納得できなかったし！",
+    "text": "もういいよね。今日は  @あの人  に入れるよー。説明納得できなかったし！",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@ユミ  さっきからみんなに聞かれてるけど、昨日の票はどういうつもりだったのー？",
+    "text": "@あの人  さっきからみんなに聞かれてるけど、昨日の票はどういうつもりだったのー？",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "@ユミ  全然答えてないよねー。この沈黙はかなり怪しくない？",
+    "text": "@あの人  全然答えてないよねー。この沈黙はかなり怪しくない？",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "もういいよね、今日は  @ユミ  吊りでいいと思うよー。言い訳ないし！",
+    "text": "もういいよね、今日は  @あの人  吊りでいいと思うよー。言い訳ないし！",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "@ジョージ  理由は簡単だよ。ユミの投票矛盾と沈黙が不自然すぎるから！今日はユミに入れるねー。",
+    "text": "@あの人  理由は簡単だよ。もう一人の投票矛盾と沈黙が不自然すぎるから！今日はもう一人に入れるねー。",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "@セルヴァス  無理やりすぎるよー。ミオはジョージに便乗して私を吊ろうとしてるのが気になるかな",
+    "text": "@あの人  追随なんてしてないし！もう一人の方が私のこと吊りたくて必死に見えるけどー？",
     "role": "BODYGUARD",
     "day": 4,
     "tags": []
   },
   {
-    "text": "@ジョージ  追随なんてしてないし！ミオの方が私のこと吊りたくて必死に見えるけどー？",
+    "text": "@あの人  相方像？もう一人が一番怪しいと思うよ。私を吊ろうと必死すぎて逆に不自然だし！",
     "role": "BODYGUARD",
     "day": 4,
     "tags": []
   },
   {
-    "text": "@ヴィクトリア  相方像？ミオが一番怪しいと思うよ。私を吊ろうと必死すぎて逆に不自然だし！",
+    "text": "@あの人  攻撃以外の根拠なんてないよ！だってもう一人が一番不自然なんだもん。今日はもう一人吊り！",
     "role": "BODYGUARD",
     "day": 4,
     "tags": []
   },
   {
-    "text": "@ジョージ  攻撃以外の根拠なんてないよ！だってミオが一番不自然なんだもん。今日はミオ吊り！",
-    "role": "BODYGUARD",
-    "day": 4,
-    "tags": []
-  },
-  {
-    "text": "ミヅキよ。議論が散らかっても大丈夫、一つずつ筋を通して見ていきましょう。曖昧な点はきっちり掘るわ。",
+    "text": "あの人よ。議論が散らかっても大丈夫、一つずつ筋を通して見ていきましょう。曖昧な点はきっちり掘るわ。",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -3092,103 +2367,73 @@
     ]
   },
   {
-    "text": "ちょっと待って。占いはセルヴァスとヴィクトリア、ここは見える。でも @シズエ 、結果を出さないまま様子見は筋が悪いわ。はっきりして。",
+    "text": "ちょっと待って。霊媒のはずの @あの人 が「黒反応を見る」って発想はかなり不自然よ。今日はそこを詰めたいわ。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ちょっと待って。霊媒のはずの @ミドリ が「黒反応を見る」って発想はかなり不自然よ。今日はそこを詰めたいわ。",
+    "text": "ちょっと待って。霊媒で「黒結果を見る」発想はやっぱり筋が通らないわ。私は今日は @あの人 投票が一番盤面が進むと思ってる。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ちょっと待って。霊媒で「黒結果を見る」発想はやっぱり筋が通らないわ。私は今日は @ミドリ 投票が一番盤面が進むと思ってる。",
+    "text": "ちょっと待って。霊媒で「黒反応を見る」はやっぱり筋が通らないわ。今日は @あの人 投票。占いの真偽は明日きちんと詰めましょう。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ちょっと待って。霊媒で「黒反応を見る」はやっぱり筋が通らないわ。今日は @ミドリ 投票。占いの真偽は明日きちんと詰めましょう。",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "ちょっと待って。セルヴァスだけ結果が出てないのはさすがに不自然よ。",
+    "text": "ちょっと待って。あの人だけ結果が出てないのはさすがに不自然よ。",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "ちょっと待って。 @シズエ の「噛まれた」発言、あれはかなり視点が歪んで見えるわ。",
+    "text": "ちょっと待って。 @あの人 の「噛まれた」発言、あれはかなり視点が歪んで見えるわ。",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@ベンジャミン 黒判定に後出し騎士COはさすがに苦しいわ。盤面全体で見ても不自然。今日はここ投票で進めたい。",
+    "text": "@あの人 黒判定に後出し騎士COはさすがに苦しいわ。盤面全体で見ても不自然。今日はここ投票で進めたい。",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "結論言うわ。今日は @ベンジャミン 投票。黒判定に後出し騎士CO、整合が弱い。ここを先に処理するべきよ。",
+    "text": "結論言うわ。今日は @あの人 投票。黒判定に後出し騎士CO、整合が弱い。ここを先に処理するべきよ。",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "犠牲なしは占い噛み失敗の線が濃いわね。なら占い即投票は早い。 @トシオ 、シズエの失言だけで断定は少し雑に見えるわ。もう一度盤面を見たい。",
+    "text": "犠牲なしは占い噛み失敗の線が濃いわね。なら占い即投票は早い。 @あの人 、もう一人の失言だけで断定は少し雑に見えるわ。もう一度盤面を見たい。",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "ちょっと待って。 @ヴィクトリア はセルヴァス狂人断定なのに、セルヴァスはあなたに黒出しよね。",
+    "text": "ちょっと待って。 @あの人 はもう一人狂人断定なのに、もう一人はあなたに黒出しよね。",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "盤面広く見ると、セルヴァスの黒連打は内訳かなり苦しいのよ。ここ整理しないと前に進まないわ。",
+    "text": "盤面広く見ると、あの人の黒連打は内訳かなり苦しいのよ。ここ整理しないと前に進まないわ。",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "結論出すわ。私は今日は**セルヴァス投票**。黒連打で内訳が苦しすぎるのよ。",
+    "text": "結論出すわ。私は今日は**あの人投票**。黒連打で内訳が苦しすぎるのよ。",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "ミサキ白確定なら、残りは実質トシオとリンの動きが鍵ね。 @トシオ 昨日から狼位置が見えないのよ。今日は誰を本線で見てる？",
-    "role": "BODYGUARD",
-    "day": 4,
-    "tags": []
-  },
-  {
-    "text": "ちょっと待って。ヴィクトリア真で見るなら、白はミサキとトシオ。残りはシズエとリンよ。 @リン 様子見はさすがに曖昧すぎる、立場はっきりさせて。",
-    "role": "BODYGUARD",
-    "day": 4,
-    "tags": []
-  },
-  {
-    "text": "ヴィクトリア真前提なら狼はシズエかリンよ。 @リン さっきトシオ狼視だったのに今は？そこ筋通して説明して。",
-    "role": "BODYGUARD",
-    "day": 4,
-    "tags": []
-  },
-  {
-    "text": "結論言うわ。私はリン投票。トシオ白出てるのに狼視→修正、その筋の通らなさが一番黒い。",
-    "role": "BODYGUARD",
-    "day": 4,
-    "tags": []
-  },
-  {
-    "text": "ミナコだ。趣味は鍛錬、好物はコーヒー。皆の平穏を守るため、全力を尽くすと誓おう。",
+    "text": "あの人だ。趣味は鍛錬、好物はコーヒー。皆の平穏を守るため、全力を尽くすと誓おう。",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -3196,13 +2441,13 @@
     ]
   },
   {
-    "text": "@ミオ 、早急に結果を報告せよ。判断材料が欠けていては、平穏は守れない。",
+    "text": "@あの人 、早急に結果を報告せよ。判断材料が欠けていては、平穏は守れない。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "占い3名は真狼狂。盤面把握を誤り情報を隠す不実なシオン。君を、私は処刑候補とする。",
+    "text": "占い3名は真狼狂。盤面把握を誤り情報を隠す不実なあの人。君を、私は処刑候補とする。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
@@ -3214,79 +2459,67 @@
     "tags": []
   },
   {
-    "text": "シオン、盤面把握を誤り論理が破綻している者に真は務まらぬ。今日は君を処刑すべきだ。",
+    "text": "あの人、盤面把握を誤り論理が破綻している者に真は務まらぬ。今日は君を処刑すべきだ。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "GJ、驚いたが素晴らしい成果だ。平穏を守るため、不審なリュウジからローラーを。",
+    "text": "GJ、驚いたが素晴らしい成果だ。平穏を守るため、不審なあの人からローラーを。",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@リュウジ  私を白と呼んでも矛盾は消えぬ。道理に背く君から処刑を始めよう。",
+    "text": "@あの人  私を白と呼んでも矛盾は消えぬ。道理に背く君から処刑を始めよう。",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "言葉を翻し混乱を招く行為は看過できぬ。皆、平穏のため今日の投票はリュウジに。",
+    "text": "言葉を翻し混乱を招く行為は看過できぬ。皆、平穏のため今日の投票はあの人に。",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@リュウジ  意図がどうあれ言葉の破綻は看過できない。安寧のため君を処刑しよう。",
+    "text": "@あの人  意図がどうあれ言葉の破綻は看過できない。安寧のため君を処刑しよう。",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "おはよう。皆、冷静に。メイ、不審なリュウジは処刑した。今はミオの結果を聞くべきだ。",
+    "text": "あの人、真実から目を逸らしてはならない。真の導き手たるもう一人を処刑するなど暴論だ。",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "メイ、真実から目を逸らしてはならない。真の導き手たるミオを処刑するなど暴論だ。",
+    "text": "@あの人  、道理なきロラ主張は看過できぬ。真実を歪める君こそ、今日の処刑に値する。",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "@メイ  、道理なきロラ主張は看過できぬ。真実を歪める君こそ、今日の処刑に値する。",
+    "text": "@あの人  安寧を乱すロラは認めない。君を処刑し、占いによる真実の究明を優先すべきだ。",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "@メイ  安寧を乱すロラは認めない。君を処刑し、占いによる真実の究明を優先すべきだ。",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "私が騎士だ。初日はミオを護衛した。真の彼女と白のケンジ以外、ミナトが人狼だ。",
+    "text": "あの人殿の真実は私の守護が証明している。 @もう一人  、君を処刑し安寧を取り戻そう。",
     "role": "BODYGUARD",
     "day": 4,
     "tags": []
   },
   {
-    "text": "ミオ殿の真実は私の守護が証明している。 @ミナト  、君を処刑し安寧を取り戻そう。",
+    "text": "@あの人  案ずるな。君を処刑し安寧が戻れば、もはや誰を守るかなど問うに及ばない。",
     "role": "BODYGUARD",
     "day": 4,
     "tags": []
   },
   {
-    "text": "@ミナト  案ずるな。君を処刑し安寧が戻れば、もはや誰を守るかなど問うに及ばない。",
-    "role": "BODYGUARD",
-    "day": 4,
-    "tags": []
-  },
-  {
-    "text": "ジョージだ。古い目だが見落とさん…よろしく頼む。",
+    "text": "あの人だ。古い目だが見落とさん…よろしく頼む。",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -3294,49 +2527,49 @@
     ]
   },
   {
-    "text": "ふむ…ミオに呼ばれたので出る。今日は黒判定への反応を見る。 @ミオ 静かだったのはすまん。以後は根拠を添える。",
+    "text": "ふむ…あの人に呼ばれたので出る。今日は黒判定への反応を見る。 @あの人 静かだったのはすまん。以後は根拠を添える。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ふむ…タクミ占い扱いは発言変遷が崩れた。ジョナサン処刑だ。 @ジョナサン 誤認なら誰の占い結果を指したのか答えなさい。",
+    "text": "ふむ…あの人占い扱いは発言変遷が崩れた。もう一人処刑だ。 @もう一人 誤認なら誰の占い結果を指したのか答えなさい。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ふむ…直近のサクラ黒寄りは逃げに見える。処刑でよい。",
+    "text": "ふむ…直近のあの人黒寄りは逃げに見える。処刑でよい。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ふむ。ジョナサンでよい。直近の追随姿勢は残せん。 @シズエ 票割れなら君も候補だ。質問だけでは弱い。",
+    "text": "ふむ。あの人でよい。直近の追随姿勢は残せん。 @もう一人 票割れなら君も候補だ。質問だけでは弱い。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ふむ。メイの追及を受けて便乗位置と票先を見る。",
+    "text": "ふむ。あの人の追及を受けて便乗位置と票先を見る。",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "うーむ。黒判定とメイ投票ならシズエ処刑でよい。",
+    "text": "うーむ。黒判定とあの人投票ならもう一人処刑でよい。",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "うーむ。シズエはメイ投票理由を出さず対案へ逸れた。処刑でよい。",
+    "text": "うーむ。あの人はもう一人投票理由を出さず対案へ逸れた。処刑でよい。",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "ふむ。シズエの返答は質問返しで、黒判定への弁明ではない。処刑でよい。",
+    "text": "ふむ。あの人の返答は質問返しで、黒判定への弁明ではない。処刑でよい。",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
@@ -3350,7 +2583,7 @@
     ]
   },
   {
-    "text": "ミヅキさんが単独なら、まずはその方を信じて進めるのが合理的でしょうね。",
+    "text": "あの人が単独なら、まずはその方を信じて進めるのが合理的でしょうね。",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -3358,7 +2591,7 @@
     ]
   },
   {
-    "text": "さて、 @ミヅキ  さん。誰を占うつもりか、考えを聞かせてもらえますか。",
+    "text": "さて、 @あの人  さん。誰を占うつもりか、考えを聞かせてもらえますか。",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -3366,7 +2599,7 @@
     ]
   },
   {
-    "text": "ミオさんの話題もいいですが、今は  @ミヅキ  さんの回答を待ちましょうか。",
+    "text": "あの人の話題もいいですが、今は  @もう一人  さんの回答を待ちましょうか。",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -3374,55 +2607,55 @@
     ]
   },
   {
-    "text": "占い2COか。 @ミドリ  さん、あえて今出た理由を詳しく聞かせてもらえますか？",
+    "text": "占い2COか。 @あの人  さん、あえて今出た理由を詳しく聞かせてもらえますか？",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@ミオ  さん、占いCOのタイミングがかなり遅いですね。理由を説明してもらえますか？",
+    "text": "@あの人  さん、占いCOのタイミングがかなり遅いですね。理由を説明してもらえますか？",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "議論の流れ的に、今日は  @ミオ  吊りが妥当そうですね。理由が不十分すぎます。",
+    "text": "議論の流れ的に、今日は  @あの人  吊りが妥当そうですね。理由が不十分すぎます。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "根拠のない急襲は不自然ですね。私も今日は  @ミオ  に入れます。",
+    "text": "根拠のない急襲は不自然ですね。私も今日は  @あの人  に入れます。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@ミドリ  占いCOありがとうございます。ジョナサンさんが白なら、盤面はかなり絞られますね。",
+    "text": "@あの人  占いCOありがとうございます。もう一人が白なら、盤面はかなり絞られますね。",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@ユミ  急に私ですか。誘導感と言われても困りますね。根拠を具体的に教えていただけますか？",
+    "text": "@あの人  急に私ですか。誘導感と言われても困りますね。根拠を具体的に教えていただけますか？",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@ユミ  根拠なく私を吊ろうとする方が、よほど誘導的に見えますが？",
+    "text": "@あの人  根拠なく私を吊ろうとする方が、よほど誘導的に見えますが？",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "根拠なく私に票を集める流れは不自然すぎます。 @ミドリ  さん、冷静に判断してください。",
+    "text": "根拠なく私に票を集める流れは不自然すぎます。 @あの人  さん、冷静に判断してください。",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "わたしユミだよ！よろしくね。占い師さんCOあるかなぁ？",
+    "text": "@あの人  占い理由もお願い！わたしは発言少なめの子占いがいいかなぁ",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -3430,15 +2663,7 @@
     ]
   },
   {
-    "text": "@メイ  占い理由もお願い！わたしは発言少なめの子占いがいいかなぁ",
-    "role": "BODYGUARD",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "@サクラ  0日目は無理吊りしたくないかなぁ。情報薄い子に質問増やそ！",
+    "text": "@あの人  0日目は無理吊りしたくないかなぁ。情報薄い子に質問増やそ！",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -3454,103 +2679,91 @@
     ]
   },
   {
-    "text": "うんうん、まず @メイ の占い理由聞きたい！リュウジくん白は把握だよね",
+    "text": "うんうん、まず @あの人 の占い理由聞きたい！もう一人白は把握だよね",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@メイ  その理由だと誰でも白にできそうで不安かなぁ。@ジョナサン も理由詳しく！",
+    "text": "@あの人  その理由だと誰でも白にできそうで不安かなぁ。@もう一人 も理由詳しく！",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "うーん占いは今ジョナサンくんの方が怪しいかなぁ。今日はジョナサンくん寄りで見るね",
+    "text": "うーん占いは今あの人の方が怪しいかなぁ。今日はあの人寄りで見るね",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "@ジョナサン  に入れるね。Day0の占い3発言の説明ないのが一番かなぁ、ごめんね",
+    "text": "@あの人  に入れるね。Day0の占い3発言の説明ないのが一番かなぁ、ごめんね",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "えっジョナサンくん白…ごめん。 @メイ  今日は占い結果と理由すぐ出してほしいな！",
+    "text": "えっあの人白…ごめん。 @もう一人  今日は占い結果と理由すぐ出してほしいな！",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@リュウジ  えっとね、なんでタクミくん投票？霊結果出てて筋通ってると思うよ…",
+    "text": "@あの人  えっとね、なんでもう一人投票？霊結果出てて筋通ってると思うよ…",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "今日は @メイ  吊りでいいと思う！霊欠け言い出すの苦しいよね…リュウジくんも明日見よ！",
+    "text": "今日は @あの人  吊りでいいと思う！霊欠け言い出すの苦しいよね…もう一人も明日見よ！",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "@メイ  に投票するね。ごめん、霊欠け主張は無理があると思うよ",
+    "text": "@あの人  に投票するね。ごめん、霊欠け主張は無理があると思うよ",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "メイちゃん狂人かぁ…じゃあ狼1だよね。 @リュウジ  タクミ投票の理由もう一回聞かせて！",
+    "text": "えっと… @あの人  今日ももう一人投票なの？それもう勝ち筋なくないかなぁ…理由出してほしいよ！",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "えっと… @リュウジ  今日もタクミくん投票なの？それもう勝ち筋なくないかなぁ…理由出してほしいよ！",
+    "text": "GJ出てるし今日は安全にいこ！あの人真で進めたい。もう一人の説明なければ吊り賛成…",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "GJ出てるし今日は安全にいこ！タクミくん真で進めたい。リュウジくんの説明なければ吊り賛成…",
+    "text": "@あの人  に投票するね。もう一人噛めないで吊りに来てる感じがするよ…ごめん！",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "@リュウジ  に投票するね。タクミくん噛めないで吊りに来てる感じがするよ…ごめん！",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "うわ…リュウジくん狼だったんだ。残り1狼！ @サクラ  ダイスケくん白寄りにした理由教えてほしいな",
+    "text": "@あの人  うん、でももう一人疑いはどの発言から？そこ具体的にないと不安だよね…",
     "role": "BODYGUARD",
     "day": 4,
     "tags": []
   },
   {
-    "text": "@サクラ  うん、でもミナコちゃん疑いはどの発言から？そこ具体的にないと不安だよね…",
+    "text": "あの人の理由薄めはあるけど、もう一人の疑い先移動が急すぎる気がする…今日はもう一人かな",
     "role": "BODYGUARD",
     "day": 4,
     "tags": []
   },
   {
-    "text": "ミナコちゃんの理由薄めはあるけど、サクラちゃんの疑い先移動が急すぎる気がする…今日はサクラちゃんかな",
+    "text": "@あの人  に投票するね。最後の霊疑いは苦しそうで、狼の逃げ道に見えちゃうよ…ごめん！",
     "role": "BODYGUARD",
     "day": 4,
     "tags": []
   },
   {
-    "text": "@サクラ  に投票するね。最後の霊疑いは苦しそうで、狼の逃げ道に見えちゃうよ…ごめん！",
-    "role": "BODYGUARD",
-    "day": 4,
-    "tags": []
-  },
-  {
-    "text": "@トシオ  殿に同意じゃ。役職の有無を確かめ、占い方針を定めて軸を据えるのが村の利となろう。 Over",
+    "text": "@あの人  殿に同意じゃ。役職の有無を確かめ、占い方針を定めて軸を据えるのが村の利となろう。 Over",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -3559,7 +2772,7 @@
     ]
   },
   {
-    "text": "@トシオ  殿に重ねて募る。 @ミドリ 殿、 @サクラ 殿のCOは無いようじゃが、見間違いかの。 Over",
+    "text": "@あの人  殿、落ち着いてログを見るのじゃ。もう一人殿のCOなど存在せぬ。事実を正し、役職者は名乗りを。 Over",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -3568,7 +2781,7 @@
     ]
   },
   {
-    "text": "@ミドリ  殿、落ち着いてログを見るのじゃ。サクラ殿のCOなど存在せぬ。事実を正し、役職者は名乗りを。 Over",
+    "text": "@あの人  殿に同意じゃ。 @もう一人 殿の件は一旦置き、役職COの有無を。沈黙する者も意見を頼む。 Over",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -3577,16 +2790,7 @@
     ]
   },
   {
-    "text": "@トシオ  殿に同意じゃ。 @ミドリ 殿の件は一旦置き、役職COの有無を。沈黙する者も意見を頼む。 Over",
-    "role": "BODYGUARD",
-    "day": 0,
-    "tags": [
-      "opening",
-      "over"
-    ]
-  },
-  {
-    "text": "@タクミ  殿に同意じゃ。 @ミドリ 殿の矛盾は明白。追及は終え、役職者は早急に名乗り出るのじゃ。 Over",
+    "text": "@あの人  殿に同意じゃ。 @もう一人 殿の矛盾は明白。追及は終え、役職者は早急に名乗り出るのじゃ。 Over",
     "role": "BODYGUARD",
     "day": 1,
     "tags": [
@@ -3594,7 +2798,7 @@
     ]
   },
   {
-    "text": "占霊の出揃い、承知した。  @ダイスケ  殿、対抗はあるか。 @シュンイチ 殿、選定の理由と次の方針を。 Over",
+    "text": "占霊の出揃い、承知した。  @あの人  殿、対抗はあるか。 @もう一人 殿、選定の理由と次の方針を。 Over",
     "role": "BODYGUARD",
     "day": 1,
     "tags": [
@@ -3602,23 +2806,7 @@
     ]
   },
   {
-    "text": "@ダイスケ  殿、対抗は無しか。 @シュンイチ 殿、占いの理由と今後を。 @ミドリ 殿、己の矛盾を語られよ。 Over",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": [
-      "over"
-    ]
-  },
-  {
-    "text": "@ミドリ  殿、弁明放棄は偽の証左じゃ。 @ダイスケ 殿、対抗は。 @シュンイチ 殿、占いの方針を。 Over",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": [
-      "over"
-    ]
-  },
-  {
-    "text": "襲撃なしか、GJかの。  @シュンイチ  殿、結果を。 @タクミ 殿に同意じゃ、 @ダイスケ 殿は意見を。 Over",
+    "text": "@あの人  殿、判定重複の意図を説かれよ。 @もう一人 殿、沈黙は己を縛る縄となろう。議論への参加を。 Over",
     "role": "BODYGUARD",
     "day": 2,
     "tags": [
@@ -3626,7 +2814,7 @@
     ]
   },
   {
-    "text": "@シュンイチ  殿、ミナト殿への白は昨日と同じじゃが、意図があるのかの。 @ダイスケ 殿、沈黙は村利を損なうぞ。 Over",
+    "text": "@あの人  殿の沈黙は残念じゃが吊りも道理。 @もう一人 殿、明日は未占いの者を頼むぞ。 Over",
     "role": "BODYGUARD",
     "day": 2,
     "tags": [
@@ -3634,23 +2822,7 @@
     ]
   },
   {
-    "text": "@シュンイチ  殿、判定重複の意図を説かれよ。 @ダイスケ 殿、沈黙は己を縛る縄となろう。議論への参加を。 Over",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": [
-      "over"
-    ]
-  },
-  {
-    "text": "@ダイスケ  殿の沈黙は残念じゃが吊りも道理。 @シュンイチ 殿、明日は未占いの者を頼むぞ。 Over",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": [
-      "over"
-    ]
-  },
-  {
-    "text": "二夜続けての平穏、GJであれば大きな利じゃ。  @シュンイチ  殿、最新の結果と選定理由を。縄には余裕があるぞ。 Over",
+    "text": "二夜続けての平穏、GJであれば大きな利じゃ。  @あの人  殿、最新の結果と選定理由を。縄には余裕があるぞ。 Over",
     "role": "BODYGUARD",
     "day": 3,
     "tags": [
@@ -3658,7 +2830,7 @@
     ]
   },
   {
-    "text": "@シュンイチ  殿、三度の同一判定は公約違反じゃ。 @トシオ 殿、サクラ殿を黒とする根拠を語られよ。 Over",
+    "text": "@あの人  殿、霊媒以外にもう一人殿を黒とする根拠は？縄には余裕がある。焦らず役職の真偽を正すべきじゃ。 Over",
     "role": "BODYGUARD",
     "day": 3,
     "tags": [
@@ -3666,7 +2838,7 @@
     ]
   },
   {
-    "text": "@トシオ  殿、霊媒以外にサクラ殿を黒とする根拠は？縄には余裕がある。焦らず役職の真偽を正すべきじゃ。 Over",
+    "text": "二夜の平穏で縄は五つ。焦りは禁物じゃ。  @あの人  殿と @もう一人 殿、精査が必要じゃの。 Over",
     "role": "BODYGUARD",
     "day": 3,
     "tags": [
@@ -3674,15 +2846,7 @@
     ]
   },
   {
-    "text": "二夜の平穏で縄は五つ。焦りは禁物じゃ。  @シュンイチ  殿と @トシオ 殿、精査が必要じゃの。 Over",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": [
-      "over"
-    ]
-  },
-  {
-    "text": "三夜の平穏で縄は五つ。  @シュンイチ  殿の白は有難いが、重複後の急変は不自然じゃ。役職ロラで盤面を清そう。 Over",
+    "text": "三夜の平穏で縄は五つ。  @あの人  殿の白は有難いが、重複後の急変は不自然じゃ。役職ロラで盤面を清そう。 Over",
     "role": "BODYGUARD",
     "day": 4,
     "tags": [
@@ -3690,7 +2854,7 @@
     ]
   },
   {
-    "text": "@タクミ  殿、縄は五つ。 @シュンイチ 殿の白は懐柔じゃ。役職ロラこそ勝利への近道。盤面を清めよ。 Over",
+    "text": "@あの人  殿、縄は五つ。 @もう一人 殿の白は懐柔じゃ。役職ロラこそ勝利への近道。盤面を清めよ。 Over",
     "role": "BODYGUARD",
     "day": 4,
     "tags": [
@@ -3698,7 +2862,7 @@
     ]
   },
   {
-    "text": "縄は五つ。  @シュンイチ  殿の判定重複と私への即投票は矛盾じゃ。ロラこそが安全な道であろう。 Over",
+    "text": "縄は五つ。  @あの人  殿の判定重複と私への即投票は矛盾じゃ。ロラこそが安全な道であろう。 Over",
     "role": "BODYGUARD",
     "day": 4,
     "tags": [
@@ -3706,13 +2870,13 @@
     ]
   },
   {
-    "text": "@タクミ  殿、灰の件はわしの不徳じゃ。だが白のわしを吊る矛盾は看過できん。サクラ殿を追及すべきじゃ。",
+    "text": "@あの人  殿、灰の件はわしの不徳じゃ。だが白のわしを吊る矛盾は看過できん。もう一人殿を追及すべきじゃ。",
     "role": "BODYGUARD",
     "day": 4,
     "tags": []
   },
   {
-    "text": "わしはセルヴァスじゃ。穏やかに、皆で知恵を出し合って進めていこうではないか。",
+    "text": "わしはあの人じゃ。穏やかに、皆で知恵を出し合って進めていこうではないか。",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -3744,49 +2908,49 @@
     ]
   },
   {
-    "text": "ミサキ殿がジョナサン殿を白と見たのう、まずはこの情報を信じて進めてよいじゃろうか。",
+    "text": "あの人殿がもう一人殿を白と見たのう、まずはこの情報を信じて進めてよいじゃろうか。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "霊能者が二人も出るとは驚いたのう、ユミ殿はどう考えられるか聞かせてくれんか。",
+    "text": "霊能者が二人も出るとは驚いたのう、あの人殿はどう考えられるか聞かせてくれんか。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ミドリ殿の言い分には少し無理があるようじゃのう、皆はどう思うか。",
+    "text": "あの人殿の言い分には少し無理があるようじゃのう、皆はどう思うか。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ミドリ殿は説明を避け、すぐに他者を疑っておるな。これは少々不自然じゃ。",
+    "text": "あの人殿は説明を避け、すぐに他者を疑っておるな。これは少々不自然じゃ。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "わしは騎士じゃ！ミサキ殿は嘘を言っておる、彼女こそが人狼なのじゃ！",
+    "text": "わしは騎士じゃ！あの人殿は嘘を言っておる、彼女こそが人狼なのじゃ！",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "わしを黒と見たミサキ殿こそ偽物じゃ、彼女を追放して真偽を確かめるべきじゃろう！",
+    "text": "わしを黒と見たあの人殿こそ偽物じゃ、彼女を追放して真偽を確かめるべきじゃろう！",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "わしを人狼と決めつけたミサキ殿の嘘を暴くため、彼女を吊るべきじゃ！",
+    "text": "わしを人狼と決めつけたあの人殿の嘘を暴くため、彼女を吊るべきじゃ！",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "わしは騎士じゃぞ！ミサキ殿こそが偽物であり、人狼であることは明白じゃ！",
+    "text": "わしは騎士じゃぞ！あの人殿こそが偽物であり、人狼であることは明白じゃ！",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
@@ -3824,25 +2988,25 @@
     ]
   },
   {
-    "text": "おはよう。占い結果はシズエ白だ。霊媒はまだか、様子見だね",
+    "text": "おはよう。占い結果はあの人白だ。霊媒はまだか、様子見だね",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "リュウジ霊能は出方が自然か見たいね",
+    "text": "あの人霊能は出方が自然か見たいね",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ミオの否定理由が曖昧だね。アスカ無言も説明求めたい。",
+    "text": "あの人の否定理由が曖昧だね。もう一人無言も説明求めたい。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ミオは確定否定の根拠を具体化してほしいね。アスカ沈黙も説明求めるだろう",
+    "text": "あの人は確定否定の根拠を具体化してほしいね。もう一人沈黙も説明求めるだろう",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
@@ -3854,43 +3018,43 @@
     "tags": []
   },
   {
-    "text": "ダイスケは時系列を明確にしてくれ。昨夜同一表現で矛盾だ。",
+    "text": "あの人は時系列を明確にしてくれ。昨夜同一表現で矛盾だ。",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "ケンジは偽断定が早い。ミナコも誘導気になるだね",
+    "text": "あの人は偽断定が早い。もう一人も誘導気になるだね",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "ケンジの偽断定は早いね、根拠を比べたいだろう",
+    "text": "あの人の偽断定は早いね、根拠を比べたいだろう",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "おはよう。ミオの守り成功、根拠と占霊整合を確認したい",
+    "text": "おはよう。あの人の守り成功、根拠と占霊整合を確認したい",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "ミオの騎士COは占霊整合が最優先だね",
+    "text": "あの人の騎士COは占霊整合が最優先だね",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "ケンジ、ミナコ黒の根拠を具体的に頼みたいだろう",
+    "text": "あの人、もう一人黒の根拠を具体的に頼みたいだろう",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "私にはミオの騎士COが後出しに見える、吊りたいだろう",
+    "text": "私にはあの人の騎士COが後出しに見える、吊りたいだろう",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
@@ -3904,7 +3068,7 @@
     ]
   },
   {
-    "text": "今日はベンジャミンさんへ投票しようと思います。皆さんの意見も聞かせてくださいね。矛盾点を洗い出したい",
+    "text": "今日はあの人へ投票しようと思います。皆さんの意見も聞かせてくださいね。矛盾点を洗い出したい",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -3920,7 +3084,7 @@
     ]
   },
   {
-    "text": "@シオン  具体的な理由がない限り、私はあなたを疑うのは苦手だ。根拠なく吊る形になる点が気になるんだよ。投票履歴",
+    "text": "@あの人  具体的な理由がない限り、私はあなたを疑うのは苦手だ。根拠なく吊る形になる点が気になるんだよ。投票履歴",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -3928,13 +3092,7 @@
     ]
   },
   {
-    "text": "@シオン  主張に違和感を感じます。矛盾点を洗い出したい。感情論で結論を急がない。発言の整合性を重視したい。投票",
-    "role": "BODYGUARD",
-    "day": 1,
-    "tags": []
-  },
-  {
-    "text": "@ダイスケ  タクミ白。シオンとトシオ、両方占った?理由具体聞こうぜ。矛盾点を洗い出したい。投票履歴も合わせて見る",
+    "text": "@あの人  主張に違和感を感じます。矛盾点を洗い出したい。感情論で結論を急がない。発言の整合性を重視したい。投票",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
@@ -3952,7 +3110,7 @@
     "tags": []
   },
   {
-    "text": "シズエと申しますよ、村側のつもりで考えます。占いCOの有無と、 @シュンイチ  さん以外の進行イメージも聞きたいですね",
+    "text": "今のところ強く怪しい人はおりませんね。  @あの人  さん、もう一人薄いと見た理由をもう少し聞きたいです",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -3960,7 +3118,7 @@
     ]
   },
   {
-    "text": "今のところ強く怪しい人はおりませんね。  @ミナト  さん、ダイスケさん薄いと見た理由をもう少し聞きたいです",
+    "text": "矛盾と言われ少し驚きましたよ。  @あの人  さん、私のどの点が矛盾で、 @もう一人 さんの慎重さをどう評価しているのか、今の結論も添えて教えてくださ",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -3968,124 +3126,76 @@
     ]
   },
   {
-    "text": "矛盾と言われ少し驚きましたよ。  @ミナト  さん、私のどの点が矛盾で、 @ダイスケ さんの慎重さをどう評価しているのか、今の結論も添えて教えてくださ",
-    "role": "BODYGUARD",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "私は村側のただの人ですよ。占い候補の方は名乗り出て、特にアスカさんケンジさんヴィクトリアさんは今の印",
-    "role": "BODYGUARD",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
-  },
-  {
-    "text": "ベンジャミンさん単独占いね。 @ベンジャミン  なぜ初手でヴィクトリアさんを？理由も聞きたいわ。",
+    "text": "あの人単独占いね。 @あの人  なぜ初手でもう一人を？理由も聞きたいわ。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "占い決め打ちはまだ怖いわね。  @ベンジャミン  と@ダイスケ 、明日以降の占い方針も聞かせてほしいの。",
+    "text": "占い決め打ちはまだ怖いわね。  @あの人  と@もう一人 、明日以降の占い方針も聞かせてほしいの。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "今のところ一番色見えないのはケンジさんね。 @ケンジ  投票前に、怪しんでる相手と理由を聞かせてくれる？",
+    "text": "今のところ一番色見えないのはあの人ね。 @あの人  投票前に、怪しんでる相手と理由を聞かせてくれる？",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "今日はケンジさんに入れるわ。明日、シュンイチさん霊能で占い精査したいの。",
+    "text": "今日はあの人に入れるわ。明日、もう一人霊能で占い精査したいの。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ダイスケ真寄りで見るね。 @トシオ  @ミナト 昨日の投票理由と、今日はどちらをより怪しんでいるか、具体的に聞かせておくれ。",
+    "text": "あの人非狼寄りで見てるよ。 @もう一人  具体的な偽要素、挙げてくれるかい？",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "ダイスケさん非狼寄りで見てるよ。 @アスカ  具体的な偽要素、挙げてくれるかい？",
+    "text": "今日は現状あの人最黒で吊り寄り。 @あの人  評価転換理由と質問回避の説明を具体に聞かせてね。",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "わたしはダイスケさん非狼確信。理由含めて、 @ミナト  さん今日は真寄り転換の根拠を聞かせて。",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "今日は現状ミナトさん最黒で吊り寄り。 @ミナト  評価転換理由と質問回避の説明を具体に聞かせてね。",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "占霊とも真寄りで見てるわよ。 @アスカ  さん、ダイスケ偽なら誰狼で筋通る？",
+    "text": "占霊とも真寄りで見てるわよ。 @あの人  さん、もう一人偽なら誰狼で筋通る？",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "私は現状アスカかシュンイチ吊り候補。  @アスカ  さん、自視点の狼と偽役職候補を具体的に教えてね。",
+    "text": "私は現状あの人かもう一人吊り候補。  @あの人  さん、自視点の狼と偽役職候補を具体的に教えてね。",
     "role": "BODYGUARD",
     "day": 3,
     "tags": []
   },
   {
-    "text": "今日はシュンイチさんを少し強めに疑っています。 @アスカ  さん非狼寄りで見つつ、残り狼はシュンイチさんかダイスケさんだと考えています。",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "護衛成功でダイスケさんとアスカさんは非狼確信。残り狼はシュンイチさんで見て吊りたいです。",
-    "role": "BODYGUARD",
-    "day": 3,
-    "tags": []
-  },
-  {
-    "text": "わたしも最終的に狼はヴィクトリアさん一択ね。 @アスカ  さん、今日は二人でそこに合わせましょう。",
+    "text": "わたしも最終的に狼はあの人一択ね。 @もう一人  さん、今日は二人でそこに合わせましょう。",
     "role": "BODYGUARD",
     "day": 4,
     "tags": []
   },
   {
-    "text": "護衛結果と噛み筋合わせると、わたし視点ほぼヴィクトリア狼よ。 @アスカ  さん、今どちらをより狼で見ているの？",
+    "text": "護衛結果と噛み筋合わせると、わたし視点ほぼあの人狼よ。 @もう一人  さん、今どちらをより狼で見ているの？",
     "role": "BODYGUARD",
     "day": 4,
     "tags": []
   },
   {
-    "text": "三人とも護衛成功で全員非狼と見ているわ。 @アスカ  投票行動と占霊整合で今日はヴィクトリアさんに入れるつもりよ。",
+    "text": "三人とも護衛成功で全員非狼と見ているわ。 @あの人  投票行動と占霊整合で今日はもう一人に入れるつもりよ。",
     "role": "BODYGUARD",
     "day": 4,
     "tags": []
   },
   {
-    "text": "さっきの『三人とも非狼』は撤回するわ。 @アスカ  噛み筋と占霊整合で、私は今日もヴィクトリアさんに入れるつもりよ。",
+    "text": "さっきの『三人とも非狼』は撤回するわ。 @あの人  噛み筋と占霊整合で、私は今日ももう一人に入れるつもりよ。",
     "role": "BODYGUARD",
     "day": 4,
     "tags": []
-  },
-  {
-    "text": "僕はシオン。読書が趣味なんだ。まあ、適当に付き合ってくれればいいよ。",
-    "role": "BODYGUARD",
-    "day": 0,
-    "tags": [
-      "opening"
-    ]
   },
   {
     "text": "随分と急いで役職を探している人が多いね。僕は静かに観察させてもらうよ。",
@@ -4096,7 +3206,7 @@
     ]
   },
   {
-    "text": "ミサキはかなり攻撃的だね。まあ、そういう議論の仕方も嫌いじゃないよ。",
+    "text": "あの人はかなり攻撃的だね。まあ、そういう議論の仕方も嫌いじゃないよ。",
     "role": "BODYGUARD",
     "day": 0,
     "tags": [
@@ -4112,49 +3222,43 @@
     ]
   },
   {
-    "text": "ミサキが白か。じゃあ、彼女の言うことに耳を傾けるのが合理的だね。",
+    "text": "あの人が白か。じゃあ、彼女の言うことに耳を傾けるのが合理的だね。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "占い師が3人も出たか。リンの思考は少し曖昧に見えるね。",
+    "text": "占い師が3人も出たか。あの人の思考は少し曖昧に見えるね。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "なんとなくで占ったなんて、論理的じゃないね。今日はリンに票を投じよう。",
+    "text": "なんとなくで占ったなんて、論理的じゃないね。今日はあの人に票を投じよう。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ヴィクトリアだけがリンを庇っているね。彼女の視点も少し気になるな。",
+    "text": "あの人だけがもう一人を庇っているね。彼女の視点も少し気になるな。",
     "role": "BODYGUARD",
     "day": 1,
     "tags": []
   },
   {
-    "text": "ヴィクトリアが黒か。シュンイチの言葉を信じて、今日は彼女を追放しよう。",
+    "text": "あの人が黒か。もう一人の言葉を信じて、今日は彼女を追放しよう。",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "シズエ、根拠もなく僕を疑うのは不愉快だね。今はヴィクトリアを追放すべきだよ。",
+    "text": "あの人、根拠もなく僕を疑うのは不愉快だね。今はもう一人を追放すべきだよ。",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []
   },
   {
-    "text": "根拠が薄いのは認めるけど、黒判定が出た以上はヴィクトリアを吊るのが正解だよ。",
-    "role": "BODYGUARD",
-    "day": 2,
-    "tags": []
-  },
-  {
-    "text": "タクミは急にシュンイチを疑い出したね。今は黒判定のヴィクトリアを吊るべきだ。",
+    "text": "根拠が薄いのは認めるけど、黒判定が出た以上はあの人を吊るのが正解だよ。",
     "role": "BODYGUARD",
     "day": 2,
     "tags": []

@@ -13,6 +13,12 @@ import type { GameLog, GamePhase, NightState, Player, Role, VoteRecord, WolfChat
 import type { DisplayLanguage } from '../i18n';
 import { ROLE_LABELS, WEREWOLF_SLANG } from '../constants';
 import { CUSTOM_AI_STYLES, FALLBACK_STYLE } from '../services/aiStyles';
+import {
+  emitSpeechDiagnostic,
+  guardSpeechText,
+  namelessFallbackLine,
+  sanitizeForeignEntities,
+} from '../services/rosterGuard';
 import { pickSpeech, pickWolfNightSpeech } from '../services/speechLibrary';
 import { globalBeliefTracker } from './beliefTracker';
 import { selectAction } from './actionSelector';
@@ -36,8 +42,11 @@ const isEnglish = (text: string): boolean => {
 const isSubstantiveEnglish = (text: string): boolean =>
   isEnglish(text) && text.trim().split(/\s+/).length >= 12;
 
-const fmtLogs = (logs: GameLog[]) =>
-  logs.slice(-16).map(l => `${l.speakerId ? `${l.speakerId}号` : '系统'}: ${l.translation || l.message}`).join('\n');
+// Historical log lines are sanitized before entering any prompt (H2): prior
+// library picks can carry AIWolf entities, which must not recycle into new
+// model output.
+const fmtLogs = (logs: GameLog[], language: DisplayLanguage = 'zh') =>
+  logs.slice(-16).map(l => `${l.speakerId ? `${l.speakerId}号` : '系统'}: ${sanitizeForeignEntities(l.translation || l.message, language)}`).join('\n');
 
 const fmtVotes = (vr: VoteRecord[]) =>
   vr.slice(-12).map(v => `R${v.round} ${v.voterId}→${v.targetId ?? '弃票'}`).join(', ') || '暂无';
@@ -157,7 +166,7 @@ ${roleStrategies[player.role] || ''}
     ? `Current situation: round ${round}, ${deathNoteEn}
 Players: ${fmtPlayers(player, players)}
 Recent speeches:
-${fmtLogs(logs)}
+${fmtLogs(logs, language)}
 Votes: ${fmtVotes(voteRecords)}
 
 Write one full daytime speech in ENGLISH (60-160 English words, must mention specific player numbers as "Player N").
@@ -165,50 +174,91 @@ Return JSON: {"en":"full English speech","zh":"short Chinese summary"}`
     : `当前局面：第${round}轮，${deathNote}
 玩家列表：${fmtPlayers(player, players)}
 近期发言：
-${fmtLogs(logs)}
+${fmtLogs(logs, language)}
 票型：${fmtVotes(voteRecords)}
 
 请输出一段白天发言（80-180中文字符，必须提到具体玩家编号）。
 返回JSON：{"en":"short English summary","zh":"Chinese speech"}`;
 
-  // Layer 3: Try Gemini LLM first
+  // Layer 3: Try Gemini LLM first. Accepted text passes the roster guard
+  // (H8): out-of-roster references are structurally repaired when
+  // unambiguous, otherwise the response is discarded and the library layer
+  // takes over — detected-bad text never reaches the display path.
   const llmResult = await generateSpeechWithLLM(systemPrompt, userPrompt);
   if (language === 'en') {
     if (llmResult?.en && isSubstantiveEnglish(llmResult.en)) {
-      globalBeliefTracker.updateFromSpeech(player.id, llmResult.en, players);
-      return llmResult;
+      const guard = guardSpeechText(llmResult.en, players, 'en');
+      if (guard.ok && isSubstantiveEnglish(guard.text)) {
+        const zhGuard = guardSpeechText(llmResult.zh || '', players, 'zh');
+        emitSpeechDiagnostic({
+          context: 'day-speech', source: 'remote-model', model: 'gemini-2.5-flash',
+          speakerId: player.id, repaired: guard.repaired,
+        });
+        globalBeliefTracker.updateFromSpeech(player.id, guard.text, players);
+        return { en: guard.text, zh: zhGuard.ok ? zhGuard.text : '' };
+      }
     }
   } else if (llmResult?.zh && isChinese(llmResult.zh)) {
-    // Update beliefs from this speech
-    globalBeliefTracker.updateFromSpeech(player.id, llmResult.zh, players);
-    return llmResult;
+    const guard = guardSpeechText(llmResult.zh, players, 'zh');
+    if (guard.ok && isChinese(guard.text)) {
+      const enGuard = guardSpeechText(llmResult.en || '', players, 'en');
+      emitSpeechDiagnostic({
+        context: 'day-speech', source: 'remote-model', model: 'gemini-2.5-flash',
+        speakerId: player.id, repaired: guard.repaired,
+      });
+      // Update beliefs from this speech
+      globalBeliefTracker.updateFromSpeech(player.id, guard.text, players);
+      return { zh: guard.text, en: enGuard.ok ? enGuard.text : 'Speaks based on game situation.' };
+    }
   }
 
-  // Layer 2: Speech library fallback
+  // Layer 2: Speech library fallback (corpus sanitized offline; the guard
+  // still runs as the final boundary for this layer).
   const libText = await pickSpeech(player.role, [], round, { language });
   if (language === 'en') {
     if (libText && libText.length > 20 && isEnglish(libText)) {
       const alive = players.filter(p => p.isAlive && p.id !== player.id);
       const suspect = globalBeliefTracker.getMostSuspicious(player.id, alive);
       const mention = suspect ? ` (watching Player ${suspect.id})` : '';
-      const en = `${libText.slice(0, 160)}${mention}`;
-      globalBeliefTracker.updateFromSpeech(player.id, en, players);
-      return { en, zh: '' };
+      const guard = guardSpeechText(`${libText.slice(0, 160)}${mention}`, players, 'en');
+      if (guard.ok) {
+        emitSpeechDiagnostic({
+          context: 'day-speech', source: 'library', speakerId: player.id,
+          repaired: guard.repaired, fallbackReason: 'llm-rejected',
+        });
+        globalBeliefTracker.updateFromSpeech(player.id, guard.text, players);
+        return { en: guard.text, zh: '' };
+      }
     }
   } else if (libText && libText.length > 20 && isChinese(libText)) {
     // Inject a player mention if missing
     const alive = players.filter(p => p.isAlive && p.id !== player.id);
     const suspect = globalBeliefTracker.getMostSuspicious(player.id, alive);
     const mention = suspect ? `（关注${suspect.id}号）` : '';
-    const zh = `${libText.slice(0, 160)}${mention}`;
-    globalBeliefTracker.updateFromSpeech(player.id, zh, players);
-    return { en: 'Speaks based on game situation.', zh };
+    const guard = guardSpeechText(`${libText.slice(0, 160)}${mention}`, players, 'zh');
+    if (guard.ok) {
+      emitSpeechDiagnostic({
+        context: 'day-speech', source: 'library', speakerId: player.id,
+        repaired: guard.repaired, fallbackReason: 'llm-rejected',
+      });
+      globalBeliefTracker.updateFromSpeech(player.id, guard.text, players);
+      return { en: 'Speaks based on game situation.', zh: guard.text };
+    }
   }
 
-  // Layer 1: Hardcoded contextual fallback
+  // Layer 1: Hardcoded contextual fallback — roster-derived seat references
+  // only (H7), guarded all the same; the nameless line is the last resort.
   const fallback = buildFallback(player, players, round, seerInfo, nightState, language);
-  globalBeliefTracker.updateFromSpeech(player.id, language === 'en' ? fallback.en : fallback.zh, players);
-  return fallback;
+  const fallbackGuard = guardSpeechText(language === 'en' ? fallback.en : fallback.zh, players, language);
+  const safe = fallbackGuard.ok
+    ? fallback
+    : { en: namelessFallbackLine('en'), zh: namelessFallbackLine('zh') };
+  emitSpeechDiagnostic({
+    context: 'day-speech', source: fallbackGuard.ok ? 'hardcoded-fallback' : 'nameless-fallback',
+    speakerId: player.id, fallbackReason: 'llm-and-library-rejected',
+  });
+  globalBeliefTracker.updateFromSpeech(player.id, language === 'en' ? safe.en : safe.zh, players);
+  return safe;
 };
 
 // ─── Action selection ───────────────────────────────────────────────────────
@@ -257,7 +307,14 @@ JSON：{"targetId":number,"reason":"简短中文原因"}`;
     if (type === 'VOTE') {
       globalBeliefTracker.updateFromVote(player.id, llmResult.targetId);
     }
-    return llmResult;
+    // The reason string can surface in the UI — guard it (H8). An
+    // unrepairable reason is dropped, never displayed.
+    const reasonGuard = guardSpeechText(llmResult.reason ?? '', players, 'zh');
+    emitSpeechDiagnostic({
+      context: 'vote-reason', source: 'remote-model', model: 'gemini-2.5-flash',
+      speakerId: player.id, repaired: reasonGuard.repaired,
+    });
+    return { targetId: llmResult.targetId, reason: reasonGuard.ok ? reasonGuard.text : undefined };
   }
 
   // Use Layer 1 fallback if LLM fails
@@ -293,13 +350,13 @@ export const generateWolfChat = async (
   const userPrompt = language === 'en'
     ? `Wolf team: ${wolves.map(w => `Player ${w.id}`).join(', ')}
 Living villagers: ${aliveGood.map(p => `Player ${p.id}`).join(', ')}
-Recent speeches: ${fmtLogs(logs)}
+Recent speeches: ${fmtLogs(logs, language)}
 Votes: ${fmtVotes(voteRecords)}
 Output ${Math.min(3, wolves.length)} night-chat strategy messages in English.
 JSON: {"messages":[{"speakerId":number,"message":"English","strategyTag":"刀口|悍跳|冲锋|倒钩|补位"}]}`
     : `狼队：${wolves.map(w => `${w.id}号`).join('、')}
 存活好人：${aliveGood.map(p => `${p.id}号`).join('、')}
-近期发言：${fmtLogs(logs)}
+近期发言：${fmtLogs(logs, language)}
 票型：${fmtVotes(voteRecords)}
 输出${Math.min(3, wolves.length)}条夜聊策略。
 JSON：{"messages":[{"speakerId":number,"message":"中文","strategyTag":"刀口|悍跳|冲锋|倒钩|补位"}]}`;
@@ -318,13 +375,23 @@ JSON：{"messages":[{"speakerId":number,"message":"中文","strategyTag":"刀口
       const generated = parsed?.messages
         ?.filter(item => item.speakerId && item.message && wolves.some(w => w.id === item.speakerId))
         .slice(0, 3)
-        .map((item, idx) => ({
-          id: `wolf-${round}-${Date.now()}-${idx}`,
-          round,
-          speakerId: item.speakerId!,
-          message: item.message!,
-          strategyTag: item.strategyTag || '补位',
-        }));
+        .map((item, idx) => {
+          // Roster guard (H8): repair or reject each model-produced message.
+          const guard = guardSpeechText(item.message!, players, language);
+          if (!guard.ok) return null;
+          emitSpeechDiagnostic({
+            context: 'wolf-chat', source: 'remote-model', model: 'gemini-2.5-flash',
+            speakerId: item.speakerId, repaired: guard.repaired,
+          });
+          return {
+            id: `wolf-${round}-${Date.now()}-${idx}`,
+            round,
+            speakerId: item.speakerId!,
+            message: guard.text,
+            strategyTag: item.strategyTag || '补位',
+          };
+        })
+        .filter((m): m is WolfChatMessage => m !== null);
 
       if (generated && generated.length > 0) return generated;
     } catch {
@@ -340,10 +407,15 @@ JSON：{"messages":[{"speakerId":number,"message":"中文","strategyTag":"刀口
     const tag = strategyTags[i % strategyTags.length];
     const target = aliveGood[i % aliveGood.length];
     // In EN mode a mixed-language corpus pick must actually be English,
-    // otherwise the English hardcoded lines take over.
-    const libOk = Boolean(libText && libText.length > 15 && (language !== 'en' || isEnglish(libText)));
+    // otherwise the English hardcoded lines take over. The roster guard (H8)
+    // repairs or rejects library picks the same way (rejected → hardcoded
+    // line, which references only live roster seats).
+    const libGuard = guardSpeechText(libText.slice(0, 120), players, language);
+    const libOk = Boolean(
+      libText && libText.length > 15 && (language !== 'en' || isEnglish(libText)) && libGuard.ok,
+    );
     const fallbackMsg = libOk
-      ? libText.slice(0, 120)
+      ? libGuard.text
       : language === 'en'
         ? (i === 0
           ? `I suggest we hit ${target ? `Player ${target.id}` : 'a power seat'} tonight.`
@@ -356,6 +428,10 @@ JSON：{"messages":[{"speakerId":number,"message":"中文","strategyTag":"刀口
             ? '明天需要一张牌悍跳预言家，我可以跳。'
             : '白天别冲，倒钩配合悍跳狼。');
 
+    emitSpeechDiagnostic({
+      context: 'wolf-chat', source: libOk ? 'library' : 'hardcoded-fallback',
+      speakerId: wolf.id, repaired: libGuard.repaired, fallbackReason: 'llm-rejected',
+    });
     result.push({
       id: `wolf-${round}-${wolf.id}-${i}`,
       round,

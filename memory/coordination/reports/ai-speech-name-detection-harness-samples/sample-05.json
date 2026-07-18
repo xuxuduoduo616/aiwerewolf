@@ -1,32 +1,17 @@
 {
-  "id": "fallback-last-words-zh-r2-p5-29",
-  "context": "last-words",
+  "id": "remote-day-speech-zh-r1-p1-1",
+  "context": "day-speech",
   "language": "zh",
-  "speakerId": 5,
-  "speakerName": "Silas",
+  "speakerId": 1,
+  "speakerName": "Luna",
   "phase": "DAY_DISCUSSION",
-  "round": 2,
+  "round": 1,
   "roster": "1:Luna(Villager) 2:Marcus(Werewolf) 3:Elena(Werewolf) 4:Darius(Werewolf) 5:Silas(Seer) 6:Amara(Witch) 7:Finn(Hunter) 8:Isla(Villager) 9:Jasper(Villager)",
-  "prompt": "你是一名狼人杀高手。性格：GPT-4o (霸总/高冷)。说话风格：Short, commanding sentences. Calm but deadly. '听我的'.。\n你是预言家。昨夜查验：暂无结果\n你的真实身份：预言家（5号 Silas）\n必须使用的术语：金水、查杀、悍跳、倒钩、冲锋、铁逻辑\n禁止：透露不该知道的信息，讲废话，超过180字\n\n---\n当前局面：第2轮，昨晚倒牌：2号、5号、8号\n玩家列表：1号[活][?] 2号[死][?] 3号[活][?] 4号[活][?] 5号[死][预言家] 6号[活][?] 7号[活][?] 8号[死][?] 9号[活][?]\n近期发言：\n\n票型：暂无\n\n请输出一段白天发言（80-180中文字符，必须提到具体玩家编号）。\n返回JSON：{\"en\":\"short English summary\",\"zh\":\"Chinese speech\"}",
-  "rawResponse": "",
+  "prompt": "你是一名狼人杀高手。性格：GPT-4o (霸总/高冷)。说话风格：Short, commanding sentences. Calm but deadly. '听我的'.。\n你是平民，通过发言和票型找狼\n你的真实身份：平民（1号 Luna）\n必须使用的术语：金水、查杀、悍跳、倒钩、冲锋、铁逻辑\n禁止：透露不该知道的信息，讲废话，超过180字\n\n---\n当前局面：第1轮，昨晚平安夜\n玩家列表：1号[活][平民] 2号[活][?] 3号[活][?] 4号[活][?] 5号[活][?] 6号[活][?] 7号[活][?] 8号[活][?] 9号[活][?]\n近期发言：\n\n票型：暂无\n\n请输出一段白天发言（80-180中文字符，必须提到具体玩家编号）。\n返回JSON：{\"en\":\"short English summary\",\"zh\":\"Chinese speech\"}",
+  "rawResponse": "{\"zh\":\"我觉得那位玩家和另一位玩家都很可疑，另一位玩家昨天的票型也有问题，今天建议先集中投他们。\",\"en\":\"I think that player and the other player are both acting suspicious, and the other player voted strangely yesterday, so the village should focus its vote on those seats today.\"}",
   "translatedResponse": "",
-  "finalText": "最終票: Servas。彼のCOは一貫性がなく夜/結果の詳細がなく対象を切り替えている。間違っていたら次はMidoriを確認して。@Servas あなたに最終票。今すぐ正確なN0記録を提示して: 「N0 対象=結果」。あなたの拒否が私の読みを確証する。（关注1号）",
-  "source": "library",
-  "violations": [
-    {
-      "kind": "aiwolf-name",
-      "match": "Servas",
-      "detail": "AIWolf corpus personal name \"Servas\" — not on the current roster"
-    },
-    {
-      "kind": "aiwolf-name",
-      "match": "Servas",
-      "detail": "AIWolf corpus personal name \"Servas\" — not on the current roster"
-    },
-    {
-      "kind": "aiwolf-name",
-      "match": "Midori",
-      "detail": "AIWolf corpus personal name \"Midori\" — not on the current roster"
-    }
-  ]
+  "finalText": "我觉得那位玩家和另一位玩家都很可疑，另一位玩家昨天的票型也有问题，今天建议先集中投他们。",
+  "source": "remote-model",
+  "violations": [],
+  "note": "no violations detected in the day-speech context on the remote path"
 }

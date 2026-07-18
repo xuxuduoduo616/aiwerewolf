@@ -200,3 +200,58 @@ describe('EN display stub path (pickTranslationSource + translateLogText)', () =
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 });
+
+/**
+ * ai-speech-roster-name-fix — H5 translation referent protection
+ * (fix invariants 4 and 5).
+ */
+describe('translateLogText — referent protection (H5)', () => {
+  const ja = 'そうだね、3号が怪しいと思う。';
+
+  it('enumerates the source seat references as protected tokens in the prompt', async () => {
+    const fetchMock = stubFetch(async () => ({
+      ok: true,
+      json: async () => ({ text: 'I think Player 3 is suspicious.' }),
+    }));
+    await translateLogText('guard-1', ja, 'en');
+    const [, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    const body = JSON.parse(init.body as string);
+    expect(body.prompt).toContain('Protected player references');
+    expect(body.prompt).toContain('3号/Player 3');
+    expect(body.prompt).toContain('Never introduce any player number or personal name');
+  });
+
+  it('accepts a translation that preserves the referents', async () => {
+    stubFetch(async () => ({
+      ok: true,
+      json: async () => ({ text: 'I think Player 3 is suspicious.' }),
+    }));
+    expect(await translateLogText('guard-2', ja, 'en')).toBe('I think Player 3 is suspicious.');
+  });
+
+  it('falls back to the original text when the translation rewrites a seat referent', async () => {
+    stubFetch(async () => ({
+      ok: true,
+      json: async () => ({ text: 'I suspect Player 5 today.' }),
+    }));
+    expect(await translateLogText('guard-3', ja, 'en')).toBe(ja);
+  });
+
+  it('falls back to the original text when the translation introduces a foreign name or Agent ref', async () => {
+    stubFetch(async () => ({
+      ok: true,
+      json: async () => ({ text: 'I suspect Player 3 — Sakura keeps lying about Agent[03].' }),
+    }));
+    expect(await translateLogText('guard-4', ja, 'en')).toBe(ja);
+  });
+
+  it('isolates the cache by language for the same log entry (invariant 5)', async () => {
+    const fetchMock = stubFetch(async () => ({
+      ok: true,
+      json: async () => ({ text: '翻译结果' }),
+    }));
+    await translateLogText('guard-5', ja, 'zh');
+    await translateLogText('guard-5', ja, 'en'); // same id, different language → separate fetch
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+});

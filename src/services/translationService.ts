@@ -12,6 +12,7 @@
  * touched.
  */
 import type { DisplayLanguage } from '../i18n';
+import { extractSeatRefs, translationViolatesReferents } from './rosterGuard';
 
 /**
  * Single endpoint-path constant for translation requests. Swap this one line
@@ -84,18 +85,29 @@ export const clearTranslationCache = (): void => {
 
 const requestTranslation = async (text: string, language: DisplayLanguage): Promise<string> => {
   const target = language === 'zh' ? 'Simplified Chinese' : 'English';
+  // H5 referent protection: enumerate the source's player references as
+  // protected tokens, and verify the response preserved them (see below).
+  const seats = [...new Set(extractSeatRefs(text))];
+  const protectedNote = seats.length
+    ? ` Protected player references — keep exactly these numbers, rendered as "N号" in Chinese or "Player N" in English: ${seats.map(n => `${n}号/Player ${n}`).join(', ')}.`
+    : '';
   const response = await fetch(TRANSLATION_ENDPOINT, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       model: 'gemini-2.5-flash',
-      prompt: `Translate the following Werewolf (social deduction game) speech into ${target}. Keep the tone conversational and keep player references (e.g. "3号" / "Player 3") natural in the target language. Output ONLY the translation, nothing else.\n\n${text}`,
+      prompt: `Translate the following Werewolf (social deduction game) speech into ${target}. Keep the tone conversational and keep player references (e.g. "3号" / "Player 3") natural in the target language.${protectedNote} Never introduce any player number or personal name that is not in the source text. Output ONLY the translation, nothing else.\n\n${text}`,
       temperature: 0.2,
     }),
   });
   if (!response.ok) return '';
   const json = await response.json();
-  return typeof json.text === 'string' ? json.text.trim() : '';
+  const translated = typeof json.text === 'string' ? json.text.trim() : '';
+  // Referent verification: a translation that introduces a player referent
+  // absent from the source is rejected — the caller falls back to the
+  // original text ('' → original, same as any other failure).
+  if (translated && translationViolatesReferents(text, translated)) return '';
+  return translated;
 };
 
 /**

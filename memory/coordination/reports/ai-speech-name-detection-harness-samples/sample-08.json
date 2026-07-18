@@ -1,22 +1,17 @@
 {
-  "id": "fallback-wolf-chat-zh-r3-p2-37",
-  "context": "wolf-chat",
+  "id": "remote-vote-reason-zh-r1-p1-31",
+  "context": "vote-reason",
   "language": "zh",
-  "speakerId": 2,
-  "speakerName": "Marcus",
-  "phase": "NIGHT_WEREWOLVES",
-  "round": 3,
+  "speakerId": 1,
+  "speakerName": "Luna",
+  "phase": "DAY_VOTING",
+  "round": 1,
   "roster": "1:Luna(Villager) 2:Marcus(Werewolf) 3:Elena(Werewolf) 4:Darius(Werewolf) 5:Silas(Seer) 6:Amara(Witch) 7:Finn(Hunter) 8:Isla(Villager) 9:Jasper(Villager)",
-  "prompt": "你们是狼人夜间团队，用中文简洁商量策略。\n\n---\n狼队：2号、3号、4号\n存活好人：1号、5号、6号、7号、8号、9号\n近期发言：\n票型：暂无\n输出3条夜聊策略。\nJSON：{\"messages\":[{\"speakerId\":number,\"message\":\"中文\",\"strategyTag\":\"刀口|悍跳|冲锋|倒钩|补位\"}]}",
-  "rawResponse": "",
+  "prompt": "\n\n---\n你是1号，身份：平民。\n行动：VOTE，可选目标：[2,3,4,5,6,7,8,9]\n近期：\n票型：暂无\n按狼人杀最优策略选择目标。\nJSON：{\"targetId\":number,\"reason\":\"简短中文原因\"}",
+  "rawResponse": "另一位玩家和那位玩家的发言都指向5号",
   "translatedResponse": "",
-  "finalText": "みんな、Mayに投票して—彼女の主張は、自分が人間だと証明したTakumiの確定した占い結果と矛盾している。",
-  "source": "library",
-  "violations": [
-    {
-      "kind": "aiwolf-name",
-      "match": "Takumi",
-      "detail": "AIWolf corpus personal name \"Takumi\" — not on the current roster"
-    }
-  ]
+  "finalText": "另一位玩家和那位玩家的发言都指向5号",
+  "source": "remote-model",
+  "violations": [],
+  "note": "no violations detected in the vote-reason context on the remote path"
 }

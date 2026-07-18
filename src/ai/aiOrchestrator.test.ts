@@ -1,11 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { generateAIDialogue, generateWolfChat } from './aiOrchestrator';
+import { generateAIAction, generateAIDialogue, generateWolfChat } from './aiOrchestrator';
 import { resolveGameLanguage } from '../hooks/useGameState';
 import { isCannedEnglishStub } from '../i18n';
 import { getRoleCamp } from '../gameEngine';
-import { GamePhase, Player, Role } from '../types';
+import { GamePhase, GameLog, Player, Role } from '../types';
 import { pickSpeech, pickWolfNightSpeech } from '../services/speechLibrary';
-import { generateSpeechWithLLM } from './geminiAdapter';
+import { detectNameViolations } from '../diagnostics/nameDetector';
+import { generateActionWithLLM, generateSpeechWithLLM } from './geminiAdapter';
 
 /**
  * Tests for lobby-language-authority: the game language captured at startGame
@@ -25,6 +26,7 @@ vi.mock('../services/speechLibrary', () => ({
 }));
 
 const mockLLM = vi.mocked(generateSpeechWithLLM);
+const mockActionLLM = vi.mocked(generateActionWithLLM);
 const mockPickSpeech = vi.mocked(pickSpeech);
 const mockPickWolfNightSpeech = vi.mocked(pickWolfNightSpeech);
 
@@ -58,6 +60,7 @@ const dialogue = (
 
 beforeEach(() => {
   mockLLM.mockReset().mockResolvedValue(null);
+  mockActionLLM.mockReset().mockResolvedValue({ targetId: null });
   mockPickSpeech.mockReset().mockResolvedValue('');
   mockPickWolfNightSpeech.mockReset().mockResolvedValue('');
 });
@@ -247,5 +250,137 @@ describe('generateWolfChat — language threading', () => {
     expect(chat[0].message).toBe('我建议刀1号。');
     expect(chat[1].message).toBe('明天需要一张牌悍跳预言家，我可以跳。');
     expect(chat[2].message).toBe('白天别冲，倒钩配合悍跳狼。');
+  });
+});
+
+/**
+ * ai-speech-roster-name-fix: roster guard + prompt hygiene invariants.
+ * (invariants 1, 2, 6, 7, 8 of the fix card — H2/H8 CONFIRMED areas)
+ */
+describe('generateAIDialogue — roster guard on the LLM layer (H8, invariant 6)', () => {
+  it('repairs a polluted zh model response before display', async () => {
+    const players = makeBoard();
+    mockLLM.mockResolvedValue({
+      zh: '我觉得Agent[05]和サクラ都很可疑，今天建议先集中投他们，票型也要跟上，他们的逻辑前后矛盾。',
+      en: 'summary',
+    });
+
+    const result = await dialogue(players[7], players);
+
+    expect(result.zh).not.toContain('Agent');
+    expect(result.zh).not.toContain('サクラ');
+    expect(detectNameViolations(result.zh, players)).toHaveLength(0);
+    expect(hasCJK(result.zh)).toBe(true);
+  });
+
+  it('repairs a polluted en model response before display', async () => {
+    const players = makeBoard();
+    mockLLM.mockResolvedValue({
+      zh: '怀疑场上位置。',
+      en: 'I think Agent[05] and Sakura are both acting suspicious today, so the village should focus its vote on those seats and re-read their earlier speeches.',
+    });
+
+    const result = await dialogue(players[7], players, 'en');
+
+    expect(result.en).not.toContain('Agent');
+    expect(result.en).not.toContain('Sakura');
+    expect(detectNameViolations(result.en, players)).toHaveLength(0);
+    expect(hasCJK(result.en)).toBe(false);
+  });
+
+  it('keeps the player-visible speech shape free of diagnostic metadata (invariant 8)', async () => {
+    const players = makeBoard();
+    const result = await dialogue(players[7], players);
+    expect(Object.keys(result).sort()).toEqual(['en', 'zh']);
+  });
+});
+
+describe('generateAIDialogue — prompt hygiene (H2, invariant 2)', () => {
+  it('scrubs AIWolf entities from historical log lines before they reach the LLM prompt', async () => {
+    const players = makeBoard();
+    const logs: GameLog[] = [{
+      id: 'log-corpus',
+      phase: GamePhase.DAY_DISCUSSION,
+      speakerId: 2,
+      message: '僕はAgent[04]、ハルの質問に答えるなら、占い師COはまだしないかな。サクラさんはどう思う？',
+      isSystem: false,
+      tone: 'speech',
+    }];
+
+    await generateAIDialogue(
+      players[7], players, logs, GamePhase.DAY_DISCUSSION, [], 2, null, [],
+      { wolfKillId: null, witchPoisonId: null, witchSaved: false }, 'zh',
+    );
+
+    const [, userPrompt] = mockLLM.mock.calls[0];
+    expect(userPrompt.length).toBeGreaterThan(0);
+    expect(userPrompt).not.toContain('Agent[04]');
+    expect(userPrompt).not.toContain('サクラ');
+    // The speaker's canonical seat reference from the log line is preserved.
+    expect(userPrompt).toContain('2号');
+  });
+});
+
+describe('generateAIDialogue — fallback layer stays roster-clean (invariant 1)', () => {
+  it('produces only roster-derived references in both languages', async () => {
+    const players = makeBoard();
+    for (const speaker of [players[7], players[1], players[4]]) {
+      const zh = await dialogue(speaker, players);
+      expect(detectNameViolations(zh.zh, players)).toHaveLength(0);
+      const en = await dialogue(speaker, players, 'en');
+      expect(detectNameViolations(en.en, players)).toHaveLength(0);
+    }
+  });
+});
+
+describe('generateWolfChat — roster guard on model messages (H8, invariant 6)', () => {
+  it('repairs polluted wolf-chat messages before display', async () => {
+    const players = makeBoard();
+    const wolves = players.filter(p => p.role === Role.WEREWOLF);
+    mockLLM.mockResolvedValue({
+      zh: JSON.stringify({
+        messages: [
+          { speakerId: 2, message: '今晚刀サクラ，明天我悍跳预言家。', strategyTag: '刀口' },
+          { speakerId: 3, message: '把嫌疑推给Agent[03]那个位置。', strategyTag: '倒钩' },
+        ],
+      }),
+      en: 'ok',
+    });
+
+    const chat = await generateWolfChat(wolves, players, [], 1, []);
+
+    expect(chat.length).toBeGreaterThan(0);
+    for (const message of chat) {
+      expect(message.message).not.toContain('サクラ');
+      expect(message.message).not.toContain('Agent');
+      expect(detectNameViolations(message.message, players)).toHaveLength(0);
+      expect(wolves.some(w => w.id === message.speakerId)).toBe(true);
+    }
+  });
+});
+
+describe('generateAIAction — guarded reason, LLM never decides legality (invariants 6, 7)', () => {
+  it('keeps a valid LLM target but repairs its polluted reason', async () => {
+    const players = makeBoard();
+    mockActionLLM.mockResolvedValue({ targetId: 5, reason: 'サクラ和Agent[02]的发言都指向5号' });
+
+    const action = await generateAIAction(players[7], players, [], 'VOTE', []);
+
+    expect(action.targetId).toBe(5);
+    expect(action.reason).toBeDefined();
+    expect(action.reason).not.toContain('サクラ');
+    expect(action.reason).not.toContain('Agent');
+    expect(detectNameViolations(action.reason!, players)).toHaveLength(0);
+  });
+
+  it('rejects an out-of-roster LLM target and falls back to a valid seat', async () => {
+    const players = makeBoard();
+    mockActionLLM.mockResolvedValue({ targetId: 99, reason: '乱选' });
+
+    const action = await generateAIAction(players[7], players, [], 'VOTE', []);
+
+    const valid = players.filter(p => p.isAlive && p.id !== players[7].id).map(p => p.id);
+    expect(action.targetId).not.toBe(99);
+    expect(valid).toContain(action.targetId);
   });
 });
