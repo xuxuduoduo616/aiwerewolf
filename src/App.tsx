@@ -13,9 +13,10 @@ import VoteSummary from './components/VoteSummary';
 import LogMessage from './components/LogMessage';
 import { useDisplayLanguage } from './i18n';
 import { resolveVoteResult } from './gameEngine';
+import { playTick } from './services/speechAudio';
 import {
   Clock3, History, KeyRound, Languages, Loader2,
-  LogOut, Mail, Moon, RefreshCw, ScrollText, Shield,
+  LogOut, Mail, Moon, Power, RefreshCw, ScrollText, Shield,
   Skull, Trophy, User as UserIcon, Volume2, VolumeX,
 } from 'lucide-react';
 
@@ -35,6 +36,15 @@ const App: React.FC = () => {
     recordError: rec.recordError,
     setRecordError: rec.setRecordError,
   });
+
+  // Vote-countdown tick: one short beep per second during the final 3s of the
+  // human vote countdown (browser-tts-mvp). The audio service enforces mute
+  // and the autoplay gesture requirement; timer semantics are untouched.
+  React.useEffect(() => {
+    if (game.voteTimer !== null && game.voteTimer >= 1 && game.voteTimer <= 3) {
+      playTick();
+    }
+  }, [game.voteTimer]);
 
   // ── helpers ──────────────────────────────────────────────────────────
   const seatStyle = (index: number, total: number): React.CSSProperties => {
@@ -218,6 +228,31 @@ const App: React.FC = () => {
             </div>
             {/* Language is fixed at startGame from the lobby pill — no in-game toggle. */}
             <div className="flex items-center gap-2">
+              <button
+                onClick={() => game.setTtsEnabled(!game.ttsEnabled)}
+                className="icon-button"
+                aria-pressed={game.ttsEnabled}
+                title={displayLanguage === 'zh' ? 'AI语音开关' : 'AI voice on/off'}
+                aria-label={displayLanguage === 'zh' ? 'AI语音开关' : 'AI voice on/off'}
+              >
+                <Power className={`w-4 h-4${game.ttsEnabled ? ' text-emerald-300' : ''}`} />
+              </button>
+              <input
+                type="range" min={0} max={1} step={0.05}
+                value={game.audioVolume}
+                onChange={e => game.setAudioVolume(Number(e.target.value))}
+                className="w-16 h-9 cursor-pointer accent-zinc-200"
+                title={displayLanguage === 'zh' ? '音量' : 'Volume'}
+                aria-label={displayLanguage === 'zh' ? '音量' : 'Volume'}
+              />
+              <input
+                type="range" min={0.5} max={2} step={0.1}
+                value={game.ttsRate}
+                onChange={e => game.setTtsRate(Number(e.target.value))}
+                className="w-16 h-9 cursor-pointer accent-zinc-200"
+                title={displayLanguage === 'zh' ? '语速' : 'Speech rate'}
+                aria-label={displayLanguage === 'zh' ? '语速' : 'Speech rate'}
+              />
               <button onClick={() => game.setIsMuted(!game.isMuted)} className="icon-button" title={displayLanguage === 'zh' ? '静音/取消静音' : 'Mute / Unmute'} aria-label={displayLanguage === 'zh' ? '静音/取消静音' : 'Mute / Unmute'}>{game.isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}</button>
               <button onClick={() => { game.setPhase(GamePhase.LOBBY); rec.setShowRecords(true); }} className="icon-button" title={displayLanguage === 'zh' ? '返回大厅' : 'Return to lobby'} aria-label={displayLanguage === 'zh' ? '返回大厅' : 'Return to lobby'}><RefreshCw className="w-4 h-4" /></button>
             </div>

@@ -2,7 +2,9 @@
 
 ## Status
 
-Queued
+Accepted
+
+Result summary: all four verification gates green — 363 tests passed (309 baseline + 35 new speechAudio + existing), zero regressions, `npm run build` succeeds, TypeScript zero errors, `speechSynthesis` references confined to `src/services/speechAudio.ts`. Centralized TTS service with injectable backend, 35 tests covering play/dedupe/cancel/voice-mapping/timeout/API-absent, per-log-ID play-once dedupe, voice per playerId via deterministic hash, Chrome async-voice-load handled, hard max utterance duration, cancel on every lifecycle event, header audio controls (Power toggle + volume + rate sliders) with bilingual tooltips/aria-labels, localStorage-persisted prefs, vote-countdown tick beep at t=3/2/1.
 
 ## Objective
 

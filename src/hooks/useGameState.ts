@@ -30,12 +30,51 @@ import {
   resolveVoteResult,
 } from '../gameEngine';
 import { isSupabaseConfigured, saveGameRecord } from '../services/supabaseClient';
-import { DEFAULT_DISPLAY_LANGUAGE, type DisplayLanguage } from '../i18n';
+import { DEFAULT_DISPLAY_LANGUAGE, pickTranslationSource, type DisplayLanguage } from '../i18n';
+import * as speechAudio from '../services/speechAudio';
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 const AI_STYLE_KEYS = Object.keys(CUSTOM_AI_STYLES);
 const MY_PLAYER_ID = 1;
 const LOCAL_RECORD_KEY = 'werewolf_guest_records';
+
+/**
+ * Audio preferences (card: browser-tts-mvp), persisted with the same
+ * try/catch localStorage pattern as the language pill (src/i18n/index.ts).
+ * `isMuted` stays session-only exactly as before this card.
+ */
+const AUDIO_PREFS_KEY = 'werewolf_audio_prefs';
+
+interface AudioPrefs {
+  volume: number;   // 0–1, master volume
+  rate: number;     // 0.5–2, speech rate
+  enabled: boolean; // AI-voice toggle (default off — needs a user gesture)
+}
+
+const DEFAULT_AUDIO_PREFS: AudioPrefs = { volume: 1, rate: 1, enabled: false };
+
+const loadAudioPrefs = (): AudioPrefs => {
+  try {
+    const stored = localStorage.getItem(AUDIO_PREFS_KEY);
+    if (!stored) return DEFAULT_AUDIO_PREFS;
+    const parsed = JSON.parse(stored) as Partial<AudioPrefs>;
+    return {
+      volume: typeof parsed.volume === 'number' ? Math.max(0, Math.min(1, parsed.volume)) : DEFAULT_AUDIO_PREFS.volume,
+      rate: typeof parsed.rate === 'number' ? Math.max(0.5, Math.min(2, parsed.rate)) : DEFAULT_AUDIO_PREFS.rate,
+      enabled: typeof parsed.enabled === 'boolean' ? parsed.enabled : DEFAULT_AUDIO_PREFS.enabled,
+    };
+  } catch {
+    return DEFAULT_AUDIO_PREFS;
+  }
+};
+
+const saveAudioPrefs = (prefs: AudioPrefs): void => {
+  try {
+    localStorage.setItem(AUDIO_PREFS_KEY, JSON.stringify(prefs));
+  } catch {
+    // localStorage unavailable (private mode) — prefs stay in memory.
+  }
+};
 
 /**
  * P0 fix (dead-player-vote-autoresolve): during DAY_VOTING the phase driver
@@ -174,6 +213,12 @@ export function useGameState(authContext: AuthContext) {
   const [winner, setWinner] = useState<Winner>(null);
   const [isProcessingAI, setIsProcessingAI] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  // Audio prefs (browser-tts-mvp): restored from localStorage, synced to the
+  // speechAudio service below. ttsEnabled defaults to OFF — flipping the
+  // header toggle is the explicit user gesture the autoplay policy requires.
+  const [audioVolume, setAudioVolume] = useState<number>(() => loadAudioPrefs().volume);
+  const [ttsEnabled, setTtsEnabled] = useState<boolean>(() => loadAudioPrefs().enabled);
+  const [ttsRate, setTtsRate] = useState<number>(() => loadAudioPrefs().rate);
   const [translateEnabled, setTranslateEnabled] = useState(true);
   const [userInput, setUserInput] = useState('');
   const [aiSeerLastCheck, setAiSeerLastCheck] = useState<{ targetId: number; isGood: boolean } | null>(null);
@@ -206,6 +251,26 @@ export function useGameState(authContext: AuthContext) {
   useEffect(() => {
     logsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [logs, currentSpeaker, wolfChat]);
+
+  // Audio: mute cancels current speech immediately (speechAudio owns the API).
+  useEffect(() => {
+    speechAudio.setMuted(isMuted);
+  }, [isMuted]);
+
+  // Audio: sync preferences into the service and persist them (same
+  // localStorage pattern as the language pill).
+  useEffect(() => {
+    speechAudio.setVolume(audioVolume);
+    speechAudio.setRate(ttsRate);
+    speechAudio.setEnabled(ttsEnabled);
+    saveAudioPrefs({ volume: audioVolume, rate: ttsRate, enabled: ttsEnabled });
+  }, [audioVolume, ttsRate, ttsEnabled]);
+
+  // Audio: any phase change (incl. game over and returning to the lobby)
+  // cancels in-flight speech. Presentation-only — never touches game flow.
+  useEffect(() => {
+    speechAudio.cancel();
+  }, [phase]);
 
   // Wolf countdown timer
   useEffect(() => {
@@ -349,11 +414,12 @@ export function useGameState(authContext: AuthContext) {
     speakerId?: number,
     translation?: string,
     tone: GameLog['tone'] = isSystem ? 'system' : 'speech'
-  ) => {
+  ): string => {
+    const id = `${Date.now()}-${Math.random()}`;
     setLogs(prev => [
       ...prev,
       {
-        id: `${Date.now()}-${Math.random()}`,
+        id,
         phase,
         message,
         translation,
@@ -362,10 +428,12 @@ export function useGameState(authContext: AuthContext) {
         tone,
       },
     ]);
+    return id;
   };
 
   const startGame = (nextConfig: GameConfig, language?: DisplayLanguage) => {
     resetAIMemory();
+    speechAudio.reset(); // new game: cancel audio, clear play-once dedupe
     setGameLanguage(resolveGameLanguage(language));
     setAIDifficulty(DIFFICULTY_CONFIGS[difficulty].actionAccuracy);
     const shuffledRoles = [...nextConfig.roles].sort(() => Math.random() - 0.5);
@@ -644,6 +712,8 @@ export function useGameState(authContext: AuthContext) {
   // Human alive? Wait for them to type
   if (nextSpeaker.isHuman) return;
 
+    let ttsText = '';
+    let ttsLogId = '';
     await runAIPhaseSafely(setIsProcessingAI, async () => {
       const seerInfo = nextSpeaker.role === Role.SEER ? aiSeerLastCheck : null;
       const response = await generateAIDialogue(
@@ -658,12 +728,30 @@ export function useGameState(authContext: AuthContext) {
         nightState,
         gameLanguage
       );
-      addLog(response.en, false, nextSpeaker.id, response.zh, 'speech');
+      ttsLogId = addLog(response.en, false, nextSpeaker.id, response.zh, 'speech');
+      // TTS reads the FINAL displayed text (post roster-guard, post
+      // translation): the same field pick the log renderer makes for the
+      // fixed game language.
+      ttsText = pickTranslationSource(
+        { message: response.en, translation: response.zh, isSystem: false },
+        gameLanguage,
+      );
       setSpokenPlayerIds(prev => new Set(prev).add(nextSpeaker.id));
     }, () => {
       addLog(`Player ${nextSpeaker.id} speech skipped (AI error).`, true, undefined, `AI出错，${nextSpeaker.id}号发言跳过。`, 'system');
       setSpokenPlayerIds(prev => new Set(prev).add(nextSpeaker.id));
     });
+    // Presentation-only TTS: awaited so audio and pacing stay in sync, but
+    // enqueue always resolves (end / error / hard max duration / disabled),
+    // so this can never stall the turn or alter vote deadlines.
+    if (ttsText && ttsLogId) {
+      await speechAudio.enqueue(
+        ttsText,
+        speechAudio.speechLangTag(ttsText, gameLanguage),
+        nextSpeaker.id,
+        ttsLogId,
+      );
+    }
     setCurrentSpeaker(null);
   };
 
@@ -856,6 +944,9 @@ export function useGameState(authContext: AuthContext) {
     selectedPlayerId, setSelectedPlayerId,
     witchStatus, nightState, roundCount, winner,
     isProcessingAI, isMuted, setIsMuted,
+    audioVolume, setAudioVolume,
+    ttsEnabled, setTtsEnabled,
+    ttsRate, setTtsRate,
     translateEnabled, setTranslateEnabled,
     userInput, setUserInput,
     speakingQueue, currentSpeaker, spokenPlayerIds,
