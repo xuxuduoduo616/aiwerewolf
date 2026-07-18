@@ -21,9 +21,9 @@ metadata:
 
 ## 当前阶段
 
-项目处于 **v1 核心可玩完成后的打磨与上线验证阶段**。2026-07-11 本地验证：
-Vitest 14/14 通过，生产构建成功。线上 Netlify、Supabase RLS、邮件模板和环境
-变量不能从本地源码自动证明，必须作为远程人工验证项处理。
+当前阶段、测试基线与部署状态见
+[coordination/PROJECT_STATE.md](coordination/PROJECT_STATE.md)（唯一事实源，
+本文件只记录稳定架构事实）。
 
 ## 技术架构
 
@@ -73,9 +73,9 @@ Gemini 当前默认模型是 `gemini-2.5-flash`。本地 Vite 场景不会调用
 
 ```bash
 npm run dev       # Vite；Gemini 使用发言库回退
-npm run test:run  # 14 个当前单元/集成测试
+npm run test:run  # 全量单元/集成测试（基线见 PROJECT_STATE）
 npm run build     # TypeScript + Vite 生产构建
 ```
 
-变更前先阅读 `memory/coordination/PROJECT_STATE.md`。完整待办、测试缺口、近期提交
-和优先级在 `memory/progress-report.md`。
+变更前先按 `memory/INDEX.md` 的阅读顺序读取共享记忆；读写规则见
+`memory/MEMORY_CONTRACT.md`。

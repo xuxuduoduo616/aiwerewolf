@@ -1,17 +1,17 @@
 # Project Coordination State
 
-**Last verified:** 2026-07-17
-**Project phase:** Session cycles 1–6 complete (22 cards Accepted, 268 tests). Netlify pipeline restored; functions-502 fix DEPLOYED and verified live.
+**Last verified:** 2026-07-18
+**Project phase:** Cycles 1–7 complete (26 cards Accepted). Round 7 (roster-name fix + vote countdown + browser TTS + cloud TTS spike) integrated and Chrome-verified locally; commits after `c670193` NOT yet pushed/deployed (owner briefing pending).
 
 ## Verified Baseline
 
-- Local tests: `npm run test:run` passed 268/268 tests (25 test files), zero regressions.
-- Local production build: `npm run build` succeeded.
-- origin/main head: `cf2728e` — netlify-functions-cjs-fix. **DEPLOYED 2026-07-17 with owner approval**, Netlify auto-deploy from push, live-verified.
-- The 4 previously-skipped commits (975b5a0, a29e1ec, 78533e4, cab46f3) were already live via `ccdb788` (ancestry + asset-hash verified); historic Skipped labels need no action.
-- **Functions restored (2026-07-17):** both Netlify Functions had returned 502 since the first deploy from this repo (`module is not defined in ES module scope` — root `"type": "module"` vs CJS `.js`; masked by frontend fallback chain). Fixed by card `netlify-functions-cjs-fix` (`git mv` to `.cjs`, debugger PASS). Post-deploy verification on both domains: OPTIONS 204, empty POST → 400 `Missing prompt`, live probe POST → 200 `{"text":"OK"}` — **API_KEY is configured and the Gemini path works in production for the first time.** Live AI polish/EN translation now active; $1/day budget guard + per-IP rate limit apply.
+- Local tests: `npm run test:run` — **363 passed / 5 skipped** (30 files), zero regressions. `npm run build` succeeds. Both speech audits green (`npm run audit:speech-names` 0 violations; corpus scan exit 0).
+- Local HEAD: `984f811` (browser QA evidence). origin/main + production deploy: `c670193` (roster-name fix live, asset `index-Bdj7A0B8.js` verified 2026-07-18, functions 204).
+- **Unpushed local commits:** `d14765d` (vote countdown 10s + cloud-TTS spike), `b9fdb49` (browser TTS MVP), `984f811` (QA evidence), plus memory-governance commits. Push = auto-deploy → requires owner approval.
+- Round 7 Chrome verification: vote pill full `10s→0s` sequence captured; timeout → abstain (never random vote) verified 3×; TTS `speaking=true`, consent-gated prefs persisted; 2 full games completed. Evidence: `reports/browser-verification-tts-vote/`.
+- Round 7 residuals (queued in ROADMAP): sanitization placeholder residue ("that player") displayed literally; EN-heavy fallback speech in zh mode; 5 katakana names uncovered by entity list.
 
-## Completed This Session (2026-07-16 Autonomous Office)
+## Completed (cycles 1–6: 2026-07-16; round 7: 2026-07-17~18)
 
 | Cycle | Cards | What |
 |-------|-------|------|
@@ -21,6 +21,7 @@
 | 4 | 1 | night-pipeline-exception-safety (owner-reported P0: permanent "AI思考" stall — try/finally around all isProcessingAI blocks, guarded dynamic imports, 12s fetch timeouts) |
 | 5 | 1 | lobby-language-authority (P1 fix: in-game pill removed, lobby sole language authority, EN games produce full native English AI speech from all 3 layers + wolf chat, zh unchanged, 231 tests) |
 | 6 | 9 | UI optimization: P0 speech-timer-autoskip-fix (human stall fix), action-bar-i18n (KILL→刀人 etc.), lobby-difficulty-i18n (Beginner/Intermediate/Expert), dead-player-card-readability, speech-input-placeholder-i18n, header-icon-tooltips (aria-labels), quick-speech-buttons (7 presets, X号 tap-to-fill), phase-labels-i18n (12 phase keys EN), player-card-speaking-status (已发言checkmark badges) |
+| 7 | 5 | netlify-functions-cjs-fix (prod 502 fix, DEPLOYED), ai-speech-name-detection-harness + ai-speech-roster-name-fix (corpus 17,848→0 entity refs, output guard, DEPLOYED c670193), vote-countdown-diagnosis-and-fix (10s deadline timer, abstain timeout), browser-tts-mvp (Web Speech API read-aloud), cloud-tts-adapter-spike (research only) |
 
 ## Provider Infrastructure
 
@@ -55,18 +56,15 @@ No AIWolf data downloaded — license unclear, organizer contact recommended for
 - vibecoder.store integration (network unreachable — retry later).
 - Wolf teammate badge browser coverage (random role assignment — not exercised in QA; unit tests pass).
 - No live provider calls made (all keys missing, dry-run only). Provider discovery gated on key availability.
-- Speech library: 11,449 entries, mixed JA/EN/CN from AIWolf corpus; Witch/Hunter/Idiot reuse Seer/Villager pools.
+- Speech library: 8,521 entries post-sanitization (was 11,035; 6,490 sanitized / 2,514 dropped); Witch/Hunter/Idiot reuse Seer/Villager pools.
 - Full browser E2E playthrough of all roles/boards not completed (QA exercised 9p and 12p as guest, 2 games).
 
 ## Deployment Status
 
-**DEPLOYED 2026-07-16 with owner approval.** Two pushes: `73e2934` (cycles 1–3) and `b94cdbe` (stall fix). Netlify auto-deploy from GitHub verified live.
-
-Still requiring owner action before the provider adapter can make live calls:
-
-1. Adding API keys to Netlify env vars (AICODEMIRROR_API_KEY, DEEPSEEK_API_KEY) — until then provider-adapter falls back to genai-proxy/speech library, which is safe.
-2. Optional: set ADAPTER_DAILY_BUDGET_USD (default $1/day/instance).
-3. Any Supabase Dashboard changes.
+- Production = `c670193` (verified 2026-07-18): roster-name fix + `.cjs` functions live; Gemini path working (API_KEY configured); $1/day budget guard active.
+- Pending deploy (owner approval required): `d14765d` vote countdown, `b9fdb49` browser TTS, QA + memory-governance commits.
+- Historical deploy narratives: git log + `reports/netlify-functions-cjs-fix.md`.
+- Still owner-gated: AICODEMIRROR/DEEPSEEK keys in Netlify env; ADAPTER_DAILY_BUDGET_USD tuning; any Supabase Dashboard change.
 
 ## Coordinator Rules
 

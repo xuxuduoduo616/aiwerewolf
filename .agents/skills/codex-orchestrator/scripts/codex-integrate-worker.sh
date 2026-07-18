@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Integration script: apply an accepted worker patch to the coordinator worktree.
+# Gate: task card must be Ready for review AND meta must say final_verdict=PASS.
 set -euo pipefail
 
 task_id="${1:?Usage: codex-integrate-worker.sh <task-id>}"
@@ -27,26 +29,29 @@ IFS= read -r meta_file <"$latest_pointer"
 
 worktree="$(sed -n 's/^worktree_path=//p' "$meta_file" | tail -n 1)"
 patch_file="$(sed -n 's/^patch_file=//p' "$meta_file" | tail -n 1)"
+final_verdict="$(sed -n 's/^final_verdict=//p' "$meta_file" | tail -n 1)"
 integrated_marker="$meta_file.integrated"
 
+# ---- Gate checks ----------------------------------------------------------
 case "$worktree" in
   "$project_dir/.codex-worker-worktrees/"*) ;;
-  *)
-    printf 'Refusing unexpected worktree path: %s\n' "$worktree" >&2
-    exit 2
-    ;;
+  *) printf 'Refusing unexpected worktree path: %s\n' "$worktree" >&2; exit 2 ;;
 esac
-[ -f "$task_file" ] || { printf 'Task card is missing.\n' >&2; exit 2; }
-[ -f "$report_file" ] || { printf 'Worker report is missing.\n' >&2; exit 2; }
+[ -f "$task_file" ]  || { printf 'Task card is missing.\n' >&2; exit 2; }
+[ -f "$report_file" ]|| { printf 'Worker report is missing.\n' >&2; exit 2; }
 [ ! -e "$integrated_marker" ] || {
-  printf 'Task patch was already integrated: %s\n' "$task_id" >&2
-  exit 2
-}
-grep -q '^Ready for review$' "$task_file" || {
-  printf 'Task must be Ready for review before integration: %s\n' "$task_id" >&2
-  exit 2
-}
+  printf 'Task patch was already integrated: %s\n' "$task_id" >&2; exit 2; }
 
+# HARD GATE: only debugger PASS patches enter the main tree.
+case "$final_verdict" in
+  PASS) ;;
+  *) printf 'Task verdict is %s, not PASS. Integration refused.\n' "$final_verdict" >&2; exit 2 ;;
+esac
+
+grep -q '^Ready for review$' "$task_file" || {
+  printf 'Task must be Ready for review before integration: %s\n' "$task_id" >&2; exit 2; }
+
+# ---- Apply ----------------------------------------------------------------
 if [ ! -s "$patch_file" ]; then
   touch "$integrated_marker"
   printf 'Task has no code patch to apply: %s\n' "$task_id"

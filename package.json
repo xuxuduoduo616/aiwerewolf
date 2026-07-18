@@ -10,7 +10,11 @@
     "test": "vitest",
     "test:run": "vitest run",
     "audit:speech-names": "SPEECH_NAME_AUDIT=1 vitest run src/diagnostics/",
-    "audit:speech-corpus": "node scripts/speech-corpus-name-audit.mjs"
+    "audit:speech-corpus": "node scripts/speech-corpus-name-audit.mjs",
+    "memory:audit": "node scripts/memory-tools.mjs audit",
+    "memory:validate": "node scripts/memory-tools.mjs validate",
+    "memory:status": "node scripts/memory-tools.mjs status",
+    "memory:update": "node scripts/memory-tools.mjs update"
   },
   "dependencies": {
     "@google/genai": "^1.52.0",

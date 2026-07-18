@@ -49,6 +49,17 @@ command -v codex >/dev/null 2>&1 || {
   exit 2
 }
 
+# Workers run on a confirmed gpt-5.6 model only. CODEX_MODEL must be set by the
+# coordinator from codex-model-preflight.sh. On FALLBACK=claude the coordinator
+# orchestrates with the current Claude model and must not call this script;
+# gpt-5.5 is not a permitted worker fallback.
+CODEX_MODEL="${CODEX_MODEL:-}"
+case "$CODEX_MODEL" in
+  gpt-5.6-*) ;;
+  '') printf 'FATAL: CODEX_MODEL unset. Run codex-model-preflight.sh first; on FALLBACK=claude do not dispatch Codex workers.\n' >&2; exit 2 ;;
+  *)  printf 'FATAL: refusing worker model "%s"; only gpt-5.6-* is allowed (gpt-5.5 is not a permitted fallback).\n' "$CODEX_MODEL" >&2; exit 2 ;;
+esac
+
 project_dir="$(git rev-parse --show-toplevel)"
 run_dir="$project_dir/memory/coordination/runs"
 worktree_base="$project_dir/.codex-worker-worktrees"
@@ -163,7 +174,8 @@ run_worker() {
   codex exec \
     --cd "$worktree" \
     --sandbox workspace-write \
-    --ask-for-approval never \
+    -c approval_policy="never" \
+    -m "$CODEX_MODEL" \
     --json \
     --output-last-message "$final_file" \
     "$prompt" >"$events_file"

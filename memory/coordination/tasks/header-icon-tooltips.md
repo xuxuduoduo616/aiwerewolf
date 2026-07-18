@@ -2,7 +2,7 @@
 
 ## Status
 
-Ready for review
+Accepted
 
 ## Objective
 
