@@ -8,7 +8,9 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "vitest",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "audit:speech-names": "SPEECH_NAME_AUDIT=1 vitest run src/diagnostics/",
+    "audit:speech-corpus": "node scripts/speech-corpus-name-audit.mjs"
   },
   "dependencies": {
     "@google/genai": "^1.52.0",

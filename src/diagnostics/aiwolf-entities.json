@@ -1,0 +1,19 @@
+{
+  "comment": "Known AIWolf-contest leftover entities found in src/data/*_speeches.json. Shared by src/diagnostics/nameDetector.ts (vitest audit) and scripts/speech-corpus-name-audit.mjs (static corpus scan). Latin names are matched case-sensitively with word boundaries; katakana names with katakana boundaries. 'May' is intentionally excluded from the Latin list (too ambiguous with the English modal/month); its katakana form メイ is listed instead.",
+  "latinNames": [
+    "Asuka", "Benjamin", "Servas", "Daisuke", "George", "Shunichi",
+    "Midori", "Shizue", "Ryuji", "Takumi", "Jonathan", "Jonny",
+    "Mio", "Victoria", "Mizuki", "Misaki", "Yumi", "Minato",
+    "Rin", "Minako", "Toshio", "Shion", "Kenji", "Sakura",
+    "Mei", "Hana", "Aya", "Rina", "Smith", "Allen",
+    "Haru", "Kana", "Yuu", "Ryo"
+  ],
+  "katakanaNames": [
+    "サクラ", "ミナコ", "メイ", "ミオ", "ヴィクトリア", "タクミ",
+    "シュンイチ", "ユウ", "リュウジ", "ミドリ", "ユミ", "ジョナサン",
+    "リン", "ミナト", "セルヴァス", "シズエ", "ミサキ", "シオン",
+    "ベンジャミン", "リナ", "アヤ", "ハナ", "アスカ", "ダイスケ",
+    "ミヅキ", "ミズキ", "アレン", "ハル", "カナ", "リョウ",
+    "タク", "ジョージ", "トシオ", "ケンジ", "ジョニー"
+  ]
+}

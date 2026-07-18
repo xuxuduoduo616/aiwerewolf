@@ -1,0 +1,17 @@
+{
+  "id": "fallback-vote-reason-zh-r1-p1-79",
+  "context": "vote-reason",
+  "language": "zh",
+  "speakerId": 1,
+  "speakerName": "Luna",
+  "phase": "DAY_VOTING",
+  "round": 1,
+  "roster": "1:Luna(Villager) 2:Marcus(Werewolf) 3:Elena(Werewolf) 4:Darius(Werewolf) 5:Silas(Seer) 6:Amara(Witch) 7:Finn(Hunter) 8:Isla(Villager) 9:Jasper(Villager)",
+  "prompt": "\n\n---\n你是1号，身份：平民。\n行动：VOTE，可选目标：[2,3,4,5,6,7,8,9]\n近期：\n票型：暂无\n按狼人杀最优策略选择目标。\nJSON：{\"targetId\":number,\"reason\":\"简短中文原因\"}",
+  "rawResponse": "",
+  "translatedResponse": "",
+  "finalText": "（低难度）随机选择",
+  "source": "selector-reason",
+  "violations": [],
+  "note": "no violations detected in the vote-reason context on the fallback path"
+}

@@ -1,0 +1,32 @@
+{
+  "id": "remote-day-speech-zh-r1-p1-1",
+  "context": "day-speech",
+  "language": "zh",
+  "speakerId": 1,
+  "speakerName": "Luna",
+  "phase": "DAY_DISCUSSION",
+  "round": 1,
+  "roster": "1:Luna(Villager) 2:Marcus(Werewolf) 3:Elena(Werewolf) 4:Darius(Werewolf) 5:Silas(Seer) 6:Amara(Witch) 7:Finn(Hunter) 8:Isla(Villager) 9:Jasper(Villager)",
+  "prompt": "你是一名狼人杀高手。性格：GPT-4o (霸总/高冷)。说话风格：Short, commanding sentences. Calm but deadly. '听我的'.。\n你是平民，通过发言和票型找狼\n你的真实身份：平民（1号 Luna）\n必须使用的术语：金水、查杀、悍跳、倒钩、冲锋、铁逻辑\n禁止：透露不该知道的信息，讲废话，超过180字\n\n---\n当前局面：第1轮，昨晚平安夜\n玩家列表：1号[活][平民] 2号[活][?] 3号[活][?] 4号[活][?] 5号[活][?] 6号[活][?] 7号[活][?] 8号[活][?] 9号[活][?]\n近期发言：\n\n票型：暂无\n\n请输出一段白天发言（80-180中文字符，必须提到具体玩家编号）。\n返回JSON：{\"en\":\"short English summary\",\"zh\":\"Chinese speech\"}",
+  "rawResponse": "{\"zh\":\"我觉得Agent[05]和サクラ都很可疑，10号昨天的票型也有问题，今天建议先集中投他们。\",\"en\":\"I think Agent[05] and Sakura are both acting suspicious, and Player 10 voted strangely yesterday, so the village should focus its vote on those seats today.\"}",
+  "translatedResponse": "",
+  "finalText": "我觉得Agent[05]和サクラ都很可疑，10号昨天的票型也有问题，今天建议先集中投他们。",
+  "source": "remote-model",
+  "violations": [
+    {
+      "kind": "agent-ref",
+      "match": "Agent[05]",
+      "detail": "raw AIWolf entity \"Agent[05]\" — not a roster reference"
+    },
+    {
+      "kind": "aiwolf-name",
+      "match": "サクラ",
+      "detail": "AIWolf corpus personal name \"サクラ\" — not on the current roster"
+    },
+    {
+      "kind": "out-of-roster-seat",
+      "match": "10",
+      "detail": "seat 10 referenced but roster has seats 1,2,3,4,5,6,7,8,9"
+    }
+  ]
+}
