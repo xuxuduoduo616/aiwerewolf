@@ -23,7 +23,8 @@
 按 `memory/MEMORY_CONTRACT.md`：coder 写 `reports/<task-id>.md`，debugger 写
 `reports/<task-id>-review.md`（末行 `VERDICT: PASS|FAIL`）；对 canonical 状态
 的变更提案写入 `memory/coordination/handoffs/`（pending delta，记录
-base_commit），由 coordinator 合并。
+base_commit），由 coordinator 合并。delta 模板：`npm run memory:update`。
+（Claude Code 端此流程由 `$sync-project-memory` skill 承载。）
 
 ## 禁止
 

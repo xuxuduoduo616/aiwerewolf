@@ -71,8 +71,9 @@ bash "${CLAUDE_SKILL_DIR}/scripts/codex-model-preflight.sh"
    npm run test:run
    npm run build
    ```
-7. Mark `Accepted`, update `PROJECT_STATE.md`. If verification fails, revert
-   and create a repair task.
+7. Mark `Accepted`, update `PROJECT_STATE.md` (via `$sync-project-memory
+   write-back` — same for deployment-verified and Blocked checkpoints). If
+   verification fails, revert and create a repair task.
 8. Clean PASS/integrated worktrees; keep FAIL/Blocked worktrees for recovery:
    ```bash
    bash "${CLAUDE_SKILL_DIR}/scripts/codex-cleanup-worker.sh" "<task-id>"

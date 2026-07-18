@@ -1,7 +1,7 @@
 # Project Coordination State
 
 **Last verified:** 2026-07-18
-**Project phase:** Cycles 1–7 complete (26 cards Accepted). Round 7 (roster-name fix + vote countdown + browser TTS + cloud TTS spike) integrated and Chrome-verified locally; commits after `c670193` NOT yet pushed/deployed (owner briefing pending).
+**Project phase:** Cycles 1–7 complete (26 cards Accepted) + memory governance (ADR-001) + sync-project-memory skill (Phase B). Owner approved key-privacy sweep + push/deploy 2026-07-18; deploying full backlog to production.
 
 ## Verified Baseline
 
@@ -62,7 +62,7 @@ No AIWolf data downloaded — license unclear, organizer contact recommended for
 ## Deployment Status
 
 - Production = `c670193` (verified 2026-07-18): roster-name fix + `.cjs` functions live; Gemini path working (API_KEY configured); $1/day budget guard active.
-- Pending deploy (owner approval required): `d14765d` vote countdown, `b9fdb49` browser TTS, QA + memory-governance commits.
+- Deploying (owner-approved 2026-07-18): vote countdown, browser TTS, QA evidence, memory governance, key-privacy sweep, sync-project-memory skill.
 - Historical deploy narratives: git log + `reports/netlify-functions-cjs-fix.md`.
 - Still owner-gated: AICODEMIRROR/DEEPSEEK keys in Netlify env; ADAPTER_DAILY_BUDGET_USD tuning; any Supabase Dashboard change.
 
