@@ -1,13 +1,12 @@
 # Project Coordination State
 
 **Last verified:** 2026-07-18
-**Project phase:** Cycles 1–7 complete (26 cards Accepted) + memory governance (ADR-001) + sync-project-memory skill (Phase B). Owner approved key-privacy sweep + push/deploy 2026-07-18; deploying full backlog to production.
+**Project phase:** Cycles 1–7 complete (26 cards Accepted) + memory governance (ADR-001) + sync-project-memory skill (Phase B). DEPLOYED 2026-07-18: production = a027296 (asset index-BOYeqKxJ.js, functions 204, live Gemini OK, zero key patterns in bundle).
 
 ## Verified Baseline
 
 - Local tests: `npm run test:run` — **363 passed / 5 skipped** (30 files), zero regressions. `npm run build` succeeds. Both speech audits green (`npm run audit:speech-names` 0 violations; corpus scan exit 0).
-- Local HEAD: `984f811` (browser QA evidence). origin/main + production deploy: `c670193` (roster-name fix live, asset `index-Bdj7A0B8.js` verified 2026-07-18, functions 204).
-- **Unpushed local commits:** `d14765d` (vote countdown 10s + cloud-TTS spike), `b9fdb49` (browser TTS MVP), `984f811` (QA evidence), plus memory-governance commits. Push = auto-deploy → requires owner approval.
+- Local HEAD = origin/main = production = `a027296` (asset `index-BOYeqKxJ.js` verified live 2026-07-18).
 - Round 7 Chrome verification: vote pill full `10s→0s` sequence captured; timeout → abstain (never random vote) verified 3×; TTS `speaking=true`, consent-gated prefs persisted; 2 full games completed. Evidence: `reports/browser-verification-tts-vote/`.
 - Round 7 residuals (queued in ROADMAP): sanitization placeholder residue ("that player") displayed literally; EN-heavy fallback speech in zh mode; 5 katakana names uncovered by entity list.
 
@@ -61,8 +60,8 @@ No AIWolf data downloaded — license unclear, organizer contact recommended for
 
 ## Deployment Status
 
-- Production = `c670193` (verified 2026-07-18): roster-name fix + `.cjs` functions live; Gemini path working (API_KEY configured); $1/day budget guard active.
-- Deploying (owner-approved 2026-07-18): vote countdown, browser TTS, QA evidence, memory governance, key-privacy sweep, sync-project-memory skill.
+- Gemini path working in production (API_KEY configured); $1/day budget guard active.
+- Production = `a027296` (verified 2026-07-18): vote countdown, browser TTS, memory governance (ADR-001), sync-project-memory skill, key-privacy sweep all live.
 - Historical deploy narratives: git log + `reports/netlify-functions-cjs-fix.md`.
 - Still owner-gated: AICODEMIRROR/DEEPSEEK keys in Netlify env; ADAPTER_DAILY_BUDGET_USD tuning; any Supabase Dashboard change.
 
