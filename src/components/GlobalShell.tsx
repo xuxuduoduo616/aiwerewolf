@@ -11,17 +11,30 @@ interface Props {
   children: React.ReactNode;
   /** When true, renders full-screen (no shell chrome). Used for LOGIN. */
   fullscreen?: boolean;
+  /** Live wallet balances from useWallet hook. */
+  coins?: number;
+  coupons?: number;
+  crystals?: number;
 }
 
-const GlobalShell: React.FC<Props> = ({ activeView, onNavigate, children, fullscreen }) => {
+const GlobalShell: React.FC<Props> = ({
+  activeView,
+  onNavigate,
+  children,
+  fullscreen,
+  coins = 0,
+  coupons = 0,
+  crystals = 0,
+}) => {
   if (fullscreen) return <>{children}</>;
 
   return (
     <div className="wol-shell">
       <TopStatusBar
-        coins={12850}
-        coupons={320}
-        crystals={8}
+        coins={coins}
+        coupons={coupons}
+        crystals={crystals}
+        onNavigateToShop={() => onNavigate('shop')}
       />
       <div className="wol-shell-content">
         {children}

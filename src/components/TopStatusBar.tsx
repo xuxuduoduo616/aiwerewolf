@@ -4,6 +4,7 @@ interface Props {
   coins: number;
   coupons: number;
   crystals: number;
+  onNavigateToShop?: () => void;
 }
 
 const coinIcon = (
@@ -26,9 +27,11 @@ const crystalIcon = (
   </svg>
 );
 
-const plusBtn = <span className="wol-currency-plus" aria-label="购买">+</span>;
+const TopStatusBar: React.FC<Props> = ({ coins, coupons, crystals, onNavigateToShop }) => {
+  const plusBtn = (
+    <button type="button" className="wol-currency-plus" aria-label="购买" onClick={onNavigateToShop}>+</button>
+  );
 
-const TopStatusBar: React.FC<Props> = ({ coins, coupons, crystals }) => {
   return (
     <div className="wol-top-bar">
       {/* Currency row */}

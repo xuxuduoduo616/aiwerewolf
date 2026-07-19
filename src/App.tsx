@@ -4,6 +4,7 @@ import { GAME_MODES, getPhaseLabel, ROLE_DESCRIPTIONS, ROLE_LABELS } from './con
 import useAuth from './hooks/useAuth';
 import { useRecords } from './hooks/useRecords';
 import { useGameState } from './hooks/useGameState';
+import { useWallet } from './hooks/useWallet';
 import { PlayerCard } from './components/PlayerCard';
 import ActionBar from './components/ActionBar';
 import RecordsPanel from './components/RecordsPanel';
@@ -16,6 +17,7 @@ import type { ShellView } from './components/GlobalShell';
 import LobbyHome from './components/LobbyHome';
 import MatchSelection from './components/MatchSelection';
 import ProfileView from './components/ProfileView';
+import CoinStore from './components/CoinStore';
 import { useDisplayLanguage } from './i18n';
 import { resolveVoteResult } from './gameEngine';
 import { playTick } from './services/speechAudio';
@@ -32,6 +34,7 @@ const App: React.FC = () => {
   const [displayLanguage, toggleDisplayLanguage] = useDisplayLanguage();
   const [activeView, setActiveView] = useState<ShellView>('home');
   const rec = useRecords(auth.session);
+  const wallet = useWallet(auth.session, auth.isGuest);
   const game = useGameState({
     session: auth.session,
     isGuest: auth.isGuest,
@@ -376,12 +379,15 @@ const App: React.FC = () => {
         );
       case 'shop':
         return (
-          <div style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            minHeight: '60vh', color: 'rgba(255,255,255,0.25)', fontSize: 14, fontWeight: 600,
-          }}>
-            商店街即将开放
-          </div>
+          <CoinStore
+            coins={wallet.coins}
+            coupons={wallet.coupons}
+            crystals={wallet.crystals}
+            onPurchase={async (packId) => {
+              const result = await wallet.purchase(packId);
+              return { success: result.success, error: result.error };
+            }}
+          />
         );
       case 'profile':
         return <ProfileView />;
@@ -395,6 +401,9 @@ const App: React.FC = () => {
       activeView={activeView}
       onNavigate={setActiveView}
       fullscreen={false}
+      coins={wallet.coins}
+      coupons={wallet.coupons}
+      crystals={wallet.crystals}
     >
       {renderShellContent()}
     </GlobalShell>

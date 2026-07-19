@@ -172,6 +172,66 @@ export const saveGameRecord = async (
   return toGameRecord(data);
 };
 
+// ─── Wallet / user_coins ──────────────────────────────────────────────────────
+
+export interface UserCoins {
+  coins: number;
+  coupons: number;
+  crystals: number;
+  totalPurchasedCoins: number;
+}
+
+export const fetchUserCoins = async (
+  session: SupabaseSession,
+): Promise<UserCoins> => {
+  const client = getClient();
+  await client.auth.setSession({
+    access_token: session.accessToken,
+    refresh_token: session.refreshToken || '',
+  });
+
+  const { data, error } = await client
+    .from('user_coins')
+    .select('coins, coupons, crystals, total_purchased_coins')
+    .eq('user_id', session.user.id)
+    .maybeSingle();
+
+  if (error) throw new Error(error.message || '钱包数据加载失败。');
+
+  return {
+    coins: (data?.coins as number) ?? 0,
+    coupons: (data?.coupons as number) ?? 0,
+    crystals: (data?.crystals as number) ?? 0,
+    totalPurchasedCoins: (data?.total_purchased_coins as number) ?? 0,
+  };
+};
+
+export const upsertUserCoins = async (
+  session: SupabaseSession,
+  coins: UserCoins,
+): Promise<void> => {
+  const client = getClient();
+  await client.auth.setSession({
+    access_token: session.accessToken,
+    refresh_token: session.refreshToken || '',
+  });
+
+  const { error } = await client
+    .from('user_coins')
+    .upsert(
+      {
+        user_id: session.user.id,
+        coins: coins.coins,
+        coupons: coins.coupons,
+        crystals: coins.crystals,
+        total_purchased_coins: coins.totalPurchasedCoins,
+      },
+      { onConflict: 'user_id' },
+    );
+
+  if (error) throw new Error(error.message || '钱包保存失败。');
+};
+
 // ─── Mappers ──────────────────────────────────────────────────────────────────
 
 const toProfile = (row: Record<string, unknown>): UserProfile => ({
