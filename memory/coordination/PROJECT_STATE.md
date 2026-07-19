@@ -1,13 +1,12 @@
 # Project Coordination State
 
-**Last verified:** 2026-07-19 (Cycle 8 UI overhaul integrated)
-**Project phase:** Cycles 1–8 complete (31 cards Accepted) + memory governance + sync-project-memory skill. Deployed `a027296` verified live 2026-07-18. **Cycle 8 UI overhaul integrated 2026-07-19 (local only, not deployed).**
+**Last verified:** 2026-07-19 (Cycle 9 payment system integrated)
+**Project phase:** Cycles 1–9 complete (34 cards Accepted) + memory governance + sync-project-memory skill. Deployed `a027296` verified live 2026-07-18. **Cycles 8–9 integrated locally 2026-07-19 (not deployed).**
 
 ## Verified Baseline
 
-- Local tests: `npm run test:run` — **363 passed / 5 skipped** (29 files), zero regressions. `npm run build` succeeds.
-- Local HEAD = `143860d` (stale — repo has no live-change commits; production tip is `a027296`).
-- Production = `a027296` (asset `index-BOYeqKxJ.js` verified live 2026-07-18).
+- Local tests: `npm run test:run` — **387 passed / 5 skipped** (30 files), zero regressions. `npm run build` succeeds.
+- Local HEAD = `fda3fa0` (Cycle 9 commit). Production = `a027296` (asset `index-BOYeqKxJ.js` verified live 2026-07-18).
 - Git has uncommitted product changes (Cycle 8 UI overhaul — 18 new/edited files).
 - Untracked: `.codex/`, `.agents/`, `.claude/`, `.mcp.json`, `memory/`, `AGENTS.md`, `CLAUDE.md`, `.env.example`, screenshot artifacts.
 - Coordination directories `tasks/`, `reports/`, `runs/` are EMPTY — ready for fresh dispatch.
