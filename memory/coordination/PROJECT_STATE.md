@@ -1,14 +1,14 @@
 # Project Coordination State
 
-**Last verified:** 2026-07-19 (framework init check)
-**Project phase:** Cycles 1–7 complete (26 cards Accepted) + memory governance + sync-project-memory skill. Deployed `a027296` verified live 2026-07-18. **Framework initialized 2026-07-19.**
+**Last verified:** 2026-07-19 (Cycle 8 UI overhaul integrated)
+**Project phase:** Cycles 1–8 complete (31 cards Accepted) + memory governance + sync-project-memory skill. Deployed `a027296` verified live 2026-07-18. **Cycle 8 UI overhaul integrated 2026-07-19 (local only, not deployed).**
 
 ## Verified Baseline
 
-- Local tests: `npm run test:run` — 14/14 passed. `npm run build` succeeds.
+- Local tests: `npm run test:run` — **363 passed / 5 skipped** (29 files), zero regressions. `npm run build` succeeds.
 - Local HEAD = `143860d` (stale — repo has no live-change commits; production tip is `a027296`).
 - Production = `a027296` (asset `index-BOYeqKxJ.js` verified live 2026-07-18).
-- Git has NO uncommitted tracked changes (clean diff).
+- Git has uncommitted product changes (Cycle 8 UI overhaul — 18 new/edited files).
 - Untracked: `.codex/`, `.agents/`, `.claude/`, `.mcp.json`, `memory/`, `AGENTS.md`, `CLAUDE.md`, `.env.example`, screenshot artifacts.
 - Coordination directories `tasks/`, `reports/`, `runs/` are EMPTY — ready for fresh dispatch.
 
@@ -66,6 +66,39 @@ Source `.mcp.json` uses OAuth auth block. Codex `.codex/config.toml` (project) o
 ### 4. Stale Codex skills under cc-switch
 
 `~/.cc-switch/skills/` has 76 skills leftover from a prior Codex migration. The active skills are at `~/.codex/skills/`. The cc-switch path is dead and can be removed.
+
+## Cycle 8: Mobile UI Overhaul (2026-07-19 — ACCEPTED, 5 cards)
+
+| Card | Status |
+|------|--------|
+| `ui-global-shell` — mobile viewport, CSS design system, BottomNav, TopStatusBar, marquee | Accepted |
+| `ui-lobby-home` — user profile panel, side menus, character showcase, activity banner, action buttons, chat preview | Accepted |
+| `ui-match-selection` — wide card stack, 2-col grid, sub-tabs, role badges, countdown labels | Accepted |
+| `ui-profile-inventory` — Outfits panel, Backpack panel, Skin collection gallery, ProfileView | Accepted |
+| `ui-integration-wiring` — App.tsx shell wiring, view routing, bottom nav → content mapping, game view preserved | Accepted |
+
+**New files (18):**
+- `src/styles/mobile-shell.css` — shared design tokens, shell/layout/nav/marquee/filter/modal CSS
+- `src/components/GlobalShell.tsx` — mobile viewport wrapper
+- `src/components/BottomNav.tsx` — 5-tab bottom navigation (首页/好友/狼村/商店街/我的)
+- `src/components/TopStatusBar.tsx` — currency bar (金币/点卷/狼神水晶) + marquee ticker
+- `src/components/LobbyHome.tsx` — lobby view (profile panel, character showcase, side menus, action buttons, chat preview)
+- `src/components/LobbySideMenus.tsx` — left/right circular icon menus with red dot badges
+- `src/components/LobbyActionButtons.tsx` — 建房/跟房/观战 buttons
+- `src/components/ActivityBanner.tsx` — horizontal scrollable activity banner cards
+- `src/components/MatchSelection.tsx` — board/match browser with sub-tabs and two layout modes
+- `src/components/MatchWideCard.tsx` — wide card with role badges and character art placeholder
+- `src/components/MatchGridCard.tsx` — 2-column grid card with countdown
+- `src/components/MatchSubTabs.tsx` — 4-item sub-tab bar
+- `src/components/ProfileView.tsx` — 我的 view shell with 6 sub-tabs
+- `src/components/ProfileSubTabs.tsx` — 6-item sub-tab bar
+- `src/components/OutfitsPanel.tsx` — fitting room + quality filter + outfit grid
+- `src/components/BackpackPanel.tsx` — 5-category filter + item grid with send-gift buttons
+- `src/components/SkinCollectionPanel.tsx` — 3-category skin gallery with progress bars
+
+**Modified:** `src/App.tsx` — GlobalShell wrapping, view routing, game view preserved inside shell
+
+**Verified:** `npm run test:run` 363 passed / 5 skipped, `npm run build` green, zero regressions.
 
 ## Task Pool (corrected 2026-07-19)
 

@@ -1,0 +1,479 @@
+/* ─── Mobile Werewolf UI Design System ───────────────────────────────────
+   Chinese dark-style flat mobile game aesthetic. Uses CSS custom properties
+   that extend the existing --ink-* and --wolf-red-* tokens from index.css.
+   All new classes prefixed with "wol-" to avoid collisions with game UI. */
+
+/* ─── Design Tokens (mobile-social shell) ─────────────────────────────── */
+:root {
+  /* Accent / decorative */
+  --wol-gold:        #c9a44b;
+  --wol-gold-dim:    #8b6914;
+  --wol-jade:        #3b8c6e;
+  --wol-jade-bright: #4ae0a6;
+  --wol-amber:       #d4a017;
+  --wol-crystal:     #7b6fdf;
+  --wol-crystal-dim: #4a3f8c;
+
+  /* Currency colours */
+  --wol-coin:        #f0c040;
+  --wol-coupon:      #60a5fa;
+  --wol-crystal:     #c084fc;
+
+  /* Surface overlays */
+  --wol-surface:       rgba(15, 15, 18, 0.92);
+  --wol-surface-light: rgba(28, 28, 33, 0.88);
+  --wol-card:          rgba(22, 22, 28, 0.94);
+
+  /* Mobile shell sizing */
+  --wol-max-width:     430px;
+  --wol-bottom-nav-h:  64px;
+  --wol-top-bar-h:     72px;
+  --wol-marquee-h:     28px;
+}
+
+/* ─── Mobile Shell Container ──────────────────────────────────────────── */
+.wol-shell {
+  max-width: var(--wol-max-width);
+  margin: 0 auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(ellipse at 50% 20%, rgba(60, 45, 20, 0.25), transparent 55%),
+    radial-gradient(ellipse at 80% 80%, rgba(30, 20, 50, 0.20), transparent 50%),
+    linear-gradient(180deg, #0d0d10 0%, #0a0a0f 40%, #08080c 100%);
+  color: #e0ddd5;
+  font-family: 'Lato', 'PingFang SC', 'Noto Sans SC', sans-serif;
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  box-shadow: 0 0 80px rgba(0,0,0,0.5), 0 0 2px rgba(200,170,80,0.08);
+}
+
+/* Desktop: center the phone frame with a subtle ambient glow */
+@media (min-width: 431px) {
+  .wol-shell {
+    border-left: 1px solid rgba(255,255,255,0.04);
+    border-right: 1px solid rgba(255,255,255,0.04);
+  }
+}
+
+/* ─── Bottom Navigation Bar ───────────────────────────────────────────── */
+.wol-bottom-nav {
+  position: sticky;
+  bottom: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: var(--wol-bottom-nav-h);
+  background: rgba(10, 10, 14, 0.96);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.wol-nav-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  flex: 1;
+  height: 100%;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.38);
+  font-size: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 180ms ease;
+  padding: 4px 2px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.wol-nav-tab svg {
+  width: 22px;
+  height: 22px;
+  transition: transform 180ms ease;
+}
+
+.wol-nav-tab--active {
+  color: var(--wol-gold);
+}
+
+.wol-nav-tab--active svg {
+  transform: scale(1.08);
+}
+
+/* ─── Top Status Bar ──────────────────────────────────────────────────── */
+.wol-top-bar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: rgba(10, 10, 14, 0.94);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.wol-currency-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  height: var(--wol-top-bar-h);
+}
+
+.wol-currency-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.wol-currency-item svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.wol-currency-plus {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.16);
+  color: rgba(255,255,255,0.65);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-left: 2px;
+  transition: background 160ms ease;
+}
+
+.wol-currency-plus:hover {
+  background: rgba(255,255,255,0.22);
+}
+
+/* Currency accent colours */
+.wol-currency-item--coin  { color: var(--wol-coin); }
+.wol-currency-item--coupon { color: var(--wol-coupon); }
+.wol-currency-item--crystal { color: var(--wol-crystal); }
+
+/* ─── Marquee Ticker ──────────────────────────────────────────────────── */
+.wol-marquee {
+  height: var(--wol-marquee-h);
+  overflow: hidden;
+  background: rgba(180, 140, 60, 0.06);
+  border-top: 1px solid rgba(255,255,255,0.03);
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+}
+
+.wol-marquee-track {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+  white-space: nowrap;
+  animation: wolMarquee 18s linear infinite;
+  font-size: 11px;
+  color: rgba(255,255,255,0.45);
+}
+
+@keyframes wolMarquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.wol-marquee-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.wol-marquee-item::before {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--wol-gold);
+  opacity: 0.6;
+}
+
+/* ─── Shell content area ──────────────────────────────────────────────── */
+.wol-shell-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* ─── Section header (reusable) ───────────────────────────────────────── */
+.wol-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.72);
+  padding: 12px 16px 6px;
+  letter-spacing: 0.5px;
+}
+
+/* ─── Generic card surface ────────────────────────────────────────────── */
+.wol-card {
+  background: var(--wol-card);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* ─── Scrollbar hide utility ──────────────────────────────────────────── */
+.wol-scrollbar-hide::-webkit-scrollbar { display: none; }
+.wol-scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ─── Placeholder shimmer ─────────────────────────────────────────────── */
+.wol-shimmer {
+  background: linear-gradient(
+    110deg,
+    rgba(255,255,255,0.03) 30%,
+    rgba(255,255,255,0.07) 50%,
+    rgba(255,255,255,0.03) 70%
+  );
+  background-size: 200% 100%;
+  animation: wolShimmer 2s ease-in-out infinite;
+}
+
+@keyframes wolShimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ─── Sub-tab bar (reusable for profile, match selection) ─────────────── */
+.wol-subtabs {
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  padding: 0 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  -webkit-overflow-scrolling: touch;
+}
+
+.wol-subtab {
+  flex-shrink: 0;
+  padding: 10px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.45);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color 180ms ease, border-color 180ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.wol-subtab--active {
+  color: var(--wol-gold);
+  border-bottom-color: var(--wol-gold);
+}
+
+/* ─── Filter bar (reusable for outfits/backpack quality filters) ──────── */
+.wol-filter-bar {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 10px 12px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.wol-filter-chip {
+  flex-shrink: 0;
+  padding: 5px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.55);
+  cursor: pointer;
+  transition: all 180ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.wol-filter-chip--active {
+  background: var(--wol-gold);
+  color: #0d0d10;
+  border-color: var(--wol-gold);
+}
+
+/* ─── Quality labels ──────────────────────────────────────────────────── */
+.wol-quality {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 3px;
+  letter-spacing: 0.5px;
+}
+
+.wol-quality--common   { background: rgba(160,160,170,0.18); color: #a0a0aa; }
+.wol-quality--advanced { background: rgba(96,165,250,0.18); color: #60a5fa; }
+.wol-quality--rare     { background: rgba(192,132,252,0.18); color: #c084fc; }
+.wol-quality--epic     { background: rgba(251,191,36,0.18);  color: #fbbf24; }
+.wol-quality--legendary{ background: rgba(248,113,113,0.18); color: #f87171; }
+
+/* ─── Button variants for mobile UI ───────────────────────────────────── */
+.wol-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 180ms ease;
+  -webkit-tap-highlight-color: transparent;
+  padding: 10px 20px;
+}
+
+.wol-btn:active { transform: scale(0.97); }
+
+.wol-btn--primary {
+  background: var(--wol-gold);
+  color: #0d0d10;
+}
+
+.wol-btn--primary:hover {
+  background: #dbb44e;
+}
+
+.wol-btn--ghost {
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.75);
+  border: 1px solid rgba(255,255,255,0.10);
+}
+
+.wol-btn--ghost:hover {
+  background: rgba(255,255,255,0.12);
+}
+
+.wol-btn--danger {
+  background: rgba(220,38,38,0.18);
+  color: #fca5a5;
+  border: 1px solid rgba(220,38,38,0.25);
+}
+
+.wol-btn--sm { padding: 5px 10px; font-size: 10px; border-radius: 6px; }
+.wol-btn--lg { padding: 14px 28px; font-size: 14px; border-radius: 10px; }
+
+/* ─── Badge (notification dot) ────────────────────────────────────────── */
+.wol-badge-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ef4444;
+  box-shadow: 0 0 4px rgba(239,68,68,0.6);
+}
+
+.wol-badge-dot--amber {
+  background: #f59e0b;
+  box-shadow: 0 0 4px rgba(245,158,11,0.6);
+}
+
+/* ─── Icon circle button (sidebar menus) ──────────────────────────────── */
+.wol-icon-circle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.55);
+  font-size: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 180ms ease;
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.wol-icon-circle svg {
+  width: 18px;
+  height: 18px;
+}
+
+.wol-icon-circle:hover {
+  background: rgba(255,255,255,0.10);
+  color: rgba(255,255,255,0.8);
+}
+
+.wol-icon-circle .wol-badge-dot {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+}
+
+/* ─── Grid layouts ────────────────────────────────────────────────────── */
+.wol-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.wol-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.wol-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+/* ─── Progress bar ────────────────────────────────────────────────────── */
+.wol-progress-bar {
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.08);
+  overflow: hidden;
+}
+
+.wol-progress-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: var(--wol-gold);
+  transition: width 400ms ease;
+}
+
+/* ─── Countdown text ──────────────────────────────────────────────────── */
+.wol-countdown {
+  font-size: 10px;
+  font-weight: 700;
+  color: #f87171;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}

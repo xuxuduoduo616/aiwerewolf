@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { GamePhase, Role, DIFFICULTY_CONFIGS, difficultyLabel, difficultyDescription } from './types';
 import { GAME_MODES, getPhaseLabel, ROLE_DESCRIPTIONS, ROLE_LABELS } from './constants';
 import useAuth from './hooks/useAuth';
@@ -11,6 +11,11 @@ import WolfChannel from './components/WolfChannel';
 import SpeechInput from './components/SpeechInput';
 import VoteSummary from './components/VoteSummary';
 import LogMessage from './components/LogMessage';
+import GlobalShell from './components/GlobalShell';
+import type { ShellView } from './components/GlobalShell';
+import LobbyHome from './components/LobbyHome';
+import MatchSelection from './components/MatchSelection';
+import ProfileView from './components/ProfileView';
 import { useDisplayLanguage } from './i18n';
 import { resolveVoteResult } from './gameEngine';
 import { playTick } from './services/speechAudio';
@@ -25,6 +30,7 @@ const MY_PLAYER_ID = 1;
 const App: React.FC = () => {
   const auth = useAuth();
   const [displayLanguage, toggleDisplayLanguage] = useDisplayLanguage();
+  const [activeView, setActiveView] = useState<ShellView>('home');
   const rec = useRecords(auth.session);
   const game = useGameState({
     session: auth.session,
@@ -139,82 +145,10 @@ const App: React.FC = () => {
     );
   }
 
-  // ── LOBBY ─────────────────────────────────────────────────────────────
-  if (game.phase === GamePhase.LOBBY) {
-    return (
-      <div className="sketch-scene min-h-screen text-zinc-100 overflow-hidden">
-        <div className="relative z-10 min-h-screen flex flex-col">
-          <header className="px-8 py-5 border-b border-zinc-800/80 bg-black/45 backdrop-blur flex items-center justify-between">
-            <div>
-              <h1 className="cinzel text-2xl font-bold tracking-wide">AI WEREWOLF</h1>
-              <p className="text-xs text-zinc-400">{auth.isGuest ? 'Guest trial. Records are local only.' : `Signed in as ${auth.profile?.email || auth.session?.user.email}`}</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <button onClick={() => rec.setShowRecords(!rec.showRecords)} className="icon-button"><History className="w-4 h-4" /></button>
-              <button
-                onClick={toggleDisplayLanguage}
-                title={displayLanguage === 'zh' ? 'Switch display language to English' : '切换显示语言为中文'}
-                className="h-9 px-2.5 inline-flex items-center gap-1.5 rounded-lg border border-zinc-700 bg-black/70 text-zinc-200 text-xs font-bold hover:bg-zinc-800 hover:border-zinc-300 transition"
-              >
-                <Languages className="w-4 h-4" />{displayLanguage === 'zh' ? '中文' : 'EN'}
-              </button>
-              <button onClick={() => { auth.logoutAuth(); rec.setRecords([]); rec.setRecordError(''); }} className="icon-button" title={displayLanguage === 'zh' ? '登出' : 'Logout'} aria-label={displayLanguage === 'zh' ? '登出' : 'Logout'}><LogOut className="w-4 h-4" /></button>
-            </div>
-          </header>
-          <main className="flex-1 grid lg:grid-cols-[1fr_360px] gap-6 p-6 lg:p-10">
-            <section className="flex flex-col justify-center">
-              <div className="mb-6">
-                <p className="text-xs uppercase tracking-wide text-zinc-500">Board Selection</p>
-                <h2 className="text-4xl cinzel font-bold mt-2">选择板子</h2>
-              </div>
-
-              {/* Difficulty selector */}
-              <div className="mb-6">
-                <p className="text-xs text-zinc-500 mb-2">难度 · Difficulty</p>
-                <div className="flex gap-2">
-                  {(['easy', 'normal', 'hard'] as const).map(d => (
-                    <button
-                      key={d}
-                      onClick={() => game.setDifficulty(d)}
-                      className={`px-4 py-2 rounded border text-sm font-bold transition ${
-                        game.difficulty === d
-                          ? 'bg-zinc-100 text-black border-zinc-100'
-                          : 'bg-black/50 text-zinc-300 border-zinc-700 hover:border-zinc-400'
-                      }`}
-                    >
-                      {difficultyLabel(DIFFICULTY_CONFIGS[d], displayLanguage)}
-                    </button>
-                  ))}
-                </div>
-                <p className="mt-2 text-xs text-zinc-500 leading-relaxed">{difficultyDescription(DIFFICULTY_CONFIGS[game.difficulty], displayLanguage)}</p>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-5 max-w-4xl">
-                {GAME_MODES.map(mode => (
-                  <button key={mode.id} onClick={() => { game.startGame(mode, displayLanguage); rec.setShowRecords(false); }} className="mode-card text-left">
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <div className="text-5xl font-black text-zinc-100">{mode.playerCount}</div>
-                        <div className="mt-2 text-xl font-bold">{mode.displayName}</div>
-                      </div>
-                      <Moon className="w-6 h-6 text-zinc-400" />
-                    </div>
-                    <p className="mt-4 text-sm text-zinc-300 leading-relaxed">{mode.description}</p>
-                    <div className="mt-5 text-xs text-zinc-400 border-t border-zinc-700 pt-3">{mode.roleSummary}</div>
-                  </button>
-                ))}
-              </div>
-            </section>
-            <RecordsPanel records={rec.records} show={rec.showRecords} error={rec.recordError} />
-          </main>
-        </div>
-      </div>
-    );
-  }
-
-  // ── GAME ──────────────────────────────────────────────────────────────
-  return (
-    <div className="sketch-scene h-screen text-zinc-200 overflow-hidden">
+  // ── After login, everything renders inside the mobile shell ──────────
+  // Full game view (preserved from original App.tsx — now rendered inside shell)
+  const renderGameView = () => (
+    <div className="sketch-scene h-full text-zinc-200 overflow-hidden" style={{ flex: 1 }}>
       <div className="relative z-10 h-full grid grid-cols-[1fr_340px]">
         <main className="relative flex flex-col min-w-0">
           {/* Header */}
@@ -226,7 +160,6 @@ const App: React.FC = () => {
                 <p className="text-xs text-zinc-400">{getPhaseLabel(game.phase, game.gameLanguage)}</p>
               </div>
             </div>
-            {/* Language is fixed at startGame from the lobby pill — no in-game toggle. */}
             <div className="flex items-center gap-2">
               <button
                 onClick={() => game.setTtsEnabled(!game.ttsEnabled)}
@@ -275,11 +208,9 @@ const App: React.FC = () => {
                     compact onClick={() => game.setSelectedPlayerId(player.id)}
                     isWolfTeammate={isWolfTeammate}
                     customBadge={
-                      // Wolf kill target — visible to wolves via wolfCountdown pill, also show on card
                       game.nightState.wolfKillId === player.id && game.me?.role === Role.WEREWOLF
                         ? <Skull className="w-5 h-5 text-red-300" />
-                        : // Seer check result — only visible to Seer / Witch (they know knife targets)
-                        game.aiSeerLastCheck && game.aiSeerLastCheck.targetId === player.id && (game.me?.role === Role.SEER || game.me?.role === Role.WITCH)
+                        : game.aiSeerLastCheck && game.aiSeerLastCheck.targetId === player.id && (game.me?.role === Role.SEER || game.me?.role === Role.WITCH)
                           ? (game.aiSeerLastCheck.isGood
                             ? <span className="bg-emerald-900/80 border border-emerald-500 text-emerald-200 text-[10px] px-1.5 py-0.5 rounded-full font-bold">金水</span>
                             : <span className="bg-red-950/80 border border-red-500 text-red-200 text-[10px] px-1.5 py-0.5 rounded-full font-bold">查杀</span>)
@@ -329,7 +260,6 @@ const App: React.FC = () => {
                       </div>
                       <p className="mt-2 text-zinc-400">{game.me ? ROLE_DESCRIPTIONS[game.me.role] : ''}</p>
                       {game.selectedPlayer && <p className="mt-2 text-zinc-300">已选择：{game.selectedPlayer.id}号 {game.selectedPlayer.name}</p>}
-                      {/* Witch: show who was attacked */}
                       {game.me?.role === Role.WITCH && game.nightState.wolfKillId && (
                         <p className="mt-2 text-amber-200 text-xs">
                           昨夜 {game.nightState.wolfKillId}号 被狼人袭击
@@ -406,6 +336,68 @@ const App: React.FC = () => {
         </aside>
       </div>
     </div>
+  );
+
+  // Determine which content view to show inside the shell
+  const renderShellContent = () => {
+    // GAME phase takes over the full shell content area
+    if (game.phase !== GamePhase.LOBBY && game.phase !== GamePhase.LOGIN) {
+      return renderGameView();
+    }
+
+    // Shell nav views (LOBBY is the default auth state)
+    switch (activeView) {
+      case 'home':
+        return (
+          <LobbyHome
+            onBuildRoom={() => setActiveView('wolfvillage')}
+            onJoinRoom={() => setActiveView('wolfvillage')}
+            onSpectate={() => {}}
+          />
+        );
+      case 'friends':
+        return (
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            minHeight: '60vh', color: 'rgba(255,255,255,0.25)', fontSize: 14, fontWeight: 600,
+          }}>
+            好友功能即将开放
+          </div>
+        );
+      case 'wolfvillage':
+        return (
+          <MatchSelection
+            onBack={() => setActiveView('home')}
+            onSelectBoard={(mode) => {
+              game.startGame(mode, displayLanguage);
+              rec.setShowRecords(false);
+            }}
+          />
+        );
+      case 'shop':
+        return (
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            minHeight: '60vh', color: 'rgba(255,255,255,0.25)', fontSize: 14, fontWeight: 600,
+          }}>
+            商店街即将开放
+          </div>
+        );
+      case 'profile':
+        return <ProfileView />;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <GlobalShell
+      activeView={activeView}
+      onNavigate={setActiveView}
+      fullscreen={false}
+    >
+      {renderShellContent()}
+    </GlobalShell>
   );
 };
 
