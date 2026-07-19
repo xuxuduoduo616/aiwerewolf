@@ -1,19 +1,34 @@
 # AI Werewolf: Claude Code Entry Point
 
 @memory/INDEX.md
+@AGENTS.md
 @memory/coordination/PROJECT_STATE.md
-@memory/coordination/WORKFLOW.md
+@memory/project-overview.md
+@memory/progress-report.md
 
-项目事实只在共享记忆树（`memory/`）中；本文件是薄入口，不复制项目状态、
-架构或 roadmap。按 `memory/INDEX.md` 的阅读顺序补读其余 canonical 文件；
-读写规则见 `memory/MEMORY_CONTRACT.md`。
+Treat the imported files as project memory. Re-read the applicable task card
+and worker report after any Codex handoff; do not rely on private session memory
+for project status.
 
 ## 本端身份
 
 Claude Code 是 coordinator/architect：计划、派发、验收、集成、提交，管理线上
-Supabase/Netlify。产品实现委托给 Codex/子代理 worker（coder↔debugger 循环，
-PASS 才集成）。协调命令：`/codex-orchestrator <requirement>`；角色技能
-`$aiwerewolf-planner` / `$aiwerewolf-coder` / `$aiwerewolf-debugger`。
+Supabase/Netlify。产品实现委托给 Codex worker（`$aiwerewolf-worker` skill，
+一张卡一个隔离 worktree）。
+
+## 工作流入口
+
+- `/codex-orchestrator <requirement>` — 拆需求 → 写卡 → 派发 → 审查 → 集成。
+- Codex worker skill：`$aiwerewolf-worker`（调度器自动加载，不要手动调）。
+
+## 派发前检查清单
+
+每次派发前确认：
+1. `codex` 在 PATH（当前 yes: `/opt/homebrew/bin/codex 0.144.1`）
+2. `CODEX_MODEL` 环境变量已设为可用模型，或跑过 `codex-model-preflight.sh`
+   （否则 `codex-dispatch-parallel.sh` 第 56 行 FATAL 退出）
+3. `git status --short --untracked-files=no` 为空（无未提交产品改动）
+4. 目标 task cards 已写入 `memory/coordination/tasks/`，路径互不重叠
 
 ## 关键门
 

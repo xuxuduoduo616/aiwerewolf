@@ -12,19 +12,18 @@
 
 ## 本端身份与限制
 
-- Codex worker（planner/coder/debugger）：只实现自己的任务卡；不 commit、
-  不 merge、不管理 worktree；不修改 `PROJECT_STATE.md`、roadmap 或他人卡。
-- Antigravity：同 worker 限制；协调与集成由 Claude Code coordinator 执行。
+- **Codex worker**（统一 $aiwerewolf-worker skill）：只实现自己的任务卡；
+  不 commit、不 merge、不管理 worktree；不修改 `PROJECT_STATE.md`、roadmap
+  或他人卡。实现 → 写 report → 设 Status 为 Ready for review 或 Blocked。
+- **Antigravity**：同 worker 限制；协调与集成由 Claude Code coordinator 执行。
 - 规则逻辑冻结在 `gameEngine.ts`/`beliefTracker`/`actionSelector`；LLM 层只
-  塑造表达。
+  塑造表达。`src/services/aiPlayer.ts` 是待清理死代码，不要引用。
 
 ## 完工后写回
 
-按 `memory/MEMORY_CONTRACT.md`：coder 写 `reports/<task-id>.md`，debugger 写
-`reports/<task-id>-review.md`（末行 `VERDICT: PASS|FAIL`）；对 canonical 状态
-的变更提案写入 `memory/coordination/handoffs/`（pending delta，记录
-base_commit），由 coordinator 合并。delta 模板：`npm run memory:update`。
-（Claude Code 端此流程由 `$sync-project-memory` skill 承载。）
+按 `memory/MEMORY_CONTRACT.md`：worker 写 `reports/<task-id>.md`；对 canonical
+状态变更的提案写入 `memory/coordination/handoffs/`（pending delta，记录
+base_commit），由 coordinator 合并。
 
 ## 禁止
 

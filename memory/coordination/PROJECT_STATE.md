@@ -1,70 +1,107 @@
 # Project Coordination State
 
-**Last verified:** 2026-07-18
-**Project phase:** Cycles 1–7 complete (26 cards Accepted) + memory governance (ADR-001) + sync-project-memory skill (Phase B). DEPLOYED 2026-07-18: production = a027296 (asset index-BOYeqKxJ.js, functions 204, live Gemini OK, zero key patterns in bundle).
+**Last verified:** 2026-07-19 (framework init check)
+**Project phase:** Cycles 1–7 complete (26 cards Accepted) + memory governance + sync-project-memory skill. Deployed `a027296` verified live 2026-07-18. **Framework initialized 2026-07-19.**
 
 ## Verified Baseline
 
-- Local tests: `npm run test:run` — **363 passed / 5 skipped** (30 files), zero regressions. `npm run build` succeeds. Both speech audits green (`npm run audit:speech-names` 0 violations; corpus scan exit 0).
-- Local HEAD = origin/main = production = `a027296` (asset `index-BOYeqKxJ.js` verified live 2026-07-18).
-- Round 7 Chrome verification: vote pill full `10s→0s` sequence captured; timeout → abstain (never random vote) verified 3×; TTS `speaking=true`, consent-gated prefs persisted; 2 full games completed. Evidence: `reports/browser-verification-tts-vote/`.
-- Round 7 residuals (queued in ROADMAP): sanitization placeholder residue ("that player") displayed literally; EN-heavy fallback speech in zh mode; 5 katakana names uncovered by entity list.
+- Local tests: `npm run test:run` — 14/14 passed. `npm run build` succeeds.
+- Local HEAD = `143860d` (stale — repo has no live-change commits; production tip is `a027296`).
+- Production = `a027296` (asset `index-BOYeqKxJ.js` verified live 2026-07-18).
+- Git has NO uncommitted tracked changes (clean diff).
+- Untracked: `.codex/`, `.agents/`, `.claude/`, `.mcp.json`, `memory/`, `AGENTS.md`, `CLAUDE.md`, `.env.example`, screenshot artifacts.
+- Coordination directories `tasks/`, `reports/`, `runs/` are EMPTY — ready for fresh dispatch.
 
-## Completed (cycles 1–6: 2026-07-16; round 7: 2026-07-17~18)
+## Framework Architecture (2026-07-19)
 
-| Cycle | Cards | What |
-|-------|-------|------|
-| 1 | 4 | provider-adapter-refactor (unified protocol-aware adapter), language-switch-and-ai-translation (zh/en pill + display-layer translation), role-behavior-distillation (behaviorSchema with honest source labeling), ai-role-evaluation (offline replay harness + 4 metrics) |
-| 2 | 3 | runtime-model-routing (frontend → provider-adapter fallback chain), model-routing-cost-guard (daily budget $1/day, UTC rollover, 402+fallback on exhaustion), provider-adapter-dry-run (zero-network in-process dry-run script) |
-| 3 | 3 | dead-player-vote-autoresolve (P0 fix: dead human DAY_VOTING no longer stalls), speech-quality-filter (wolf/possessed self-reveal exclusion + language preference), en-display-translation-improvement (Seer stub detection, EN → zh fallback) |
-| 4 | 1 | night-pipeline-exception-safety (owner-reported P0: permanent "AI思考" stall — try/finally around all isProcessingAI blocks, guarded dynamic imports, 12s fetch timeouts) |
-| 5 | 1 | lobby-language-authority (P1 fix: in-game pill removed, lobby sole language authority, EN games produce full native English AI speech from all 3 layers + wolf chat, zh unchanged, 231 tests) |
-| 6 | 9 | UI optimization: P0 speech-timer-autoskip-fix (human stall fix), action-bar-i18n (KILL→刀人 etc.), lobby-difficulty-i18n (Beginner/Intermediate/Expert), dead-player-card-readability, speech-input-placeholder-i18n, header-icon-tooltips (aria-labels), quick-speech-buttons (7 presets, X号 tap-to-fill), phase-labels-i18n (12 phase keys EN), player-card-speaking-status (已发言checkmark badges) |
-| 7 | 5 | netlify-functions-cjs-fix (prod 502 fix, DEPLOYED), ai-speech-name-detection-harness + ai-speech-roster-name-fix (corpus 17,848→0 entity refs, output guard, DEPLOYED c670193), vote-countdown-diagnosis-and-fix (10s deadline timer, abstain timeout), browser-tts-mvp (Web Speech API read-aloud), cloud-tts-adapter-spike (research only) |
+### Roles
 
-## Provider Infrastructure
+| Role | Tool | Owns |
+|------|------|------|
+| Coordinator/Architect | Claude Code (`/codex-orchestrator`) | Plan, dispatch, review, integrate, verify, commit, PROJECT_STATE |
+| Worker | Codex CLI (`codex exec`, `$aiwerewolf-worker` skill) | One task card per isolated worktree |
 
-| Provider | Protocol | Status |
-|---|---|---|
-| aicodemirror API | Anthropic Messages + Codex backend + Google Gemini | Endpoints confirmed reachable. All require auth keys (x-api-key or Bearer). No live calls made. Model IDs NOT enumerated (require authenticated access). |
-| deepseek API | Anthropic Messages compatible | Reachable. `POST /anthropic/v1/messages` parses Anthropic-style auth. No live calls. |
-| vibecoder.store | Unknown | TLS handshake reset from this network. Unreachable. |
+The old planner/coder/debugger triple split is archived (skills at `~/.codex/skills/aiwerewolf-{planner,coder,debugger}/` preserved but unused). The unified `aiwerewolf-worker` skill is the dispatch target.
 
-**Unified provider-adapter.js** (Netlify function) supports gemini / anthropic-messages / openai-chat protocols with circuit breaker, cost guard, per-call ceiling, daily budget accumulator, ADAPTER_DRY_RUN mode, redacted logging. Frontend routes through it first, falling back to genai-proxy, then speech library.
+### Script infrastructure
 
-## AIWolf Data
+| Script | Path | Status |
+|--------|------|--------|
+| Parallel dispatch | `~/.claude/skills/codex-orchestrator/scripts/codex-dispatch-parallel.sh` | Present |
+| Single dispatch | `~/.claude/skills/codex-orchestrator/scripts/codex-dispatch.sh` | Present (wraps parallel with `--max-workers 1`) |
+| Integration | `~/.claude/skills/codex-orchestrator/scripts/codex-integrate-worker.sh` | Present |
+| Cleanup | `~/.claude/skills/codex-orchestrator/scripts/codex-cleanup-worker.sh` | Present |
+| Model preflight | `~/.claude/skills/codex-orchestrator/scripts/codex-model-preflight.sh` | Present (probes gpt-5.6 only) |
 
-No AIWolf data downloaded — license unclear, organizer contact recommended for commercial use. Role mismatch confirmed: AIWolf has NO Witch, NO Hunter, NO Idiot. All behavioral parameters labeled 'synthetic' or 'heuristic' (never 'aiwolf-distilled'). Schema honesty enforced by test.
+### Runtime environment
 
-## Budget
+| Item | Value |
+|------|-------|
+| Codex CLI | 0.144.1 (Homebrew, `/opt/homebrew/bin/codex`) |
+| codex in PATH | Yes (confirmed this session) |
+| OpenAI Codex provider | `deepseek-v4-flash` via custom provider (`http://127.0.0.1:15721/v1`) |
+| Project codex config | `.codex/config.toml` (personality=friendly, supabase MCP) |
+| Global codex config | `~/.codex/config.toml` (personality=pragmatic, deepseek provider) |
+| MCP servers (codex) | 2 stdio servers, 1 disabled |
+| Sandbox | restricted fs + restricted network, approval OnRequest |
 
-- Runtime AI uses gemini-2.5-flash (~$0.00015/1k tokens). Budget guard caps at $1/day/instance.
-- Rough estimate: ~$0.01–0.03 per game. $25 supports ~800–2500 games.
-- No paid API calls made this session (all dry-run or local-fallback).
+## Known Friction Points (pre-dispatch checklist)
 
-## Key Browser Findings (Cycle 2–3 QA)
+### 1. CODEX_MODEL gate (BLOCKER for dispatch script)
 
-- Guest flow ✅, language toggle ✅ (zh/en pill, localStorage), VoteSummary structured component ✅ (verified rendering — previous "flat text" report refuted).
-- P0 bug FIXED: dead human stall in DAY_VOTING — auto-resolves now.
-- Speech quality improved: wolf self-reveals excluded; language preference applied.
-- EN display mode: Seer report canned stub routed to zh original.
+`codex-dispatch-parallel.sh` lines 56-61 **hardcode** a `CODEX_MODEL=gpt-5.6-*` check and FATAL-exit if unset. The actual Codex provider is `deepseek-v4-flash`. Running the script without setting `CODEX_MODEL` to a gpt-5.6 model will fail.
 
-## Not Completed / Out of Scope
+**Workaround for coordinator**: when dispatching via bash, set `CODEX_MODEL` to the actual Codex model (e.g. `CODEX_MODEL=gpt-5.6-Sol` to probe, or bypass the script and call `codex exec` directly). The coordinator should either (a) run `codex-model-preflight.sh` first to check gpt-5.6 availability, (b) fall back to direct `codex exec` with the active provider model, or (c) patch the script to accept a `CODEX_MODEL` override.
 
-- AIWolf raw data download & distillation (license gate — owner/legal decision).
-- vibecoder.store integration (network unreachable — retry later).
-- Wolf teammate badge browser coverage (random role assignment — not exercised in QA; unit tests pass).
-- No live provider calls made (all keys missing, dry-run only). Provider discovery gated on key availability.
-- Speech library: 8,521 entries post-sanitization (was 11,035; 6,490 sanitized / 2,514 dropped); Witch/Hunter/Idiot reuse Seer/Villager pools.
-- Full browser E2E playthrough of all roles/boards not completed (QA exercised 9p and 12p as guest, 2 games).
+**Owner decision needed**: whether to (a) attempt the gpt-5.6 probe each time, (b) patch the script, or (c) dispatch workers via direct `codex exec` bypassing the script.
 
-## Deployment Status
+### 2. Supabase MCP OAuth
 
-- Gemini path working in production (API_KEY configured); $1/day budget guard active.
-- Production = `a027296` (verified 2026-07-18): vote countdown, browser TTS, memory governance (ADR-001), sync-project-memory skill, key-privacy sweep all live.
-- Historical deploy narratives: git log + `reports/netlify-functions-cjs-fix.md`.
-- Still owner-gated: AICODEMIRROR/DEEPSEEK keys in Netlify env; ADAPTER_DAILY_BUDGET_USD tuning; any Supabase Dashboard change.
+Source `.mcp.json` uses OAuth auth block. Codex `.codex/config.toml` (project) only has the URL — the OAuth block was dropped during migration. First Codex session connecting to supabase MCP will require re-authentication.
+
+### 3. approval_policy flag form
+
+`codex-dispatch-parallel.sh` line 177 uses `-c approval_policy="never"`. Codex 0.144.1 supports this as a config override AND also has `-a never` as a dedicated flag. The `-c` form is confirmed working for 0.144.1.
+
+### 4. Stale Codex skills under cc-switch
+
+`~/.cc-switch/skills/` has 76 skills leftover from a prior Codex migration. The active skills are at `~/.codex/skills/`. The cc-switch path is dead and can be removed.
+
+## Task Pool (corrected 2026-07-19)
+
+### Wave 1 — parallel (non-overlapping paths, no deps)
+
+| Task ID | Scope | Priority |
+|---------|-------|----------|
+| `legacy-ai-player-cleanup` | `src/services/aiPlayer.ts` delete only | P1 |
+| `type-safety-cleanup` | `src/hooks/useAuth.ts`, `src/ai/aiOrchestrator.ts` tighten `any` | P1 |
+| `seo-robots` | `index.html` metadata, `public/robots.txt` new file | P2 |
+
+### Wave 2 — sequential (needs deploy verification)
+
+| Task ID | Scope | Priority |
+|---------|-------|----------|
+| `netlify-csp` | `netlify.toml` CSP header | P1 (deploy-gated) |
+
+### Owner-only (no codex worker)
+
+- Supabase RLS / email template / OTP verification in Dashboard
+- Netlify env vars / ALLOWED_ORIGIN check
+- Full browser E2E (12p, all roles)
+
+## Codex Migration Artifacts (project scope, 2026-07-19)
+
+| Artifact | Type | Status |
+|----------|------|--------|
+| `AGENTS.md` | Symlink → CLAUDE.md | Created (1:1 forward) |
+| `.codex/config.toml` | MCP + personality | Created (supabase OAuth noted as manual) |
+| `.agents/skills/codex-orchestrator/SKILL.md` | Skill | Created (variables fixed, tool list → guidance) |
+| `.agents/skills/codex-orchestrator/scripts/*` | Scripts | Copied (4 scripts, unchanged) |
 
 ## Coordinator Rules
 
-- Same as before. No deployment, push, or external service mutation without owner approval.
+- No deploy, push, or external service mutation without owner approval.
+- Worktree dispatch from clean `git HEAD` only.
+- If uncommitted product changes exist, commit or abort first.
+- Never place secrets, raw transcripts, or private session history in `memory/coordination/`.
+- Integration gate: `final_verdict=PASS` + status `Ready for review` → apply patch → `npm run test:run` + `npm run build` → mark `Accepted`.

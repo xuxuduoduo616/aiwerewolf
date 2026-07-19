@@ -1,67 +1,87 @@
 # AI Werewolf Coordination Workflow
 
-This file is the durable protocol for the Codex multi-agent workflow. Claude Code
-is the coordinator/architect; Codex provides three role workers. Shared state
-lives in `memory/coordination/`, never in private session memory.
+Durable protocol for Claude Code ↔ Codex multi-agent dispatch. Shared state
+in `memory/coordination/`.
 
-## Roles
+## Roles (2026-07-19)
 
-| Role | Skill | Owns | Returns to Claude Code |
+| Role | Tool | Owns | Returns |
 | --- | --- | --- | --- |
-| Coordinator | `/codex-orchestrator` (Claude Code) | Plan, dispatch, review, integrate, verify, commit/push, deploy | — |
-| Planner | `$aiwerewolf-planner` | Decompose a requirement into bounded task cards | Report path + created card paths |
-| Coder | `$aiwerewolf-coder` | Implement one card in a resumable worktree session | Report path + changed file paths + one-line status |
-| Debugger | `$aiwerewolf-debugger` | Review one card's result against acceptance criteria | Verdict (PASS/FAIL) + review path + files needing repair |
+| Coordinator | `/codex-orchestrator` (Claude Code) | Plan, dispatch, review, integrate, verify, commit/push, deploy, PROJECT_STATE | — |
+| Worker | `$aiwerewolf-worker` (Codex CLI) | One task card per isolated worktree | Report + patch + one-line status |
 
-Workers never return code, diffs, or full transcripts to the coordinator — only
-paths and verdicts. The paths and reports carry the detail.
+The planner/coder/debugger triple (`~/.codex/skills/aiwerewolf-{planner,coder,debugger}/`) is archived. All workers use the unified `aiwerewolf-worker` skill.
 
 ## Pipeline
 
 1. Coordinator receives a requirement via `/codex-orchestrator <requirement>`.
-2. **Plan** — dispatch one planner over the remaining work pool. It writes
-   non-overlapping cards under `tasks/` and a planning report.
-3. Coordinator reviews the cards, sets the queue and parallel waves.
-4. **Code loop** — for each card, dispatch the coder ↔ debugger loop:
-   - coder round 1 implements and reports; its session id is captured;
-   - debugger reviews, reproduces verification, writes `<task-id>-review.md`
-     ending with `VERDICT: PASS` or `VERDICT: FAIL`;
-   - on FAIL, the SAME coder session is resumed (`codex exec resume <id>`) with
-     the debugger findings, so the coder keeps its context across rounds;
-   - loop until `VERDICT: PASS` or the round limit.
-5. Coordinator reviews each PASS patch, integrates accepted patches sequentially,
-   runs `npm run test:run` and `npm run build`, then marks `Accepted` and updates
-   `PROJECT_STATE.md`.
-6. Coordinator reports the deployment's changes/optimizations, waits for owner
-   approval, then deploys.
-7. Cleanup the worktree; preserve reports and run logs under `runs/`.
+2. Coordinator reads shared memory + git status, decomposes the requirement
+   into task cards, writes them to `memory/coordination/tasks/<task-id>.md`
+   (from `TASK_TEMPLATE.md`).
+3. Cards must have non-overlapping allowed paths and independent verification
+   to run in one parallel wave. Default max 3 workers.
+4. **Dispatch** via `codex-dispatch-parallel.sh` (or direct `codex exec`):
+   workers run in isolated git worktrees under `.codex-worker-worktrees/`.
+   Worktrees start from `git HEAD` — no uncommitted product changes inherited.
+5. Each worker reads AGENTS.md + PROJECT_STATE + its task card, implements,
+   verifies, writes `reports/<task-id>.md`, sets card to `Ready for review` or
+   `Blocked`.
+6. Coordinator reviews each report + patch + verification evidence.
+7. **Integrate**: accepted patches applied via `codex-integrate-worker.sh`.
+   Run `npm run test:run` + `npm run build` after each integration batch.
+8. Mark `Accepted` in task card, update PROJECT_STATE.
+9. **Cleanup**: `codex-cleanup-worker.sh` removes worktree, preserves reports/logs.
+
+## Scripts
+
+| Script | Path | Purpose |
+|--------|------|---------|
+| Parallel dispatch | `~/.claude/skills/codex-orchestrator/scripts/codex-dispatch-parallel.sh` | Fan-out workers, max N at a time |
+| Single dispatch | `~/.claude/skills/codex-orchestrator/scripts/codex-dispatch.sh` | Wraps parallel with `--max-workers 1` |
+| Model preflight | `~/.claude/skills/codex-orchestrator/scripts/codex-model-preflight.sh` | Probe gpt-5.6 availability before dispatch |
+| Integration | `~/.claude/skills/codex-orchestrator/scripts/codex-integrate-worker.sh` | Gate (PASS + Ready for review) → git apply |
+| Cleanup | `~/.claude/skills/codex-orchestrator/scripts/codex-cleanup-worker.sh` | git worktree remove + prune |
+
+## Script friction (known)
+
+`codex-dispatch-parallel.sh` line 56-61 requires `CODEX_MODEL=gpt-5.6-*` in env
+or FATAL-exits. The active project Codex provider is `deepseek-v4-flash`. When
+dispatching, coordinator must either:
+
+- Run `codex-model-preflight.sh` first to check gpt-5.6 reachability, or
+- `export CODEX_MODEL=<actual-model>` before calling the dispatch script, or
+- Bypass the script and call `codex exec` directly with the active model.
+
+The coordinator decides per-session which path to take.
+
+## Worker sandbox
+
+```bash
+codex exec \
+  --cd "$worktree" \
+  --sandbox workspace-write \
+  -c approval_policy="never" \
+  -m "$CODEX_MODEL" \
+  --json \
+  --output-last-message "$final_file" \
+  "$prompt"
+```
+
+Codex 0.144.1, sandbox `workspace-write`, approval `never`.
 
 ## Concurrency and isolation
 
-- Default concurrency limit is 10, chosen by task difficulty.
-- A parallel wave contains only dependency-free cards with non-overlapping
-  allowed paths.
-- Each worker runs in its own detached Git worktree started from Git `HEAD`;
-  uncommitted product changes are not inherited. The dispatcher copies shared
-  memory and the assigned card into each worktree.
-
-## Scripts (`~/.claude/skills/codex-orchestrator/scripts/`)
-
-- `codex-role-loop.sh plan --requirement <slug> "<text>"` — planner pass.
-- `codex-role-loop.sh code <task-id> [--max-rounds N]` — coder ↔ debugger loop.
-- `codex-dispatch-parallel.sh [--max-workers N] <task-id...>` — generic worker
-  fan-out (compatibility).
-- `codex-integrate-worker.sh <task-id>` — apply an accepted patch.
-- `codex-cleanup-worker.sh <task-id>` — remove a worktree, keep reports/logs.
+- Default max 3 parallel workers.
+- Workers start from detached git worktree from `HEAD`.
+- Shared memory + task card copied into each worktree.
+- `node_modules` symlinked to project root to avoid reinstall.
+- Worktrees under `.codex-worker-worktrees/` (gitignored).
+- `memory/coordination/runs/` stores events, patches, metadata per run.
 
 ## Boundaries
 
-- Codex CLI: `codex` (Homebrew, `/opt/homebrew/bin/codex`).
-- Workers must not commit, merge, rebase, manage other worktrees, or edit
-  `PROJECT_STATE.md`.
-- Rule logic stays in `gameEngine.ts` / `beliefTracker` / `actionSelector`; the
-  LLM layer only shapes expression. `src/services/aiPlayer.ts` is legacy/unused.
-- Never place secrets, raw terminal transcripts, or private conversation history
-  in `memory/coordination/`.
-- No deploy, online Supabase/Netlify change, commit, or push without the owner's
-  explicit approval of the described change.
+- Workers must not commit, merge, rebase, manage worktrees, or edit PROJECT_STATE.
+- Rule logic stays in `gameEngine.ts`/`beliefTracker`/`actionSelector`; LLM layer shapes expression.
+- `src/services/aiPlayer.ts` is legacy/unused (pending deletion via task card).
+- No deploy, Supabase/Netlify change, commit, or push without owner approval.
+- Secrets, raw transcripts, private session history never go into `memory/coordination/`.
