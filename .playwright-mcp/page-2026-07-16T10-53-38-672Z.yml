@@ -1,0 +1,114 @@
+- generic [ref=f2e4]:
+  - main [ref=f2e76]:
+    - generic [ref=f2e77]:
+      - generic [ref=f2e78]:
+        - generic [ref=f2e79]: "1"
+        - generic [ref=f2e80]:
+          - heading "9人标准场" [level=2] [ref=f2e81]
+          - paragraph [ref=f2e82]: 放逐投票
+      - generic [ref=f2e83]:
+        - button "EN" [ref=f2e84] [cursor=pointer]
+        - button [ref=f2e89] [cursor=pointer]
+        - button [ref=f2e94] [cursor=pointer]
+    - generic [ref=f2e101]:
+      - button "1 Guest YOU 平民" [ref=f2e103] [cursor=pointer]:
+        - generic [ref=f2e104]: "1"
+        - img "Guest" [ref=f2e106]
+        - generic [ref=f2e107]:
+          - generic [ref=f2e108]: YOU
+          - generic [ref=f2e109]: 平民
+      - button "2 Marcus Marcus Doubao" [ref=f2e115] [cursor=pointer]:
+        - generic [ref=f2e116]: "2"
+        - img "Marcus" [ref=f2e118]
+        - generic [ref=f2e119]:
+          - generic [ref=f2e120]: Marcus
+          - generic [ref=f2e121]: Doubao
+      - button "3 Elena Elena Llama" [active] [ref=f2e127] [cursor=pointer]:
+        - generic [ref=f2e128]: "3"
+        - img "Elena" [ref=f2e130]
+        - generic [ref=f2e131]:
+          - generic [ref=f2e132]: Elena
+          - generic [ref=f2e133]: Llama
+      - button "4 Darius Darius GPT-4o" [ref=f2e139] [cursor=pointer]:
+        - generic [ref=f2e140]: "4"
+        - img "Darius" [ref=f2e142]
+        - generic [ref=f2e143]:
+          - generic [ref=f2e144]: Darius
+          - generic [ref=f2e145]: GPT-4o
+      - button "5 Silas Silas Doubao" [ref=f2e151] [cursor=pointer]:
+        - generic [ref=f2e152]: "5"
+        - img "Silas" [ref=f2e154]
+        - generic [ref=f2e155]:
+          - generic [ref=f2e156]: Silas
+          - generic [ref=f2e157]: Doubao
+      - button "6 Amara Amara Llama" [ref=f2e163] [cursor=pointer]:
+        - generic [ref=f2e164]: "6"
+        - img "Amara" [ref=f2e166]
+        - generic [ref=f2e167]:
+          - generic [ref=f2e168]: Amara
+          - generic [ref=f2e169]: Llama
+      - button "7 Finn Finn Claude" [ref=f2e175] [cursor=pointer]:
+        - generic [ref=f2e176]: "7"
+        - img "Finn" [ref=f2e178]
+        - generic [ref=f2e179]:
+          - generic [ref=f2e180]: Finn
+          - generic [ref=f2e181]: Claude
+      - button "8 Isla Isla DeepSeek" [ref=f2e187] [cursor=pointer]:
+        - generic [ref=f2e188]: "8"
+        - img "Isla" [ref=f2e190]
+        - generic [ref=f2e191]:
+          - generic [ref=f2e192]: Isla
+          - generic [ref=f2e193]: DeepSeek
+      - button "9 Jasper Jasper Doubao" [ref=f2e199] [cursor=pointer]:
+        - generic [ref=f2e200]: "9"
+        - img "Jasper" [ref=f2e202]
+        - generic [ref=f2e203]:
+          - generic [ref=f2e204]: Jasper
+          - generic [ref=f2e205]: Doubao
+      - generic [ref=f2e210]:
+        - generic [ref=f2e212]:
+          - generic [ref=f2e213]: PHASE
+          - generic [ref=f2e214]: 放逐投票
+        - paragraph [ref=f2e219]: 选择一名玩家进行放逐投票。
+        - generic [ref=f2e265]:
+          - generic [ref=f2e266]: 你的身份：平民
+          - paragraph [ref=f2e270]: 没有夜间技能，依靠发言、票型和逻辑找狼。
+          - paragraph [ref=f2e302]: 已选择：3号 Elena
+        - button "VOTE" [ref=f2e272] [cursor=pointer]
+  - complementary [ref=f2e226]:
+    - generic [ref=f2e227]:
+      - generic [ref=f2e228]: 对局日志
+      - button "战绩" [ref=f2e232] [cursor=pointer]
+    - generic [ref=f2e233]:
+      - generic [ref=f2e234]: Game Start. You are Villager.
+      - generic [ref=f2e236]: Local Vite preview does not run Netlify Functions. AI fallback speech is active.
+      - generic [ref=f2e238]: Night falls.
+      - generic [ref=f2e260]: Peaceful night.
+      - generic [ref=f2e263]:
+        - generic [ref=f2e264]: YOU
+        - text: 我是平民，暂时没有明确怀疑对象，先听大家的发言。
+      - generic [ref=f2e277]:
+        - generic [ref=f2e278]: 2号
+        - text: Speaks based on game situation.
+      - generic [ref=f2e280]:
+        - generic [ref=f2e281]: 3号
+        - text: Speaks based on game situation.
+      - generic [ref=f2e283]:
+        - generic [ref=f2e284]: 4号
+        - text: Speaks based on game situation.
+      - generic [ref=f2e286]:
+        - generic [ref=f2e287]: 5号
+        - text: Speaks based on game situation.
+      - generic [ref=f2e289]:
+        - generic [ref=f2e290]: 6号
+        - text: Pushes suspicion on Player 1.
+      - generic [ref=f2e292]:
+        - generic [ref=f2e293]: 7号
+        - text: Speaks based on game situation.
+      - generic [ref=f2e295]:
+        - generic [ref=f2e296]: 8号
+        - text: Speaks based on game situation.
+      - generic [ref=f2e298]:
+        - generic [ref=f2e299]: 9号
+        - text: Speaks based on game situation.
+      - generic [ref=f2e300]: Discussion ended. Voting starts.

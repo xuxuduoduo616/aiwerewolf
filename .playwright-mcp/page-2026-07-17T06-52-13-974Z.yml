@@ -1,0 +1,95 @@
+- generic [ref=e4]:
+  - main [ref=e76]:
+    - generic [ref=e77]:
+      - generic [ref=e78]:
+        - generic [ref=e79]: "1"
+        - generic [ref=e80]:
+          - heading "9人标准场" [level=2] [ref=e81]
+          - paragraph [ref=e82]: Werewolves Hunt
+      - generic [ref=e83]:
+        - button "Mute / Unmute" [ref=e84] [cursor=pointer]
+        - button "Return to lobby" [ref=e89] [cursor=pointer]
+    - generic [ref=e95]:
+      - generic [ref=e96]:
+        - button "1 Guest YOU 我是狼人 狼人" [ref=e98] [cursor=pointer]:
+          - generic [ref=e99]: "1"
+          - img "Guest" [ref=e101]
+          - generic [ref=e102]:
+            - generic [ref=e103]:
+              - text: YOU
+              - img "我是狼人" [ref=e104]
+            - generic [ref=e106]: 狼人
+        - button "2 Marcus Marcus GPT-4o" [ref=e115] [cursor=pointer]:
+          - generic [ref=e116]: "2"
+          - img "Marcus" [ref=e118]
+          - generic [ref=e119]:
+            - generic [ref=e120]: Marcus
+            - generic [ref=e121]: GPT-4o
+        - button "3 Elena Elena Claude" [ref=e127] [cursor=pointer]:
+          - generic [ref=e128]: "3"
+          - img "Elena" [ref=e130]
+          - generic [ref=e131]:
+            - generic [ref=e132]: Elena
+            - generic [ref=e133]: Claude
+        - button "4 Darius Darius DeepSeek" [ref=e139] [cursor=pointer]:
+          - generic [ref=e140]: "4"
+          - img "Darius" [ref=e142]
+          - generic [ref=e143]:
+            - generic [ref=e144]: Darius
+            - generic [ref=e145]: DeepSeek
+        - button "5 Silas Silas GPT-4o" [ref=e151] [cursor=pointer]:
+          - generic [ref=e152]: "5"
+          - img "Silas" [ref=e154]
+          - generic [ref=e155]:
+            - generic [ref=e156]: Silas
+            - generic [ref=e157]: GPT-4o
+        - button "6 Amara Amara GPT-4o" [ref=e163] [cursor=pointer]:
+          - generic [ref=e164]: "6"
+          - img "Amara" [ref=e166]
+          - generic [ref=e167]:
+            - generic [ref=e168]: Amara
+            - generic [ref=e169]: GPT-4o
+        - button "7 Finn 狼队友 Finn GPT-4o" [ref=e175] [cursor=pointer]:
+          - generic [ref=e176]: "7"
+          - generic [ref=e177]:
+            - img "Finn" [ref=e178]
+            - generic "狼队友" [ref=e179]
+          - generic [ref=e185]:
+            - generic [ref=e186]: Finn
+            - generic [ref=e187]: GPT-4o
+        - button "8 Isla Isla Gemini" [ref=e193] [cursor=pointer]:
+          - generic [ref=e194]: "8"
+          - img "Isla" [ref=e196]
+          - generic [ref=e197]:
+            - generic [ref=e198]: Isla
+            - generic [ref=e199]: Gemini
+        - button "9 Jasper 狼队友 Jasper DeepSeek" [ref=e205] [cursor=pointer]:
+          - generic [ref=e206]: "9"
+          - generic [ref=e207]:
+            - img "Jasper" [ref=e208]
+            - generic "狼队友" [ref=e209]
+          - generic [ref=e215]:
+            - generic [ref=e216]: Jasper
+            - generic [ref=e217]: DeepSeek
+        - generic [ref=e222]:
+          - generic [ref=e223]:
+            - generic [ref=e224]:
+              - generic [ref=e225]: PHASE
+              - generic [ref=e226]: Werewolves Hunt
+            - generic [ref=e227]: 20s
+          - paragraph [ref=e231]: 选择一名非狼人玩家作为刀口。
+          - generic [ref=e232]:
+            - generic [ref=e233]: 你的身份：狼人
+            - paragraph [ref=e237]: 夜晚共同刀人，白天隐藏身份、扰乱好人视角。
+          - button "KILL 确认?" [disabled] [ref=e239]
+      - generic [ref=e246]:
+        - generic [ref=e247]: 狼队夜聊
+        - generic [ref=e254]: 狼队正在组织夜间策略...
+  - complementary [ref=e256]:
+    - generic [ref=e257]:
+      - generic [ref=e258]: 对局日志
+      - button "战绩" [ref=e262] [cursor=pointer]
+    - generic [ref=e263]:
+      - generic [ref=e264]: Game Start. You are Werewolf.
+      - generic [ref=e266]: "Wolf teammates: 7号, 9号."
+      - generic [ref=e268]: Night falls.

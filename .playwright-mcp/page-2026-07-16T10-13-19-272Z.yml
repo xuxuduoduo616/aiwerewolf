@@ -1,0 +1,117 @@
+- generic [ref=e4]:
+  - main [ref=e76]:
+    - generic [ref=e77]:
+      - generic [ref=e78]:
+        - generic [ref=e79]: "1"
+        - generic [ref=e80]:
+          - heading "9人标准场" [level=2] [ref=e81]
+          - paragraph [ref=e82]: 放逐投票
+      - generic [ref=e83]:
+        - button [ref=e84] [cursor=pointer]
+        - button [ref=e89] [cursor=pointer]
+        - button [ref=e94] [cursor=pointer]
+    - generic [ref=e101]:
+      - button "1 Guest YOU 预言家" [ref=e103] [cursor=pointer]:
+        - generic [ref=e104]: "1"
+        - img "Guest" [ref=e106]
+        - generic [ref=e107]:
+          - generic [ref=e108]: YOU
+          - generic [ref=e109]: 预言家
+      - button "2 Marcus 查杀 Marcus Gemini" [ref=e252] [cursor=pointer]:
+        - generic [ref=e116]: "2"
+        - generic [ref=e117]:
+          - img "Marcus" [ref=e118]
+          - generic [ref=e253]: 查杀
+        - generic [ref=e119]:
+          - generic [ref=e120]: Marcus
+          - generic [ref=e121]: Gemini
+      - button "3 Elena Elena Llama" [ref=e127] [cursor=pointer]:
+        - generic [ref=e128]: "3"
+        - img "Elena" [ref=e130]
+        - generic [ref=e131]:
+          - generic [ref=e132]: Elena
+          - generic [ref=e133]: Llama
+      - button "4 Darius Darius DeepSeek" [ref=e139] [cursor=pointer]:
+        - generic [ref=e140]: "4"
+        - img "Darius" [ref=e142]
+        - generic [ref=e143]:
+          - generic [ref=e144]: Darius
+          - generic [ref=e145]: DeepSeek
+      - button "5 Silas Silas Gemini" [ref=e151] [cursor=pointer]:
+        - generic [ref=e152]: "5"
+        - img "Silas" [ref=e154]
+        - generic [ref=e155]:
+          - generic [ref=e156]: Silas
+          - generic [ref=e157]: Gemini
+      - button "6 Amara Amara Claude" [ref=e163] [cursor=pointer]:
+        - generic [ref=e164]: "6"
+        - img "Amara" [ref=e166]
+        - generic [ref=e167]:
+          - generic [ref=e168]: Amara
+          - generic [ref=e169]: Claude
+      - button "7 Finn Finn DeepSeek" [ref=e175] [cursor=pointer]:
+        - generic [ref=e176]: "7"
+        - img "Finn" [ref=e178]
+        - generic [ref=e179]:
+          - generic [ref=e180]: Finn
+          - generic [ref=e181]: DeepSeek
+      - button "8 Isla Isla Claude" [ref=e187] [cursor=pointer]:
+        - generic [ref=e188]: "8"
+        - img "Isla" [ref=e190]
+        - generic [ref=e191]:
+          - generic [ref=e192]: Isla
+          - generic [ref=e193]: Claude
+      - button "9 Jasper Jasper Gemini" [ref=e199] [cursor=pointer]:
+        - generic [ref=e200]: "9"
+        - img "Jasper" [ref=e202]
+        - generic [ref=e203]:
+          - generic [ref=e204]: Jasper
+          - generic [ref=e205]: Gemini
+      - generic [ref=e210]:
+        - generic [ref=e212]:
+          - generic [ref=e213]: PHASE
+          - generic [ref=e214]: 放逐投票
+        - paragraph [ref=e219]: 选择一名玩家进行放逐投票。
+        - generic [ref=e289]:
+          - generic [ref=e290]: 你的身份：预言家
+          - paragraph [ref=e294]: 每晚查验一名玩家，得知其是否为狼人。
+          - paragraph [ref=e295]: 已选择：2号 Marcus
+        - button "VOTE" [ref=e296] [cursor=pointer]
+  - complementary [ref=e226]:
+    - generic [ref=e227]:
+      - generic [ref=e228]: 对局日志
+      - button "战绩" [ref=e232] [cursor=pointer]
+    - generic [ref=e233]:
+      - generic [ref=e234]: 游戏开始。你的身份是：预言家。每晚查验一名玩家，得知其是否为狼人。
+      - generic [ref=e236]: 本地 Vite 预览不会运行 Netlify Functions；当前使用本地AI fallback话术。部署到Netlify并配置 API_KEY 后会启用服务端Gemini。
+      - generic [ref=e238]: 天黑请闭眼。
+      - generic [ref=e261]: 2号查验结果：查杀/狼人。
+      - generic [ref=e284]: 昨晚平安夜。
+      - generic [ref=e287]:
+        - generic [ref=e288]: YOU
+        - text: 我是预言家，昨晚查验2号Marcus是狼人，查杀。今天建议投2号。
+      - generic [ref=e301]:
+        - generic [ref=e302]: 2号
+        - text: ええ、明日は霊媒不在を理由にリン軸で進行提案いたしますわ。（关注1号）
+      - generic [ref=e304]:
+        - generic [ref=e305]: 3号
+        - text: 私は偽ではありません。メイ白でミオ誘導確認。処刑は拒否します。（关注1号）
+      - generic [ref=e307]:
+        - generic [ref=e308]: 4号
+        - text: トモ吊りだけで安心できない気がします。他の議論も必要では（关注1号）
+      - generic [ref=e310]:
+        - generic [ref=e311]: 5号
+        - text: "@サクラ セルヴァス襲撃確定。昼はミドリ疑う流れに乗ろう。占いCO出たら要注意（关注1号）"
+      - generic [ref=e313]:
+        - generic [ref=e314]: 6号
+        - text: 私は村人です。雑殴りは浅い。投票はメイです。（关注1号）
+      - generic [ref=e316]:
+        - generic [ref=e317]: 7号
+        - text: リュウジ投票継続。ジョナサンがミサキを黒と断言する矛盾を見逃せない。 @ユミ で追加確認して!（关注1号）
+      - generic [ref=e319]:
+        - generic [ref=e320]: 8号
+        - text: 私村だよ！雑殴りじゃないもん！ユミ吊り急ぎ反対ね！（关注1号）
+      - generic [ref=e322]:
+        - generic [ref=e323]: 9号
+        - text: "@シオン 脅威とは具体的だね。理由の詳細は真偽の鍵だ。@ミナコ 沈黙は狼潜伏と見るよ。 Over（关注1号）"
+      - generic [ref=e324]: 发言结束，开始放逐投票。

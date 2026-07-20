@@ -1,0 +1,9 @@
+- generic [ref=f15e3]:
+  - heading "Site not available" [level=1] [ref=f15e4]
+  - paragraph [ref=f15e5]: This site was paused as it reached its usage limits. Please contact the site owner for more information.
+  - separator [ref=f15e6]
+  - paragraph [ref=f15e7]:
+    - text: If this is your site, please visit Netlify’s
+    - link "Billing docs page" [ref=f15e8] [cursor=pointer]:
+      - /url: https://docs.netlify.com/manage/accounts-and-billing/billing/resume-paused-projects/
+    - text: or log into your Netlify account to upgrade your plan.

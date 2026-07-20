@@ -1,0 +1,100 @@
+- generic [ref=e4]:
+  - main [ref=e110]:
+    - generic [ref=e111]:
+      - generic [ref=e112]:
+        - generic [ref=e113]: "1"
+        - generic [ref=e114]:
+          - heading "9人标准场" [level=2] [ref=e115]
+          - paragraph [ref=e116]: Day Discussion
+      - generic [ref=e117]:
+        - button "AI voice on/off" [active] [pressed] [ref=e118] [cursor=pointer]
+        - slider "Volume" [ref=e121] [cursor=pointer]: "1"
+        - slider "Speech rate" [ref=e122] [cursor=pointer]: "1"
+        - button "Mute / Unmute" [ref=e123] [cursor=pointer]
+        - button "Return to lobby" [ref=e128] [cursor=pointer]
+    - generic [ref=e135]:
+      - button "1 Guest YOU 平民" [ref=e137] [cursor=pointer]:
+        - generic [ref=e138]: "1"
+        - img "Guest" [ref=e140]
+        - generic [ref=e141]:
+          - generic [ref=e142]: YOU
+          - generic [ref=e143]: 平民
+      - button "2 Marcus Marcus Claude" [ref=e149] [cursor=pointer]:
+        - generic [ref=e150]: "2"
+        - img "Marcus" [ref=e152]
+        - generic [ref=e153]:
+          - generic [ref=e154]: Marcus
+          - generic [ref=e155]: Claude
+      - button "3 Elena Elena Claude" [ref=e161] [cursor=pointer]:
+        - generic [ref=e162]: "3"
+        - img "Elena" [ref=e164]
+        - generic [ref=e165]:
+          - generic [ref=e166]: Elena
+          - generic [ref=e167]: Claude
+      - button "4 Darius Darius Claude" [ref=e173] [cursor=pointer]:
+        - generic [ref=e174]: "4"
+        - img "Darius" [ref=e176]
+        - generic [ref=e177]:
+          - generic [ref=e178]: Darius
+          - generic [ref=e179]: Claude
+      - button "5 Silas Silas Gemini" [ref=e185] [cursor=pointer]:
+        - generic [ref=e186]: "5"
+        - img "Silas" [ref=e188]
+        - generic [ref=e189]:
+          - generic [ref=e190]: Silas
+          - generic [ref=e191]: Gemini
+      - button "6 Amara Amara Llama" [ref=e197] [cursor=pointer]:
+        - generic [ref=e198]: "6"
+        - img "Amara" [ref=e200]
+        - generic [ref=e201]:
+          - generic [ref=e202]: Amara
+          - generic [ref=e203]: Llama
+      - button "7 Finn Finn Gemini" [ref=e209] [cursor=pointer]:
+        - generic [ref=e210]: "7"
+        - img "Finn" [ref=e212]
+        - generic [ref=e213]:
+          - generic [ref=e214]: Finn
+          - generic [ref=e215]: Gemini
+      - button "8 Isla Isla DeepSeek" [ref=e221] [cursor=pointer]:
+        - generic [ref=e222]: "8"
+        - img "Isla" [ref=e224]
+        - generic [ref=e225]:
+          - generic [ref=e226]: Isla
+          - generic [ref=e227]: DeepSeek
+      - button "9 Jasper Jasper Claude" [ref=e233] [cursor=pointer]:
+        - generic [ref=e234]: "9"
+        - img "Jasper" [ref=e236]
+        - generic [ref=e237]:
+          - generic [ref=e238]: Jasper
+          - generic [ref=e239]: Claude
+      - generic [ref=e244]:
+        - generic [ref=e245]:
+          - generic [ref=e246]:
+            - generic [ref=e247]: PHASE
+            - generic [ref=e248]: Day Discussion
+          - generic [ref=e278]: 40s
+        - paragraph [ref=e253]: 轮到你公开发言。
+        - generic [ref=e282]:
+          - generic [ref=e283]: 你的身份：平民
+          - paragraph [ref=e287]: 没有夜间技能，依靠发言、票型和逻辑找狼。
+        - generic [ref=e288]:
+          - generic [ref=e289]:
+            - button "Pass" [ref=e290] [cursor=pointer]
+            - button "I'm a villager" [ref=e291] [cursor=pointer]
+            - button "Let me listen" [ref=e292] [cursor=pointer]
+            - button "Player X is wolf" [ref=e293] [cursor=pointer]
+            - button "Player X is suspicious" [ref=e294] [cursor=pointer]
+            - button "Player X seems good" [ref=e295] [cursor=pointer]
+            - button "I trust Player X" [ref=e296] [cursor=pointer]
+          - generic [ref=e297]:
+            - textbox "Your turn to speak..." [ref=e298]
+            - button [ref=e299] [cursor=pointer]
+  - complementary [ref=e260]:
+    - generic [ref=e261]:
+      - generic [ref=e262]: 对局日志
+      - button "战绩" [ref=e266] [cursor=pointer]
+    - generic [ref=e267]:
+      - generic [ref=e268]: Game Start. You are Villager.
+      - generic [ref=e270]: Local Vite preview does not run Netlify Functions. AI fallback speech is active.
+      - generic [ref=e272]: Night falls.
+      - generic [ref=e303]: Peaceful night.

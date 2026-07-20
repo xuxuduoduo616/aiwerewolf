@@ -1,0 +1,120 @@
+- generic [ref=f3e4]:
+  - main [ref=f3e76]:
+    - generic [ref=f3e77]:
+      - generic [ref=f3e78]:
+        - generic [ref=f3e79]: "1"
+        - generic [ref=f3e80]:
+          - heading "9人标准场" [level=2] [ref=f3e81]
+          - paragraph [ref=f3e82]: 白天发言
+      - generic [ref=f3e83]:
+        - button [ref=f3e84] [cursor=pointer]
+        - button [ref=f3e89] [cursor=pointer]
+    - generic [ref=f3e96]:
+      - button "1 Guest YOU 我是狼人 狼人" [ref=f3e98] [cursor=pointer]:
+        - generic [ref=f3e99]: "1"
+        - img "Guest" [ref=f3e101]
+        - generic [ref=f3e102]:
+          - generic [ref=f3e103]:
+            - text: YOU
+            - img "我是狼人" [ref=f3e104]
+          - generic [ref=f3e106]: 狼人
+      - button "2 Marcus Marcus OUT" [active] [ref=f3e277] [cursor=pointer]:
+        - generic [ref=f3e116]: "2"
+        - img "Marcus" [ref=f3e118]
+        - generic [ref=f3e119]:
+          - generic [ref=f3e120]: Marcus
+          - generic [ref=f3e292]: OUT
+      - button "3 Elena 狼队友 Elena OUT" [ref=f3e293] [cursor=pointer]:
+        - generic [ref=f3e128]: "3"
+        - generic [ref=f3e129]:
+          - img "Elena" [ref=f3e130]
+          - generic "狼队友" [ref=f3e131]
+        - generic [ref=f3e137]:
+          - generic [ref=f3e138]: Elena
+          - generic [ref=f3e301]: OUT
+      - button "4 Darius Darius Gemini" [ref=f3e145] [cursor=pointer]:
+        - generic [ref=f3e146]: "4"
+        - img "Darius" [ref=f3e148]
+        - generic [ref=f3e149]:
+          - generic [ref=f3e150]: Darius
+          - generic [ref=f3e151]: Gemini
+      - button "5 Silas Silas Claude" [ref=f3e157] [cursor=pointer]:
+        - generic [ref=f3e158]: "5"
+        - img "Silas" [ref=f3e160]
+        - generic [ref=f3e161]:
+          - generic [ref=f3e162]: Silas
+          - generic [ref=f3e163]: Claude
+      - button "6 Amara Amara Claude" [ref=f3e169] [cursor=pointer]:
+        - generic [ref=f3e170]: "6"
+        - img "Amara" [ref=f3e172]
+        - generic [ref=f3e173]:
+          - generic [ref=f3e174]: Amara
+          - generic [ref=f3e175]: Claude
+      - button "7 Finn 狼队友 Finn Claude" [ref=f3e181] [cursor=pointer]:
+        - generic [ref=f3e182]: "7"
+        - generic [ref=f3e183]:
+          - img "Finn" [ref=f3e184]
+          - generic "狼队友" [ref=f3e185]
+        - generic [ref=f3e191]:
+          - generic [ref=f3e192]: Finn
+          - generic [ref=f3e193]: Claude
+      - button "8 Isla Isla GPT-4o" [ref=f3e199] [cursor=pointer]:
+        - generic [ref=f3e200]: "8"
+        - img "Isla" [ref=f3e202]
+        - generic [ref=f3e203]:
+          - generic [ref=f3e204]: Isla
+          - generic [ref=f3e205]: GPT-4o
+      - button "9 Jasper Jasper DeepSeek" [ref=f3e211] [cursor=pointer]:
+        - generic [ref=f3e212]: "9"
+        - img "Jasper" [ref=f3e214]
+        - generic [ref=f3e215]:
+          - generic [ref=f3e216]: Jasper
+          - generic [ref=f3e217]: DeepSeek
+      - generic [ref=f3e222]:
+        - generic [ref=f3e223]:
+          - generic [ref=f3e224]:
+            - generic [ref=f3e225]: PHASE
+            - generic [ref=f3e226]: 白天发言
+          - generic [ref=f3e330]: 50s
+        - paragraph [ref=f3e231]: 轮到你公开发言。
+        - generic [ref=f3e306]:
+          - generic [ref=f3e307]: 你的身份：狼人
+          - paragraph [ref=f3e311]: 夜晚共同刀人，白天隐藏身份、扰乱好人视角。
+          - paragraph [ref=f3e312]: 已选择：2号 Marcus
+        - generic [ref=f3e334]:
+          - textbox "轮到你发言..." [ref=f3e335]
+          - button [ref=f3e336] [cursor=pointer]
+  - complementary [ref=f3e256]:
+    - generic [ref=f3e257]:
+      - generic [ref=f3e258]: 对局日志
+      - button "战绩" [ref=f3e262] [cursor=pointer]
+    - generic [ref=f3e263]:
+      - generic [ref=f3e264]: 游戏开始。你的身份是：狼人。夜晚共同刀人，白天隐藏身份、扰乱好人视角。
+      - generic [ref=f3e266]: 你的狼队友：3号、7号。夜晚可查看狼队频道。
+      - generic [ref=f3e268]: 天黑请闭眼。
+      - generic [ref=f3e313]: 狼队倒计时结束，自动选择2号。
+      - generic [ref=f3e315]: 昨晚倒牌：2号、3号
+      - generic [ref=f3e318]:
+        - generic [ref=f3e319]: 2号
+        - text: みんな、リナの主張を聞いて、少し気になる点があるじゃ。もしリナが本当に占い師なら、どうしてタクミの黒を発表したのか、占い師としての責任を考えると不自然に思える。ヘンリーが本物の占い師である可能性もまだ十分にあるから、村の統一された意見を集めるために今日はしっかり議論すべきじゃ。タクミに投票するのも大事だが、他の意見も重（关注1号）
+      - generic [ref=f3e321]:
+        - generic [ref=f3e322]: 3号
+        - text: 占い師ローラー一択推しで行くわ。余裕ある振る舞いも忘れずにね。ユキ吊り最優先で。（关注4号）
+      - generic [ref=f3e341]:
+        - generic [ref=f3e342]: 4号
+        - text: ユキが本物なら、アヤ以外の津軽な占い先が必要だと思うですか。信頼関係を築くために、皆で行動して行きた@ユキアヤは人狼かもしれないので、他を占うのもありかと。少し考え直してみて？（关注1号）
+      - generic [ref=f3e344]:
+        - generic [ref=f3e345]: 5号
+        - text: 场上先不乱分票，1号要先说清楚自己的立场再说。
+      - generic [ref=f3e347]:
+        - generic [ref=f3e348]: 6号
+        - text: 静かな人追放だけでは危険です。霊媒結果の精査が先決では。（关注1号）
+      - generic [ref=f3e350]:
+        - generic [ref=f3e351]: 7号
+        - text: 场上4号的表水太虚了，这个位置我要带节奏，一起看发言。
+      - generic [ref=f3e353]:
+        - generic [ref=f3e354]: 8号
+        - text: 根拠は矛盾と視点漏れ。今日はジョナサン吊り。 @シズエ 3CO誤認、タクミ占い扱い、逃避。十分黒いわ。（关注1号）
+      - generic [ref=f3e356]:
+        - generic [ref=f3e357]: 9号
+        - text: "@メイ 私はミナトが人間であると断じた。後出しで虚偽を吐くミオを即刻処刑せよ。（关注1号）"

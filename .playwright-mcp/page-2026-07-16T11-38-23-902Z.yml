@@ -1,0 +1,188 @@
+- generic [ref=f1e4]:
+  - main [ref=f1e77]:
+    - generic [ref=f1e78]:
+      - generic [ref=f1e79]:
+        - generic [ref=f1e80]: "1"
+        - generic [ref=f1e81]:
+          - heading "12人预女猎白" [level=2] [ref=f1e82]
+          - paragraph [ref=f1e83]: 猎人开枪
+      - generic [ref=f1e84]:
+        - button "中文" [ref=f1e343] [cursor=pointer]
+        - button [ref=f1e90] [cursor=pointer]
+        - button [ref=f1e95] [cursor=pointer]
+    - generic [ref=f1e102]:
+      - button "1 Guest YOU 猎人 OUT" [ref=f1e350] [cursor=pointer]:
+        - generic [ref=f1e105]: "1"
+        - img "Guest" [ref=f1e107]
+        - generic [ref=f1e108]:
+          - generic [ref=f1e109]: YOU
+          - generic [ref=f1e110]: 猎人
+          - generic [ref=f1e358]: OUT
+      - button "2 Marcus Marcus GPT-4o" [ref=f1e115] [cursor=pointer]:
+        - generic [ref=f1e116]: "2"
+        - img "Marcus" [ref=f1e118]
+        - generic [ref=f1e119]:
+          - generic [ref=f1e120]: Marcus
+          - generic [ref=f1e121]: GPT-4o
+      - button "3 Elena Elena DeepSeek" [ref=f1e127] [cursor=pointer]:
+        - generic [ref=f1e128]: "3"
+        - img "Elena" [ref=f1e130]
+        - generic [ref=f1e131]:
+          - generic [ref=f1e132]: Elena
+          - generic [ref=f1e133]: DeepSeek
+      - button "4 Darius Darius Doubao" [ref=f1e139] [cursor=pointer]:
+        - generic [ref=f1e140]: "4"
+        - img "Darius" [ref=f1e142]
+        - generic [ref=f1e143]:
+          - generic [ref=f1e144]: Darius
+          - generic [ref=f1e145]: Doubao
+      - button "5 Silas Silas Doubao" [ref=f1e151] [cursor=pointer]:
+        - generic [ref=f1e152]: "5"
+        - img "Silas" [ref=f1e154]
+        - generic [ref=f1e155]:
+          - generic [ref=f1e156]: Silas
+          - generic [ref=f1e157]: Doubao
+      - button "6 Amara Amara Gemini" [ref=f1e163] [cursor=pointer]:
+        - generic [ref=f1e164]: "6"
+        - img "Amara" [ref=f1e166]
+        - generic [ref=f1e167]:
+          - generic [ref=f1e168]: Amara
+          - generic [ref=f1e169]: Gemini
+      - button "7 Finn Finn Llama" [ref=f1e175] [cursor=pointer]:
+        - generic [ref=f1e176]: "7"
+        - img "Finn" [ref=f1e178]
+        - generic [ref=f1e179]:
+          - generic [ref=f1e180]: Finn
+          - generic [ref=f1e181]: Llama
+      - button "8 Isla Isla Doubao" [ref=f1e187] [cursor=pointer]:
+        - generic [ref=f1e188]: "8"
+        - img "Isla" [ref=f1e190]
+        - generic [ref=f1e191]:
+          - generic [ref=f1e192]: Isla
+          - generic [ref=f1e193]: Doubao
+      - button "9 Jasper Jasper DeepSeek" [ref=f1e199] [cursor=pointer]:
+        - generic [ref=f1e200]: "9"
+        - img "Jasper" [ref=f1e202]
+        - generic [ref=f1e203]:
+          - generic [ref=f1e204]: Jasper
+          - generic [ref=f1e205]: DeepSeek
+      - button "10 Nova Nova DeepSeek" [ref=f1e211] [cursor=pointer]:
+        - generic [ref=f1e212]: "10"
+        - img "Nova" [ref=f1e214]
+        - generic [ref=f1e215]:
+          - generic [ref=f1e216]: Nova
+          - generic [ref=f1e217]: DeepSeek
+      - button "11 Orion Orion Claude" [ref=f1e223] [cursor=pointer]:
+        - generic [ref=f1e224]: "11"
+        - img "Orion" [ref=f1e226]
+        - generic [ref=f1e227]:
+          - generic [ref=f1e228]: Orion
+          - generic [ref=f1e229]: Claude
+      - button "12 Freya Freya GPT-4o" [ref=f1e235] [cursor=pointer]:
+        - generic [ref=f1e236]: "12"
+        - img "Freya" [ref=f1e238]
+        - generic [ref=f1e239]:
+          - generic [ref=f1e240]: Freya
+          - generic [ref=f1e241]: GPT-4o
+      - generic [ref=f1e246]:
+        - generic [ref=f1e248]:
+          - generic [ref=f1e249]: PHASE
+          - generic [ref=f1e250]: 猎人开枪
+        - paragraph [ref=f1e251]: 猎人开枪阶段，选择一名存活玩家。
+        - generic [ref=f1e359]:
+          - generic [ref=f1e360]: 你的身份：猎人
+          - paragraph [ref=f1e364]: 正常死亡时可以开枪带走一名玩家，被毒死不能开枪。
+          - paragraph [ref=f1e365]: 已选择：3号 Elena
+        - button "SHOOT 确认?" [active] [ref=f1e366] [cursor=pointer]
+  - complementary [ref=f1e258]:
+    - generic [ref=f1e259]:
+      - generic [ref=f1e260]: 对局日志
+      - button "战绩" [ref=f1e264] [cursor=pointer]
+    - generic [ref=f1e265]:
+      - generic [ref=f1e266]: 游戏开始。你的身份是：猎人。正常死亡时可以开枪带走一名玩家，被毒死不能开枪。
+      - generic [ref=f1e268]: 本地 Vite 预览不会运行 Netlify Functions；当前使用本地AI fallback话术。部署到Netlify并配置 API_KEY 后会启用服务端Gemini。
+      - generic [ref=f1e270]: 天黑请闭眼。
+      - generic [ref=f1e292]: 昨晚平安夜。
+      - generic [ref=f1e295]:
+        - generic [ref=f1e296]: YOU
+        - text: Hello everyone, I'm a villager. Nothing much to report on day 1. Let's see how the discussion goes.
+      - generic [ref=f1e298]:
+        - generic [ref=f1e299]: 2号
+        - text: 私はタクヤ票から外れるよ。ミカの理由薄い発言が不自然だね（关注1号）
+      - generic [ref=f1e301]:
+        - generic [ref=f1e302]: 3号
+        - text: 我站好人视角盘，1号的发言有问题，建议今天集中看他的逻辑漏洞。
+      - generic [ref=f1e304]:
+        - generic [ref=f1e305]: 4号
+        - text: 了解ですよぉ。明日は私、ミドリさんは慎重に見るねぇ（关注1号）
+      - generic [ref=f1e307]:
+        - generic [ref=f1e308]: 5号
+        - text: "@セルヴァス 判定の根拠をもう少し聞かせてください。判断材料はもう少し集めたい。感情論で結論を急がない。根拠を整理（关注1号）"
+      - generic [ref=f1e310]:
+        - generic [ref=f1e311]: 6号
+        - text: 黒出しを疑う筋は認める。だがシオンは投票から急に俺黒…シオン処刑希望。 @ダイスケ 比べる軸は投票と主張変遷だ。感情は切っていい。（关注1号）
+      - generic [ref=f1e313]:
+        - generic [ref=f1e314]: 7号
+        - text: サクラの占い師COが強烈ですね。真贋見極めが急務です。（关注1号）
+      - generic [ref=f1e316]:
+        - generic [ref=f1e317]: 8号
+        - text: 我先不站死边，但1号的视角开得太早，像在带节奏给狼队找抗推位。
+      - generic [ref=f1e330]:
+        - generic [ref=f1e331]: 9号
+        - text: 現象の観察記録。それ自体が有益なデータとなる。そこから本質を見抜く。（关注1号）
+      - generic [ref=f1e333]:
+        - generic [ref=f1e334]: 10号
+        - text: ほう、占い師が二人出たのう。理由と占い先で見極めたいぞえ（关注1号）
+      - generic [ref=f1e336]:
+        - generic [ref=f1e337]: 11号
+        - text: 落ち着いて、真実を見抜くため議論しましょう。（关注1号）
+      - generic [ref=f1e339]:
+        - generic [ref=f1e340]: 12号
+        - text: 今のところ、ダン殿とダリル殿の占い理由が要やのう。特に初日は慎重さが命じゃ。（关注1号）
+      - generic [ref=f1e341]: 发言结束，开始放逐投票。
+      - generic [ref=f1e345]: 你投给了3号。
+      - generic [ref=f1e369]: 票型：1号→3号，2号→1号，3号→2号，4号→1号，5号→1号，6号→7号，7号→1号，8号→2号，9号→1号，10号→1号，11号→9号，12号→1号
+      - generic [ref=f1e371]: 1号被放逐出局。
+      - generic [ref=f1e373]:
+        - generic [ref=f1e374]:
+          - generic [ref=f1e375]: 放逐投票结果
+          - generic [ref=f1e379]: 第 1 天 · 12 票
+        - generic [ref=f1e380]:
+          - generic [ref=f1e381]:
+            - generic [ref=f1e382]:
+              - generic [ref=f1e383]: 1号 Guest
+              - generic [ref=f1e384]: 7 票 · 58%
+            - generic [ref=f1e387]:
+              - generic [ref=f1e388]: 2号
+              - generic [ref=f1e389]: 4号
+              - generic [ref=f1e390]: 5号
+              - generic [ref=f1e391]: 7号
+              - generic [ref=f1e392]: 9号
+              - generic [ref=f1e393]: 10号
+              - generic [ref=f1e394]: 12号
+          - generic [ref=f1e395]:
+            - generic [ref=f1e396]:
+              - generic [ref=f1e397]: 2号 Marcus
+              - generic [ref=f1e398]: 2 票 · 17%
+            - generic [ref=f1e401]:
+              - generic [ref=f1e402]: 3号
+              - generic [ref=f1e403]: 8号
+          - generic [ref=f1e404]:
+            - generic [ref=f1e405]:
+              - generic [ref=f1e406]: 3号 Elena
+              - generic [ref=f1e407]: 1 票 · 8%
+            - generic [ref=f1e410]: 1号
+          - generic [ref=f1e412]:
+            - generic [ref=f1e413]:
+              - generic [ref=f1e414]: 7号 Finn
+              - generic [ref=f1e415]: 1 票 · 8%
+            - generic [ref=f1e418]: 6号
+          - generic [ref=f1e420]:
+            - generic [ref=f1e421]:
+              - generic [ref=f1e422]: 9号 Jasper
+              - generic [ref=f1e423]: 1 票 · 8%
+            - generic [ref=f1e426]: 11号
+        - generic [ref=f1e428]:
+          - generic [ref=f1e429]: 放逐出局
+          - generic [ref=f1e436]: 1号 Guest
+        - button "详情" [ref=f1e444] [cursor=pointer]

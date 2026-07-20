@@ -1,0 +1,49 @@
+- generic [ref=f37e3]:
+  - status [ref=f37e4]
+  - generic [ref=f37e5]:
+    - link "Skip to main content ↓" [ref=f37e6] [cursor=pointer]:
+      - /url: "#main"
+      - generic [ref=f37e7]: Skip to main content
+      - text: ↓
+    - main "Authorize" [ref=f37e12]:
+      - generic [ref=f37e14]:
+        - generic [ref=f37e16]:
+          - heading "Log in" [level=1] [ref=f37e22]
+          - generic [ref=f37e23]:
+            - generic [ref=f37e25]:
+              - button "Log in with Google" [ref=f37e26] [cursor=pointer]
+              - button "Log in with GitHub" [ref=f37e33] [cursor=pointer]
+              - button "Log in with GitLab" [ref=f37e38] [cursor=pointer]
+              - button "Log in with Bitbucket" [ref=f37e45] [cursor=pointer]
+            - paragraph [ref=f37e52]:
+              - button "Log in with email" [ref=f37e53] [cursor=pointer]
+            - paragraph [ref=f37e54]:
+              - link "Log in with SSO" [ref=f37e55] [cursor=pointer]:
+                - /url: /sso?redirect=/
+            - paragraph [ref=f37e56]:
+              - text: No account yet?
+              - link "Sign up" [ref=f37e57] [cursor=pointer]:
+                - /url: /signup
+          - paragraph [ref=f37e59]:
+            - text: By logging in to Netlify, you agree to our
+            - link "terms of service" [ref=f37e60] [cursor=pointer]:
+              - /url: https://www.netlify.com/legal/self-serve-subscription-agreement/
+            - text: and
+            - link "privacy policy" [ref=f37e61] [cursor=pointer]:
+              - /url: https://www.netlify.com/privacy
+            - text: .
+        - complementary "Why sign up" [ref=f37e76]:
+          - generic [ref=f37e77]:
+            - generic [ref=f37e78]:
+              - heading [level=2] [ref=f37e79]
+              - paragraph [ref=f37e84]:
+                - text: We simplify deploying on the web for millions so
+                - strong [ref=f37e85]: anyone
+                - text: "can do it: drag and drop your project’s files, import a Git repository, or use our API or CLI."
+            - generic [ref=f37e86]:
+              - heading [level=2] [ref=f37e87]
+              - paragraph [ref=f37e91]: Customize with your own domain, forms, password protection, and more. Build experiences with your favorite AI agent using Agent Runners.
+            - generic [ref=f37e92]:
+              - heading [level=2] [ref=f37e93]
+              - paragraph [ref=f37e97]: Share Deploy Previews for feedback. We have you covered as you grow with observability, security, support, and more.
+  - region "Notifications alt+T"

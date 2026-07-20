@@ -1,0 +1,96 @@
+- generic [ref=f4e4]:
+  - main [ref=f4e80]:
+    - generic [ref=f4e81]:
+      - generic [ref=f4e82]:
+        - generic [ref=f4e83]: "1"
+        - generic [ref=f4e84]:
+          - heading "9人标准场" [level=2] [ref=f4e85]
+          - paragraph [ref=f4e86]: Werewolves Hunt
+      - generic [ref=f4e87]:
+        - button "Mute / Unmute" [ref=f4e88] [cursor=pointer]
+        - button "Return to lobby" [ref=f4e93] [cursor=pointer]
+    - generic [ref=f4e99]:
+      - generic [ref=f4e100]:
+        - button "1 Guest YOU 我是狼人 狼人" [ref=f4e102] [cursor=pointer]:
+          - generic [ref=f4e103]: "1"
+          - img "Guest" [ref=f4e105]
+          - generic [ref=f4e106]:
+            - generic [ref=f4e107]:
+              - text: YOU
+              - img "我是狼人" [ref=f4e108]
+            - generic [ref=f4e110]: 狼人
+        - button "2 Marcus Marcus DeepSeek" [ref=f4e119] [cursor=pointer]:
+          - generic [ref=f4e120]: "2"
+          - img "Marcus" [ref=f4e122]
+          - generic [ref=f4e123]:
+            - generic [ref=f4e124]: Marcus
+            - generic [ref=f4e125]: DeepSeek
+        - button "3 Elena 狼队友 Elena DeepSeek" [ref=f4e131] [cursor=pointer]:
+          - generic [ref=f4e132]: "3"
+          - generic [ref=f4e133]:
+            - img "Elena" [ref=f4e134]
+            - generic "狼队友" [ref=f4e135]
+          - generic [ref=f4e141]:
+            - generic [ref=f4e142]: Elena
+            - generic [ref=f4e143]: DeepSeek
+        - button "4 Darius 狼队友 Darius GPT-4o" [ref=f4e149] [cursor=pointer]:
+          - generic [ref=f4e150]: "4"
+          - generic [ref=f4e151]:
+            - img "Darius" [ref=f4e152]
+            - generic "狼队友" [ref=f4e153]
+          - generic [ref=f4e159]:
+            - generic [ref=f4e160]: Darius
+            - generic [ref=f4e161]: GPT-4o
+        - button "5 Silas Silas DeepSeek" [ref=f4e167] [cursor=pointer]:
+          - generic [ref=f4e168]: "5"
+          - img "Silas" [ref=f4e170]
+          - generic [ref=f4e171]:
+            - generic [ref=f4e172]: Silas
+            - generic [ref=f4e173]: DeepSeek
+        - button "6 Amara Amara GPT-4o" [ref=f4e179] [cursor=pointer]:
+          - generic [ref=f4e180]: "6"
+          - img "Amara" [ref=f4e182]
+          - generic [ref=f4e183]:
+            - generic [ref=f4e184]: Amara
+            - generic [ref=f4e185]: GPT-4o
+        - button "7 Finn Finn Doubao" [ref=f4e191] [cursor=pointer]:
+          - generic [ref=f4e192]: "7"
+          - img "Finn" [ref=f4e194]
+          - generic [ref=f4e195]:
+            - generic [ref=f4e196]: Finn
+            - generic [ref=f4e197]: Doubao
+        - button "8 Isla Isla GPT-4o" [ref=f4e203] [cursor=pointer]:
+          - generic [ref=f4e204]: "8"
+          - img "Isla" [ref=f4e206]
+          - generic [ref=f4e207]:
+            - generic [ref=f4e208]: Isla
+            - generic [ref=f4e209]: GPT-4o
+        - button "9 Jasper Jasper Llama" [ref=f4e215] [cursor=pointer]:
+          - generic [ref=f4e216]: "9"
+          - img "Jasper" [ref=f4e218]
+          - generic [ref=f4e219]:
+            - generic [ref=f4e220]: Jasper
+            - generic [ref=f4e221]: Llama
+        - generic [ref=f4e226]:
+          - generic [ref=f4e227]:
+            - generic [ref=f4e228]:
+              - generic [ref=f4e229]: PHASE
+              - generic [ref=f4e230]: Werewolves Hunt
+            - generic [ref=f4e231]: 20s
+          - paragraph [ref=f4e235]: 选择一名非狼人玩家作为刀口。
+          - generic [ref=f4e236]:
+            - generic [ref=f4e237]: 你的身份：狼人
+            - paragraph [ref=f4e241]: 夜晚共同刀人，白天隐藏身份、扰乱好人视角。
+          - button "KILL 确认?" [disabled] [ref=f4e243]
+      - generic [ref=f4e250]:
+        - generic [ref=f4e251]: 狼队夜聊
+        - generic [ref=f4e258]: 狼队正在组织夜间策略...
+  - complementary [ref=f4e260]:
+    - generic [ref=f4e261]:
+      - generic [ref=f4e262]: 对局日志
+      - button "战绩" [ref=f4e266] [cursor=pointer]
+    - generic [ref=f4e267]:
+      - generic [ref=f4e268]: Game Start. You are Werewolf.
+      - generic [ref=f4e270]: Local Vite preview does not run Netlify Functions. AI fallback speech is active.
+      - generic [ref=f4e272]: "Wolf teammates: 3号, 4号."
+      - generic [ref=f4e274]: Night falls.

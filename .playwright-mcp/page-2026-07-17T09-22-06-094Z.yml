@@ -1,0 +1,54 @@
+- generic [ref=f12e2]:
+  - generic [ref=f12e3]:
+    - link "Skip to content" [ref=f12e4] [cursor=pointer]:
+      - /url: "#start-of-content"
+    - banner [ref=f12e6]
+  - main [ref=f12e9]:
+    - generic [ref=f12e10]:
+      - generic [ref=f12e12]:
+        - img "Netlify Auth logo" [ref=f12e14]
+        - paragraph [ref=f12e15]:
+          - text: Sign in to
+          - strong [ref=f12e16]: GitHub
+          - text: to continue to
+          - strong [ref=f12e17]: Netlify Auth
+      - generic [ref=f12e18]:
+        - generic [ref=f12e19]:
+          - generic [ref=f12e20]:
+            - generic [ref=f12e21]: Username or email address
+            - textbox "Username or email address" [active] [ref=f12e22]
+          - generic [ref=f12e23]:
+            - generic [ref=f12e24]: Password
+            - textbox "Password" [ref=f12e25]
+            - link "Forgot password?" [ref=f12e26] [cursor=pointer]:
+              - /url: /password_reset
+          - button "Sign in" [ref=f12e28] [cursor=pointer]
+        - generic [ref=f12e29]:
+          - generic [ref=f12e30]: or
+          - button "Continue with Google" [ref=f12e33] [cursor=pointer]
+          - button "Continue with Apple" [ref=f12e37] [cursor=pointer]
+      - generic [ref=f12e40]:
+        - paragraph [ref=f12e42]:
+          - text: New to GitHub?
+          - link "Create an account" [ref=f12e43] [cursor=pointer]:
+            - /url: /join?return_to=%2Flogin%2Foauth%2Fauthorize%3Fclient_id%3D0eef2fa971fd9f7d46a2%26redirect_uri%3Dhttps%253A%252F%252Fapi.netlify.com%252Fauth%252Fdone%26scope%3Duser%253Aemail%26state%3DeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwaWQiOiI1NmMzZjE1MDcxZTIwYTE4ZGIwMDAwMGYiLCJleHAiOjE3ODQyODAzMDIsImxvZ2luIjp0cnVlfQ.01Rz3STyPnlTExZ1UzimlJkZAqWdAFZuIVdxQuooqwg&source=oauth
+        - paragraph [ref=f12e45]:
+          - button "Sign in with a passkey" [ref=f12e46] [cursor=pointer]
+  - contentinfo [ref=f12e49]:
+    - list [ref=f12e50]:
+      - listitem [ref=f12e51]:
+        - link "Terms" [ref=f12e52] [cursor=pointer]:
+          - /url: https://docs.github.com/site-policy/github-terms/github-terms-of-service
+      - listitem [ref=f12e53]:
+        - link "Privacy" [ref=f12e54] [cursor=pointer]:
+          - /url: https://docs.github.com/site-policy/privacy-policies/github-privacy-statement
+      - listitem [ref=f12e55]:
+        - link "Docs" [ref=f12e56] [cursor=pointer]:
+          - /url: https://docs.github.com
+      - listitem [ref=f12e57]:
+        - link "Contact GitHub Support" [ref=f12e58] [cursor=pointer]:
+          - /url: https://support.github.com
+      - listitem [ref=f12e59]:
+        - button "Manage cookies" [ref=f12e61] [cursor=pointer]
+      - listitem [ref=f12e62]:
+        - button "Do not share my personal information" [ref=f12e64] [cursor=pointer]

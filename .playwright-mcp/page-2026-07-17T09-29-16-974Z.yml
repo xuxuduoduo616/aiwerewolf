@@ -1,0 +1,303 @@
+- generic [ref=f17e3]:
+  - status [ref=f17e4]
+  - generic [ref=f17e5]:
+    - link "Skip to main content ↓" [ref=f17e6] [cursor=pointer]:
+      - /url: "#main"
+      - generic [ref=f17e7]: Skip to main content
+      - text: ↓
+    - generic [ref=f17e8]:
+      - generic [ref=f17e12]:
+        - link [ref=f17e15] [cursor=pointer]:
+          - /url: /
+          - img "Netlify" [ref=f17e17]
+        - navigation "Team navigation" [ref=f17e21]:
+          - generic:
+            - generic:
+              - list
+      - generic [ref=f17e24]:
+        - generic [ref=f17e26]:
+          - generic [ref=f17e27]:
+            - list [ref=f17e28]:
+              - listitem [ref=f17e29]:
+                - link "Projects" [ref=f17e30] [cursor=pointer]:
+                  - /url: /teams/dahuangtongxue-bit/projects
+              - listitem [ref=f17e31]
+              - listitem [ref=f17e34]:
+                - link "Hugooo/ai-werewolf" [ref=f17e35] [cursor=pointer]:
+                  - /url: /projects/ai-werewolf/deploys
+            - list [ref=f17e37]:
+              - listitem [ref=f17e38]:
+                - link "Log in" [ref=f17e39] [cursor=pointer]:
+                  - /url: /login?next=/projects/ai-werewolf/deploys
+              - listitem [ref=f17e40]:
+                - link "Sign up" [ref=f17e41] [cursor=pointer]:
+                  - /url: /signup?next=/projects/ai-werewolf/deploys
+          - generic [ref=f17e42]:
+            - navigation [ref=f17e45]:
+              - heading "Project navigation" [level=2] [ref=f17e46]
+              - list [ref=f17e47]:
+                - listitem [ref=f17e48]:
+                  - link "Deploys" [ref=f17e49] [cursor=pointer]:
+                    - /url: /projects/ai-werewolf/deploys
+            - main "Deploys" [ref=f17e51]:
+              - generic [ref=f17e52]:
+                - generic [ref=f17e56]:
+                  - heading "Deploys for ai-werewolf" [level=1] [ref=f17e57]
+                  - paragraph [ref=f17e58]:
+                    - link "ai-werewolf.netlify.app" [ref=f17e59] [cursor=pointer]:
+                      - /url: https://ai-werewolf.netlify.app
+                  - paragraph [ref=f17e60]: Last deployed from Netlify Drop.
+                  - paragraph [ref=f17e61]:
+                    - generic [ref=f17e62]:
+                      - text: Published
+                      - generic [ref=f17e63]:
+                        - generic "main" [ref=f17e64]
+                        - text: "@"
+                        - link "f3d78c1" [ref=f17e65] [cursor=pointer]:
+                          - /url: https://github.com/dahuangtongxue-bit/Werewolf-game-AI/commit/f3d78c168b5ba04fc0ea1f2a45e05dfc13cb3ccc
+                - generic [ref=f17e67]:
+                  - heading "Deploys" [level=2] [ref=f17e69]
+                  - list [ref=f17e70]:
+                    - listitem [ref=f17e71]:
+                      - paragraph [ref=f17e74] [cursor=pointer]:
+                        - generic [ref=f17e76]:
+                          - generic [ref=f17e77]:
+                            - generic [ref=f17e79]:
+                              - 'link "Production: main @f3d78c1" [ref=f17e81]':
+                                - /url: /projects/ai-werewolf/deploys/6a23c5a3ea8c1b0008902e66
+                                - generic [ref=f17e82]:
+                                  - text: Production
+                                  - generic [ref=f17e83]:
+                                    - text: ":"
+                                    - generic [ref=f17e84]:
+                                      - generic "main" [ref=f17e85]
+                                      - text: "@f3d78c1"
+                              - generic [ref=f17e86]: published
+                            - generic [ref=f17e87]: Improve MiniMax output handling and token budget
+                          - generic [ref=f17e88]:
+                            - time [ref=f17e89]: Jun 6 at 12:00 AM
+                            - paragraph [ref=f17e90]:
+                              - generic [ref=f17e91]: Deployed in 55s
+                      - link "Go to deploy details" [ref=f17e92] [cursor=pointer]:
+                        - /url: /projects/ai-werewolf/deploys/6a23c5a3ea8c1b0008902e66
+                        - img "Go to deploy details" [ref=f17e93]
+                    - listitem [ref=f17e95]:
+                      - paragraph [ref=f17e98] [cursor=pointer]:
+                        - generic [ref=f17e100]:
+                          - generic [ref=f17e101]:
+                            - generic [ref=f17e103]:
+                              - 'link "Production: main @df5f719" [ref=f17e105]':
+                                - /url: /projects/ai-werewolf/deploys/6a229a6bbcf7d1f3817fbe06
+                                - generic [ref=f17e106]:
+                                  - text: Production
+                                  - generic [ref=f17e107]:
+                                    - text: ":"
+                                    - generic [ref=f17e108]:
+                                      - generic "main" [ref=f17e109]
+                                      - text: "@df5f719"
+                              - generic [ref=f17e110]: completed
+                            - generic [ref=f17e111]: No deploy message
+                          - generic [ref=f17e112]:
+                            - time [ref=f17e113]: Jun 5 at 2:44 AM
+                            - paragraph [ref=f17e114]:
+                              - generic [ref=f17e115]: Deployed in 50s
+                      - link "Go to deploy details" [ref=f17e116] [cursor=pointer]:
+                        - /url: /projects/ai-werewolf/deploys/6a229a6bbcf7d1f3817fbe06
+                        - img "Go to deploy details" [ref=f17e117]
+                    - listitem [ref=f17e119]:
+                      - paragraph [ref=f17e122] [cursor=pointer]:
+                        - generic [ref=f17e124]:
+                          - generic [ref=f17e125]:
+                            - generic [ref=f17e127]:
+                              - 'link "Production: main @df5f719" [ref=f17e129]':
+                                - /url: /projects/ai-werewolf/deploys/6a22977c1d93870008e7d83c
+                                - generic [ref=f17e130]:
+                                  - text: Production
+                                  - generic [ref=f17e131]:
+                                    - text: ":"
+                                    - generic [ref=f17e132]:
+                                      - generic "main" [ref=f17e133]
+                                      - text: "@df5f719"
+                              - generic [ref=f17e134]: completed
+                            - generic [ref=f17e135]: Add moderation function to soften sensitive terms
+                          - generic [ref=f17e136]:
+                            - time [ref=f17e137]: Jun 5 at 2:31 AM
+                            - paragraph [ref=f17e138]:
+                              - generic [ref=f17e139]: Deployed in 50s
+                      - link "Go to deploy details" [ref=f17e140] [cursor=pointer]:
+                        - /url: /projects/ai-werewolf/deploys/6a22977c1d93870008e7d83c
+                        - img "Go to deploy details" [ref=f17e141]
+                    - listitem [ref=f17e143]:
+                      - paragraph [ref=f17e146] [cursor=pointer]:
+                        - generic [ref=f17e148]:
+                          - generic [ref=f17e149]:
+                            - generic [ref=f17e151]:
+                              - 'link "Production: main @f87fe7c" [ref=f17e153]':
+                                - /url: /projects/ai-werewolf/deploys/6a228ccedc611f00084107ca
+                                - generic [ref=f17e154]:
+                                  - text: Production
+                                  - generic [ref=f17e155]:
+                                    - text: ":"
+                                    - generic [ref=f17e156]:
+                                      - generic "main" [ref=f17e157]
+                                      - text: "@f87fe7c"
+                              - generic [ref=f17e158]: completed
+                            - generic [ref=f17e159]: Refine MiniMax token budget and response deadline
+                          - generic [ref=f17e160]:
+                            - time [ref=f17e161]: Jun 5 at 1:46 AM
+                            - paragraph [ref=f17e162]:
+                              - generic [ref=f17e163]: Deployed in 51s
+                      - link "Go to deploy details" [ref=f17e164] [cursor=pointer]:
+                        - /url: /projects/ai-werewolf/deploys/6a228ccedc611f00084107ca
+                        - img "Go to deploy details" [ref=f17e165]
+                    - listitem [ref=f17e167]:
+                      - paragraph [ref=f17e170] [cursor=pointer]:
+                        - generic [ref=f17e172]:
+                          - generic [ref=f17e173]:
+                            - generic [ref=f17e175]:
+                              - 'link "Production: main @82cde5a" [ref=f17e177]':
+                                - /url: /projects/ai-werewolf/deploys/6a2281fa3743520007f17fb2
+                                - generic [ref=f17e178]:
+                                  - text: Production
+                                  - generic [ref=f17e179]:
+                                    - text: ":"
+                                    - generic [ref=f17e180]:
+                                      - generic "main" [ref=f17e181]
+                                      - text: "@82cde5a"
+                              - generic [ref=f17e182]: completed
+                            - generic [ref=f17e183]: Enhance MiniMax token management and error handling
+                          - generic [ref=f17e184]:
+                            - time [ref=f17e185]: Jun 5 at 12:59 AM
+                            - paragraph [ref=f17e186]:
+                              - generic [ref=f17e187]: Deployed in 46s
+                      - link "Go to deploy details" [ref=f17e188] [cursor=pointer]:
+                        - /url: /projects/ai-werewolf/deploys/6a2281fa3743520007f17fb2
+                        - img "Go to deploy details" [ref=f17e189]
+                    - listitem [ref=f17e191]:
+                      - paragraph [ref=f17e194] [cursor=pointer]:
+                        - generic [ref=f17e196]:
+                          - generic [ref=f17e197]:
+                            - generic [ref=f17e199]:
+                              - 'link "Production: main @48a8739" [ref=f17e201]':
+                                - /url: /projects/ai-werewolf/deploys/6a227da5c4b39c00082b3782
+                                - generic [ref=f17e202]:
+                                  - text: Production
+                                  - generic [ref=f17e203]:
+                                    - text: ":"
+                                    - generic [ref=f17e204]:
+                                      - generic "main" [ref=f17e205]
+                                      - text: "@48a8739"
+                              - generic [ref=f17e206]: completed
+                            - generic [ref=f17e207]: Improve error handling and response for MiniMax
+                          - generic [ref=f17e208]:
+                            - time [ref=f17e209]: Jun 5 at 12:41 AM
+                            - paragraph [ref=f17e210]:
+                              - generic [ref=f17e211]: Deployed in 52s
+                      - link "Go to deploy details" [ref=f17e212] [cursor=pointer]:
+                        - /url: /projects/ai-werewolf/deploys/6a227da5c4b39c00082b3782
+                        - img "Go to deploy details" [ref=f17e213]
+                    - listitem [ref=f17e215]:
+                      - paragraph [ref=f17e218] [cursor=pointer]:
+                        - generic [ref=f17e220]:
+                          - generic [ref=f17e221]:
+                            - generic [ref=f17e223]:
+                              - 'link "Production: main @1f01d4d" [ref=f17e225]':
+                                - /url: /projects/ai-werewolf/deploys/6a2279f776cd6b000842fb02
+                                - generic [ref=f17e226]:
+                                  - text: Production
+                                  - generic [ref=f17e227]:
+                                    - text: ":"
+                                    - generic [ref=f17e228]:
+                                      - generic "main" [ref=f17e229]
+                                      - text: "@1f01d4d"
+                              - generic [ref=f17e230]: completed
+                            - generic [ref=f17e231]: "1.0"
+                          - generic [ref=f17e232]:
+                            - time [ref=f17e233]: Jun 5 at 12:25 AM
+                            - paragraph [ref=f17e234]:
+                              - generic [ref=f17e235]: Deployed in 58s
+                      - link "Go to deploy details" [ref=f17e236] [cursor=pointer]:
+                        - /url: /projects/ai-werewolf/deploys/6a2279f776cd6b000842fb02
+                        - img "Go to deploy details" [ref=f17e237]
+                    - listitem [ref=f17e239]:
+                      - paragraph [ref=f17e242] [cursor=pointer]:
+                        - generic [ref=f17e244]:
+                          - generic [ref=f17e245]:
+                            - generic [ref=f17e247]:
+                              - 'link "Production: main @3faedf9" [ref=f17e249]':
+                                - /url: /projects/ai-werewolf/deploys/6a2279390df9c891e429b5cc
+                                - generic [ref=f17e250]:
+                                  - text: Production
+                                  - generic [ref=f17e251]:
+                                    - text: ":"
+                                    - generic [ref=f17e252]:
+                                      - generic "main" [ref=f17e253]
+                                      - text: "@3faedf9"
+                              - generic [ref=f17e254]: completed
+                            - generic [ref=f17e255]: No deploy message
+                          - generic [ref=f17e256]:
+                            - time [ref=f17e257]: Jun 5 at 12:22 AM
+                            - paragraph [ref=f17e258]:
+                              - generic [ref=f17e259]: Deployed in 4s
+                      - link "Go to deploy details" [ref=f17e260] [cursor=pointer]:
+                        - /url: /projects/ai-werewolf/deploys/6a2279390df9c891e429b5cc
+                        - img "Go to deploy details" [ref=f17e261]
+                    - listitem [ref=f17e263]:
+                      - paragraph [ref=f17e266] [cursor=pointer]:
+                        - generic [ref=f17e268]:
+                          - generic [ref=f17e269]:
+                            - generic [ref=f17e271]:
+                              - 'link "Production: main @3faedf9" [ref=f17e273]':
+                                - /url: /projects/ai-werewolf/deploys/6a2277c20900c07dce08d6c5
+                                - generic [ref=f17e274]:
+                                  - text: Production
+                                  - generic [ref=f17e275]:
+                                    - text: ":"
+                                    - generic [ref=f17e276]:
+                                      - generic "main" [ref=f17e277]
+                                      - text: "@3faedf9"
+                              - generic [ref=f17e278]: completed
+                            - generic [ref=f17e279]: No deploy message
+                          - generic [ref=f17e280]:
+                            - time [ref=f17e281]: Jun 5 at 12:16 AM
+                            - paragraph [ref=f17e282]:
+                              - generic [ref=f17e283]: Deployed in 7s
+                      - link "Go to deploy details" [ref=f17e284] [cursor=pointer]:
+                        - /url: /projects/ai-werewolf/deploys/6a2277c20900c07dce08d6c5
+                        - img "Go to deploy details" [ref=f17e285]
+                  - generic [ref=f17e289]:
+                    - heading "Collaborate, test, build…" [level=1] [ref=f17e290]
+                    - paragraph [ref=f17e291]: Every time you open a pull request, or push new changes to a branch, Netlify automatically builds a preview with a unique URL. Like a staging environment for every PR or branch, deploy previews are perfect for testing and collaboration.
+                    - paragraph [ref=f17e292]: Join Netlify or log in if you already have a Netlify account to browse the full deploy history for this project.
+                    - generic [ref=f17e295]:
+                      - link "Join Netlify" [ref=f17e296] [cursor=pointer]:
+                        - /url: /signup?next=/projects/ai-werewolf/deploys
+                      - link "Log in" [ref=f17e297] [cursor=pointer]:
+                        - /url: /login?next=/projects/ai-werewolf/deploys
+        - contentinfo [ref=f17e298]:
+          - generic [ref=f17e299]:
+            - navigation [ref=f17e300]:
+              - list "External links" [ref=f17e301]:
+                - listitem [ref=f17e302]:
+                  - link "Docs" [ref=f17e303] [cursor=pointer]:
+                    - /url: https://docs.netlify.com/
+                - listitem [ref=f17e304]:
+                  - link "Pricing" [ref=f17e305] [cursor=pointer]:
+                    - /url: https://www.netlify.com/pricing/
+                - listitem [ref=f17e306]:
+                  - link "Support" [ref=f17e307] [cursor=pointer]:
+                    - /url: https://www.netlify.com/support/
+                - listitem [ref=f17e308]:
+                  - link "Blog" [ref=f17e309] [cursor=pointer]:
+                    - /url: https://www.netlify.com/blog/
+                - listitem [ref=f17e310]:
+                  - link "Changelog" [ref=f17e311] [cursor=pointer]:
+                    - /url: https://www.netlify.com/changelog/
+                - listitem [ref=f17e312]:
+                  - link "Terms" [ref=f17e313] [cursor=pointer]:
+                    - /url: https://www.netlify.com/legal/terms-of-use/
+            - paragraph [ref=f17e314]:
+              - text: © 2026
+              - link "Netlify" [ref=f17e315] [cursor=pointer]:
+                - /url: https://www.netlify.com
+  - region "Notifications alt+T"

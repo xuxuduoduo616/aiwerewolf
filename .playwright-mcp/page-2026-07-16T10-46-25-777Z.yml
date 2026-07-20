@@ -1,0 +1,121 @@
+- generic [ref=f1e4]:
+  - main [ref=f1e76]:
+    - generic [ref=f1e77]:
+      - generic [ref=f1e78]:
+        - generic [ref=f1e79]: "1"
+        - generic [ref=f1e80]:
+          - heading "9人标准场" [level=2] [ref=f1e81]
+          - paragraph [ref=f1e82]: 白天发言
+      - generic [ref=f1e83]:
+        - button "中文" [active] [ref=f1e347] [cursor=pointer]
+        - button [ref=f1e89] [cursor=pointer]
+        - button [ref=f1e94] [cursor=pointer]
+    - generic [ref=f1e101]:
+      - button "1 Guest YOU 我是狼人 狼人" [ref=f1e103] [cursor=pointer]:
+        - generic [ref=f1e104]: "1"
+        - img "Guest" [ref=f1e106]
+        - generic [ref=f1e107]:
+          - generic [ref=f1e108]:
+            - text: YOU
+            - img "我是狼人" [ref=f1e109]
+          - generic [ref=f1e111]: 狼人
+      - button "2 Marcus Marcus OUT" [ref=f1e287] [cursor=pointer]:
+        - generic [ref=f1e121]: "2"
+        - img "Marcus" [ref=f1e123]
+        - generic [ref=f1e124]:
+          - generic [ref=f1e125]: Marcus
+          - generic [ref=f1e302]: OUT
+      - button "3 Elena 狼队友 Elena Gemini" [ref=f1e132] [cursor=pointer]:
+        - generic [ref=f1e133]: "3"
+        - generic [ref=f1e134]:
+          - img "Elena" [ref=f1e135]
+          - generic "狼队友" [ref=f1e136]
+        - generic [ref=f1e142]:
+          - generic [ref=f1e143]: Elena
+          - generic [ref=f1e144]: Gemini
+      - button "4 Darius Darius GPT-4o" [ref=f1e150] [cursor=pointer]:
+        - generic [ref=f1e151]: "4"
+        - img "Darius" [ref=f1e153]
+        - generic [ref=f1e154]:
+          - generic [ref=f1e155]: Darius
+          - generic [ref=f1e156]: GPT-4o
+      - button "5 Silas Silas Llama" [ref=f1e162] [cursor=pointer]:
+        - generic [ref=f1e163]: "5"
+        - img "Silas" [ref=f1e165]
+        - generic [ref=f1e166]:
+          - generic [ref=f1e167]: Silas
+          - generic [ref=f1e168]: Llama
+      - button "6 Amara Amara Gemini" [ref=f1e174] [cursor=pointer]:
+        - generic [ref=f1e175]: "6"
+        - img "Amara" [ref=f1e177]
+        - generic [ref=f1e178]:
+          - generic [ref=f1e179]: Amara
+          - generic [ref=f1e180]: Gemini
+      - button "7 Finn 狼队友 Finn GPT-4o" [ref=f1e186] [cursor=pointer]:
+        - generic [ref=f1e187]: "7"
+        - generic [ref=f1e188]:
+          - img "Finn" [ref=f1e189]
+          - generic "狼队友" [ref=f1e190]
+        - generic [ref=f1e196]:
+          - generic [ref=f1e197]: Finn
+          - generic [ref=f1e198]: GPT-4o
+      - button "8 Isla Isla DeepSeek" [ref=f1e204] [cursor=pointer]:
+        - generic [ref=f1e205]: "8"
+        - img "Isla" [ref=f1e207]
+        - generic [ref=f1e208]:
+          - generic [ref=f1e209]: Isla
+          - generic [ref=f1e210]: DeepSeek
+      - button "9 Jasper Jasper DeepSeek" [ref=f1e216] [cursor=pointer]:
+        - generic [ref=f1e217]: "9"
+        - img "Jasper" [ref=f1e219]
+        - generic [ref=f1e220]:
+          - generic [ref=f1e221]: Jasper
+          - generic [ref=f1e222]: DeepSeek
+      - generic [ref=f1e227]:
+        - generic [ref=f1e228]:
+          - generic [ref=f1e229]:
+            - generic [ref=f1e230]: PHASE
+            - generic [ref=f1e231]: 白天发言
+          - generic [ref=f1e303]: 39s
+        - paragraph [ref=f1e236]: 轮到你公开发言。
+        - generic [ref=f1e307]:
+          - generic [ref=f1e308]: 你的身份：狼人
+          - paragraph [ref=f1e312]: 夜晚共同刀人，白天隐藏身份、扰乱好人视角。
+        - generic [ref=f1e313]:
+          - textbox "轮到你发言..." [ref=f1e314]
+          - button [ref=f1e315] [cursor=pointer]
+  - complementary [ref=f1e261]:
+    - generic [ref=f1e262]:
+      - generic [ref=f1e263]: 对局日志
+      - button "战绩" [ref=f1e267] [cursor=pointer]
+    - generic [ref=f1e268]:
+      - generic [ref=f1e269]: 游戏开始。你的身份是：狼人。夜晚共同刀人，白天隐藏身份、扰乱好人视角。
+      - generic [ref=f1e271]: 本地 Vite 预览不会运行 Netlify Functions；当前使用本地AI fallback话术。部署到Netlify并配置 API_KEY 后会启用服务端Gemini。
+      - generic [ref=f1e273]: 你的狼队友：3号、7号。夜晚可查看狼队频道。
+      - generic [ref=f1e275]: 天黑请闭眼。
+      - generic [ref=f1e319]: 狼队倒计时结束，自动选择2号。
+      - generic [ref=f1e321]: 昨晚倒牌：2号
+      - generic [ref=f1e324]:
+        - generic [ref=f1e325]: 2号
+        - text: 皆の者、我が言葉を再び聞くがよい。我が占いの結果は真実を示しており、Agent[03]が人間であると断言した。Agent[05]が人狼ではなかったことは、我が言葉の正しさを証明している。疑念を持つ者は多いが、我が真実を見極める眼を持ってほしい。この国の安寧を守るためには、真実を受け入れる勇気が求められる。Agent[0（关注1号）
+      - generic [ref=f1e327]:
+        - generic [ref=f1e328]: 3号
+        - text: ……ふむ。感情の荒波は霧を深めるだけ。今は占い二人の精査と、霊媒師の不在を憂うべきかと。 Over（关注4号）
+      - generic [ref=f1e330]:
+        - generic [ref=f1e331]: 4号
+        - text: "@ミドリ 判定の根拠と、その矛盾を聞かせてください。焦らず進めたいかな。みんなの意見聞かせて。今後の流れに注目（关注1号）"
+      - generic [ref=f1e333]:
+        - generic [ref=f1e334]: 5号
+        - text: 场上先不乱分票，1号要先说清楚自己的立场再说。
+      - generic [ref=f1e336]:
+        - generic [ref=f1e337]: 6号
+        - text: ミナコの指摘に賛成。ジョナサンは理由が薄く真見づらい。（关注1号）
+      - generic [ref=f1e339]:
+        - generic [ref=f1e340]: 7号
+        - text: 占い結果を報告する。俺は占い師だ。昨夜、 @タクミ を占った。結果は『人狼』だ。（关注4号）
+      - generic [ref=f1e342]:
+        - generic [ref=f1e343]: 8号
+        - text: 慎重な人が多いけど、意見を急に変えた人もちょっと気になる（关注1号）
+      - generic [ref=f1e345]:
+        - generic [ref=f1e346]: 9号
+        - text: "@アルフ、議論回すの上手いけどどこか決定的な疑いとかある？今一番黒く見てる人と理由を詳しく聞かせて。（关注1号）"

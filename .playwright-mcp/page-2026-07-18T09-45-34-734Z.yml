@@ -1,0 +1,84 @@
+- generic [ref=e4]:
+  - main [ref=e660]:
+    - generic [ref=e661]:
+      - generic [ref=e662]:
+        - generic [ref=e663]: "1"
+        - generic [ref=e664]:
+          - heading "9人标准场" [level=2] [ref=e665]
+          - paragraph [ref=e666]: Nightfall
+      - generic [ref=e667]:
+        - button "AI voice on/off" [pressed] [ref=e668] [cursor=pointer]
+        - slider "Volume" [ref=e671] [cursor=pointer]: "1"
+        - slider "Speech rate" [ref=e672] [cursor=pointer]: "1"
+        - button "Mute / Unmute" [ref=e673] [cursor=pointer]
+        - button "Return to lobby" [ref=e678] [cursor=pointer]
+    - generic [ref=e685]:
+      - button "1 Guest YOU 猎人" [ref=e687] [cursor=pointer]:
+        - generic [ref=e688]: "1"
+        - img "Guest" [ref=e690]
+        - generic [ref=e691]:
+          - generic [ref=e692]: YOU
+          - generic [ref=e693]: 猎人
+      - button "2 Marcus Marcus Claude" [ref=e698] [cursor=pointer]:
+        - generic [ref=e699]: "2"
+        - img "Marcus" [ref=e701]
+        - generic [ref=e702]:
+          - generic [ref=e703]: Marcus
+          - generic [ref=e704]: Claude
+      - button "3 Elena Elena Llama" [ref=e710] [cursor=pointer]:
+        - generic [ref=e711]: "3"
+        - img "Elena" [ref=e713]
+        - generic [ref=e714]:
+          - generic [ref=e715]: Elena
+          - generic [ref=e716]: Llama
+      - button "4 Darius Darius DeepSeek" [ref=e722] [cursor=pointer]:
+        - generic [ref=e723]: "4"
+        - img "Darius" [ref=e725]
+        - generic [ref=e726]:
+          - generic [ref=e727]: Darius
+          - generic [ref=e728]: DeepSeek
+      - button "5 Silas Silas Llama" [ref=e734] [cursor=pointer]:
+        - generic [ref=e735]: "5"
+        - img "Silas" [ref=e737]
+        - generic [ref=e738]:
+          - generic [ref=e739]: Silas
+          - generic [ref=e740]: Llama
+      - button "6 Amara Amara Doubao" [ref=e746] [cursor=pointer]:
+        - generic [ref=e747]: "6"
+        - img "Amara" [ref=e749]
+        - generic [ref=e750]:
+          - generic [ref=e751]: Amara
+          - generic [ref=e752]: Doubao
+      - button "7 Finn Finn Claude" [ref=e758] [cursor=pointer]:
+        - generic [ref=e759]: "7"
+        - img "Finn" [ref=e761]
+        - generic [ref=e762]:
+          - generic [ref=e763]: Finn
+          - generic [ref=e764]: Claude
+      - button "8 Isla Isla Gemini" [ref=e770] [cursor=pointer]:
+        - generic [ref=e771]: "8"
+        - img "Isla" [ref=e773]
+        - generic [ref=e774]:
+          - generic [ref=e775]: Isla
+          - generic [ref=e776]: Gemini
+      - button "9 Jasper Jasper DeepSeek" [ref=e782] [cursor=pointer]:
+        - generic [ref=e783]: "9"
+        - img "Jasper" [ref=e785]
+        - generic [ref=e786]:
+          - generic [ref=e787]: Jasper
+          - generic [ref=e788]: DeepSeek
+      - generic [ref=e793]:
+        - generic [ref=e795]:
+          - generic [ref=e796]: PHASE
+          - generic [ref=e797]: Nightfall
+        - paragraph [ref=e798]: 等待系统和AI玩家行动。
+        - generic [ref=e799]:
+          - generic [ref=e800]: 你的身份：猎人
+          - paragraph [ref=e804]: 正常死亡时可以开枪带走一名玩家，被毒死不能开枪。
+  - complementary [ref=e805]:
+    - generic [ref=e806]:
+      - generic [ref=e807]: 对局日志
+      - button "战绩" [ref=e811] [cursor=pointer]
+    - generic [ref=e812]:
+      - generic [ref=e813]: Game Start. You are Hunter.
+      - generic [ref=e815]: Local Vite preview does not run Netlify Functions. AI fallback speech is active.

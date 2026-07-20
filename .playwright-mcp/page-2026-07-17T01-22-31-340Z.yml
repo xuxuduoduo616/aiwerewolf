@@ -1,0 +1,95 @@
+- generic [ref=f3e4]:
+  - main [ref=f3e76]:
+    - generic [ref=f3e77]:
+      - generic [ref=f3e78]:
+        - generic [ref=f3e79]: "1"
+        - generic [ref=f3e80]:
+          - heading "9人标准场" [level=2] [ref=f3e81]
+          - paragraph [ref=f3e82]: 狼人夜聊/刀人
+      - generic [ref=f3e83]:
+        - button [ref=f3e84] [cursor=pointer]
+        - button [ref=f3e89] [cursor=pointer]
+    - generic [ref=f3e95]:
+      - generic [ref=f3e96]:
+        - button "1 Guest YOU 我是狼人 狼人" [ref=f3e98] [cursor=pointer]:
+          - generic [ref=f3e99]: "1"
+          - img "Guest" [ref=f3e101]
+          - generic [ref=f3e102]:
+            - generic [ref=f3e103]:
+              - text: YOU
+              - img "我是狼人" [ref=f3e104]
+            - generic [ref=f3e106]: 狼人
+        - button "2 Marcus Marcus Gemini" [ref=f3e115] [cursor=pointer]:
+          - generic [ref=f3e116]: "2"
+          - img "Marcus" [ref=f3e118]
+          - generic [ref=f3e119]:
+            - generic [ref=f3e120]: Marcus
+            - generic [ref=f3e121]: Gemini
+        - button "3 Elena 狼队友 Elena GPT-4o" [ref=f3e127] [cursor=pointer]:
+          - generic [ref=f3e128]: "3"
+          - generic [ref=f3e129]:
+            - img "Elena" [ref=f3e130]
+            - generic "狼队友" [ref=f3e131]
+          - generic [ref=f3e137]:
+            - generic [ref=f3e138]: Elena
+            - generic [ref=f3e139]: GPT-4o
+        - button "4 Darius Darius Gemini" [ref=f3e145] [cursor=pointer]:
+          - generic [ref=f3e146]: "4"
+          - img "Darius" [ref=f3e148]
+          - generic [ref=f3e149]:
+            - generic [ref=f3e150]: Darius
+            - generic [ref=f3e151]: Gemini
+        - button "5 Silas Silas Claude" [ref=f3e157] [cursor=pointer]:
+          - generic [ref=f3e158]: "5"
+          - img "Silas" [ref=f3e160]
+          - generic [ref=f3e161]:
+            - generic [ref=f3e162]: Silas
+            - generic [ref=f3e163]: Claude
+        - button "6 Amara Amara Claude" [ref=f3e169] [cursor=pointer]:
+          - generic [ref=f3e170]: "6"
+          - img "Amara" [ref=f3e172]
+          - generic [ref=f3e173]:
+            - generic [ref=f3e174]: Amara
+            - generic [ref=f3e175]: Claude
+        - button "7 Finn 狼队友 Finn Claude" [ref=f3e181] [cursor=pointer]:
+          - generic [ref=f3e182]: "7"
+          - generic [ref=f3e183]:
+            - img "Finn" [ref=f3e184]
+            - generic "狼队友" [ref=f3e185]
+          - generic [ref=f3e191]:
+            - generic [ref=f3e192]: Finn
+            - generic [ref=f3e193]: Claude
+        - button "8 Isla Isla GPT-4o" [ref=f3e199] [cursor=pointer]:
+          - generic [ref=f3e200]: "8"
+          - img "Isla" [ref=f3e202]
+          - generic [ref=f3e203]:
+            - generic [ref=f3e204]: Isla
+            - generic [ref=f3e205]: GPT-4o
+        - button "9 Jasper Jasper DeepSeek" [ref=f3e211] [cursor=pointer]:
+          - generic [ref=f3e212]: "9"
+          - img "Jasper" [ref=f3e214]
+          - generic [ref=f3e215]:
+            - generic [ref=f3e216]: Jasper
+            - generic [ref=f3e217]: DeepSeek
+        - generic [ref=f3e222]:
+          - generic [ref=f3e223]:
+            - generic [ref=f3e224]:
+              - generic [ref=f3e225]: PHASE
+              - generic [ref=f3e226]: 狼人夜聊/刀人
+            - generic [ref=f3e227]: 20s
+          - paragraph [ref=f3e231]: 选择一名非狼人玩家作为刀口。
+          - generic [ref=f3e232]:
+            - generic [ref=f3e233]: 你的身份：狼人
+            - paragraph [ref=f3e237]: 夜晚共同刀人，白天隐藏身份、扰乱好人视角。
+          - button "KILL 确认?" [disabled] [ref=f3e239]
+      - generic [ref=f3e246]:
+        - generic [ref=f3e247]: 狼队夜聊
+        - generic [ref=f3e254]: 狼队正在组织夜间策略...
+  - complementary [ref=f3e256]:
+    - generic [ref=f3e257]:
+      - generic [ref=f3e258]: 对局日志
+      - button "战绩" [ref=f3e262] [cursor=pointer]
+    - generic [ref=f3e263]:
+      - generic [ref=f3e264]: 游戏开始。你的身份是：狼人。夜晚共同刀人，白天隐藏身份、扰乱好人视角。
+      - generic [ref=f3e266]: 你的狼队友：3号、7号。夜晚可查看狼队频道。
+      - generic [ref=f3e268]: 天黑请闭眼。

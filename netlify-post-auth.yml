@@ -1,0 +1,92 @@
+- generic [ref=f13e3]:
+  - status [ref=f13e4]
+  - generic [ref=f13e5]:
+    - link "Skip to main content ↓" [ref=f13e6] [cursor=pointer]:
+      - /url: "#main"
+      - generic [ref=f13e7]: Skip to main content
+      - text: ↓
+    - generic [ref=f13e8]:
+      - generic [ref=f13e12]:
+        - generic [ref=f13e13]:
+          - link [ref=f13e15] [cursor=pointer]:
+            - /url: /teams/xuxuduoduo616
+            - img "Netlify" [ref=f13e17]
+          - button "Collapse team navigation" [pressed] [ref=f13e22] [cursor=pointer]:
+            - img "Toggle Navigation" [ref=f13e24]
+        - button [ref=f13e27] [cursor=pointer]
+        - list "Breadcrumb" [ref=f13e34]:
+          - listitem [ref=f13e35]:
+            - link [ref=f13e36] [cursor=pointer]:
+              - /url: /teams/xuxuduoduo616/overview
+              - generic [ref=f13e37]:
+                - generic [ref=f13e38]: S
+                - generic: salamander
+            - button "Switch teams. Open menu" [ref=f13e41] [cursor=pointer]:
+              - generic [ref=f13e42]: Switch teams
+        - link "Upgrade" [ref=f13e47] [cursor=pointer]:
+          - /url: /teams/xuxuduoduo616/billing/pricing?upgrade=true
+        - button "User xuxuduoduo616@gmail.com. Open menu" [ref=f13e51] [cursor=pointer]:
+          - generic "salamander XU" [ref=f13e53]
+          - generic:
+            - generic: salamander XU
+            - generic: xuxuduoduo616@gmail.com
+      - generic [ref=f13e55]:
+        - generic [ref=f13e56]:
+          - generic [ref=f13e58]:
+            - combobox [ref=f13e60]:
+              - button "News. Open menu" [ref=f13e61] [cursor=pointer]:
+                - generic [ref=f13e66]: News
+            - combobox [ref=f13e68]:
+              - button "Support. Open menu" [ref=f13e69] [cursor=pointer]:
+                - generic [ref=f13e73]: Support
+          - main "Authorize" [ref=f13e74]:
+            - generic [ref=f13e76]:
+              - generic [ref=f13e77]:
+                - heading "Authorize Application" [level=1] [ref=f13e78]
+                - status [ref=f13e79]:
+                  - paragraph [ref=f13e83]:
+                    - text: An application named
+                    - strong [ref=f13e84]: Netlify CLI
+                    - text: is asking for permission to access Netlify on your behalf.
+                - paragraph [ref=f13e85]: This app will be able to create and manage projects in your Netlify teams. You can revoke access at any time.
+                - paragraph [ref=f13e86]:
+                  - strong [ref=f13e87]: "Please review the details below before authorizing access:"
+                - generic [ref=f13e88]:
+                  - generic:
+                    - term [ref=f13e89]: Redirect URI
+                    - definition [ref=f13e90]:
+                      - code [ref=f13e91]: urn:ietf:wg:oauth:2.0:oob
+                  - generic:
+                    - term [ref=f13e92]: Description
+                    - definition [ref=f13e93]:
+                      - code [ref=f13e94]: Netlify's next generation CLI. https://github.com/netlify/cli
+              - generic [ref=f13e95]:
+                - button "Authorize" [ref=f13e96] [cursor=pointer]
+                - button "Deny" [ref=f13e97] [cursor=pointer]
+        - contentinfo [ref=f13e98]:
+          - generic [ref=f13e99]:
+            - navigation [ref=f13e100]:
+              - list "External links" [ref=f13e101]:
+                - listitem [ref=f13e102]:
+                  - link "Docs" [ref=f13e103] [cursor=pointer]:
+                    - /url: https://docs.netlify.com/
+                - listitem [ref=f13e104]:
+                  - link "Pricing" [ref=f13e105] [cursor=pointer]:
+                    - /url: https://www.netlify.com/pricing/
+                - listitem [ref=f13e106]:
+                  - link "Support" [ref=f13e107] [cursor=pointer]:
+                    - /url: https://www.netlify.com/support/
+                - listitem [ref=f13e108]:
+                  - link "Blog" [ref=f13e109] [cursor=pointer]:
+                    - /url: https://www.netlify.com/blog/
+                - listitem [ref=f13e110]:
+                  - link "Changelog" [ref=f13e111] [cursor=pointer]:
+                    - /url: https://www.netlify.com/changelog/
+                - listitem [ref=f13e112]:
+                  - link "Terms" [ref=f13e113] [cursor=pointer]:
+                    - /url: https://www.netlify.com/legal/terms-of-use/
+            - paragraph [ref=f13e114]:
+              - text: © 2026
+              - link "Netlify" [ref=f13e115] [cursor=pointer]:
+                - /url: https://www.netlify.com
+  - region "Notifications alt+T"

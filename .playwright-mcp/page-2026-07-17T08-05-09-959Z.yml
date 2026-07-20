@@ -1,0 +1,34 @@
+- generic [ref=f8e4]:
+  - banner [ref=f8e26]:
+    - generic [ref=f8e27]:
+      - heading "AI WEREWOLF" [level=1] [ref=f8e28]
+      - paragraph [ref=f8e29]: Guest trial. Records are local only.
+    - generic [ref=f8e30]:
+      - button [ref=f8e31] [cursor=pointer]
+      - button "EN" [ref=f8e36] [cursor=pointer]
+      - button "Logout" [ref=f8e41] [cursor=pointer]
+  - main [ref=f8e45]:
+    - generic [ref=f8e46]:
+      - generic [ref=f8e47]:
+        - paragraph [ref=f8e48]: Board Selection
+        - heading "选择板子" [level=2] [ref=f8e49]
+      - generic [ref=f8e50]:
+        - paragraph [ref=f8e51]: 难度 · Difficulty
+        - generic [ref=f8e52]:
+          - button "Beginner" [ref=f8e53] [cursor=pointer]
+          - button "Intermediate" [ref=f8e54] [cursor=pointer]
+          - button "Expert" [ref=f8e55] [cursor=pointer]
+        - paragraph [ref=f8e56]: AI uses standard strategy with occasional mistakes — for players with some experience.
+      - generic [ref=f8e57]:
+        - button "9 9人标准场 3民3狼 + 预言家、女巫、猎人。节奏快，适合第一阶段调试AI发言和基础规则。 3民 / 3狼 / 预言家 / 女巫 / 猎人" [ref=f8e58] [cursor=pointer]:
+          - generic [ref=f8e60]:
+            - generic [ref=f8e61]: "9"
+            - generic [ref=f8e62]: 9人标准场
+          - paragraph [ref=f8e65]: 3民3狼 + 预言家、女巫、猎人。节奏快，适合第一阶段调试AI发言和基础规则。
+          - generic [ref=f8e66]: 3民 / 3狼 / 预言家 / 女巫 / 猎人
+        - button "12 12人预女猎白 4民4狼 + 预言家、女巫、猎人、白痴。更接近完整标准局。 4民 / 4狼 / 预言家 / 女巫 / 猎人 / 白痴" [ref=f8e67] [cursor=pointer]:
+          - generic [ref=f8e69]:
+            - generic [ref=f8e70]: "12"
+            - generic [ref=f8e71]: 12人预女猎白
+          - paragraph [ref=f8e74]: 4民4狼 + 预言家、女巫、猎人、白痴。更接近完整标准局。
+          - generic [ref=f8e75]: 4民 / 4狼 / 预言家 / 女巫 / 猎人 / 白痴

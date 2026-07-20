@@ -1,0 +1,46 @@
+- generic [ref=f34e2]:
+  - generic [ref=f34e3]:
+    - link "Skip to content" [ref=f34e4] [cursor=pointer]:
+      - /url: "#start-of-content"
+    - banner [ref=f34e6]
+  - main [ref=f34e9]:
+    - generic [ref=f34e10]:
+      - generic [ref=f34e12]:
+        - img "Netlify Auth logo" [ref=f34e14]
+        - paragraph [ref=f34e15]:
+          - text: Sign in to
+          - strong [ref=f34e16]: GitHub
+          - text: to continue to
+          - strong [ref=f34e17]: Netlify Auth
+      - generic [ref=f34e19]:
+        - generic [ref=f34e20]:
+          - generic [ref=f34e21]: Username or email address
+          - textbox "Username or email address" [active] [ref=f34e22]
+        - generic [ref=f34e23]:
+          - generic [ref=f34e24]: Password
+          - textbox "Password" [ref=f34e25]
+          - link "Forgot password?" [ref=f34e26] [cursor=pointer]:
+            - /url: /password_reset
+        - button "Sign in" [ref=f34e28] [cursor=pointer]
+      - paragraph [ref=f34e31]:
+        - text: New to GitHub?
+        - link "Create an account" [ref=f34e32] [cursor=pointer]:
+          - /url: /join?return_to=%2Flogin%2Foauth%2Fauthorize%3Fclient_id%3D0eef2fa971fd9f7d46a2%26redirect_uri%3Dhttps%253A%252F%252Fapi.netlify.com%252Fauth%252Fdone%26scope%3Duser%253Aemail%26state%3DeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwaWQiOiI1NmMzZjE1MDcxZTIwYTE4ZGIwMDAwMGYiLCJleHAiOjE3ODQyNzg2NDAsImxvZ2luIjp0cnVlfQ.tYMt91NfkpMXIJEd0wzwKVaCJw2wk-QAmTMNCiORUCk&source=oauth
+  - contentinfo [ref=f34e33]:
+    - list [ref=f34e34]:
+      - listitem [ref=f34e35]:
+        - link "Terms" [ref=f34e36] [cursor=pointer]:
+          - /url: https://docs.github.com/site-policy/github-terms/github-terms-of-service
+      - listitem [ref=f34e37]:
+        - link "Privacy" [ref=f34e38] [cursor=pointer]:
+          - /url: https://docs.github.com/site-policy/privacy-policies/github-privacy-statement
+      - listitem [ref=f34e39]:
+        - link "Docs" [ref=f34e40] [cursor=pointer]:
+          - /url: https://docs.github.com
+      - listitem [ref=f34e41]:
+        - link "Contact GitHub Support" [ref=f34e42] [cursor=pointer]:
+          - /url: https://support.github.com
+      - listitem [ref=f34e43]:
+        - button "Manage cookies" [ref=f34e45] [cursor=pointer]
+      - listitem [ref=f34e46]:
+        - button "Do not share my personal information" [ref=f34e48] [cursor=pointer]

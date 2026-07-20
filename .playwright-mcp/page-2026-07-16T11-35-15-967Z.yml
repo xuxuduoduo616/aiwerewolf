@@ -1,0 +1,105 @@
+- generic [ref=f1e4]:
+  - main [ref=f1e77]:
+    - generic [ref=f1e78]:
+      - generic [ref=f1e79]:
+        - generic [ref=f1e80]: "1"
+        - generic [ref=f1e81]:
+          - heading "12人预女猎白" [level=2] [ref=f1e82]
+          - paragraph [ref=f1e83]: 白天发言
+      - generic [ref=f1e84]:
+        - button "EN" [ref=f1e85] [cursor=pointer]
+        - button [ref=f1e90] [cursor=pointer]
+        - button [ref=f1e95] [cursor=pointer]
+    - generic [ref=f1e102]:
+      - button "1 Guest YOU 猎人" [ref=f1e104] [cursor=pointer]:
+        - generic [ref=f1e105]: "1"
+        - img "Guest" [ref=f1e107]
+        - generic [ref=f1e108]:
+          - generic [ref=f1e109]: YOU
+          - generic [ref=f1e110]: 猎人
+      - button "2 Marcus Marcus GPT-4o" [ref=f1e115] [cursor=pointer]:
+        - generic [ref=f1e116]: "2"
+        - img "Marcus" [ref=f1e118]
+        - generic [ref=f1e119]:
+          - generic [ref=f1e120]: Marcus
+          - generic [ref=f1e121]: GPT-4o
+      - button "3 Elena Elena DeepSeek" [ref=f1e127] [cursor=pointer]:
+        - generic [ref=f1e128]: "3"
+        - img "Elena" [ref=f1e130]
+        - generic [ref=f1e131]:
+          - generic [ref=f1e132]: Elena
+          - generic [ref=f1e133]: DeepSeek
+      - button "4 Darius Darius Doubao" [ref=f1e139] [cursor=pointer]:
+        - generic [ref=f1e140]: "4"
+        - img "Darius" [ref=f1e142]
+        - generic [ref=f1e143]:
+          - generic [ref=f1e144]: Darius
+          - generic [ref=f1e145]: Doubao
+      - button "5 Silas Silas Doubao" [ref=f1e151] [cursor=pointer]:
+        - generic [ref=f1e152]: "5"
+        - img "Silas" [ref=f1e154]
+        - generic [ref=f1e155]:
+          - generic [ref=f1e156]: Silas
+          - generic [ref=f1e157]: Doubao
+      - button "6 Amara Amara Gemini" [ref=f1e163] [cursor=pointer]:
+        - generic [ref=f1e164]: "6"
+        - img "Amara" [ref=f1e166]
+        - generic [ref=f1e167]:
+          - generic [ref=f1e168]: Amara
+          - generic [ref=f1e169]: Gemini
+      - button "7 Finn Finn Llama" [ref=f1e175] [cursor=pointer]:
+        - generic [ref=f1e176]: "7"
+        - img "Finn" [ref=f1e178]
+        - generic [ref=f1e179]:
+          - generic [ref=f1e180]: Finn
+          - generic [ref=f1e181]: Llama
+      - button "8 Isla Isla Doubao" [ref=f1e187] [cursor=pointer]:
+        - generic [ref=f1e188]: "8"
+        - img "Isla" [ref=f1e190]
+        - generic [ref=f1e191]:
+          - generic [ref=f1e192]: Isla
+          - generic [ref=f1e193]: Doubao
+      - button "9 Jasper Jasper DeepSeek" [ref=f1e199] [cursor=pointer]:
+        - generic [ref=f1e200]: "9"
+        - img "Jasper" [ref=f1e202]
+        - generic [ref=f1e203]:
+          - generic [ref=f1e204]: Jasper
+          - generic [ref=f1e205]: DeepSeek
+      - button "10 Nova Nova DeepSeek" [ref=f1e211] [cursor=pointer]:
+        - generic [ref=f1e212]: "10"
+        - img "Nova" [ref=f1e214]
+        - generic [ref=f1e215]:
+          - generic [ref=f1e216]: Nova
+          - generic [ref=f1e217]: DeepSeek
+      - button "11 Orion Orion Claude" [ref=f1e223] [cursor=pointer]:
+        - generic [ref=f1e224]: "11"
+        - img "Orion" [ref=f1e226]
+        - generic [ref=f1e227]:
+          - generic [ref=f1e228]: Orion
+          - generic [ref=f1e229]: Claude
+      - button "12 Freya Freya GPT-4o" [ref=f1e235] [cursor=pointer]:
+        - generic [ref=f1e236]: "12"
+        - img "Freya" [ref=f1e238]
+        - generic [ref=f1e239]:
+          - generic [ref=f1e240]: Freya
+          - generic [ref=f1e241]: GPT-4o
+      - generic [ref=f1e246]:
+        - generic [ref=f1e248]:
+          - generic [ref=f1e249]: PHASE
+          - generic [ref=f1e250]: 白天发言
+        - paragraph [ref=f1e251]: 等待系统和AI玩家行动。
+        - generic [ref=f1e280]:
+          - generic [ref=f1e281]: 你的身份：猎人
+          - paragraph [ref=f1e285]: 正常死亡时可以开枪带走一名玩家，被毒死不能开枪。
+  - complementary [ref=f1e258]:
+    - generic [ref=f1e259]:
+      - generic [ref=f1e260]: 对局日志
+      - button "战绩" [ref=f1e264] [cursor=pointer]
+    - generic [ref=f1e265]:
+      - generic [ref=f1e266]: Game Start. You are Hunter.
+      - generic [ref=f1e268]: Local Vite preview does not run Netlify Functions. AI fallback speech is active.
+      - generic [ref=f1e270]: Night falls.
+      - generic [ref=f1e292]: Peaceful night.
+      - generic [ref=f1e295]:
+        - generic [ref=f1e296]: YOU
+        - text: Hello everyone, I'm a villager. Nothing much to report on day 1. Let's see how the discussion goes.

@@ -1,0 +1,202 @@
+- generic [ref=f2e4]:
+  - main [ref=f2e76]:
+    - generic [ref=f2e77]:
+      - generic [ref=f2e78]:
+        - generic [ref=f2e79]: "4"
+        - generic [ref=f2e80]:
+          - heading "9人标准场" [level=2] [ref=f2e81]
+          - paragraph [ref=f2e82]: 游戏结束
+      - generic [ref=f2e83]:
+        - button "EN" [ref=f2e84] [cursor=pointer]
+        - button [ref=f2e89] [cursor=pointer]
+        - button [ref=f2e94] [cursor=pointer]
+    - generic [ref=f2e101]:
+      - button "1 Guest YOU 平民 OUT" [ref=f2e308] [cursor=pointer]:
+        - generic [ref=f2e104]: "1"
+        - img "Guest" [ref=f2e106]
+        - generic [ref=f2e107]:
+          - generic [ref=f2e108]: YOU
+          - generic [ref=f2e109]: 平民
+          - generic [ref=f2e316]: OUT
+      - button "2 Marcus Marcus 预言家 OUT" [ref=f2e455] [cursor=pointer]:
+        - generic [ref=f2e116]: "2"
+        - img "Marcus" [ref=f2e118]
+        - generic [ref=f2e119]:
+          - generic [ref=f2e120]: Marcus
+          - generic [ref=f2e456]: 预言家
+          - generic [ref=f2e325]: OUT
+      - button "3 Elena Elena 狼人 OUT" [active] [ref=f2e377] [cursor=pointer]:
+        - generic [ref=f2e128]: "3"
+        - img "Elena" [ref=f2e130]
+        - generic [ref=f2e131]:
+          - generic [ref=f2e132]: Elena
+          - generic [ref=f2e385]: 狼人
+          - generic [ref=f2e393]: OUT
+      - button "4 Darius Darius 平民 OUT" [ref=f2e461] [cursor=pointer]:
+        - generic [ref=f2e140]: "4"
+        - img "Darius" [ref=f2e142]
+        - generic [ref=f2e143]:
+          - generic [ref=f2e144]: Darius
+          - generic [ref=f2e469]: 平民
+          - generic [ref=f2e474]: OUT
+      - button "5 Silas Silas Doubao 女巫" [ref=f2e475] [cursor=pointer]:
+        - generic [ref=f2e152]: "5"
+        - img "Silas" [ref=f2e154]
+        - generic [ref=f2e155]:
+          - generic [ref=f2e156]: Silas
+          - generic [ref=f2e157]: Doubao
+          - generic [ref=f2e476]: 女巫
+      - button "6 Amara Amara 平民 OUT" [ref=f2e480] [cursor=pointer]:
+        - generic [ref=f2e164]: "6"
+        - img "Amara" [ref=f2e166]
+        - generic [ref=f2e167]:
+          - generic [ref=f2e168]: Amara
+          - generic [ref=f2e488]: 平民
+          - generic [ref=f2e493]: OUT
+      - button "7 Finn Finn 狼人 OUT" [ref=f2e494] [cursor=pointer]:
+        - generic [ref=f2e176]: "7"
+        - img "Finn" [ref=f2e178]
+        - generic [ref=f2e179]:
+          - generic [ref=f2e180]: Finn
+          - generic [ref=f2e495]: 狼人
+          - generic [ref=f2e402]: OUT
+      - button "8 Isla Isla DeepSeek 狼人" [ref=f2e503] [cursor=pointer]:
+        - generic [ref=f2e188]: "8"
+        - img "Isla" [ref=f2e190]
+        - generic [ref=f2e191]:
+          - generic [ref=f2e192]: Isla
+          - generic [ref=f2e193]: DeepSeek
+          - generic [ref=f2e504]: 狼人
+      - button "9 Jasper Jasper 猎人 OUT" [ref=f2e512] [cursor=pointer]:
+        - generic [ref=f2e200]: "9"
+        - img "Jasper" [ref=f2e202]
+        - generic [ref=f2e203]:
+          - generic [ref=f2e204]: Jasper
+          - generic [ref=f2e513]: 猎人
+          - generic [ref=f2e411]: OUT
+      - generic [ref=f2e211]:
+        - heading "狼人胜利" [level=1] [ref=f2e523]
+        - paragraph [ref=f2e524]: 第4轮结束 · 平民
+        - paragraph [ref=f2e525]: 战绩已记录。
+        - button "返回大厅" [ref=f2e526] [cursor=pointer]
+  - complementary [ref=f2e226]:
+    - generic [ref=f2e227]:
+      - generic [ref=f2e228]: 对局日志
+      - button "战绩" [ref=f2e232] [cursor=pointer]
+    - generic [ref=f2e233]:
+      - generic [ref=f2e234]: Game Start. You are Villager.
+      - generic [ref=f2e236]: Local Vite preview does not run Netlify Functions. AI fallback speech is active.
+      - generic [ref=f2e238]: Night falls.
+      - generic [ref=f2e260]: Peaceful night.
+      - generic [ref=f2e263]:
+        - generic [ref=f2e264]: YOU
+        - text: 我是平民，暂时没有明确怀疑对象，先听大家的发言。
+      - generic [ref=f2e277]:
+        - generic [ref=f2e278]: 2号
+        - text: Speaks based on game situation.
+      - generic [ref=f2e280]:
+        - generic [ref=f2e281]: 3号
+        - text: Speaks based on game situation.
+      - generic [ref=f2e283]:
+        - generic [ref=f2e284]: 4号
+        - text: Speaks based on game situation.
+      - generic [ref=f2e286]:
+        - generic [ref=f2e287]: 5号
+        - text: Speaks based on game situation.
+      - generic [ref=f2e289]:
+        - generic [ref=f2e290]: 6号
+        - text: Pushes suspicion on Player 1.
+      - generic [ref=f2e292]:
+        - generic [ref=f2e293]: 7号
+        - text: Speaks based on game situation.
+      - generic [ref=f2e295]:
+        - generic [ref=f2e296]: 8号
+        - text: Speaks based on game situation.
+      - generic [ref=f2e298]:
+        - generic [ref=f2e299]: 9号
+        - text: Speaks based on game situation.
+      - generic [ref=f2e300]: Discussion ended. Voting starts.
+      - generic [ref=f2e303]: You voted Player 3.
+      - generic [ref=f2e337]: "Vote record: 1->3, 2->1, 3->1, 4->6, 5->1, 6->2, 7->5, 8->1, 9->1"
+      - generic [ref=f2e339]: Player 1 was exiled.
+      - generic [ref=f2e341]: Night falls.
+      - generic [ref=f2e343]: "Deaths: 2"
+      - generic [ref=f2e346]:
+        - generic [ref=f2e347]: 2号
+        - text: Speaks based on game situation.
+      - generic [ref=f2e349]:
+        - generic [ref=f2e350]: 3号
+        - text: Speaks based on game situation.
+      - generic [ref=f2e352]:
+        - generic [ref=f2e353]: 4号
+        - text: Pushes suspicion on Player 6.
+      - generic [ref=f2e355]:
+        - generic [ref=f2e356]: 5号
+        - text: Speaks based on game situation.
+      - generic [ref=f2e358]:
+        - generic [ref=f2e359]: 6号
+        - text: Speaks based on game situation.
+      - generic [ref=f2e361]:
+        - generic [ref=f2e362]: 7号
+        - text: Speaks based on game situation.
+      - generic [ref=f2e364]:
+        - generic [ref=f2e365]: 8号
+        - text: Speaks based on game situation.
+      - generic [ref=f2e367]:
+        - generic [ref=f2e368]: 9号
+        - text: Speaks based on game situation.
+      - generic [ref=f2e369]: Discussion ended. Voting starts.
+      - generic [ref=f2e372]: You have no vote or abstained.
+      - generic [ref=f2e423]: "Vote record: 1->skip, 3->4, 4->6, 5->7, 6->3, 7->3, 8->4, 9->3"
+      - generic [ref=f2e425]: Player 3 was exiled.
+      - generic [ref=f2e427]: Night falls.
+      - generic [ref=f2e429]: "Deaths: 9"
+      - generic [ref=f2e431]: Hunter shoots Player 7.
+      - generic [ref=f2e434]:
+        - generic [ref=f2e435]: 9号
+        - text: Speaks based on game situation.
+      - generic [ref=f2e437]:
+        - generic [ref=f2e438]: 4号
+        - text: Speaks based on game situation.
+      - generic [ref=f2e440]:
+        - generic [ref=f2e441]: 5号
+        - text: Speaks based on game situation.
+      - generic [ref=f2e443]:
+        - generic [ref=f2e444]: 6号
+        - text: Speaks based on game situation.
+      - generic [ref=f2e446]:
+        - generic [ref=f2e447]: 8号
+        - text: Speaks based on game situation.
+      - generic [ref=f2e448]: Discussion ended. Voting starts.
+      - generic [ref=f2e450]: You have no vote or abstained.
+      - generic [ref=f2e527]: "Vote record: 1->skip, 4->8, 5->4, 6->4, 8->4"
+      - generic [ref=f2e529]: Player 4 was exiled.
+      - generic [ref=f2e531]: Night falls.
+      - generic [ref=f2e533]: "Deaths: 6"
+      - generic [ref=f2e535]:
+        - generic [ref=f2e536]:
+          - generic [ref=f2e537]: 放逐投票结果
+          - generic [ref=f2e541]: 第 3 天 · 5 票
+        - generic [ref=f2e542]:
+          - generic [ref=f2e543]:
+            - generic [ref=f2e544]:
+              - generic [ref=f2e545]: 4号 Darius
+              - generic [ref=f2e546]: 3 票 · 60%
+            - generic [ref=f2e549]:
+              - generic [ref=f2e550]: 5号
+              - generic [ref=f2e551]: 6号
+              - generic [ref=f2e552]: 8号
+          - generic [ref=f2e553]:
+            - generic [ref=f2e554]:
+              - generic [ref=f2e555]: 8号 Isla
+              - generic [ref=f2e556]: 1 票 · 20%
+            - generic [ref=f2e559]: 4号
+        - generic [ref=f2e561]:
+          - generic [ref=f2e562]:
+            - generic [ref=f2e563]: 弃票
+            - generic [ref=f2e564]: 1 票
+          - generic [ref=f2e565]: 1号
+        - generic [ref=f2e567]:
+          - generic [ref=f2e568]: 放逐出局
+          - generic [ref=f2e575]: 4号 Darius
+        - button "详情" [ref=f2e583] [cursor=pointer]

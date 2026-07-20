@@ -1,0 +1,66 @@
+- generic [ref=f25e26]:
+  - generic [ref=f25e27]:
+    - generic [ref=f25e28]:
+      - generic [ref=f25e29]:
+        - generic [ref=f25e33]: "0"
+        - button "购买" [ref=f25e34] [cursor=pointer]: +
+      - generic [ref=f25e35]:
+        - generic [ref=f25e39]: "0"
+        - button "购买" [ref=f25e40] [cursor=pointer]: +
+      - generic [ref=f25e41]:
+        - generic [ref=f25e44]: "0"
+        - button "购买" [ref=f25e45] [cursor=pointer]: +
+    - generic [ref=f25e47]:
+      - generic [ref=f25e48]: 全服赠言：欢迎来到狼人杀村落 · 每日签到领好礼
+      - generic [ref=f25e49]: 逐浪季限定皮肤即将下架 · 欲购从速
+      - generic [ref=f25e50]: 新手保护期：前10局免体力消耗
+      - generic [ref=f25e51]: 本周活动：完成3局对局送限定头像框
+      - generic [ref=f25e52]: 全服赠言：欢迎来到狼人杀村落 · 每日签到领好礼
+      - generic [ref=f25e53]: 逐浪季限定皮肤即将下架 · 欲购从速
+      - generic [ref=f25e54]: 新手保护期：前10局免体力消耗
+      - generic [ref=f25e55]: 本周活动：完成3局对局送限定头像框
+  - generic [ref=f25e57]:
+    - generic [ref=f25e58]:
+      - generic [ref=f25e59]: "10"
+      - generic [ref=f25e65]:
+        - generic [ref=f25e66]: 狼村旅人
+        - generic [ref=f25e72]:
+          - generic [ref=f25e73]: 真相洞悉
+          - generic [ref=f25e74]: 二阶 5星
+    - generic [ref=f25e77]:
+      - generic [ref=f25e78]:
+        - generic [ref=f25e79] [cursor=pointer]: 活动
+        - generic [ref=f25e84] [cursor=pointer]: 阵营应援
+        - generic [ref=f25e90] [cursor=pointer]: 限时娱乐
+      - generic [ref=f25e96]: 默认时装
+      - generic [ref=f25e103]:
+        - generic [ref=f25e104] [cursor=pointer]: 功能菜单
+        - generic [ref=f25e110] [cursor=pointer]: 任务
+        - generic [ref=f25e116] [cursor=pointer]: 通行证
+        - generic [ref=f25e121] [cursor=pointer]: 首充
+    - generic [ref=f25e127]:
+      - generic [ref=f25e128]:
+        - generic [ref=f25e130]: 逐浪季限定
+        - generic [ref=f25e131]: 夏日海滩主题皮肤限时上架
+      - generic [ref=f25e132]:
+        - generic [ref=f25e134]: 线上海选赛
+        - generic [ref=f25e135]: 月度狼人杀锦标赛报名中
+      - generic [ref=f25e136]:
+        - generic [ref=f25e138]: 每日签到
+        - generic [ref=f25e139]: 连续签到7天送限定头像框
+    - generic [ref=f25e140]:
+      - generic [ref=f25e141]:
+        - generic [ref=f25e143]: 大厅聊天
+        - generic [ref=f25e144]:
+          - generic [ref=f25e145]: 夜行者：有人一起开黑吗？
+          - generic [ref=f25e146]: 魔法少女：求带新手场~
+      - generic [ref=f25e147]:
+        - button "建房" [ref=f25e148] [cursor=pointer]
+        - button "跟房" [ref=f25e153] [cursor=pointer]
+        - button "观战" [ref=f25e157] [cursor=pointer]
+  - navigation "主导航" [ref=f25e162]:
+    - button "首页" [ref=f25e163] [cursor=pointer]
+    - button "好友" [ref=f25e168] [cursor=pointer]
+    - button "狼村" [ref=f25e176] [cursor=pointer]
+    - button "商店街" [ref=f25e181] [cursor=pointer]
+    - button "我的" [ref=f25e188] [cursor=pointer]

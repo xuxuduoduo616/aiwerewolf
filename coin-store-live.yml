@@ -1,0 +1,90 @@
+- generic [ref=f25e26]:
+  - generic [ref=f25e27]:
+    - generic [ref=f25e28]:
+      - generic [ref=f25e29]:
+        - generic [ref=f25e33]: "0"
+        - button "购买" [ref=f25e34] [cursor=pointer]: +
+      - generic [ref=f25e35]:
+        - generic [ref=f25e39]: "0"
+        - button "购买" [ref=f25e40] [cursor=pointer]: +
+      - generic [ref=f25e41]:
+        - generic [ref=f25e44]: "0"
+        - button "购买" [ref=f25e45] [cursor=pointer]: +
+    - generic [ref=f25e47]:
+      - generic [ref=f25e48]: 全服赠言：欢迎来到狼人杀村落 · 每日签到领好礼
+      - generic [ref=f25e49]: 逐浪季限定皮肤即将下架 · 欲购从速
+      - generic [ref=f25e50]: 新手保护期：前10局免体力消耗
+      - generic [ref=f25e51]: 本周活动：完成3局对局送限定头像框
+      - generic [ref=f25e52]: 全服赠言：欢迎来到狼人杀村落 · 每日签到领好礼
+      - generic [ref=f25e53]: 逐浪季限定皮肤即将下架 · 欲购从速
+      - generic [ref=f25e54]: 新手保护期：前10局免体力消耗
+      - generic [ref=f25e55]: 本周活动：完成3局对局送限定头像框
+  - generic [ref=f25e193]:
+    - generic [ref=f25e194]:
+      - heading "狼村商会" [level=1] [ref=f25e195]
+      - paragraph [ref=f25e196]: 为你的狼村之旅添砖加瓦
+    - generic [ref=f25e203]:
+      - generic [ref=f25e204]:
+        - generic [ref=f25e208]: "0"
+        - generic [ref=f25e209]: 金币
+      - generic [ref=f25e210]:
+        - generic [ref=f25e214]: "0"
+        - generic [ref=f25e215]: 抵用券
+      - generic [ref=f25e216]:
+        - generic [ref=f25e219]: "0"
+        - generic [ref=f25e220]: 水晶
+    - generic [ref=f25e221]:
+      - heading "金币充值" [level=2] [ref=f25e222]
+      - generic [ref=f25e223]:
+        - button "60金币 ¥6" [ref=f25e224] [cursor=pointer]:
+          - generic [ref=f25e225]: 首充双倍
+          - generic [ref=f25e226]:
+            - generic [ref=f25e227]: "60"
+            - generic [ref=f25e228]: 金币
+          - generic [ref=f25e229]: ¥6
+          - generic [ref=f25e230]: +60赠送
+        - button "300金币 ¥30" [ref=f25e231] [cursor=pointer]:
+          - generic [ref=f25e232]:
+            - generic [ref=f25e233]: "300"
+            - generic [ref=f25e234]: 金币
+          - generic [ref=f25e235]: ¥30
+          - generic [ref=f25e236]: +30赠送
+        - button "680金币 ¥68" [ref=f25e237] [cursor=pointer]:
+          - generic [ref=f25e238]: 限时
+          - generic [ref=f25e239]:
+            - generic [ref=f25e240]: "680"
+            - generic [ref=f25e241]: 金币
+          - generic [ref=f25e242]: ¥68
+          - generic [ref=f25e243]: +68赠送
+        - button "1280金币 ¥128" [ref=f25e244] [cursor=pointer]:
+          - generic [ref=f25e245]: 最热门
+          - generic [ref=f25e246]:
+            - generic [ref=f25e247]: 1,280
+            - generic [ref=f25e248]: 金币
+          - generic [ref=f25e249]: ¥128
+          - generic [ref=f25e250]: +128赠送
+        - button "3280金币 ¥328" [ref=f25e251] [cursor=pointer]:
+          - generic [ref=f25e252]:
+            - generic [ref=f25e253]: 3,280
+            - generic [ref=f25e254]: 金币
+          - generic [ref=f25e255]: ¥328
+          - generic [ref=f25e256]: +680赠送
+        - button "6480金币 ¥648" [ref=f25e257] [cursor=pointer]:
+          - generic [ref=f25e258]:
+            - generic [ref=f25e259]: 6,480
+            - generic [ref=f25e260]: 金币
+          - generic [ref=f25e261]: ¥648
+          - generic [ref=f25e262]: +1600赠送
+    - generic [ref=f25e264]:
+      - generic [ref=f25e265]: 支付方式
+      - paragraph [ref=f25e269]:
+        - text: 当前支付方式：
+        - strong [ref=f25e270]: 第三方充值助手（测试模式）
+      - paragraph [ref=f25e271]: 测试模式下购买直接到账，无需实际支付。生产环境中将由第三方托管平台担保。
+    - button "请选择充值档位" [disabled] [ref=f25e273]
+  - navigation "主导航" [ref=f25e162]:
+    - button "首页" [ref=f25e163] [cursor=pointer]
+    - button "好友" [ref=f25e168] [cursor=pointer]
+    - button "狼村" [ref=f25e176] [cursor=pointer]
+    - button "商店街" [ref=f25e181] [cursor=pointer]
+    - button "我的" [ref=f25e188] [cursor=pointer]

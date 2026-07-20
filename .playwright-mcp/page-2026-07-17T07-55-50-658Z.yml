@@ -1,0 +1,95 @@
+- generic [ref=f5e4]:
+  - main [ref=f5e76]:
+    - generic [ref=f5e77]:
+      - generic [ref=f5e78]:
+        - generic [ref=f5e79]: "1"
+        - generic [ref=f5e80]:
+          - heading "9人标准场" [level=2] [ref=f5e81]
+          - paragraph [ref=f5e82]: Werewolves Hunt
+      - generic [ref=f5e83]:
+        - button "Mute / Unmute" [ref=f5e84] [cursor=pointer]
+        - button "Return to lobby" [ref=f5e89] [cursor=pointer]
+    - generic [ref=f5e95]:
+      - generic [ref=f5e96]:
+        - button "1 Guest YOU 我是狼人 狼人" [ref=f5e98] [cursor=pointer]:
+          - generic [ref=f5e99]: "1"
+          - img "Guest" [ref=f5e101]
+          - generic [ref=f5e102]:
+            - generic [ref=f5e103]:
+              - text: YOU
+              - img "我是狼人" [ref=f5e104]
+            - generic [ref=f5e106]: 狼人
+        - button "2 Marcus Marcus Llama" [ref=f5e115] [cursor=pointer]:
+          - generic [ref=f5e116]: "2"
+          - img "Marcus" [ref=f5e118]
+          - generic [ref=f5e119]:
+            - generic [ref=f5e120]: Marcus
+            - generic [ref=f5e121]: Llama
+        - button "3 Elena Elena Doubao" [ref=f5e127] [cursor=pointer]:
+          - generic [ref=f5e128]: "3"
+          - img "Elena" [ref=f5e130]
+          - generic [ref=f5e131]:
+            - generic [ref=f5e132]: Elena
+            - generic [ref=f5e133]: Doubao
+        - button "4 Darius 狼队友 Darius Llama" [ref=f5e139] [cursor=pointer]:
+          - generic [ref=f5e140]: "4"
+          - generic [ref=f5e141]:
+            - img "Darius" [ref=f5e142]
+            - generic "狼队友" [ref=f5e143]
+          - generic [ref=f5e149]:
+            - generic [ref=f5e150]: Darius
+            - generic [ref=f5e151]: Llama
+        - button "5 Silas 狼队友 Silas GPT-4o" [ref=f5e157] [cursor=pointer]:
+          - generic [ref=f5e158]: "5"
+          - generic [ref=f5e159]:
+            - img "Silas" [ref=f5e160]
+            - generic "狼队友" [ref=f5e161]
+          - generic [ref=f5e167]:
+            - generic [ref=f5e168]: Silas
+            - generic [ref=f5e169]: GPT-4o
+        - button "6 Amara Amara Doubao" [ref=f5e175] [cursor=pointer]:
+          - generic [ref=f5e176]: "6"
+          - img "Amara" [ref=f5e178]
+          - generic [ref=f5e179]:
+            - generic [ref=f5e180]: Amara
+            - generic [ref=f5e181]: Doubao
+        - button "7 Finn Finn Llama" [ref=f5e187] [cursor=pointer]:
+          - generic [ref=f5e188]: "7"
+          - img "Finn" [ref=f5e190]
+          - generic [ref=f5e191]:
+            - generic [ref=f5e192]: Finn
+            - generic [ref=f5e193]: Llama
+        - button "8 Isla Isla Claude" [ref=f5e199] [cursor=pointer]:
+          - generic [ref=f5e200]: "8"
+          - img "Isla" [ref=f5e202]
+          - generic [ref=f5e203]:
+            - generic [ref=f5e204]: Isla
+            - generic [ref=f5e205]: Claude
+        - button "9 Jasper Jasper Gemini" [ref=f5e211] [cursor=pointer]:
+          - generic [ref=f5e212]: "9"
+          - img "Jasper" [ref=f5e214]
+          - generic [ref=f5e215]:
+            - generic [ref=f5e216]: Jasper
+            - generic [ref=f5e217]: Gemini
+        - generic [ref=f5e222]:
+          - generic [ref=f5e223]:
+            - generic [ref=f5e224]:
+              - generic [ref=f5e225]: PHASE
+              - generic [ref=f5e226]: Werewolves Hunt
+            - generic [ref=f5e227]: 20s
+          - paragraph [ref=f5e231]: 选择一名非狼人玩家作为刀口。
+          - generic [ref=f5e232]:
+            - generic [ref=f5e233]: 你的身份：狼人
+            - paragraph [ref=f5e237]: 夜晚共同刀人，白天隐藏身份、扰乱好人视角。
+          - button "KILL 确认?" [disabled] [ref=f5e239]
+      - generic [ref=f5e246]:
+        - generic [ref=f5e247]: 狼队夜聊
+        - generic [ref=f5e254]: 狼队正在组织夜间策略...
+  - complementary [ref=f5e256]:
+    - generic [ref=f5e257]:
+      - generic [ref=f5e258]: 对局日志
+      - button "战绩" [ref=f5e262] [cursor=pointer]
+    - generic [ref=f5e263]:
+      - generic [ref=f5e264]: Game Start. You are Werewolf.
+      - generic [ref=f5e266]: "Wolf teammates: 4号, 5号."
+      - generic [ref=f5e268]: Night falls.

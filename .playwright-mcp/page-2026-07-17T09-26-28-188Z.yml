@@ -1,0 +1,54 @@
+- generic [ref=f14e4]:
+  - banner [ref=f14e26]:
+    - generic [ref=f14e27]:
+      - heading "AI WEREWOLF" [level=1] [ref=f14e28]
+      - paragraph [ref=f14e29]: Guest trial. Records are local only.
+    - generic [ref=f14e30]:
+      - button [ref=f14e31] [cursor=pointer]
+      - button "中文" [ref=f14e36] [cursor=pointer]
+      - button "登出" [ref=f14e41] [cursor=pointer]
+  - main [ref=f14e45]:
+    - generic [ref=f14e46]:
+      - generic [ref=f14e47]:
+        - paragraph [ref=f14e48]: Board Selection
+        - heading "选择板子" [level=2] [ref=f14e49]
+      - generic [ref=f14e50]:
+        - paragraph [ref=f14e51]: 难度 · Difficulty
+        - generic [ref=f14e52]:
+          - button "新手" [ref=f14e53] [cursor=pointer]
+          - button "进阶" [ref=f14e54] [cursor=pointer]
+          - button "高手" [ref=f14e55] [cursor=pointer]
+        - paragraph [ref=f14e56]: AI 使用标准策略，偶有逻辑失误，适合有一定基础的玩家
+      - generic [ref=f14e57]:
+        - button "9 9人标准场 3民3狼 + 预言家、女巫、猎人。节奏快，适合第一阶段调试AI发言和基础规则。 3民 / 3狼 / 预言家 / 女巫 / 猎人" [ref=f14e58] [cursor=pointer]:
+          - generic [ref=f14e60]:
+            - generic [ref=f14e61]: "9"
+            - generic [ref=f14e62]: 9人标准场
+          - paragraph [ref=f14e65]: 3民3狼 + 预言家、女巫、猎人。节奏快，适合第一阶段调试AI发言和基础规则。
+          - generic [ref=f14e66]: 3民 / 3狼 / 预言家 / 女巫 / 猎人
+        - button "12 12人预女猎白 4民4狼 + 预言家、女巫、猎人、白痴。更接近完整标准局。 4民 / 4狼 / 预言家 / 女巫 / 猎人 / 白痴" [ref=f14e67] [cursor=pointer]:
+          - generic [ref=f14e69]:
+            - generic [ref=f14e70]: "12"
+            - generic [ref=f14e71]: 12人预女猎白
+          - paragraph [ref=f14e74]: 4民4狼 + 预言家、女巫、猎人、白痴。更接近完整标准局。
+          - generic [ref=f14e75]: 4民 / 4狼 / 预言家 / 女巫 / 猎人 / 白痴
+    - generic [ref=f14e76]:
+      - heading "我的战绩" [level=3] [ref=f14e82]
+      - generic [ref=f14e83]:
+        - generic [ref=f14e84]:
+          - generic [ref=f14e85]: "1"
+          - generic [ref=f14e86]: 对局
+        - generic [ref=f14e87]:
+          - generic [ref=f14e88]: 0%
+          - generic [ref=f14e89]: 胜率
+        - generic [ref=f14e90]:
+          - generic [ref=f14e91]: Villager
+          - generic [ref=f14e92]: 常用
+      - article [ref=f14e94]:
+        - generic [ref=f14e95]:
+          - generic [ref=f14e96]:
+            - generic [ref=f14e103]: LOSE
+            - generic [ref=f14e104]: ·
+            - generic [ref=f14e107]: Villager
+          - generic [ref=f14e108]: 2026/7/16
+        - paragraph [ref=f14e109]: 9人标准场，你的身份：Villager，狼人阵营胜利，共4轮。你无票或弃票。 / 票型：1号→弃票，4号→8号，5号→4号，6号→4号，8号→4号 / 4号被放逐出局。 / 天黑请闭眼。 / 昨晚倒牌：6号

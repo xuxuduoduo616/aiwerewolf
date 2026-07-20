@@ -1,0 +1,73 @@
+- generic [ref=f55e3]:
+  - status [ref=f55e4]
+  - generic [ref=f55e5]:
+    - link "Skip to main content ↓" [ref=f55e6] [cursor=pointer]:
+      - /url: "#main"
+      - generic [ref=f55e7]: Skip to main content
+      - text: ↓
+    - generic [ref=f55e12]:
+      - generic [ref=f55e13]:
+        - list [ref=f55e14]:
+          - listitem [ref=f55e15]:
+            - link "Projects" [ref=f55e16] [cursor=pointer]:
+              - /url: /teams/xuxuduoduo616/projects
+          - listitem [ref=f55e17]
+          - listitem [ref=f55e20]:
+            - link "salamander/ai-werewolf.net" [ref=f55e21] [cursor=pointer]:
+              - /url: /projects/aiwerewolf/deploys
+        - list [ref=f55e23]:
+          - listitem [ref=f55e24]:
+            - link "Log in" [ref=f55e25] [cursor=pointer]:
+              - /url: /login?next=/projects/aiwerewolf/configuration/env
+          - listitem [ref=f55e26]:
+            - link "Sign up" [ref=f55e27] [cursor=pointer]:
+              - /url: /signup?next=/projects/aiwerewolf/configuration/env
+      - generic [ref=f55e28]:
+        - navigation [ref=f55e31]:
+          - heading "Project navigation" [level=2] [ref=f55e32]
+          - list [ref=f55e33]:
+            - listitem [ref=f55e34]:
+              - link "Deploys" [ref=f55e35] [cursor=pointer]:
+                - /url: /projects/aiwerewolf/deploys
+        - main "Environment variables" [ref=f55e37]:
+          - generic [ref=f55e39]:
+            - generic [ref=f55e41]:
+              - heading "Log in" [level=1] [ref=f55e47]
+              - generic [ref=f55e48]:
+                - generic [ref=f55e50]:
+                  - button "Log in with Google" [ref=f55e51] [cursor=pointer]
+                  - button "Log in with GitHub" [ref=f55e58] [cursor=pointer]
+                  - button "Log in with GitLab" [ref=f55e63] [cursor=pointer]
+                  - button "Log in with Bitbucket" [ref=f55e70] [cursor=pointer]
+                - paragraph [ref=f55e77]:
+                  - button "Log in with email" [ref=f55e78] [cursor=pointer]
+                - paragraph [ref=f55e79]:
+                  - link "Log in with SSO" [ref=f55e80] [cursor=pointer]:
+                    - /url: /sso?redirect=/
+                - paragraph [ref=f55e81]:
+                  - text: No account yet?
+                  - link "Sign up" [ref=f55e82] [cursor=pointer]:
+                    - /url: /signup
+              - paragraph [ref=f55e84]:
+                - text: By logging in to Netlify, you agree to our
+                - link "terms of service" [ref=f55e85] [cursor=pointer]:
+                  - /url: https://www.netlify.com/legal/self-serve-subscription-agreement/
+                - text: and
+                - link "privacy policy" [ref=f55e86] [cursor=pointer]:
+                  - /url: https://www.netlify.com/privacy
+                - text: .
+            - complementary "Why sign up" [ref=f55e101]:
+              - generic [ref=f55e102]:
+                - generic [ref=f55e103]:
+                  - heading [level=2] [ref=f55e104]
+                  - paragraph [ref=f55e109]:
+                    - text: We simplify deploying on the web for millions so
+                    - strong [ref=f55e110]: anyone
+                    - text: "can do it: drag and drop your project’s files, import a Git repository, or use our API or CLI."
+                - generic [ref=f55e111]:
+                  - heading [level=2] [ref=f55e112]
+                  - paragraph [ref=f55e116]: Customize with your own domain, forms, password protection, and more. Build experiences with your favorite AI agent using Agent Runners.
+                - generic [ref=f55e117]:
+                  - heading [level=2] [ref=f55e118]
+                  - paragraph [ref=f55e122]: Share Deploy Previews for feedback. We have you covered as you grow with observability, security, support, and more.
+  - region "Notifications alt+T"

@@ -1,0 +1,84 @@
+- generic [ref=f14e4]:
+  - main [ref=f14e115]:
+    - generic [ref=f14e116]:
+      - generic [ref=f14e117]:
+        - generic [ref=f14e118]: "1"
+        - generic [ref=f14e119]:
+          - heading "9人标准场" [level=2] [ref=f14e120]
+          - paragraph [ref=f14e121]: Werewolves Hunt
+      - generic [ref=f14e122]:
+        - button "Mute / Unmute" [ref=f14e123] [cursor=pointer]
+        - button "Return to lobby" [ref=f14e128] [cursor=pointer]
+    - generic [ref=f14e135]:
+      - button "1 Guest YOU 预言家" [ref=f14e137] [cursor=pointer]:
+        - generic [ref=f14e138]: "1"
+        - img "Guest" [ref=f14e140]
+        - generic [ref=f14e141]:
+          - generic [ref=f14e142]: YOU
+          - generic [ref=f14e143]: 预言家
+      - button "2 Marcus Marcus Llama" [ref=f14e149] [cursor=pointer]:
+        - generic [ref=f14e150]: "2"
+        - img "Marcus" [ref=f14e152]
+        - generic [ref=f14e153]:
+          - generic [ref=f14e154]: Marcus
+          - generic [ref=f14e155]: Llama
+      - button "3 Elena Elena Llama" [ref=f14e161] [cursor=pointer]:
+        - generic [ref=f14e162]: "3"
+        - img "Elena" [ref=f14e164]
+        - generic [ref=f14e165]:
+          - generic [ref=f14e166]: Elena
+          - generic [ref=f14e167]: Llama
+      - button "4 Darius Darius Gemini" [ref=f14e173] [cursor=pointer]:
+        - generic [ref=f14e174]: "4"
+        - img "Darius" [ref=f14e176]
+        - generic [ref=f14e177]:
+          - generic [ref=f14e178]: Darius
+          - generic [ref=f14e179]: Gemini
+      - button "5 Silas Silas Claude" [ref=f14e185] [cursor=pointer]:
+        - generic [ref=f14e186]: "5"
+        - img "Silas" [ref=f14e188]
+        - generic [ref=f14e189]:
+          - generic [ref=f14e190]: Silas
+          - generic [ref=f14e191]: Claude
+      - button "6 Amara Amara Gemini" [ref=f14e197] [cursor=pointer]:
+        - generic [ref=f14e198]: "6"
+        - img "Amara" [ref=f14e200]
+        - generic [ref=f14e201]:
+          - generic [ref=f14e202]: Amara
+          - generic [ref=f14e203]: Gemini
+      - button "7 Finn Finn Claude" [ref=f14e209] [cursor=pointer]:
+        - generic [ref=f14e210]: "7"
+        - img "Finn" [ref=f14e212]
+        - generic [ref=f14e213]:
+          - generic [ref=f14e214]: Finn
+          - generic [ref=f14e215]: Claude
+      - button "8 Isla Isla Llama" [ref=f14e221] [cursor=pointer]:
+        - generic [ref=f14e222]: "8"
+        - img "Isla" [ref=f14e224]
+        - generic [ref=f14e225]:
+          - generic [ref=f14e226]: Isla
+          - generic [ref=f14e227]: Llama
+      - button "9 Jasper Jasper DeepSeek" [ref=f14e233] [cursor=pointer]:
+        - generic [ref=f14e234]: "9"
+        - img "Jasper" [ref=f14e236]
+        - generic [ref=f14e237]:
+          - generic [ref=f14e238]: Jasper
+          - generic [ref=f14e239]: DeepSeek
+      - generic [ref=f14e244]:
+        - generic [ref=f14e245]:
+          - generic [ref=f14e246]:
+            - generic [ref=f14e247]: PHASE
+            - generic [ref=f14e248]: Werewolves Hunt
+          - generic [ref=f14e249]: 20s
+        - paragraph [ref=f14e253]: 等待系统和AI玩家行动。
+        - generic [ref=f14e254]:
+          - generic [ref=f14e255]: 你的身份：预言家
+          - paragraph [ref=f14e259]: 每晚查验一名玩家，得知其是否为狼人。
+  - complementary [ref=f14e260]:
+    - generic [ref=f14e261]:
+      - generic [ref=f14e262]: 对局日志
+      - button "战绩" [ref=f14e266] [cursor=pointer]
+    - generic [ref=f14e267]:
+      - generic [ref=f14e268]: Game Start. You are Seer.
+      - generic [ref=f14e270]: Local Vite preview does not run Netlify Functions. AI fallback speech is active.
+      - generic [ref=f14e272]: Night falls.

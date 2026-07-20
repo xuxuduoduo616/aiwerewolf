@@ -1,0 +1,83 @@
+- generic [ref=f1e4]:
+  - main [ref=f1e76]:
+    - generic [ref=f1e77]:
+      - generic [ref=f1e78]:
+        - generic [ref=f1e79]: "1"
+        - generic [ref=f1e80]:
+          - heading "9人标准场" [level=2] [ref=f1e81]
+          - paragraph [ref=f1e82]: Seer Checks
+      - generic [ref=f1e83]:
+        - button "Mute / Unmute" [ref=f1e84] [cursor=pointer]
+        - button "Return to lobby" [ref=f1e89] [cursor=pointer]
+    - generic [ref=f1e96]:
+      - button "1 Guest YOU 预言家" [ref=f1e98] [cursor=pointer]:
+        - generic [ref=f1e99]: "1"
+        - img "Guest" [ref=f1e101]
+        - generic [ref=f1e102]:
+          - generic [ref=f1e103]: YOU
+          - generic [ref=f1e104]: 预言家
+      - button "2 Marcus Marcus Llama" [ref=f1e110] [cursor=pointer]:
+        - generic [ref=f1e111]: "2"
+        - img "Marcus" [ref=f1e113]
+        - generic [ref=f1e114]:
+          - generic [ref=f1e115]: Marcus
+          - generic [ref=f1e116]: Llama
+      - button "3 Elena Elena GPT-4o" [ref=f1e122] [cursor=pointer]:
+        - generic [ref=f1e123]: "3"
+        - img "Elena" [ref=f1e125]
+        - generic [ref=f1e126]:
+          - generic [ref=f1e127]: Elena
+          - generic [ref=f1e128]: GPT-4o
+      - button "4 Darius Darius Llama" [ref=f1e134] [cursor=pointer]:
+        - generic [ref=f1e135]: "4"
+        - img "Darius" [ref=f1e137]
+        - generic [ref=f1e138]:
+          - generic [ref=f1e139]: Darius
+          - generic [ref=f1e140]: Llama
+      - button "5 Silas Silas Llama" [ref=f1e146] [cursor=pointer]:
+        - generic [ref=f1e147]: "5"
+        - img "Silas" [ref=f1e149]
+        - generic [ref=f1e150]:
+          - generic [ref=f1e151]: Silas
+          - generic [ref=f1e152]: Llama
+      - button "6 Amara Amara Gemini" [active] [ref=f1e158] [cursor=pointer]:
+        - generic [ref=f1e159]: "6"
+        - img "Amara" [ref=f1e161]
+        - generic [ref=f1e162]:
+          - generic [ref=f1e163]: Amara
+          - generic [ref=f1e164]: Gemini
+      - button "7 Finn Finn Doubao" [ref=f1e170] [cursor=pointer]:
+        - generic [ref=f1e171]: "7"
+        - img "Finn" [ref=f1e173]
+        - generic [ref=f1e174]:
+          - generic [ref=f1e175]: Finn
+          - generic [ref=f1e176]: Doubao
+      - button "8 Isla Isla Gemini" [ref=f1e182] [cursor=pointer]:
+        - generic [ref=f1e183]: "8"
+        - img "Isla" [ref=f1e185]
+        - generic [ref=f1e186]:
+          - generic [ref=f1e187]: Isla
+          - generic [ref=f1e188]: Gemini
+      - button "9 Jasper Jasper Llama" [ref=f1e194] [cursor=pointer]:
+        - generic [ref=f1e195]: "9"
+        - img "Jasper" [ref=f1e197]
+        - generic [ref=f1e198]:
+          - generic [ref=f1e199]: Jasper
+          - generic [ref=f1e200]: Llama
+      - generic [ref=f1e205]:
+        - generic [ref=f1e207]:
+          - generic [ref=f1e208]: PHASE
+          - generic [ref=f1e209]: Seer Checks
+        - paragraph [ref=f1e214]: 选择一名玩家查验身份。
+        - generic [ref=f1e233]:
+          - generic [ref=f1e234]: 你的身份：预言家
+          - paragraph [ref=f1e238]: 每晚查验一名玩家，得知其是否为狼人。
+          - paragraph [ref=f1e239]: 已选择：6号 Amara
+        - button "CHECK" [ref=f1e241] [cursor=pointer]
+  - complementary [ref=f1e221]:
+    - generic [ref=f1e222]:
+      - generic [ref=f1e223]: 对局日志
+      - button "战绩" [ref=f1e227] [cursor=pointer]
+    - generic [ref=f1e228]:
+      - generic [ref=f1e229]: Game Start. You are Seer.
+      - generic [ref=f1e231]: Night falls.

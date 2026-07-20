@@ -1,0 +1,126 @@
+- generic [ref=f41e3]:
+  - main [ref=f41e4]:
+    - paragraph [ref=f41e15]: Loading Netlify dashboard…
+  - status [ref=f41e16]
+  - generic [ref=f41e17]:
+    - link "Skip to main content ↓" [ref=f41e18] [cursor=pointer]:
+      - /url: "#main"
+      - generic [ref=f41e19]: Skip to main content
+      - text: ↓
+    - banner [ref=f41e20]:
+      - link [ref=f41e23] [cursor=pointer]:
+        - /url: /drop
+        - img "Netlify" [ref=f41e25]
+        - generic [ref=f41e27]: Netlify Drop
+    - generic [ref=f41e30]:
+      - main "Drop" [ref=f41e32]:
+        - generic [ref=f41e33]:
+          - generic [ref=f41e36]:
+            - generic [ref=f41e40]:
+              - paragraph [ref=f41e46]: Drag and drop your project folder, zip file, or a single HTML file to deploy instantly.
+              - paragraph [ref=f41e47]:
+                - text: Or
+                - generic [ref=f41e48]:
+                  - text: browse files to upload
+                  - button "browse files to upload browse files to upload" [ref=f41e49]
+                - text: or
+                - generic [ref=f41e50]:
+                  - text: choose a folder
+                  - button "choose a folder choose a folder" [ref=f41e51]
+                - text: .
+            - generic [ref=f41e55]:
+              - heading "Drag & drop. It’s online." [level=1] [ref=f41e56]
+              - paragraph [ref=f41e57]: Drop a folder with your project’s HTML, CSS, and JS files. We’ll give you a link to share it.
+          - generic [ref=f41e60]:
+            - heading "Drop a project, make it yours" [level=2] [ref=f41e62]
+            - generic [ref=f41e63]:
+              - article [ref=f41e64]:
+                - generic [ref=f41e66]:
+                  - heading "Put your project online" [level=3] [ref=f41e67]
+                  - paragraph [ref=f41e68]: Drag and drop your project folder, and you’ll have your project in the cloud at a temporary URL. No account needed.
+              - article [ref=f41e69]:
+                - generic [ref=f41e71]:
+                  - heading "Sign up to keep dropping" [level=3] [ref=f41e72]
+                  - paragraph [ref=f41e73]: By creating a free Netlify account, you can make changes to your project by dragging new versions into the Netlify app.
+              - article [ref=f41e74]:
+                - generic [ref=f41e76]:
+                  - heading "Add a custom domain" [level=3] [ref=f41e77]
+                  - paragraph [ref=f41e78]: We give your project a unique URL to share with the world. Personalize your project further with a custom domain.
+              - article [ref=f41e79]:
+                - generic [ref=f41e81]:
+                  - heading "HTTPS is automatic" [level=3] [ref=f41e82]
+                  - paragraph [ref=f41e83]: That little lock in your browser bar? That means the project is secure using HTTPS. Netlify takes care of it automatically for free.
+              - article [ref=f41e84]:
+                - generic [ref=f41e86]:
+                  - heading "Take it to the next level" [level=3] [ref=f41e87]
+                  - paragraph [ref=f41e88]: Power up your projects with features like form handling, automatic minification and bundling, one-click rollbacks, and so much more!
+            - generic [ref=f41e89]:
+              - heading "Don’t have a project handy? We gotchu." [level=3] [ref=f41e90]
+              - generic [ref=f41e91]:
+                - generic [ref=f41e92]:
+                  - link [ref=f41e93] [cursor=pointer]:
+                    - /url: https://github.com/netlify/netlify-drop-demo-portfolio/archive/main.zip
+                    - img "Personal portfolio" [ref=f41e95]
+                    - generic [ref=f41e96]: Personal portfolio demo
+                  - generic [ref=f41e99]:
+                    - generic [ref=f41e100]:
+                      - text: Works with
+                      - link "Agent Runners →" [ref=f41e104] [cursor=pointer]:
+                        - /url: https://docs.netlify.com/build/build-with-ai/agent-runners/overview/
+                    - generic [ref=f41e105]: HTML, CSS, JavaScript
+                - generic [ref=f41e106]:
+                  - link [ref=f41e107] [cursor=pointer]:
+                    - /url: https://github.com/netlify/netlify-drop-demo-site/archive/master.zip
+                    - img "ThanosJS gauntlet" [ref=f41e109]
+                    - generic [ref=f41e110]: ThanosJS demo
+                  - generic [ref=f41e113]: HTML, CSS
+                - generic [ref=f41e115]:
+                  - link [ref=f41e116] [cursor=pointer]:
+                    - /url: https://github.com/netlify/netlify-drop-demo-landing-page/archive/main.zip
+                    - img "Landing page" [ref=f41e118]
+                    - generic [ref=f41e119]: Landing page demo
+                  - generic [ref=f41e122]: HTML, CSS, Light/Dark Mode
+            - generic [ref=f41e124]:
+              - heading "Ready to try it out?" [level=2] [ref=f41e125]
+              - paragraph [ref=f41e126]:
+                - text: You know what to do
+                - img "point down" [ref=f41e127]: 👇
+              - generic [ref=f41e130]:
+                - paragraph [ref=f41e136]: Drag and drop your project folder, zip file, or a single HTML file to deploy instantly.
+                - paragraph [ref=f41e137]:
+                  - text: Or
+                  - generic [ref=f41e138]:
+                    - text: browse files to upload
+                    - button "Choose File" [ref=f41e139]
+                  - text: or
+                  - generic [ref=f41e140]:
+                    - text: choose a folder
+                    - button "Choose File" [ref=f41e141]
+                  - text: .
+      - contentinfo [ref=f41e142]:
+        - generic [ref=f41e143]:
+          - navigation [ref=f41e144]:
+            - list "External links" [ref=f41e145]:
+              - listitem [ref=f41e146]:
+                - link "Docs" [ref=f41e147] [cursor=pointer]:
+                  - /url: https://docs.netlify.com/
+              - listitem [ref=f41e148]:
+                - link "Pricing" [ref=f41e149] [cursor=pointer]:
+                  - /url: https://www.netlify.com/pricing/
+              - listitem [ref=f41e150]:
+                - link "Support" [ref=f41e151] [cursor=pointer]:
+                  - /url: https://www.netlify.com/support/
+              - listitem [ref=f41e152]:
+                - link "Blog" [ref=f41e153] [cursor=pointer]:
+                  - /url: https://www.netlify.com/blog/
+              - listitem [ref=f41e154]:
+                - link "Changelog" [ref=f41e155] [cursor=pointer]:
+                  - /url: https://www.netlify.com/changelog/
+              - listitem [ref=f41e156]:
+                - link "Terms" [ref=f41e157] [cursor=pointer]:
+                  - /url: https://www.netlify.com/legal/terms-of-use/
+          - paragraph [ref=f41e158]:
+            - text: © 2026
+            - link "Netlify" [ref=f41e159] [cursor=pointer]:
+              - /url: https://www.netlify.com
+  - region "Notifications alt+T"

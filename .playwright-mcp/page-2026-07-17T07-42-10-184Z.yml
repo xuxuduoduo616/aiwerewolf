@@ -1,0 +1,84 @@
+- generic [ref=f2e4]:
+  - main [ref=f2e76]:
+    - generic [ref=f2e77]:
+      - generic [ref=f2e78]:
+        - generic [ref=f2e79]: "1"
+        - generic [ref=f2e80]:
+          - heading "9人标准场" [level=2] [ref=f2e81]
+          - paragraph [ref=f2e82]: Werewolves Hunt
+      - generic [ref=f2e83]:
+        - button "Mute / Unmute" [ref=f2e84] [cursor=pointer]
+        - button "Return to lobby" [ref=f2e89] [cursor=pointer]
+    - generic [ref=f2e96]:
+      - button "1 Guest YOU 平民" [ref=f2e98] [cursor=pointer]:
+        - generic [ref=f2e99]: "1"
+        - img "Guest" [ref=f2e101]
+        - generic [ref=f2e102]:
+          - generic [ref=f2e103]: YOU
+          - generic [ref=f2e104]: 平民
+      - button "2 Marcus Marcus Doubao" [ref=f2e110] [cursor=pointer]:
+        - generic [ref=f2e111]: "2"
+        - img "Marcus" [ref=f2e113]
+        - generic [ref=f2e114]:
+          - generic [ref=f2e115]: Marcus
+          - generic [ref=f2e116]: Doubao
+      - button "3 Elena Elena Gemini" [ref=f2e122] [cursor=pointer]:
+        - generic [ref=f2e123]: "3"
+        - img "Elena" [ref=f2e125]
+        - generic [ref=f2e126]:
+          - generic [ref=f2e127]: Elena
+          - generic [ref=f2e128]: Gemini
+      - button "4 Darius Darius DeepSeek" [ref=f2e134] [cursor=pointer]:
+        - generic [ref=f2e135]: "4"
+        - img "Darius" [ref=f2e137]
+        - generic [ref=f2e138]:
+          - generic [ref=f2e139]: Darius
+          - generic [ref=f2e140]: DeepSeek
+      - button "5 Silas Silas GPT-4o" [ref=f2e146] [cursor=pointer]:
+        - generic [ref=f2e147]: "5"
+        - img "Silas" [ref=f2e149]
+        - generic [ref=f2e150]:
+          - generic [ref=f2e151]: Silas
+          - generic [ref=f2e152]: GPT-4o
+      - button "6 Amara Amara Gemini" [ref=f2e158] [cursor=pointer]:
+        - generic [ref=f2e159]: "6"
+        - img "Amara" [ref=f2e161]
+        - generic [ref=f2e162]:
+          - generic [ref=f2e163]: Amara
+          - generic [ref=f2e164]: Gemini
+      - button "7 Finn Finn Claude" [ref=f2e170] [cursor=pointer]:
+        - generic [ref=f2e171]: "7"
+        - img "Finn" [ref=f2e173]
+        - generic [ref=f2e174]:
+          - generic [ref=f2e175]: Finn
+          - generic [ref=f2e176]: Claude
+      - button "8 Isla Isla GPT-4o" [ref=f2e182] [cursor=pointer]:
+        - generic [ref=f2e183]: "8"
+        - img "Isla" [ref=f2e185]
+        - generic [ref=f2e186]:
+          - generic [ref=f2e187]: Isla
+          - generic [ref=f2e188]: GPT-4o
+      - button "9 Jasper Jasper DeepSeek" [ref=f2e194] [cursor=pointer]:
+        - generic [ref=f2e195]: "9"
+        - img "Jasper" [ref=f2e197]
+        - generic [ref=f2e198]:
+          - generic [ref=f2e199]: Jasper
+          - generic [ref=f2e200]: DeepSeek
+      - generic [ref=f2e205]:
+        - generic [ref=f2e206]:
+          - generic [ref=f2e207]:
+            - generic [ref=f2e208]: PHASE
+            - generic [ref=f2e209]: Werewolves Hunt
+          - generic [ref=f2e210]: 20s
+        - paragraph [ref=f2e214]: 等待系统和AI玩家行动。
+        - generic [ref=f2e215]:
+          - generic [ref=f2e216]: 你的身份：平民
+          - paragraph [ref=f2e220]: 没有夜间技能，依靠发言、票型和逻辑找狼。
+  - complementary [ref=f2e221]:
+    - generic [ref=f2e222]:
+      - generic [ref=f2e223]: 对局日志
+      - button "战绩" [ref=f2e227] [cursor=pointer]
+    - generic [ref=f2e228]:
+      - generic [ref=f2e229]: Game Start. You are Villager.
+      - generic [ref=f2e231]: Local Vite preview does not run Netlify Functions. AI fallback speech is active.
+      - generic [ref=f2e233]: Night falls.

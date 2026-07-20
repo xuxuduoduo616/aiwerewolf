@@ -1,0 +1,14 @@
+- generic [ref=f2e4]:
+  - generic [ref=f2e5]:
+    - heading "AI WEREWOLF" [level=1] [ref=f2e8]
+    - paragraph [ref=f2e9]: Shadows of the Village
+  - generic [ref=f2e10]:
+    - generic [ref=f2e11]: Email
+    - textbox "you@example.com" [ref=f2e16]
+    - generic [ref=f2e17]: Display Name
+    - textbox "optional" [ref=f2e18]
+  - button "SEND EMAIL CODE" [ref=f2e19] [cursor=pointer]
+  - generic [ref=f2e22]:
+    - button "Switch Step" [ref=f2e23] [cursor=pointer]
+    - button "Guest Trial" [ref=f2e24] [cursor=pointer]
+  - paragraph [ref=f2e25]: 新手推荐：点击 Guest Trial 直接试玩，选择「新手」难度。 AI 会引导你熟悉预言家查验、女巫用药、狼人夜刀等机制。

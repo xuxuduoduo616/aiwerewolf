@@ -1,0 +1,105 @@
+- generic [ref=f4e4]:
+  - main [ref=f4e76]:
+    - generic [ref=f4e77]:
+      - generic [ref=f4e78]:
+        - generic [ref=f4e79]: "1"
+        - generic [ref=f4e80]:
+          - heading "9人标准场" [level=2] [ref=f4e81]
+          - paragraph [ref=f4e82]: Werewolves Hunt
+      - generic [ref=f4e83]:
+        - button "Mute / Unmute" [ref=f4e84] [cursor=pointer]
+        - button "Return to lobby" [ref=f4e89] [cursor=pointer]
+    - generic [ref=f4e95]:
+      - generic [ref=f4e96]:
+        - button "1 Guest YOU 我是狼人 狼人" [ref=f4e98] [cursor=pointer]:
+          - generic [ref=f4e99]: "1"
+          - img "Guest" [ref=f4e101]
+          - generic [ref=f4e102]:
+            - generic [ref=f4e103]:
+              - text: YOU
+              - img "我是狼人" [ref=f4e104]
+            - generic [ref=f4e106]: 狼人
+        - button "2 Marcus Marcus Doubao" [active] [ref=f4e115] [cursor=pointer]:
+          - generic [ref=f4e116]: "2"
+          - img "Marcus" [ref=f4e118]
+          - generic [ref=f4e119]:
+            - generic [ref=f4e120]: Marcus
+            - generic [ref=f4e121]: Doubao
+        - button "3 Elena Elena Llama" [ref=f4e127] [cursor=pointer]:
+          - generic [ref=f4e128]: "3"
+          - img "Elena" [ref=f4e130]
+          - generic [ref=f4e131]:
+            - generic [ref=f4e132]: Elena
+            - generic [ref=f4e133]: Llama
+        - button "4 Darius Darius Claude" [ref=f4e139] [cursor=pointer]:
+          - generic [ref=f4e140]: "4"
+          - img "Darius" [ref=f4e142]
+          - generic [ref=f4e143]:
+            - generic [ref=f4e144]: Darius
+            - generic [ref=f4e145]: Claude
+        - button "5 Silas Silas Claude" [ref=f4e151] [cursor=pointer]:
+          - generic [ref=f4e152]: "5"
+          - img "Silas" [ref=f4e154]
+          - generic [ref=f4e155]:
+            - generic [ref=f4e156]: Silas
+            - generic [ref=f4e157]: Claude
+        - button "6 Amara Amara DeepSeek" [ref=f4e163] [cursor=pointer]:
+          - generic [ref=f4e164]: "6"
+          - img "Amara" [ref=f4e166]
+          - generic [ref=f4e167]:
+            - generic [ref=f4e168]: Amara
+            - generic [ref=f4e169]: DeepSeek
+        - button "7 Finn 狼队友 Finn GPT-4o" [ref=f4e175] [cursor=pointer]:
+          - generic [ref=f4e176]: "7"
+          - generic [ref=f4e177]:
+            - img "Finn" [ref=f4e178]
+            - generic "狼队友" [ref=f4e179]
+          - generic [ref=f4e185]:
+            - generic [ref=f4e186]: Finn
+            - generic [ref=f4e187]: GPT-4o
+        - button "8 Isla 狼队友 Isla Claude" [ref=f4e193] [cursor=pointer]:
+          - generic [ref=f4e194]: "8"
+          - generic [ref=f4e195]:
+            - img "Isla" [ref=f4e196]
+            - generic "狼队友" [ref=f4e197]
+          - generic [ref=f4e203]:
+            - generic [ref=f4e204]: Isla
+            - generic [ref=f4e205]: Claude
+        - button "9 Jasper Jasper Gemini" [ref=f4e211] [cursor=pointer]:
+          - generic [ref=f4e212]: "9"
+          - img "Jasper" [ref=f4e214]
+          - generic [ref=f4e215]:
+            - generic [ref=f4e216]: Jasper
+            - generic [ref=f4e217]: Gemini
+        - generic [ref=f4e222]:
+          - generic [ref=f4e223]:
+            - generic [ref=f4e224]:
+              - generic [ref=f4e225]: PHASE
+              - generic [ref=f4e226]: Werewolves Hunt
+            - generic [ref=f4e227]: 3s
+          - paragraph [ref=f4e231]: 选择一名非狼人玩家作为刀口。
+          - generic [ref=f4e232]:
+            - generic [ref=f4e233]: 你的身份：狼人
+            - paragraph [ref=f4e237]: 夜晚共同刀人，白天隐藏身份、扰乱好人视角。
+            - paragraph [ref=f4e276]: 已选择：2号 Marcus
+          - button "KILL 确认?" [ref=f4e239] [cursor=pointer]
+      - generic [ref=f4e246]:
+        - generic [ref=f4e247]: 狼队夜聊
+        - generic [ref=f4e254]:
+          - generic [ref=f4e270]:
+            - generic [ref=f4e271]: 1号 [刀口]
+            - text: Benjamin is under suspicion. Our Seer should share their results to guide us.
+          - generic [ref=f4e272]:
+            - generic [ref=f4e273]: 7号 [悍跳]
+            - text: The roster indicates 13 survivors. @Benjamin your statement on Asuka's status is a factual error. Explain.
+          - generic [ref=f4e274]:
+            - generic [ref=f4e275]: 8号 [冲锋]
+            - text: I suppose Ryuji seems suspicious tonight. Hmm. Let's see about threats. George might confuse us I think. So tricky isn't
+  - complementary [ref=f4e256]:
+    - generic [ref=f4e257]:
+      - generic [ref=f4e258]: 对局日志
+      - button "战绩" [ref=f4e262] [cursor=pointer]
+    - generic [ref=f4e263]:
+      - generic [ref=f4e264]: Game Start. You are Werewolf.
+      - generic [ref=f4e266]: "Wolf teammates: 7号, 8号."
+      - generic [ref=f4e268]: Night falls.

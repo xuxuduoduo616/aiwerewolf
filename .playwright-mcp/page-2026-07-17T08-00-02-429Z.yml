@@ -1,0 +1,94 @@
+- generic [ref=f6e4]:
+  - main [ref=f6e84]:
+    - generic [ref=f6e85]:
+      - generic [ref=f6e86]:
+        - generic [ref=f6e87]: "1"
+        - generic [ref=f6e88]:
+          - heading "9人标准场" [level=2] [ref=f6e89]
+          - paragraph [ref=f6e90]: Werewolves Hunt
+      - generic [ref=f6e91]:
+        - button "Mute / Unmute" [ref=f6e92] [cursor=pointer]
+        - button "Return to lobby" [ref=f6e97] [cursor=pointer]
+    - generic [ref=f6e103]:
+      - generic [ref=f6e104]:
+        - button "1 Guest YOU 我是狼人 狼人" [ref=f6e106] [cursor=pointer]:
+          - generic [ref=f6e107]: "1"
+          - img "Guest" [ref=f6e109]
+          - generic [ref=f6e110]:
+            - generic [ref=f6e111]:
+              - text: YOU
+              - img "我是狼人" [ref=f6e112]
+            - generic [ref=f6e114]: 狼人
+        - button "2 Marcus Marcus Doubao" [ref=f6e123] [cursor=pointer]:
+          - generic [ref=f6e124]: "2"
+          - img "Marcus" [ref=f6e126]
+          - generic [ref=f6e127]:
+            - generic [ref=f6e128]: Marcus
+            - generic [ref=f6e129]: Doubao
+        - button "3 Elena Elena DeepSeek" [ref=f6e135] [cursor=pointer]:
+          - generic [ref=f6e136]: "3"
+          - img "Elena" [ref=f6e138]
+          - generic [ref=f6e139]:
+            - generic [ref=f6e140]: Elena
+            - generic [ref=f6e141]: DeepSeek
+        - button "4 Darius Darius DeepSeek" [ref=f6e147] [cursor=pointer]:
+          - generic [ref=f6e148]: "4"
+          - img "Darius" [ref=f6e150]
+          - generic [ref=f6e151]:
+            - generic [ref=f6e152]: Darius
+            - generic [ref=f6e153]: DeepSeek
+        - button "5 Silas Silas Llama" [ref=f6e159] [cursor=pointer]:
+          - generic [ref=f6e160]: "5"
+          - img "Silas" [ref=f6e162]
+          - generic [ref=f6e163]:
+            - generic [ref=f6e164]: Silas
+            - generic [ref=f6e165]: Llama
+        - button "6 Amara Amara DeepSeek" [ref=f6e171] [cursor=pointer]:
+          - generic [ref=f6e172]: "6"
+          - img "Amara" [ref=f6e174]
+          - generic [ref=f6e175]:
+            - generic [ref=f6e176]: Amara
+            - generic [ref=f6e177]: DeepSeek
+        - button "7 Finn 狼队友 Finn Llama" [ref=f6e183] [cursor=pointer]:
+          - generic [ref=f6e184]: "7"
+          - generic [ref=f6e185]:
+            - img "Finn" [ref=f6e186]
+            - generic "狼队友" [ref=f6e187]
+          - generic [ref=f6e193]:
+            - generic [ref=f6e194]: Finn
+            - generic [ref=f6e195]: Llama
+        - button "8 Isla Isla Llama" [ref=f6e201] [cursor=pointer]:
+          - generic [ref=f6e202]: "8"
+          - img "Isla" [ref=f6e204]
+          - generic [ref=f6e205]:
+            - generic [ref=f6e206]: Isla
+            - generic [ref=f6e207]: Llama
+        - button "9 Jasper 狼队友 Jasper Doubao" [ref=f6e213] [cursor=pointer]:
+          - generic [ref=f6e214]: "9"
+          - generic [ref=f6e215]:
+            - img "Jasper" [ref=f6e216]
+            - generic "狼队友" [ref=f6e217]
+          - generic [ref=f6e223]:
+            - generic [ref=f6e224]: Jasper
+            - generic [ref=f6e225]: Doubao
+        - generic [ref=f6e230]:
+          - generic [ref=f6e231]:
+            - generic [ref=f6e232]:
+              - generic [ref=f6e233]: PHASE
+              - generic [ref=f6e234]: Werewolves Hunt
+            - generic [ref=f6e235]: 20s
+          - paragraph [ref=f6e239]: 选择一名非狼人玩家作为刀口。
+          - generic [ref=f6e240]:
+            - generic [ref=f6e241]: 你的身份：狼人
+            - paragraph [ref=f6e245]: 夜晚共同刀人，白天隐藏身份、扰乱好人视角。
+          - button "KILL 确认?" [disabled] [ref=f6e247]
+      - generic [ref=f6e254]:
+        - generic [ref=f6e255]: 狼队夜聊
+        - generic [ref=f6e262]: 狼队正在组织夜间策略...
+  - complementary [ref=f6e264]:
+    - generic [ref=f6e265]:
+      - generic [ref=f6e266]: 对局日志
+      - button "战绩" [ref=f6e270] [cursor=pointer]
+    - generic [ref=f6e271]:
+      - heading "我的战绩" [level=3] [ref=f6e277]
+      - paragraph [ref=f6e278]: 暂无历史对局。完成一局后会显示在这里。
