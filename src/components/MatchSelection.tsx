@@ -12,6 +12,8 @@ type SubTab = 'home' | 'beginner' | 'entertainment' | 'advanced';
 interface Props {
   onBack: () => void;
   onSelectBoard: (config: GameConfig) => void;
+  onMultiMatch?: () => void;
+  onLimitedSelect?: () => void;
 }
 
 /* ─── Help icon ──────────────────────────────────────────────────────── */
@@ -67,7 +69,7 @@ const LIMITED_BOARDS = [
 
 /* ─── Component ──────────────────────────────────────────────────────── */
 
-const MatchSelection: React.FC<Props> = ({ onBack, onSelectBoard }) => {
+const MatchSelection: React.FC<Props> = ({ onBack, onSelectBoard, onMultiMatch, onLimitedSelect }) => {
   const [subTab, setSubTab] = useState<SubTab>('home');
 
   return (
@@ -138,6 +140,7 @@ const MatchSelection: React.FC<Props> = ({ onBack, onSelectBoard }) => {
           type="button"
           className="wol-btn wol-btn--primary wol-btn--lg"
           style={{ width: '100%', marginBottom: 20, fontSize: 15, fontWeight: 800 }}
+          onClick={() => onMultiMatch?.()}
         >
           多选匹配
         </button>
@@ -155,6 +158,7 @@ const MatchSelection: React.FC<Props> = ({ onBack, onSelectBoard }) => {
                 roleSummary={board.roleSummary}
                 season={board.season}
                 deadline={board.deadline}
+                onSelect={onLimitedSelect}
               />
             ))}
           </div>

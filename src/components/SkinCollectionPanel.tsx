@@ -111,13 +111,19 @@ const SkinCollectionPanel: React.FC = () => {
                   <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>
                     {set.owned}/{set.total}
                   </span>
-                  <span style={{
-                    fontSize: 10, fontWeight: 600,
-                    color: 'rgba(255,255,255,0.4)',
-                    display: 'inline-flex', alignItems: 'center', gap: 2,
-                  }}>
+                  <button
+                    type="button"
+                    onClick={() => { /* Navigate to skin detail */ }}
+                    style={{
+                      fontSize: 10, fontWeight: 600,
+                      color: 'rgba(255,255,255,0.4)',
+                      display: 'inline-flex', alignItems: 'center', gap: 2,
+                      background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+                    }}
+                    aria-label={`${set.name} 详情`}
+                  >
                     详情<ChevronRight />
-                  </span>
+                  </button>
                 </div>
               </div>
             </div>

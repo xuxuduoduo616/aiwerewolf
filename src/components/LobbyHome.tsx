@@ -2,11 +2,13 @@ import React from 'react';
 import LobbySideMenus from './LobbySideMenus';
 import LobbyActionButtons from './LobbyActionButtons';
 import ActivityBanner from './ActivityBanner';
+import type { ShellView } from './GlobalShell';
 
 interface Props {
   onBuildRoom: () => void;
   onJoinRoom: () => void;
   onSpectate: () => void;
+  onNavigate: (view: ShellView) => void;
 }
 
 /* ─── SVG sub-components ──────────────────────────────────────────────── */
@@ -35,7 +37,7 @@ const LevelBadge = ({ level }: { level: number }) => (
 
 /* ─── Lobby Home ─────────────────────────────────────────────────────── */
 
-const LobbyHome: React.FC<Props> = ({ onBuildRoom, onJoinRoom, onSpectate }) => {
+const LobbyHome: React.FC<Props> = ({ onBuildRoom, onJoinRoom, onSpectate, onNavigate }) => {
   return (
     <div style={{ paddingBottom: 16, position: 'relative', minHeight: '100%' }}>
       {/* ── User Profile Panel (top-left) ───────────────────────────── */}
@@ -103,7 +105,7 @@ const LobbyHome: React.FC<Props> = ({ onBuildRoom, onJoinRoom, onSpectate }) => 
         padding: '0 8px',
       }}>
         {/* Left sidebar */}
-        <LobbySideMenus side="left" />
+        <LobbySideMenus side="left" onNavigate={onNavigate} />
 
         {/* Center character showcase */}
         <div style={{
@@ -138,7 +140,7 @@ const LobbyHome: React.FC<Props> = ({ onBuildRoom, onJoinRoom, onSpectate }) => 
         </div>
 
         {/* Right sidebar */}
-        <LobbySideMenus side="right" />
+        <LobbySideMenus side="right" onNavigate={onNavigate} />
       </div>
 
       {/* ── Activity Banner Carousel ─────────────────────────────────── */}

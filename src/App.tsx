@@ -382,7 +382,8 @@ const App: React.FC = () => {
           <LobbyHome
             onBuildRoom={() => setActiveView('wolfvillage')}
             onJoinRoom={() => setActiveView('wolfvillage')}
-            onSpectate={() => {}}
+            onSpectate={() => setActiveView('wolfvillage')}
+            onNavigate={setActiveView}
           />
         );
       case 'friends':
@@ -400,6 +401,11 @@ const App: React.FC = () => {
             onBack={() => setActiveView('home')}
             onSelectBoard={(mode) => {
               game.startGame(mode, displayLanguage);
+              rec.setShowRecords(false);
+            }}
+            onLimitedSelect={() => {
+              // Limited-time boards not yet implemented — show coming soon via game start
+              game.startGame(GAME_MODES[0], displayLanguage);
               rec.setShowRecords(false);
             }}
           />

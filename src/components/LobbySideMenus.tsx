@@ -1,7 +1,9 @@
 import React from 'react';
+import type { ShellView } from './GlobalShell';
 
 interface Props {
   side: 'left' | 'right';
+  onNavigate: (view: ShellView) => void;
 }
 
 /* ─── SVG icons ───────────────────────────────────────────────────────── */
@@ -61,24 +63,25 @@ interface MenuItem {
   label: string;
   Icon: React.FC;
   hasRedDot?: boolean;
+  targetView?: ShellView;
 }
 
 const LEFT_MENUS: MenuItem[] = [
-  { label: '活动', Icon: ActivityIcon, hasRedDot: true },
+  { label: '活动', Icon: ActivityIcon, hasRedDot: true, targetView: 'shop' },
   { label: '阵营应援', Icon: FactionIcon },
-  { label: '限时娱乐', Icon: EntertainmentIcon, hasRedDot: true },
+  { label: '限时娱乐', Icon: EntertainmentIcon, hasRedDot: true, targetView: 'wolfvillage' },
 ];
 
 const RIGHT_MENUS: MenuItem[] = [
   { label: '功能菜单', Icon: MenuIcon },
   { label: '任务', Icon: TaskIcon, hasRedDot: true },
   { label: '通行证', Icon: PassIcon },
-  { label: '首充', Icon: FirstChargeIcon, hasRedDot: true },
+  { label: '首充', Icon: FirstChargeIcon, hasRedDot: true, targetView: 'shop' },
 ];
 
 /* ─── Component ───────────────────────────────────────────────────────── */
 
-const LobbySideMenus: React.FC<Props> = ({ side }) => {
+const LobbySideMenus: React.FC<Props> = ({ side, onNavigate }) => {
   const menus = side === 'left' ? LEFT_MENUS : RIGHT_MENUS;
 
   return (
@@ -91,7 +94,14 @@ const LobbySideMenus: React.FC<Props> = ({ side }) => {
       zIndex: 5,
     }}>
       {menus.map(item => (
-        <div key={item.label} className="wol-icon-circle" style={{ position: 'relative' }}>
+        <button
+          key={item.label}
+          type="button"
+          className="wol-icon-circle"
+          style={{ position: 'relative' }}
+          onClick={() => item.targetView ? onNavigate(item.targetView) : undefined}
+          aria-label={item.label}
+        >
           <item.Icon />
           <span style={{ fontSize: 8, lineHeight: 1.2 }}>{item.label}</span>
           {item.hasRedDot && (
@@ -102,7 +112,7 @@ const LobbySideMenus: React.FC<Props> = ({ side }) => {
               boxShadow: '0 0 4px rgba(239,68,68,0.5)',
             }} />
           )}
-        </div>
+        </button>
       ))}
     </div>
   );
