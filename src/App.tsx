@@ -29,8 +29,8 @@ import {
 } from 'lucide-react';
 
 /** Cloudflare Turnstile site key — safe to expose in client code.
- *  Use the always-passing test key for dev verification unless
- *  TURNSTILE_SITE_KEY env var is set. */
+ *  Set VITE_TURNSTILE_SITE_KEY in Netlify env vars for production.
+ *  Falls back to always-passing test key for local dev. */
 const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY || '1x00000000000000000000AA';
 
 const MY_PLAYER_ID = 1;
