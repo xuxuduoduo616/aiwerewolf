@@ -9,14 +9,14 @@ interface Props {
 /* ─── SVG Icons (inline — no external deps) ──────────────────────────── */
 
 const HomeIcon: React.FC<{ active: boolean }> = ({ active }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke={active ? 'currentColor' : 'currentColor'} strokeWidth={active ? 2.2 : 1.8}>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={active ? 2.2 : 1.8}>
     <path d="M3 12l9-9 9 9" strokeLinecap="round" strokeLinejoin="round"/>
     <path d="M5 10v10a1 1 0 001 1h5v-5a1 1 0 011-1h2a1 1 0 011 1v5h4a1 1 0 001-1V10" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
 
 const FriendsIcon: React.FC<{ active: boolean }> = ({ active }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke={active ? 'currentColor' : 'currentColor'} strokeWidth={active ? 2.2 : 1.8}>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={active ? 2.2 : 1.8}>
     <circle cx="9" cy="7" r="3" strokeLinecap="round"/>
     <circle cx="17" cy="7" r="3" strokeLinecap="round"/>
     <path d="M5 21c0-4 2.5-6 4-6" strokeLinecap="round"/>
@@ -26,7 +26,7 @@ const FriendsIcon: React.FC<{ active: boolean }> = ({ active }) => (
 );
 
 const VillageIcon: React.FC<{ active: boolean }> = ({ active }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke={active ? 'currentColor' : 'currentColor'} strokeWidth={active ? 2.2 : 1.8}>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={active ? 2.2 : 1.8}>
     <path d="M12 3L4 9v12h6v-6h4v6h6V9z" strokeLinecap="round" strokeLinejoin="round"/>
     <path d="M10 12h4" strokeLinecap="round"/>
     <circle cx="17" cy="5" r="1.5" fill={active ? 'currentColor' : 'none'} />
@@ -36,7 +36,7 @@ const VillageIcon: React.FC<{ active: boolean }> = ({ active }) => (
 );
 
 const ShopIcon: React.FC<{ active: boolean }> = ({ active }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke={active ? 'currentColor' : 'currentColor'} strokeWidth={active ? 2.2 : 1.8}>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={active ? 2.2 : 1.8}>
     <path d="M3 10l1 11h16l1-11" strokeLinecap="round" strokeLinejoin="round"/>
     <path d="M2 10h20" strokeLinecap="round"/>
     <path d="M7 10V7a5 5 0 0110 0v3" strokeLinecap="round"/>
@@ -46,7 +46,7 @@ const ShopIcon: React.FC<{ active: boolean }> = ({ active }) => (
 );
 
 const ProfileIcon: React.FC<{ active: boolean }> = ({ active }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke={active ? 'currentColor' : 'currentColor'} strokeWidth={active ? 2.2 : 1.8}>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={active ? 2.2 : 1.8}>
     <circle cx="12" cy="8" r="4" strokeLinecap="round"/>
     <path d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2" strokeLinecap="round"/>
   </svg>

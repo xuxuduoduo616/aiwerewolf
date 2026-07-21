@@ -11,8 +11,8 @@
   --wol-jade:        #3b8c6e;
   --wol-jade-bright: #4ae0a6;
   --wol-amber:       #d4a017;
-  --wol-crystal:     #7b6fdf;
-  --wol-crystal-dim: #4a3f8c;
+  --wol-crystal-decor:  #7b6fdf;
+  --wol-crystal-dim:    #4a3f8c;
 
   /* Currency colours */
   --wol-coin:        #f0c040;
@@ -193,6 +193,10 @@
   animation: wolMarquee 18s linear infinite;
   font-size: 11px;
   color: rgba(255,255,255,0.45);
+}
+
+.wol-marquee-track:hover {
+  animation-play-state: paused;
 }
 
 @keyframes wolMarquee {
@@ -748,4 +752,23 @@
   border-style: solid;
   -webkit-appearance: none;
   appearance: none;
+}
+
+/* ─── Focus-visible (keyboard accessibility) ────────────────────────────── */
+.wol-nav-tab:focus-visible,
+.wol-subtab:focus-visible,
+.wol-filter-chip:focus-visible,
+.wol-btn:focus-visible,
+.wol-coin-pack:focus-visible,
+.wol-icon-circle:focus-visible,
+.wol-currency-plus:focus-visible,
+.wol-store-purchase-btn:focus-visible {
+  outline: 2px solid var(--wol-gold);
+  outline-offset: 2px;
+}
+
+/* ─── Interactive card surface with :active feedback ──────────────────── */
+.wol-card-interactive:active {
+  transform: scale(0.98) translateY(0);
+  transition: transform 80ms ease;
 }

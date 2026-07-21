@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import FilterChipBar from './FilterChipBar';
 
 /* ─── SVG icons ───────────────────────────────────────────────────────── */
 
@@ -36,6 +37,7 @@ const SKIN_TABS: { key: SkinTab; label: string }[] = [
 ];
 
 const SkinCollectionPanel: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<SkinTab>('classic');
   const totalOwned = 0;
   const totalSkins = 137;
   const totalThemes = 8;
@@ -63,17 +65,7 @@ const SkinCollectionPanel: React.FC = () => {
       </div>
 
       {/* Sub-category tabs */}
-      <div className="wol-filter-bar">
-        {SKIN_TABS.map(tab => (
-          <button
-            key={tab.key}
-            type="button"
-            className={`wol-filter-chip${tab.key === 'classic' ? ' wol-filter-chip--active' : ''}`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      <FilterChipBar chips={SKIN_TABS} active={activeTab} onSelect={setActiveTab} />
 
       {/* Banner stream */}
       <div style={{ padding: '0 12px', display: 'flex', flexDirection: 'column', gap: 10 }}>

@@ -46,6 +46,10 @@ const LogMessage: React.FC<Props> = ({ log, language }) => {
       <button
         onClick={event => { event.stopPropagation(); setShowOriginal(value => !value); }}
         className="block mt-1 text-[9px] underline opacity-60 hover:opacity-100"
+        aria-expanded={showOriginal}
+        aria-label={showOriginal
+          ? (language === 'zh' ? '查看译文' : 'Show translation')
+          : (language === 'zh' ? '查看原文' : 'Show original')}
       >
         {showOriginal
           ? (language === 'zh' ? '查看译文' : 'Show translation')

@@ -128,7 +128,7 @@ const SpeechInput = ({
           placeholder={speechPlaceholder(language)}
           onKeyDown={e => { if (e.key === 'Enter') onSubmit(); }}
         />
-        <button onClick={onSubmit} className="action-button px-3"><Send className="w-4 h-4" /></button>
+        <button onClick={onSubmit} className="action-button px-3" aria-label="Send speech"><Send className="w-4 h-4" /></button>
       </div>
     </div>
   );

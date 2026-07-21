@@ -107,19 +107,19 @@ const App: React.FC = () => {
             <p className="text-xs text-zinc-400 mt-2">Shadows of the Village</p>
           </div>
           <div className="space-y-3">
-            <label className="block text-xs text-zinc-400">Email</label>
+            <label className="block text-xs text-zinc-400" htmlFor="auth-email">Email</label>
             <div className="relative">
               <Mail className="absolute left-3 top-3.5 w-4 h-4 text-zinc-500" />
-              <input className="w-full bg-black/70 border border-zinc-700 rounded px-10 py-3 text-white outline-none focus:border-zinc-300" placeholder="you@example.com" value={auth.authEmail} onChange={e => auth.setAuthEmail(e.target.value)} />
+              <input id="auth-email" className="w-full bg-black/70 border border-zinc-700 rounded px-10 py-3 text-white outline-none focus:border-zinc-300" placeholder="you@example.com" value={auth.authEmail} onChange={e => auth.setAuthEmail(e.target.value)} />
             </div>
-            <label className="block text-xs text-zinc-400">Display Name</label>
-            <input className="w-full bg-black/70 border border-zinc-700 rounded px-4 py-3 text-white outline-none focus:border-zinc-300" placeholder="optional" value={auth.authName} onChange={e => auth.setAuthName(e.target.value)} />
+            <label className="block text-xs text-zinc-400" htmlFor="auth-name">Display Name</label>
+            <input id="auth-name" className="w-full bg-black/70 border border-zinc-700 rounded px-4 py-3 text-white outline-none focus:border-zinc-300" placeholder="optional" value={auth.authName} onChange={e => auth.setAuthName(e.target.value)} />
             {auth.authStep === 'VERIFY' && (
               <>
-                <label className="block text-xs text-zinc-400">Verification Code</label>
+                <label className="block text-xs text-zinc-400" htmlFor="auth-code">Verification Code</label>
                 <div className="relative">
                   <KeyRound className="absolute left-3 top-3.5 w-4 h-4 text-zinc-500" />
-                  <input className="w-full bg-black/70 border border-zinc-700 rounded px-10 py-3 text-white outline-none focus:border-zinc-300" placeholder="6-digit email code" value={auth.authCode} onChange={e => auth.setAuthCode(e.target.value)} />
+                  <input id="auth-code" className="w-full bg-black/70 border border-zinc-700 rounded px-10 py-3 text-white outline-none focus:border-zinc-300" placeholder="6-digit email code" value={auth.authCode} onChange={e => auth.setAuthCode(e.target.value)} />
                 </div>
               </>
             )}

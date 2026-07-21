@@ -171,12 +171,14 @@ const VoteSummary: React.FC<Props> = ({ voteRecords, players, round, eliminatedP
         <button
           onClick={() => setShowDetail(v => !v)}
           className="flex items-center gap-1 text-[10px] text-zinc-500 hover:text-zinc-300"
+          aria-expanded={showDetail}
+          aria-controls="vote-detail-panel"
         >
           <ChevronDown className={`w-3 h-3 transition-transform ${showDetail ? 'rotate-180' : ''}`} />
           详情
         </button>
         {showDetail && (
-          <div className="mt-1.5 grid grid-cols-2 gap-x-3 gap-y-0.5">
+          <div id="vote-detail-panel" className="mt-1.5 grid grid-cols-2 gap-x-3 gap-y-0.5">
             {summary.pairs.map(pair => (
               <div key={pair.voterId} className="text-[10px] text-zinc-500 flex justify-between">
                 <span>{shortOf(pair.voterId)}</span>

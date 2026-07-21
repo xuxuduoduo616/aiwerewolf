@@ -1,4 +1,5 @@
 import React from 'react';
+import TabBar from './TabBar';
 
 type SubTab = 'outfits' | 'decorations' | 'runwolf' | 'scenes' | 'skins' | 'backpack';
 
@@ -7,30 +8,17 @@ interface Props {
   onSelect: (tab: SubTab) => void;
 }
 
-const TABS: { key: SubTab; label: string }[] = [
-  { key: 'outfits',     label: '时装' },
-  { key: 'decorations', label: '装饰' },
-  { key: 'runwolf',     label: '跑跑狼' },
-  { key: 'scenes',      label: '场景' },
-  { key: 'skins',       label: '皮肤' },
-  { key: 'backpack',    label: '背包' },
+const TABS = [
+  { key: 'outfits' as const,     label: '时装' },
+  { key: 'decorations' as const, label: '装饰' },
+  { key: 'runwolf' as const,     label: '跑跑狼' },
+  { key: 'scenes' as const,      label: '场景' },
+  { key: 'skins' as const,       label: '皮肤' },
+  { key: 'backpack' as const,    label: '背包' },
 ];
 
-const ProfileSubTabs: React.FC<Props> = ({ active, onSelect }) => {
-  return (
-    <div className="wol-subtabs">
-      {TABS.map(tab => (
-        <button
-          key={tab.key}
-          type="button"
-          className={`wol-subtab${active === tab.key ? ' wol-subtab--active' : ''}`}
-          onClick={() => onSelect(tab.key)}
-        >
-          {tab.label}
-        </button>
-      ))}
-    </div>
-  );
-};
+const ProfileSubTabs: React.FC<Props> = ({ active, onSelect }) => (
+  <TabBar tabs={TABS} active={active} onSelect={onSelect} />
+);
 
 export default ProfileSubTabs;

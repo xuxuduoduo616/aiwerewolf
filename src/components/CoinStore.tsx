@@ -48,7 +48,12 @@ const CoinStore: React.FC<Props> = ({ coins, coupons, crystals, onPurchase }) =>
 
   const showToast = (msg: string) => {
     setToast(msg);
-    setTimeout(() => setToast(null), 2500);
+    setTimeout(() => {
+      // Trigger exit animation class
+      const el = document.querySelector('.wol-store-toast');
+      if (el) { el.classList.add('wol-store-toast--out'); }
+      setTimeout(() => setToast(null), 220);
+    }, 2300);
   };
 
   const handlePurchase = async () => {
@@ -73,7 +78,7 @@ const CoinStore: React.FC<Props> = ({ coins, coupons, crystals, onPurchase }) =>
   return (
     <div className="wol-store">
       {/* Toast overlay */}
-      {toast && <div className="wol-store-toast">{toast}</div>}
+      {toast && <div className="wol-store-toast" role="status" aria-live="polite">{toast}</div>}
 
       {/* Hero Banner */}
       <div className="wol-store-hero">
@@ -180,9 +185,16 @@ const CoinStore: React.FC<Props> = ({ coins, coupons, crystals, onPurchase }) =>
           max-width: var(--wol-max-width, 430px);
           text-align: center;
         }
+        .wol-store-toast--out {
+          animation: wol-toast-out 0.2s ease forwards;
+        }
         @keyframes wol-toast-in {
           from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
           to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        @keyframes wol-toast-out {
+          from { opacity: 1; transform: translateX(-50%) translateY(0); }
+          to   { opacity: 0; transform: translateX(-50%) translateY(-10px); }
         }
       `}</style>
     </div>

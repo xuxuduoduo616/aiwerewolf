@@ -502,5 +502,11 @@ button, input { font: inherit; }
 
   .speaking-ring.night { animation: none; }
   .player-dead::before { /* static crosshatch — no animation */ }
+
+  /* Mobile-shell animations */
+  .wol-marquee-track { animation: none; }
+  .wol-shimmer { animation: none; }
+  .wol-progress-bar-fill { transition: none; }
+  .wol-store-toast { animation: none; }
 }
 

@@ -1,21 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface Props {
   name: string;
   roleSummary: string;
   season: string;
   deadline: string;
+  onSelect?: () => void;
 }
 
-const MatchGridCard: React.FC<Props> = ({ name, roleSummary, season, deadline }) => {
-  return (
-    <div style={{
-      background: 'rgba(22,22,28,0.94)',
-      border: '1px solid rgba(255,255,255,0.06)',
-      borderRadius: 12,
-      padding: '12px',
-      display: 'flex', flexDirection: 'column',
-    }}>
+const MatchGridCard: React.FC<Props> = ({ name, roleSummary, season, deadline, onSelect }) => {
+  const [hovered, setHovered] = useState(false);
+
+  const cardContent = (
+    <>
       {/* Top: character placeholder */}
       <div style={{
         width: '100%', aspectRatio: '4/3',
@@ -60,8 +57,39 @@ const MatchGridCard: React.FC<Props> = ({ name, roleSummary, season, deadline })
           {deadline}
         </span>
       </div>
-    </div>
+    </>
   );
+
+  const sharedStyle: React.CSSProperties = {
+    background: hovered ? 'rgba(30,30,40,0.94)' : 'rgba(22,22,28,0.94)',
+    border: hovered ? '1px solid rgba(255,255,255,0.12)' : '1px solid rgba(255,255,255,0.06)',
+    borderRadius: 12,
+    padding: '12px',
+    display: 'flex',
+    flexDirection: 'column',
+    cursor: 'pointer',
+    transition: 'all 180ms ease',
+    transform: hovered ? 'translateY(-1px)' : 'translateY(0)',
+    boxShadow: hovered ? '0 4px 20px rgba(0,0,0,0.3)' : 'none',
+    textAlign: 'left',
+    width: '100%',
+  };
+
+  if (onSelect) {
+    return (
+      <button
+        type="button"
+        onClick={onSelect}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        style={sharedStyle}
+      >
+        {cardContent}
+      </button>
+    );
+  }
+
+  return <div style={sharedStyle}>{cardContent}</div>;
 };
 
 export default MatchGridCard;

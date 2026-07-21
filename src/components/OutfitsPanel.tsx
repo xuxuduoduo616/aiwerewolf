@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import FilterChipBar from './FilterChipBar';
 
 /* ─── Hardcoded test outfit data ──────────────────────────────────────── */
 
@@ -92,18 +93,7 @@ const OutfitsPanel: React.FC = () => {
       </div>
 
       {/* ── Filter bar ────────────────────────────────────────────── */}
-      <div className="wol-filter-bar">
-        {FILTERS.map(f => (
-          <button
-            key={f.key}
-            type="button"
-            className={`wol-filter-chip${activeFilter === f.key ? ' wol-filter-chip--active' : ''}`}
-            onClick={() => setActiveFilter(f.key)}
-          >
-            {f.label}
-          </button>
-        ))}
-      </div>
+      <FilterChipBar chips={FILTERS} active={activeFilter} onSelect={setActiveFilter} />
 
       {/* ── Outfit grid ───────────────────────────────────────────── */}
       <div style={{ padding: '0 12px' }}>

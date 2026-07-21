@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface Props {
   onBuildRoom: () => void;
@@ -28,24 +28,30 @@ const SpectateIcon = () => (
 );
 
 const LobbyActionButtons: React.FC<Props> = ({ onBuildRoom, onJoinRoom, onSpectate }) => {
+  const [hoveredBtn, setHoveredBtn] = useState<string | null>(null);
+
+  const btnStyle = (color: string, bgRgb: string) => ({
+    display: 'flex', flexDirection: 'column' as const, alignItems: 'center' as const, gap: 4,
+    width: 62, height: 62,
+    borderRadius: 14,
+    background: hoveredBtn === color ? `rgba(${bgRgb},0.22)` : `rgba(${bgRgb},0.12)`,
+    border: hoveredBtn === color ? `1px solid rgba(${bgRgb},0.5)` : `1px solid rgba(${bgRgb},0.3)`,
+    color: hoveredBtn === color ? '#fff' : color,
+    fontSize: 10, fontWeight: 700 as const,
+    cursor: 'pointer',
+    backdropFilter: 'blur(8px)',
+    transition: 'all 180ms ease',
+  });
+
   return (
     <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
       {/* 建房 */}
       <button
         type="button"
         onClick={onBuildRoom}
-        style={{
-          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
-          width: 62, height: 62,
-          borderRadius: 14,
-          background: 'rgba(201,164,75,0.15)',
-          border: '1px solid rgba(201,164,75,0.3)',
-          color: '#c9a44b',
-          fontSize: 10, fontWeight: 700,
-          cursor: 'pointer',
-          backdropFilter: 'blur(8px)',
-          transition: 'all 180ms ease',
-        }}
+        onMouseEnter={() => setHoveredBtn('#c9a44b')}
+        onMouseLeave={() => setHoveredBtn(null)}
+        style={btnStyle('#c9a44b', '201,164,75')}
       >
         <BuildIcon />
         <span>建房</span>
@@ -55,18 +61,9 @@ const LobbyActionButtons: React.FC<Props> = ({ onBuildRoom, onJoinRoom, onSpecta
       <button
         type="button"
         onClick={onJoinRoom}
-        style={{
-          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
-          width: 62, height: 62,
-          borderRadius: 14,
-          background: 'rgba(59,140,110,0.12)',
-          border: '1px solid rgba(59,140,110,0.3)',
-          color: '#4ae0a6',
-          fontSize: 10, fontWeight: 700,
-          cursor: 'pointer',
-          backdropFilter: 'blur(8px)',
-          transition: 'all 180ms ease',
-        }}
+        onMouseEnter={() => setHoveredBtn('#4ae0a6')}
+        onMouseLeave={() => setHoveredBtn(null)}
+        style={btnStyle('#4ae0a6', '74,224,166')}
       >
         <JoinIcon />
         <span>跟房</span>
@@ -76,18 +73,9 @@ const LobbyActionButtons: React.FC<Props> = ({ onBuildRoom, onJoinRoom, onSpecta
       <button
         type="button"
         onClick={onSpectate}
-        style={{
-          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
-          width: 62, height: 62,
-          borderRadius: 14,
-          background: 'rgba(123,111,223,0.12)',
-          border: '1px solid rgba(123,111,223,0.3)',
-          color: '#a78bfa',
-          fontSize: 10, fontWeight: 700,
-          cursor: 'pointer',
-          backdropFilter: 'blur(8px)',
-          transition: 'all 180ms ease',
-        }}
+        onMouseEnter={() => setHoveredBtn('#a78bfa')}
+        onMouseLeave={() => setHoveredBtn(null)}
+        style={btnStyle('#a78bfa', '167,139,250')}
       >
         <SpectateIcon />
         <span>观战</span>

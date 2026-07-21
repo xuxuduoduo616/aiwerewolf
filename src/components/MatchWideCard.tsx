@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { GameConfig, Role } from '../types';
 import { ROLE_COLORS, ROLE_SHORT } from './MatchSelection';
 
@@ -9,22 +9,28 @@ interface Props {
 }
 
 const MatchWideCard: React.FC<Props> = ({ config, roleCounts, onSelect }) => {
+  const [hovered, setHovered] = useState(false);
+
   return (
     <button
       type="button"
       onClick={onSelect}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       style={{
         display: 'flex',
         width: '100%',
         textAlign: 'left',
-        background: 'rgba(22,22,28,0.94)',
-        border: '1px solid rgba(255,255,255,0.06)',
+        background: hovered ? 'rgba(30,30,40,0.94)' : 'rgba(22,22,28,0.94)',
+        border: hovered ? '1px solid rgba(255,255,255,0.12)' : '1px solid rgba(255,255,255,0.06)',
         borderRadius: 12,
         padding: '14px',
         cursor: 'pointer',
         transition: 'all 180ms ease',
         position: 'relative',
         overflow: 'hidden',
+        transform: hovered ? 'translateY(-1px)' : 'translateY(0)',
+        boxShadow: hovered ? '0 4px 20px rgba(0,0,0,0.3)' : 'none',
       }}
     >
       {/* Left content */}

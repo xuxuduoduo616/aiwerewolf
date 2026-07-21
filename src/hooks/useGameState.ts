@@ -954,7 +954,7 @@ export function useGameState(authContext: AuthContext) {
     pendingHunterId, savedRecordId,
     speechTimer, voteTimer, aiSeerLastCheck,
     // derived
-    me, selectedPlayer, visibleText, phaseHint,
+    me, selectedPlayer, phaseHint,
     logsEndRef,
     // actions
     startGame, handlePlayerAction,

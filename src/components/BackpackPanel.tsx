@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import FilterChipBar from './FilterChipBar';
 
 /* ─── Hardcoded test backpack data ───────────────────────────────────── */
 
@@ -63,23 +64,24 @@ const BackpackPanel: React.FC = () => {
   return (
     <div>
       {/* Filter bar */}
-      <div className="wol-filter-bar">
-        {CATEGORIES.map(c => (
-          <button
-            key={c.key}
-            type="button"
-            className={`wol-filter-chip${category === c.key ? ' wol-filter-chip--active' : ''}`}
-            onClick={() => setCategory(c.key)}
-          >
-            {c.label}
-          </button>
-        ))}
-      </div>
+      <FilterChipBar chips={CATEGORIES} active={category} onSelect={setCategory} />
 
       {/* Items grid */}
       <div style={{ padding: '0 12px' }}>
         <div className="wol-grid-4">
-          {items.map(item => (
+          {items.length === 0 ? (
+            <div style={{
+              gridColumn: '1 / -1',
+              textAlign: 'center',
+              padding: '32px 16px',
+              color: 'rgba(255,255,255,0.35)',
+              fontSize: 12,
+              fontWeight: 600,
+            }}>
+              该分类暂无道具
+            </div>
+          ) : (
+            items.map(item => (
             <div
               key={item.id}
               style={{
@@ -140,7 +142,7 @@ const BackpackPanel: React.FC = () => {
                 x{item.count}
               </div>
             </div>
-          ))}
+          )))}
         </div>
       </div>
     </div>
