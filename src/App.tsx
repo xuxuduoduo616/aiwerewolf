@@ -389,8 +389,8 @@ const App: React.FC = () => {
   // Determine which content view to show inside the shell
   const renderShellContent = () => {
     // Game views are rendered OUTSIDE the shell (full-screen) — see isInGame above.
+    // Lobby/shop/profile views remain inside the phone-frame shell.
 
-    // Shell nav views (LOBBY is the default auth state)
     switch (activeView) {
       case 'home':
         return (
