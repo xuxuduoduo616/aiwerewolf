@@ -18,6 +18,7 @@ import LobbyHome from './components/LobbyHome';
 import MatchSelection from './components/MatchSelection';
 import ProfileView from './components/ProfileView';
 import CoinStore from './components/CoinStore';
+import TurnstileWidget from './components/TurnstileWidget';
 import { useDisplayLanguage } from './i18n';
 import { resolveVoteResult } from './gameEngine';
 import { playTick } from './services/speechAudio';
@@ -27,12 +28,16 @@ import {
   Skull, Trophy, User as UserIcon, Volume2, VolumeX,
 } from 'lucide-react';
 
+/** Cloudflare Turnstile site key — safe to expose in client code */
+const TURNSTILE_SITE_KEY = '0x4AAAAAABIflHdJ9h-rXo-8';
+
 const MY_PLAYER_ID = 1;
 
 const App: React.FC = () => {
   const auth = useAuth();
   const [displayLanguage, toggleDisplayLanguage] = useDisplayLanguage();
   const [activeView, setActiveView] = useState<ShellView>('home');
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const rec = useRecords(auth.session);
   const wallet = useWallet(auth.session, auth.isGuest);
   const game = useGameState({
@@ -125,24 +130,44 @@ const App: React.FC = () => {
             )}
           </div>
           {auth.authError && <p className="mt-4 text-xs leading-relaxed text-amber-200 bg-amber-950/35 border border-amber-900 rounded p-3">{auth.authError}</p>}
+
+          {/* Cloudflare Turnstile — human verification before login */}
+          <div className="mt-4 flex justify-center">
+            <TurnstileWidget
+              siteKey={TURNSTILE_SITE_KEY}
+              onVerify={token => setTurnstileToken(token)}
+              onError={() => setTurnstileToken(null)}
+              onExpired={() => setTurnstileToken(null)}
+            />
+          </div>
+
           <button
             onClick={() => auth.authStep === 'EMAIL'
               ? auth.handleSendOtp()
               : auth.handleVerifyOtp(records => { rec.setRecords(records); rec.setShowRecords(true); game.setPhase(GamePhase.LOBBY); })}
-            disabled={auth.isAuthLoading}
-            className="mt-6 w-full bg-zinc-100 text-black py-3 font-bold rounded hover:bg-white transition flex items-center justify-center gap-2"
+            disabled={auth.isAuthLoading || !turnstileToken}
+            className="mt-4 w-full bg-zinc-100 text-black py-3 font-bold rounded hover:bg-white transition flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed"
           >
             {auth.isAuthLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Shield className="w-4 h-4" />}
             {auth.authStep === 'EMAIL' ? 'SEND EMAIL CODE' : 'VERIFY AND ENTER'}
           </button>
           <div className="flex justify-between mt-4 text-xs text-zinc-400">
             <button onClick={() => auth.setAuthStep(auth.authStep === 'EMAIL' ? 'VERIFY' : 'EMAIL')} className="hover:text-white">Switch Step</button>
-            <button onClick={() => auth.handleGuest(() => { rec.loadLocalRecords(); rec.setShowRecords(true); game.setPhase(GamePhase.LOBBY); })} className="hover:text-white">Guest Trial</button>
+            <button
+              onClick={() => auth.handleGuest(() => { rec.loadLocalRecords(); rec.setShowRecords(true); game.setPhase(GamePhase.LOBBY); })}
+              disabled={!turnstileToken}
+              className="hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
+            >Guest Trial</button>
           </div>
           <p className="mt-5 text-[11px] leading-relaxed text-zinc-500 text-center border-t border-zinc-800 pt-4">
             新手推荐：点击 <span className="text-zinc-300">Guest Trial</span> 直接试玩，选择「新手」难度。
             AI 会引导你熟悉预言家查验、女巫用药、狼人夜刀等机制。
           </p>
+          {!turnstileToken && (
+            <p className="mt-2 text-[10px] text-zinc-600 text-center">
+              请先完成上方人机验证，即可开始游戏
+            </p>
+          )}
         </div>
       </div>
     );
