@@ -28,8 +28,10 @@ import {
   Skull, Trophy, User as UserIcon, Volume2, VolumeX,
 } from 'lucide-react';
 
-/** Cloudflare Turnstile site key — safe to expose in client code */
-const TURNSTILE_SITE_KEY = '0x4AAAAAABIflHdJ9h-rXo-8';
+/** Cloudflare Turnstile site key — safe to expose in client code.
+ *  Use the always-passing test key for dev verification unless
+ *  TURNSTILE_SITE_KEY env var is set. */
+const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY || '1x00000000000000000000AA';
 
 const MY_PLAYER_ID = 1;
 
