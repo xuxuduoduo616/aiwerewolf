@@ -1,15 +1,36 @@
 # Project Coordination State
 
-**Last verified:** 2026-07-19 (Cycle 9 payment system integrated)
-**Project phase:** Cycles 1–9 complete (34 cards Accepted) + memory governance + sync-project-memory skill. Deployed `a027296` verified live 2026-07-18. **Cycles 8–9 integrated locally 2026-07-19 (not deployed).**
+**Last verified:** 2026-07-22 (Session handoff after Day 13-14 polish + login fix)
+**Project phase:** Cycles 1-9 complete (34 cards Accepted). Deployed `d8ae20a` verified live 2026-07-22. Production domain `https://ai-werewolf.net` (Cloudflare proxy → Netlify Let's Encrypt SSL).
 
 ## Verified Baseline
 
 - Local tests: `npm run test:run` — **387 passed / 5 skipped** (30 files), zero regressions. `npm run build` succeeds.
-- Local HEAD = `fda3fa0` (Cycle 9 commit). Production = `a027296` (asset `index-BOYeqKxJ.js` verified live 2026-07-18).
-- Git has uncommitted product changes (Cycle 8 UI overhaul — 18 new/edited files).
-- Untracked: `.codex/`, `.agents/`, `.claude/`, `.mcp.json`, `memory/`, `AGENTS.md`, `CLAUDE.md`, `.env.example`, screenshot artifacts.
+- Local HEAD = `d8ae20a`. Production HEAD = `d8ae20a` (confirmed live 2026-07-22).
+- Netlify deployment is MANUAL (`npx netlify-cli deploy --prod --dir=dist`); GitHub push does NOT auto-deploy.
 - Coordination directories `tasks/`, `reports/`, `runs/` are EMPTY — ready for fresh dispatch.
+
+## What's live on `ai-werewolf.net`
+
+| Component | Status |
+|---|---|
+| Vite + React 18 + TypeScript + Tailwind | ✅ `npm run build` clean |
+| Mobile shell UI (GlobalShell, BottomNav, TopStatusBar, LobbyHome, MatchSelection, Shop, Profile) | ✅ deployed |
+| Game engine (9p / 12p, NetEase rules, dark-board) | ✅ deployed |
+| AI dual-layer: BeliefTracker + ActionSelector + Gemini 2.5 Flash proxy | ✅ deployed |
+| Chinese speech detection filter (`isChinese()`) | ✅ deployed |
+| Email OTP login (Resend SMTP via Supabase) | ✅ deployed |
+| 30-day persistent session (localStorage) | ✅ deployed |
+| Seer-check badge (金水/查杀) visible only to Seer | ✅ deployed |
+| Witch sees wolf-kill target during night phase | ✅ deployed |
+| 7 bug-fix commits deployed (see git log `143860d..6721ed5`) | ✅ deployed |
+| `netlify/functions/genai-proxy.js` (rate-limit, CORS, input validation) | ✅ deployed |
+| `netlify/functions/provider-adapter.cjs` (multi-model routing — NOT yet deployed to production) | ⚠️ authored, not live |
+| Custom domain `ai-werewolf.net` + `www.ai-werewolf.net` | ✅ live |
+| SSL: Google Trust Services / Let's Encrypt | ✅ live |
+| Cloudflare Turnstile | ✅ configured |
+| Supabase RLS + profiles/game_records tables | ✅ live |
+| Resend SMTP (100 emails/day free tier) | ✅ configured |
 
 ## Framework Architecture (2026-07-19)
 

@@ -3,7 +3,7 @@
 **Canonical owner:** coordinator。当前已验证状态见
 [coordination/PROJECT_STATE.md](coordination/PROJECT_STATE.md)（本文件不记录状态）。
 
-**更新日期:** 2026-07-19（框架初始化后校正）
+**更新日期:** 2026-07-22（会话交接，cad0434 后基准）
 
 ## 立即可派发（并行 Wave 1 — 路径不重叠，无依赖）
 
@@ -24,19 +24,36 @@
 | 8 | `cloud-tts-implementation` | P2 | gemini-2.5-flash-preview-tts Netlify 适配层 |
 | 9 | `visibleText-dead-code-cleanup` | P3 | useGameState 中未被消费的导出 |
 
+## 已完成（2026-07-07 ～ 2026-07-22 打磨期）
+
+- ✅ 预言家查验结果在被验者头顶显示"金水"/"查杀"标记（仅预言家可见）
+- ✅ 真人玩家死后不再可发言（遗言后自动跳过）
+- ✅ AI 发言中英混杂修复：`isChinese()` 三层检测（Gemini→发言库→fallback 全程优先中文）
+- ✅ 女巫可看刀口：控制台显示"昨夜X号被狼人袭击"
+- ✅ 30天免登录：localStorage 持久化 session token
+- ✅ 暗牌场：夜间死亡/毒死/枪死不展露角色身份
+- ✅ 登录验证码过期bug修复：`getClient()` 不再缓存 Supabase 客户端
+- ✅ SSL 证书修复：Resend SMTP + Let's Encrypt + Cloudflare DNS 切换
+- ✅ 重定向循环修复：移除 Cloudflare 重复 redirect 规则
+- ✅ `provider-adapter.js` 多模型路由层已部署（支持 gemini/anthropic-messages/openai-chat 协议）
+- ✅ Cloudflare Turnstile 集成完毕
+- ✅ 移动端 UI 壳完工（GlobalShell, BottomNav, TopStatusBar, etc.）
+
 ## 已知缺口（非阻塞）
 
 - 浏览器 E2E 未覆盖全部角色/板型（12 人局、狼队徽章路径）。
 - AIWolf 原始数据下载/蒸馏 — license 待 owner/法务决定。
 - vibecoder.store 集成 — 网络不可达，待重试。
-- AICODEMIRROR_API_KEY / DEEPSEEK_API_KEY 未配置 — provider-adapter 仅走 gemini/local 链。
+- AICODEMIRROR_API_KEY / DEEPSEEK_API_KEY 未配置 — provider-adapter 仅走 gemini/local 链。**GPT/Claude/DeepSeek/Doubao 多模型 per-player 接入待 owner 提供各平台 API key。**
 - 音效系统仅有 TTS 与投票 tick；无环境音/事件音（可选增强）。
+- Netlify CLI 部署 token 过期需 owner 重登（`netlify login`），GitHub auto-deploy 未开启。
 
 ## 人工核验清单（owner 或线上操作）
 
-1. Supabase RLS 策略、邮件模板 `{{ .Token }}`、真实 OTP 闭环。
-2. Netlify 环境变量与 `ALLOWED_ORIGIN`。
-3. 完整真人对局验收：12 人局、每个特殊身份、断网回退。
+1. Supabase RLS 策略、邮件 OTP 闭环 ✅（已验证 2026-07-07 — Resend SMTP 正常工作）
+2. Netlify 环境变量与 `ALLOWED_ORIGIN` ✅
+3. 完整真人对局验收：12 人局、每个特殊身份、断网回退（待 owner 试玩）
+4. 多模型 API key 收集：GPT-5.6/5.5、DeepSeek v4-pro、Doubao、Claude、NotebookLLM
 
 ## 已排卡但可能过时
 
