@@ -235,54 +235,89 @@ export function useWallet(
   // ── purchase: POST to escrow, fall back to test mode ─────────────────
   const purchase = useCallback(
     async (packId: string): Promise<PurchaseResult> => {
+      // ── Map packId to the fields the escrow function expects ─────────
+      const rewards = PACK_REWARDS[packId];
+      if (!rewards) {
+        return { success: false, error: `未知的商品包: ${packId}` };
+      }
+
       // Try the real escrow endpoint first
       try {
-        const body: Record<string, unknown> = { packId, isGuest };
-        if (session) {
-          body.accessToken = session.accessToken;
-          body.userId = session.user.id;
+        // Build escrow-compliant body (snake_case, JWT in Authorization header)
+        const escrowBody = {
+          pack_id: packId,
+          coin_amount: rewards.coins,
+          bonus_amount: rewards.coins - (PACK_REWARDS[packId]?.coins ?? 0),  // base coins = total - bonus
+          price_cents: rewards.costCents,
+          currency: 'CNY',
+          payment_method: 'escrow',
+        };
+
+        // Compute actual bonus: total - base (base coins before bonus applied)
+        const baseCoins: Record<string, number> = {
+          'coin-60': 60, 'coin-300': 300, 'coin-680': 680,
+          'coin-1280': 1280, 'coin-3280': 3280, 'coin-6480': 6480,
+        };
+        const base = baseCoins[packId] ?? rewards.coins;
+        escrowBody.coin_amount = base;
+        escrowBody.bonus_amount = rewards.coins - base;
+
+        const fetchHeaders: Record<string, string> = {
+          'Content-Type': 'application/json',
+        };
+
+        // Send JWT in Authorization header (what payment-escrow expects)
+        if (session?.accessToken) {
+          fetchHeaders['Authorization'] = `Bearer ${session.accessToken}`;
         }
 
         const res = await fetch('/.netlify/functions/payment-escrow', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body),
+          headers: fetchHeaders,
+          body: JSON.stringify(escrowBody),
         });
 
         if (res.ok) {
-          const data = (await res.json()) as {
-            success: boolean;
-            orderId?: string;
-            coins?: number;
-            coupons?: number;
-            crystals?: number;
+          const data = await res.json() as {
+            order_id?: string;
+            status?: string;
+            new_balance?: { coins?: number; coupons?: number; crystals?: number };
+            message?: string;
             error?: string;
+            _test_mode?: boolean;
           };
 
-          if (data.success) {
-            const grantCoins = data.coins ?? 0;
-            const grantCoupons = data.coupons ?? 0;
-            const grantCrystals = data.crystals ?? 0;
+          // payment-escrow returns { order_id, status, new_balance, message }
+          // NOT { success, coins, ... }
+          if (data.order_id && data.new_balance) {
+            const grantCoins = data.new_balance.coins ?? 0;
+            const grantCoupons = data.new_balance.coupons ?? 0;
+            const grantCrystals = data.new_balance.crystals ?? 0;
 
             setWallet(prev => {
-              const updated = applyPurchase(
-                prev, packId, grantCoins, grantCoupons, grantCrystals, 0,
-                data.orderId,
-              );
+              const updated = {
+                ...prev,
+                coins: grantCoins,
+                coupons: grantCoupons,
+                crystals: grantCrystals,
+                totalPurchasedCoins: prev.totalPurchasedCoins + escrowBody.coin_amount + escrowBody.bonus_amount,
+              };
               if (isGuestRef.current) saveLocalWallet(updated);
               return updated;
             });
 
             return {
               success: true,
-              orderId: data.orderId,
-              coins: grantCoins,
-              coupons: grantCoupons,
-              crystals: grantCrystals,
+              orderId: data.order_id,
+              coins: escrowBody.coin_amount + escrowBody.bonus_amount,
+              coupons: 0,
+              crystals: 0,
             };
           }
 
-          return { success: false, error: data.error ?? '购买失败' };
+          if (data.error) {
+            return { success: false, error: data.error };
+          }
         }
 
         throw new Error(`${res.status}`);
@@ -291,11 +326,8 @@ export function useWallet(
       }
 
       // ── Test-mode fallback ──────────────────────────────────────────
-      const rewards = PACK_REWARDS[packId];
-      if (!rewards) {
-        return { success: false, error: `未知的商品包: ${packId}` };
-      }
-
+      // Only reached when fetch itself fails (network/DNS error),
+      // NOT when the function returns an error response
       setWallet(prev => {
         const updated = applyPurchase(
           prev, packId, rewards.coins, rewards.coupons,
