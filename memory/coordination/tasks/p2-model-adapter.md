@@ -2,7 +2,7 @@
 
 ## Status
 
-Queued
+Superseded — covered by later accepted implementation; do not dispatch directly
 
 ## Objective
 

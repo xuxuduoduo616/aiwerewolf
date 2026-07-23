@@ -6,12 +6,20 @@
 
 ## 阅读顺序（开工前）
 
-1. [coordination/PROJECT_STATE](coordination/PROJECT_STATE.md) — **当前状态**：
-   已验证基线、部署状态、阶段判断。当前状态只在这一个文件里。
-2. [progress-report](progress-report.md) — ROADMAP：剩余计划、优先级、已知缺口。
-3. [project-overview](project-overview.md) — 架构、代码地图、关键不变量（稳定事实）。
+入口文件 `AGENTS.md` / `CLAUDE.md` 先提供角色限制；打开本文件后，所有
+Codex、Claude Code 和 Antigravity 会话按以下顺序读取：
+
+1. [coordination/PROJECT_STATE](coordination/PROJECT_STATE.md) — **当前状态**：已验证基线、部署状态和当前产品阶段。当前状态只在这一个文件里。
+2. [progress-report](progress-report.md) — ROADMAP：剩余计划、优先级和已知缺口。
+3. [project-overview](project-overview.md) — 稳定架构、代码地图和关键不变量。
 4. [coordination/WORKFLOW](coordination/WORKFLOW.md) — 角色分工与协作协议。
-5. [product-brief](product-brief.md) — 产品目标与首阶段需求（稳定事实）。
+5. [product-brief](product-brief.md) — 产品目标与范围。
+6. [decisions/ADR-003-scalable-social-multiplayer-roadmap](decisions/ADR-003-scalable-social-multiplayer-roadmap.md) 及与任务相关的其他 ADR — 长期路线和已确认决策。
+7. `coordination/tasks/<task-id>.md` — 仅在任务已分配时读取对应任务卡。
+
+历史 `coordination/reports/` 不属于默认必读内容；`coordination/handoffs/`
+只保存尚未合并的 pending delta。新会话不得用历史报告、handoff 或私有
+上下文替代 `PROJECT_STATE.md`。
 
 执行任务时还必须阅读 `coordination/tasks/<task-id>.md`。
 
@@ -30,7 +38,7 @@
 | 待合并增量 | `coordination/handoffs/*.md` | 任何 agent（pending delta） |
 | 运行日志 | `coordination/runs/` | 调度脚本 |
 
-历史 reports/runs 是证据归档，**不代表当前状态**；当前状态一律以
+历史 reports/runs 是证据归档，handoffs 在合并后应移入 reports，**不代表当前状态**；当前状态一律以
 PROJECT_STATE 为准。
 
 ## 校验

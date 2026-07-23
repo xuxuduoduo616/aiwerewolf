@@ -1,14 +1,18 @@
 # AI Werewolf: Claude Code Entry Point
 
-@memory/INDEX.md
 @AGENTS.md
+@memory/INDEX.md
 @memory/coordination/PROJECT_STATE.md
-@memory/project-overview.md
 @memory/progress-report.md
+@memory/project-overview.md
+@memory/coordination/WORKFLOW.md
+@memory/product-brief.md
+@memory/decisions/ADR-003-scalable-social-multiplayer-roadmap.md
 
-Treat the imported files as project memory. Re-read the applicable task card
-and worker report after any Codex handoff; do not rely on private session memory
-for project status.
+Treat the imported files as project memory and read them in the listed order.
+Read the applicable task card after the canonical files. Read historical reports
+or archived handoffs only when the current task explicitly needs their evidence;
+do not rely on private session memory for project status.
 
 ## 本端身份
 

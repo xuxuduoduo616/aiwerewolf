@@ -5,10 +5,17 @@
 
 ## 开工前必读（按序，仓库相对路径）
 
-1. `memory/INDEX.md` — 记忆导航与阅读顺序
-2. `memory/coordination/PROJECT_STATE.md` — 当前已验证状态
-3. `memory/coordination/WORKFLOW.md` — 角色分工与协作协议
-4. 你的任务卡 `memory/coordination/tasks/<task-id>.md`（若有）
+`memory/INDEX.md` 是唯一入口。打开后严格按下面顺序读取：
+
+1. `memory/coordination/PROJECT_STATE.md` — 当前已验证状态、部署和基线
+2. `memory/progress-report.md` — 当前 roadmap 与优先级
+3. `memory/project-overview.md` — 稳定架构、代码地图和不变量
+4. `memory/coordination/WORKFLOW.md` — 角色分工与协作协议
+5. `memory/product-brief.md` — 产品目标与范围
+6. 相关 `memory/decisions/ADR-*.md` — 先读与本任务相关的 ADR，至少确认长期规模路线 ADR-003
+7. 你的任务卡 `memory/coordination/tasks/<task-id>.md`（若有）
+
+`coordination/reports/` 是历史证据归档，`coordination/handoffs/` 只保存尚未合并的 pending delta；它们不属于新对话的默认必读内容。当前状态只认 `PROJECT_STATE.md`，不要用历史报告或私有会话记忆覆盖它。
 
 ## 本端身份与限制
 
