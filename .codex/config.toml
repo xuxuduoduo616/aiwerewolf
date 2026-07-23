@@ -1,0 +1,9 @@
+personality = "friendly"
+
+[mcp_servers]
+
+[mcp_servers.supabase]
+url = "https://mcp.supabase.com/mcp"
+# Source .mcp.json used an OAuth `auth` block (project_ref rsfcftpchetqzwdppkob).
+# Codex does not map that block; it performs its own OAuth login on first connect
+# to this streamable-HTTP server. Authenticate on first use.

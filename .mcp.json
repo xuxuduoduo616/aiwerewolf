@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "supabase": {
+      "url": "https://mcp.supabase.com/mcp",
+      "auth": {
+        "type": "oauth",
+        "project_ref": "rsfcftpchetqzwdppkob"
+      }
+    }
+  }
+}
