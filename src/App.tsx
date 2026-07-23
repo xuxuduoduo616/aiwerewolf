@@ -28,10 +28,17 @@ import {
   Skull, Trophy, User as UserIcon, Volume2, VolumeX,
 } from 'lucide-react';
 
-/** Cloudflare Turnstile site key — safe to expose in client code.
- *  Set VITE_TURNSTILE_SITE_KEY in Netlify env vars for production.
- *  Falls back to always-passing test key for local dev. */
-const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY || '1x00000000000000000000AA';
+/** Cloudflare Turnstile site key, required by the guarded production build. */
+const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY;
+
+export type TurnstileGuestGateEvent =
+  | { type: 'verified'; token: string }
+  | { type: 'error' | 'expired' };
+
+export const nextTurnstileToken = (event: TurnstileGuestGateEvent): string | null =>
+  event.type === 'verified' ? event.token : null;
+
+export const isTurnstileGuestGateOpen = (token: string | null): boolean => Boolean(token);
 
 const MY_PLAYER_ID = 1;
 
@@ -137,9 +144,9 @@ const App: React.FC = () => {
           <div className="mt-4 flex justify-center">
             <TurnstileWidget
               siteKey={TURNSTILE_SITE_KEY}
-              onVerify={token => setTurnstileToken(token)}
-              onError={() => setTurnstileToken(null)}
-              onExpired={() => setTurnstileToken(null)}
+              onVerify={token => setTurnstileToken(nextTurnstileToken({ type: 'verified', token }))}
+              onError={() => setTurnstileToken(nextTurnstileToken({ type: 'error' }))}
+              onExpired={() => setTurnstileToken(nextTurnstileToken({ type: 'expired' }))}
             />
           </div>
 
@@ -147,7 +154,7 @@ const App: React.FC = () => {
             onClick={() => auth.authStep === 'EMAIL'
               ? auth.handleSendOtp()
               : auth.handleVerifyOtp(records => { rec.setRecords(records); rec.setShowRecords(true); game.setPhase(GamePhase.LOBBY); })}
-            disabled={auth.isAuthLoading || !turnstileToken}
+            disabled={auth.isAuthLoading || !isTurnstileGuestGateOpen(turnstileToken)}
             className="mt-4 w-full bg-zinc-100 text-black py-3 font-bold rounded hover:bg-white transition flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed"
           >
             {auth.isAuthLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Shield className="w-4 h-4" />}
@@ -157,7 +164,7 @@ const App: React.FC = () => {
             <button onClick={() => auth.setAuthStep(auth.authStep === 'EMAIL' ? 'VERIFY' : 'EMAIL')} className="hover:text-white">Switch Step</button>
             <button
               onClick={() => auth.handleGuest(() => { rec.loadLocalRecords(); rec.setShowRecords(true); game.setPhase(GamePhase.LOBBY); })}
-              disabled={!turnstileToken}
+              disabled={!isTurnstileGuestGateOpen(turnstileToken)}
               className="hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
             >Guest Trial</button>
           </div>
