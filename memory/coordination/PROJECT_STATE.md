@@ -1,14 +1,38 @@
 # Project Coordination State
 
-**Last verified:** 2026-07-22 (Session handoff after Day 13-14 polish + login fix)
-**Project phase:** Cycles 1-9 complete (34 cards Accepted). Deployed `d8ae20a` verified live 2026-07-22. Production domain `https://ai-werewolf.net` (Cloudflare proxy → Netlify Let's Encrypt SSL).
+**Last verified:** 2026-07-23 (payment system end-to-end verified)
+**Project phase:** Stage 1 — 单机 AI 对局加社交基础设施，暂不支持真人联机对局。长期路线见 `memory/decisions/ADR-003-scalable-social-multiplayer-roadmap.md`。
+**Engineering phase:** Cycles 1-9 complete (34 cards Accepted). Cycle 10 payment system verified live 2026-07-23. Deployed `9a7e66f` live. Production domain `https://ai-werewolf.net` (Cloudflare proxy → Netlify Let's Encrypt SSL).
 
 ## Verified Baseline
 
 - Local tests: `npm run test:run` — **387 passed / 5 skipped** (30 files), zero regressions. `npm run build` succeeds.
-- Local HEAD = `d8ae20a`. Production HEAD = `d8ae20a` (confirmed live 2026-07-22).
+- Local HEAD = `5f69139`. Production HEAD = `9a7e66f` (confirmed live 2026-07-23).
 - Netlify deployment is MANUAL (`npx netlify-cli deploy --prod --dir=dist`); GitHub push does NOT auto-deploy.
-- Coordination directories `tasks/`, `reports/`, `runs/` are EMPTY — ready for fresh dispatch.
+- Coordination archives are retained for traceability: `tasks/` contains historical cards, `reports/` contains historical evidence, and `handoffs/` is reserved only for unmerged pending deltas. There are currently no active queued or review cards; new work requires a new task card.
+
+## Cycle 10: Payment System (2026-07-22~23 — VERIFIED, 3 cards)
+
+| Card | Status |
+|------|--------|
+| `payment-escrow-bridge` — Netlify Function (CJS), supabase-admin client, SQL schema | Verified |
+| `coin-store-ui` — CoinStore + CoinPackCard, 6 hardcoded coin packs, wallet strip | Verified |
+| `wallet-hook-and-integration` — useWallet hook (24 unit tests), App.tsx wiring, escrow fetch | Verified |
+
+**New files (5):**
+- `netlify/functions/payment-escrow.cjs` + `payment-escrow.js` — escrow function (JWT verify → INSERT coin_orders → UPSERT user_coins)
+- `netlify/functions/supabase-admin.cjs` — shared service_role Supabase client
+- `docs/coin-escrow-schema.sql` — DDL for `coin_orders` and `user_coins`
+- `src/hooks/useWallet.ts` + `useWallet.test.ts` — wallet state, purchase, localStorage + Supabase dual-source
+- `src/components/CoinStore.tsx` + `CoinPackCard.tsx` — coin store UI
+
+**Modified:** `src/App.tsx`, `src/components/GlobalShell.tsx`, `src/components/TopStatusBar.tsx`, `src/services/supabaseClient.ts`, `src/styles/mobile-shell.css`
+
+**Supabase (live):** `coin_orders` + `user_coins` tables created with RLS (SELECT + INSERT + UPDATE policies). `SUPABASE_SERVICE_ROLE_KEY` set in Netlify env (219 chars). Admin client active.
+
+**Verified:** `npm run test:run` 387 passed / 5 skipped, `npm run build` green.
+- Guest purchase: 4× verified on production (coin-60 × 4, coins 0→480, localStorage orders)
+- Auth purchase: 2× verified on production (coin-60 + coin-300, coins 0→450, Supabase coin_orders + user_coins rows confirmed)
 
 ## What's live on `ai-werewolf.net`
 
@@ -31,6 +55,11 @@
 | Cloudflare Turnstile | ✅ configured |
 | Supabase RLS + profiles/game_records tables | ✅ live |
 | Resend SMTP (100 emails/day free tier) | ✅ configured |
+| Coin store UI (商店街) + useWallet hook | ✅ deployed |
+| Payment escrow function (`payment-escrow.cjs`) | ✅ deployed |
+| `coin_orders` + `user_coins` Supabase tables with RLS | ✅ live |
+| Guest-mode coin purchase flow (localStorage wallet) | ✅ verified 4× on production |
+| Logged-in-user coin purchase flow (JWT → escrow → Supabase) | ✅ verified 2× on production |
 
 ## Framework Architecture (2026-07-19)
 

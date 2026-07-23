@@ -3,9 +3,16 @@
 **Canonical owner:** coordinator。当前已验证状态见
 [coordination/PROJECT_STATE.md](coordination/PROJECT_STATE.md)（本文件不记录状态）。
 
-**更新日期:** 2026-07-22（会话交接，cad0434 后基准）
+**更新日期:** 2026-07-23（payment system verified live）
 
-## 立即可派发（并行 Wave 1 — 路径不重叠，无依赖）
+## 当前派发状态
+
+当前没有可以直接派发的 active task card。`coordination/tasks/` 中的历史卡片
+保留用于追溯：已完成卡标记为 `Accepted`，被后续实现取代的旧卡标记为
+`Superseded`。新的需求必须由 coordinator 重新核对当前状态、创建新任务卡，
+并在卡片中引用相关 ADR。
+
+## 待重新规划（不是现成任务卡）
 
 | # | Task ID | 优先级 | 允许范围 | 说明 |
 |---|---------|--------|---------|------|
@@ -38,6 +45,7 @@
 - ✅ `provider-adapter.js` 多模型路由层已部署（支持 gemini/anthropic-messages/openai-chat 协议）
 - ✅ Cloudflare Turnstile 集成完毕
 - ✅ 移动端 UI 壳完工（GlobalShell, BottomNav, TopStatusBar, etc.）
+- ✅ 玩家充值系统接入完成（CoinStore → useWallet → payment-escrow → Supabase coin_orders + user_coins，游客+注册用户双路径已验证 live）
 
 ## 已知缺口（非阻塞）
 
@@ -55,14 +63,15 @@
 3. 完整真人对局验收：12 人局、每个特殊身份、断网回退（待 owner 试玩）
 4. 多模型 API key 收集：GPT-5.6/5.5、DeepSeek v4-pro、Doubao、Claude、NotebookLLM
 
-## 已排卡但可能过时
+## 历史任务卡
 
-`coordination/tasks/` 中部分 Status=Queued 的卡（p0-fix-guest-lobby-deadlock、
-p0-wolf-teammate-visual、p1-final-screen-polish、p1-ui-design-system、
-p1-ui-screen-polish、p1-vote-summary-redesign、p2-model-adapter）可能已被
-后续修复覆盖。执行前 planner 需去重复核。
+以下历史卡已被后续实现覆盖并关闭，不得直接重新派发：
 
-## 待办池 (2026-07-19 剩余未结束任务)
+`p0-fix-guest-lobby-deadlock`、`p0-wolf-teammate-visual`、
+`p1-final-screen-polish`、`p1-ui-design-system`、`p1-ui-screen-polish`、
+`p1-vote-summary-redesign`、`p2-model-adapter`。
 
-根据已存在的 task cards + report pairs，Status 非 `Accepted` 的卡属于
-历史遗留（前 Codex 框架产物），需由 coordinator 逐卡判断是否仍需执行或可关闭。
+## 历史说明
+
+旧 task cards、reports 和 handoffs 是历史证据，不代表当前 roadmap 或当前
+部署状态。新增任务以 `PROJECT_STATE.md`、本文件和相关 ADR 为准。
