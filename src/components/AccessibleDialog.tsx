@@ -1,6 +1,26 @@
 import React, { useEffect, useId, useRef } from 'react';
 import { X } from 'lucide-react';
 
+type ScrollLockStyle = Pick<CSSStyleDeclaration, 'overflow'>;
+
+let activeScrollLocks = 0;
+let overflowBeforeFirstLock = '';
+
+/** Acquire a nest-safe body scroll lock and return its idempotent release. */
+export const acquireDocumentScrollLock = (style: ScrollLockStyle): (() => void) => {
+  if (activeScrollLocks === 0) overflowBeforeFirstLock = style.overflow;
+  activeScrollLocks += 1;
+  style.overflow = 'hidden';
+
+  let released = false;
+  return () => {
+    if (released) return;
+    released = true;
+    activeScrollLocks = Math.max(0, activeScrollLocks - 1);
+    if (activeScrollLocks === 0) style.overflow = overflowBeforeFirstLock;
+  };
+};
+
 const FOCUSABLE_SELECTOR = [
   'a[href]',
   'button:not([disabled])',
@@ -86,6 +106,7 @@ const AccessibleDialog: React.FC<AccessibleDialogProps> = ({
     previousFocusRef.current = document.activeElement instanceof HTMLElement
       ? document.activeElement
       : null;
+    const releaseScrollLock = acquireDocumentScrollLock(document.body.style);
 
     const focusDialog = () => {
       const dialog = dialogRef.current;
@@ -136,6 +157,7 @@ const AccessibleDialog: React.FC<AccessibleDialogProps> = ({
       window.cancelAnimationFrame(animationFrame);
       document.removeEventListener('keydown', handleKeyDown, true);
       document.removeEventListener('focusin', handleFocusIn);
+      releaseScrollLock();
 
       const restoreTarget = returnFocusRef?.current ?? previousFocusRef.current;
       if (restoreTarget?.isConnected) restoreTarget.focus();

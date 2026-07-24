@@ -2,6 +2,7 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 import AccessibleDialog, {
+  acquireDocumentScrollLock,
   closeOnBackdropMouseDown,
   getFocusLoopTarget,
 } from './AccessibleDialog';
@@ -77,5 +78,19 @@ describe('AccessibleDialog', () => {
     expect(ignored).toBe(false);
     expect(preventDefault).toHaveBeenCalledOnce();
     expect(onClose).toHaveBeenCalledOnce();
+  });
+
+  it('locks background scrolling until the final open dialog releases it', () => {
+    const style = { overflow: 'auto' } as CSSStyleDeclaration;
+    const releaseFirst = acquireDocumentScrollLock(style);
+    const releaseSecond = acquireDocumentScrollLock(style);
+
+    expect(style.overflow).toBe('hidden');
+    releaseFirst();
+    expect(style.overflow).toBe('hidden');
+    releaseFirst();
+    expect(style.overflow).toBe('hidden');
+    releaseSecond();
+    expect(style.overflow).toBe('auto');
   });
 });

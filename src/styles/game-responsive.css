@@ -1,0 +1,332 @@
+/* Game room breakpoints: mobile <=640, tablet 641-1023, desktop >=1024. */
+.game-room {
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+}
+
+.game-room-layout {
+  position: relative;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  height: 100%;
+}
+
+.game-room-main {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.game-room-header {
+  flex: 0 0 auto;
+  min-height: 64px;
+}
+
+.game-room-audio-controls {
+  min-width: 0;
+}
+
+.game-audio-slider {
+  min-height: 44px;
+}
+
+.game-room-board {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.game-player-seat {
+  position: absolute;
+  z-index: 2;
+}
+
+.game-room-sidebar {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.game-log-feed {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 12px;
+  overflow-wrap: anywhere;
+}
+
+.game-log-trigger {
+  display: none;
+}
+
+.game-log-dialog {
+  display: flex;
+  width: min(100%, 44rem);
+  max-height: calc(100dvh - 48px);
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.game-log-dialog .accessible-dialog__header {
+  flex: 0 0 auto;
+}
+
+.game-log-dialog .accessible-dialog__body {
+  display: flex;
+  min-height: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+}
+
+.game-info-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  flex: 0 0 auto;
+  margin-bottom: 12px;
+}
+
+.game-info-tabs [role='tab'] {
+  min-width: 0;
+  min-height: 44px;
+  border: 1px solid rgba(var(--ink-500), 0.45);
+  border-radius: 8px;
+  background: rgba(var(--ink-900), 0.82);
+  color: rgb(var(--ink-300));
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.game-info-tabs [role='tab'][aria-selected='true'] {
+  border-color: rgba(var(--ink-100), 0.78);
+  background: rgb(var(--ink-100));
+  color: rgb(var(--ink-950));
+}
+
+.game-info-tabs [role='tab']:focus-visible,
+.game-info-panel:focus-visible,
+.game-room :is(button, input):focus-visible {
+  outline: 2px solid var(--ink-bright);
+  outline-offset: 2px;
+}
+
+.game-info-panel {
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+@media (min-width: 1024px) {
+  .game-room-sidebar {
+    border-left: 1px solid rgb(var(--ink-800));
+  }
+}
+
+@media (max-width: 1023px) {
+  .game-room {
+    height: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .game-room-layout {
+    display: block;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  .game-room-main {
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  .game-room-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    height: auto;
+    min-height: 72px;
+    gap: 8px;
+    padding-top: max(8px, env(safe-area-inset-top, 0px));
+    padding-right: max(12px, env(safe-area-inset-right, 0px));
+    padding-bottom: 8px;
+    padding-left: max(12px, env(safe-area-inset-left, 0px));
+  }
+
+  .game-room-phase-summary {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .game-room-phase-summary h2,
+  .game-room-phase-summary p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .game-room-audio-controls {
+    display: flex;
+    flex: 0 1 auto;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .game-room-board {
+    display: block;
+    min-height: 0;
+    flex: none;
+    padding:
+      12px
+      max(12px, env(safe-area-inset-right, 0px))
+      max(24px, env(safe-area-inset-bottom, 0px))
+      max(12px, env(safe-area-inset-left, 0px));
+  }
+
+  .game-room .seat-stage {
+    position: relative;
+    inset: auto;
+    display: grid;
+    width: 100%;
+    min-height: 0;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    align-items: stretch;
+    overflow: visible;
+    padding: 18px 14px;
+  }
+
+  .seat-stage::before,
+  .seat-stage::after {
+    display: none;
+  }
+
+  .game-player-seat {
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
+    display: flex;
+    min-width: 0;
+    transform: none !important;
+    justify-content: center;
+  }
+
+  .game-player-seat > button {
+    width: 100%;
+    min-width: 0;
+    max-width: 128px;
+    height: auto;
+  }
+
+  .center-console.game-action-console {
+    position: relative;
+    left: auto;
+    top: auto;
+    grid-column: 1 / -1;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    transform: none;
+  }
+
+  .game-action-console > .flex:first-child {
+    flex-wrap: wrap;
+  }
+
+  .game-room .wolf-channel {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    width: 100%;
+    max-height: none;
+    margin-top: 12px;
+  }
+
+  .game-room-sidebar {
+    display: none;
+  }
+
+  .game-log-trigger {
+    display: inline-flex;
+    flex: 0 0 44px;
+  }
+}
+
+@media (max-width: 640px) {
+  .game-room-header {
+    align-items: flex-start;
+  }
+
+  .game-room-header .game-round-indicator {
+    width: 36px;
+    height: 36px;
+  }
+
+  .game-room-audio-controls {
+    max-width: 236px;
+    gap: 4px;
+  }
+
+  .game-audio-slider {
+    width: 44px;
+  }
+
+  .game-room .seat-stage {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px 6px;
+    padding: 16px 10px;
+  }
+
+  .game-player-seat > button {
+    max-width: 116px;
+  }
+
+  .center-console.game-action-console {
+    padding: 16px;
+  }
+
+  .game-log-dialog {
+    height: calc(100dvh - 32px);
+    max-height: calc(100dvh - 32px);
+  }
+}
+
+@media (max-width: 359px) {
+  .game-room-header {
+    flex-wrap: wrap;
+  }
+
+  .game-room-phase-summary,
+  .game-room-audio-controls {
+    width: 100%;
+    max-width: none;
+    flex-basis: 100%;
+  }
+
+  .game-room-audio-controls {
+    justify-content: flex-start;
+  }
+
+  .game-room .seat-stage {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-room *,
+  .game-log-dialog * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
