@@ -1,12 +1,12 @@
 # Project Coordination State
 
-**Last verified:** 2026-07-24 (Wave 1 local integration verified; Stage 0 remains the production release)
+**Last verified:** 2026-07-24 (TC-005 local integration verified; Stage 0 remains the production release)
 **Project phase:** Stage 1 — 单机 AI 对局加社交基础设施，暂不支持真人联机对局。长期路线见 `memory/decisions/ADR-003-scalable-social-multiplayer-roadmap.md`。
-**Engineering phase:** 49 tracked historical task cards: 42 Accepted and 7 Superseded. In the owner-approved release run, S0-GATE and TC-001 through TC-004 have independent PASS evidence; local integration commit `6320f5f` is not yet deployed. Stage 0 release `6504603` remains live at `https://ai-werewolf.net` (Cloudflare proxy → Netlify).
+**Engineering phase:** 49 tracked historical task cards: 42 Accepted and 7 Superseded. In the owner-approved release run, S0-GATE and TC-001 through TC-005 have independent PASS evidence; responsive game-room integration commit `b762cd2` is not yet deployed. Stage 0 release `6504603` remains live at `https://ai-werewolf.net` (Cloudflare proxy → Netlify).
 
 ## Verified Baseline
 
-- Local tests at integration commit `6320f5f`: `npm run test:run` — **423 passed / 5 skipped** (39 files passed, 1 skipped), zero regressions. TypeScript, memory validate/audit, and the guarded production build pass when the required Turnstile build input is supplied.
+- Local tests at integration commit `b762cd2`: `npm run test:run` — **434 passed / 5 skipped** (41 files passed, 1 skipped), zero regressions. The TC-005 targeted suite passed 49/49; TypeScript, memory validate/audit, and the guarded production build pass when the required Turnstile build input is supplied.
 - Production deploy `commit_ref` = `650460360913c3b83c9cd4b706788ec0f82d55ac` (verified live 2026-07-24). Subsequent local integration baselines are recorded by the coordinator and do not imply a production deploy.
 - Netlify Git integration published production deploy `6a62a55064a90100088318db` from that exact commit. GitHub Actions run `30053679882` used the same head but failed before deploy because its guarded build lacked `VITE_TURNSTILE_SITE_KEY`; the Actions workflow is not currently a verified release path.
 - Coordination archives are retained for traceability: `tasks/` contains historical cards, `reports/` contains historical evidence, and `handoffs/` is reserved only for unmerged pending deltas. No card under `memory/coordination/tasks/` is directly dispatchable; current owner-approved coordinator work is tracked in its invocation artifacts until accepted.
@@ -19,9 +19,9 @@
 | `TC-002` payment fail-closed boundary | PASS; integrated in `6320f5f` |
 | `TC-003` local lobby operation surfaces | PASS after R2; integrated in `6320f5f` |
 | `TC-004` responsive accessible application shell | PASS after Dialog focus repair; integrated in `6320f5f` |
-| `TC-005` responsive game room | Next queued card |
+| `TC-005` responsive game room | PASS after production-CSS cascade repair; integrated in `b762cd2` |
 
-The local payment closure, lobby surfaces, and responsive shell are not live until the final run passes and an owner-approved production release is verified. Current production payment behavior remains the Stage 0 state documented below.
+The local payment closure, lobby surfaces, responsive shell, and responsive game room are not live until the final run passes and an owner-approved production release is verified. Current production payment behavior remains the Stage 0 state documented below.
 
 ## Cycle 10: Payment System (2026-07-22~23 — VERIFIED, 3 cards)
 
