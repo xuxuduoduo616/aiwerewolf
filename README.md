@@ -2,7 +2,7 @@
 
 一款沉浸式 AI 狼人杀网站：一名真人玩家与多个 AI 玩家同台竞技。黑白灰素描风格，中英文双语，严格遵循网易狼人杀规则。
 
-> AI 玩家的发言经由 [aiwolf.org](https://aiwolf.org) 国际大赛对局记录蒸馏训练，配合信念推理引擎，实现接近真人的局内推理与角色扮演。
+> AI 玩家结合信念推理引擎与仓库内按角色分类的本地发言库生成局内表达。发言库的外部来源和许可尚未独立核验（未验证），公开再分发前需由 owner 确认。
 
 ## ✨ 特性
 
@@ -19,7 +19,7 @@
 | 层 | 技术 |
 |----|------|
 | 前端 | Vite + React 18 + TypeScript + Tailwind CSS |
-| AI 推理 | Gemini 2.0 Flash（免费层，服务端代理）+ 蒸馏发言库 |
+| AI 推理 | Gemini 2.5 Flash（服务端代理）+ 本地发言库 |
 | 托管 | Netlify（免费层）|
 | 认证/数据库 | Supabase Auth（邮箱 OTP）+ Postgres |
 
@@ -28,7 +28,7 @@
 ```
 Layer 1 — BeliefTracker（信念追踪，纯 TS）
   └── 每回合更新每位玩家对他人的可疑度 (0–1)
-Layer 2 — 发言库（从 aiwolf.org 蒸馏 11,449 条发言）
+Layer 2 — 发言库（仓库内 6 个角色文件，共 8,521 条）
   └── 按角色/场景匹配真实发言模板
 Layer 3 — Gemini 润色（可选 LLM，失败自动降级）
   └── 根据局势生成个性化中文发言
@@ -57,26 +57,31 @@ npm run build        # 生产构建
 | `API_KEY` | Gemini API（服务端）| https://aistudio.google.com/apikey |
 | `VITE_SUPABASE_URL` | Supabase 项目 URL | Supabase Dashboard |
 | `VITE_SUPABASE_ANON_KEY` | Supabase 匿名 key | Supabase Dashboard |
+| `VITE_TURNSTILE_SITE_KEY` | Cloudflare Turnstile 公开 site key（构建必需）| Cloudflare Dashboard |
+| `SUPABASE_SERVICE_ROLE_KEY` | 支付 Function 的服务端 key；禁止放入前端或 Git | Supabase Dashboard |
 | `ALLOWED_ORIGIN` | CORS 白名单（生产）| 你的域名 |
 
 ## 📦 部署到 Netlify
 
-1. 推送代码到 GitHub
-2. Netlify → Import project → 选择仓库
-3. 构建设置自动读取 `netlify.toml`
-4. Site settings → Environment variables 添加上述变量
-5. Supabase 数据库设置见 [`docs/supabase-setup.md`](docs/supabase-setup.md)
+1. 在 owner 批准后推送 `main` 到 GitHub
+2. Netlify 的 Git integration 从 `main` 构建并发布，构建设置读取 `netlify.toml`
+3. Site settings → Environment variables 添加上述变量；服务端变量不得暴露给前端
+4. Supabase 数据库设置见 [`docs/supabase-setup.md`](docs/supabase-setup.md)
 
-## 📊 数据采集
+当前 GitHub Actions workflow 不注入构建所需的 `VITE_TURNSTILE_SITE_KEY`，因此
+不能作为已验证的生产发布路径；Stage 0 验证的生产发布来自 Netlify Git
+integration。修复 workflow 前不要把 Actions 构建失败描述为部署成功。
+
+## 📊 数据工具
 
 ```bash
-python3 scripts/scrape_aiwolf.py   # 从 aiwolf.org 采集对局并构建发言库
+python3 scripts/scrape_aiwolf.py   # 本地采集工具；外部来源与许可状态未验证
 ```
 
 ## 🔒 安全
 
 - API key 仅存于服务端 Netlify Function，绝不暴露到前端
-- Supabase RLS 强制用户只能访问自己的数据
+- Supabase schema 要求使用 RLS 限制用户数据访问；线上策略需独立验证
 - AI 代理含限流（30 req/min/IP）、CORS 白名单、输入验证、模型白名单
 
 ## 📁 项目结构
@@ -91,7 +96,7 @@ src/
 ├── components/          # PlayerCard, ActionBar, WolfChannel, ...
 ├── gameEngine.ts        # 核心规则（+ 单元测试）
 └── constants.ts         # 板子配置、角色、黑话
-netlify/functions/       # genai-proxy.js（Gemini 代理）
+netlify/functions/       # genai-proxy.cjs（Gemini 代理）
 scripts/                 # scrape_aiwolf.py
 ```
 

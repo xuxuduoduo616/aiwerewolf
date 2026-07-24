@@ -3,33 +3,24 @@
 **Canonical owner:** coordinator。当前已验证状态见
 [coordination/PROJECT_STATE.md](coordination/PROJECT_STATE.md)（本文件不记录状态）。
 
-**更新日期:** 2026-07-23（payment system verified live）
+**更新日期:** 2026-07-24（Stage 0 production release + TC-001 governance checkpoint）
 
 ## 当前派发状态
 
-当前没有可以直接派发的 active task card。`coordination/tasks/` 中的历史卡片
-保留用于追溯：已完成卡标记为 `Accepted`，被后续实现取代的旧卡标记为
-`Superseded`。新的需求必须由 coordinator 重新核对当前状态、创建新任务卡，
-并在卡片中引用相关 ADR。
+`coordination/tasks/` 中没有可直接派发的 active card；其中卡片是保留用于
+追溯的历史记录：已完成卡标记为 `Accepted`，被后续实现取代的旧卡标记为
+`Superseded`。当前 owner-approved coordinator 工作在独立 invocation artifacts
+中跟踪，只有通过验收并集成的事实才写回本 roadmap。
 
 ## 待重新规划（不是现成任务卡）
 
-| # | Task ID | 优先级 | 允许范围 | 说明 |
-|---|---------|--------|---------|------|
-| 1 | `legacy-ai-player-cleanup` | P1 | `src/services/aiPlayer.ts` 仅删除 | 死代码，无任何导入，15KB。删除后跑 test:run + build 确认 |
-| 2 | `type-safety-cleanup` | P1 | `src/hooks/useAuth.ts`（4 处 any）+ `src/ai/aiOrchestrator.ts`（1 处 as any） | 收紧为领域类型，不改行为 |
-| 3 | `seo-robots` | P2 | `index.html` meta 标签 + 新增 `public/robots.txt` | 纯增量，无现有代码修改 |
-
-## 后续波次
-
 | # | Task ID | 优先级 | 说明 |
 |---|---------|--------|------|
-| 4 | `netlify-csp` | P1 | `netlify.toml` CSP header。需部署验证 → 单独走 |
-| 5 | `speech-placeholder-resolution` | P1 | "that player" 等占位符在显示层原样出现，需解析为 N 号 |
-| 6 | `zh-display-language-purity` | P1 | zh 模式 fallback 发言以 EN 为主 |
-| 7 | `katakana-entity-follow-up` | P2 | 5 个片假名人名未入实体表，~300 处引用逃过清洗 |
-| 8 | `cloud-tts-implementation` | P2 | gemini-2.5-flash-preview-tts Netlify 适配层 |
-| 9 | `visibleText-dead-code-cleanup` | P3 | useGameState 中未被消费的导出 |
+| 1 | `speech-placeholder-resolution` | P1 | "that player" 等占位符在显示层原样出现，需解析为 N 号 |
+| 2 | `zh-display-language-purity` | P1 | zh 模式 fallback 发言以 EN 为主 |
+| 3 | `katakana-entity-follow-up` | P2 | 5 个片假名人名未入实体表，~300 处引用逃过清洗 |
+| 4 | `cloud-tts-implementation` | P2 | gemini-2.5-flash-preview-tts Netlify 适配层 |
+| 5 | `visibleText-dead-code-cleanup` | P3 | useGameState 中未被消费的导出 |
 
 ## 已完成（2026-07-07 ～ 2026-07-22 打磨期）
 
@@ -42,7 +33,7 @@
 - ✅ 登录验证码过期bug修复：`getClient()` 不再缓存 Supabase 客户端
 - ✅ SSL 证书修复：Resend SMTP + Let's Encrypt + Cloudflare DNS 切换
 - ✅ 重定向循环修复：移除 Cloudflare 重复 redirect 规则
-- ✅ `provider-adapter.js` 多模型路由层已部署（支持 gemini/anthropic-messages/openai-chat 协议）
+- `provider-adapter.cjs` 多模型路由源码存在；生产 endpoint 状态未验证
 - ✅ Cloudflare Turnstile 集成完毕
 - ✅ 移动端 UI 壳完工（GlobalShell, BottomNav, TopStatusBar, etc.）
 - ✅ 玩家充值系统接入完成（CoinStore → useWallet → payment-escrow → Supabase coin_orders + user_coins，游客+注册用户双路径已验证 live）
@@ -52,9 +43,9 @@
 - 浏览器 E2E 未覆盖全部角色/板型（12 人局、狼队徽章路径）。
 - AIWolf 原始数据下载/蒸馏 — license 待 owner/法务决定。
 - vibecoder.store 集成 — 网络不可达，待重试。
-- AICODEMIRROR_API_KEY / DEEPSEEK_API_KEY 未配置 — provider-adapter 仅走 gemini/local 链。**GPT/Claude/DeepSeek/Doubao 多模型 per-player 接入待 owner 提供各平台 API key。**
+- AICODEMIRROR_API_KEY / DEEPSEEK_API_KEY 的当前配置状态未验证。**GPT/Claude/DeepSeek/Doubao 多模型 per-player 接入仍需 owner 选择平台并提供相应商户/API 配置。**
 - 音效系统仅有 TTS 与投票 tick；无环境音/事件音（可选增强）。
-- Netlify CLI 部署 token 过期需 owner 重登（`netlify login`），GitHub auto-deploy 未开启。
+- Netlify CLI 当前认证状态未验证。Netlify Git integration 已从 `main` 发布精确 commit；GitHub Actions workflow 因未注入必需 Turnstile build input 而失败，尚不是已验证发布路径。
 
 ## 人工核验清单（owner 或线上操作）
 

@@ -1,15 +1,15 @@
 # Project Coordination State
 
-**Last verified:** 2026-07-23 (payment system end-to-end verified)
+**Last verified:** 2026-07-24 (Stage 0 repaired release verified in production)
 **Project phase:** Stage 1 — 单机 AI 对局加社交基础设施，暂不支持真人联机对局。长期路线见 `memory/decisions/ADR-003-scalable-social-multiplayer-roadmap.md`。
-**Engineering phase:** Cycles 1-9 complete (34 cards Accepted). Cycle 10 payment system verified live 2026-07-23. Deployed `9a7e66f` live. Production domain `https://ai-werewolf.net` (Cloudflare proxy → Netlify Let's Encrypt SSL).
+**Engineering phase:** 49 tracked historical task cards: 42 Accepted and 7 Superseded. Stage 0 release `6504603` is live at `https://ai-werewolf.net` (Cloudflare proxy → Netlify).
 
 ## Verified Baseline
 
-- Local tests: `npm run test:run` — **387 passed / 5 skipped** (30 files), zero regressions. `npm run build` succeeds.
-- Local HEAD = `5f69139`. Production HEAD = `9a7e66f` (confirmed live 2026-07-23).
-- Netlify deployment is MANUAL (`npx netlify-cli deploy --prod --dir=dist`); GitHub push does NOT auto-deploy.
-- Coordination archives are retained for traceability: `tasks/` contains historical cards, `reports/` contains historical evidence, and `handoffs/` is reserved only for unmerged pending deltas. There are currently no active queued or review cards; new work requires a new task card.
+- Local tests: `npm run test:run` — **391 passed / 5 skipped** (32 files passed, 1 skipped), zero regressions. The guarded production build passes when the required Turnstile build input is supplied.
+- Production deploy `commit_ref` = `650460360913c3b83c9cd4b706788ec0f82d55ac` (verified live 2026-07-24). Subsequent local integration baselines are recorded by the coordinator and do not imply a production deploy.
+- Netlify Git integration published production deploy `6a62a55064a90100088318db` from that exact commit. GitHub Actions run `30053679882` used the same head but failed before deploy because its guarded build lacked `VITE_TURNSTILE_SITE_KEY`; the Actions workflow is not currently a verified release path.
+- Coordination archives are retained for traceability: `tasks/` contains historical cards, `reports/` contains historical evidence, and `handoffs/` is reserved only for unmerged pending deltas. No card under `memory/coordination/tasks/` is directly dispatchable; current owner-approved coordinator work is tracked in its invocation artifacts until accepted.
 
 ## Cycle 10: Payment System (2026-07-22~23 — VERIFIED, 3 cards)
 
@@ -20,7 +20,7 @@
 | `wallet-hook-and-integration` — useWallet hook (24 unit tests), App.tsx wiring, escrow fetch | Verified |
 
 **New files (5):**
-- `netlify/functions/payment-escrow.cjs` + `payment-escrow.js` — escrow function (JWT verify → INSERT coin_orders → UPSERT user_coins)
+- `netlify/functions/payment-escrow.cjs` — escrow function (JWT verify → INSERT coin_orders → UPSERT user_coins)
 - `netlify/functions/supabase-admin.cjs` — shared service_role Supabase client
 - `docs/coin-escrow-schema.sql` — DDL for `coin_orders` and `user_coins`
 - `src/hooks/useWallet.ts` + `useWallet.test.ts` — wallet state, purchase, localStorage + Supabase dual-source
@@ -48,8 +48,8 @@
 | Seer-check badge (金水/查杀) visible only to Seer | ✅ deployed |
 | Witch sees wolf-kill target during night phase | ✅ deployed |
 | 7 bug-fix commits deployed (see git log `143860d..6721ed5`) | ✅ deployed |
-| `netlify/functions/genai-proxy.js` (rate-limit, CORS, input validation) | ✅ deployed |
-| `netlify/functions/provider-adapter.cjs` (multi-model routing — NOT yet deployed to production) | ⚠️ authored, not live |
+| `netlify/functions/genai-proxy.cjs` (rate-limit, CORS, input validation) | ✅ deployed |
+| `netlify/functions/provider-adapter.cjs` (multi-model routing source) | ⚠️ production endpoint status 未验证 |
 | Custom domain `ai-werewolf.net` + `www.ai-werewolf.net` | ✅ live |
 | SSL: Google Trust Services / Let's Encrypt | ✅ live |
 | Cloudflare Turnstile | ✅ configured |
@@ -149,23 +149,7 @@ Source `.mcp.json` uses OAuth auth block. Codex `.codex/config.toml` (project) o
 
 **Verified:** `npm run test:run` 363 passed / 5 skipped, `npm run build` green, zero regressions.
 
-## Task Pool (corrected 2026-07-19)
-
-### Wave 1 — parallel (non-overlapping paths, no deps)
-
-| Task ID | Scope | Priority |
-|---------|-------|----------|
-| `legacy-ai-player-cleanup` | `src/services/aiPlayer.ts` delete only | P1 |
-| `type-safety-cleanup` | `src/hooks/useAuth.ts`, `src/ai/aiOrchestrator.ts` tighten `any` | P1 |
-| `seo-robots` | `index.html` metadata, `public/robots.txt` new file | P2 |
-
-### Wave 2 — sequential (needs deploy verification)
-
-| Task ID | Scope | Priority |
-|---------|-------|----------|
-| `netlify-csp` | `netlify.toml` CSP header | P1 (deploy-gated) |
-
-### Owner-only (no codex worker)
+## Owner-only follow-ups
 
 - Supabase RLS / email template / OTP verification in Dashboard
 - Netlify env vars / ALLOWED_ORIGIN check

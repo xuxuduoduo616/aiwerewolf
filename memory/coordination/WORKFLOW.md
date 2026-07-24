@@ -82,6 +82,6 @@ Codex 0.144.1, sandbox `workspace-write`, approval `never`.
 
 - Workers must not commit, merge, rebase, manage worktrees, or edit PROJECT_STATE.
 - Rule logic stays in `gameEngine.ts`/`beliefTracker`/`actionSelector`; LLM layer shapes expression.
-- `src/services/aiPlayer.ts` is legacy/unused (pending deletion via task card).
+- The old `src/services/aiPlayer.ts` implementation is removed; do not reintroduce it or use it as a feature base.
 - No deploy, Supabase/Netlify change, commit, or push without owner approval.
 - Secrets, raw transcripts, private session history never go into `memory/coordination/`.

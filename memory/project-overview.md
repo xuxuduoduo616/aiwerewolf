@@ -11,8 +11,8 @@ metadata:
 
 构建一款沉浸式 AI 狼人杀网站：一名真人与 AI 玩家完成完整对局。产品面向中文
 狼人杀体验，采用黑白灰手绘村庄风格，同时保留中英混合的界面文案和发言库回退。
-核心差异不是让大模型自由编规则，而是让规则引擎和信念/行动层决定局势，再由真实
-对局蒸馏发言库和 Gemini 润色表达。
+核心差异不是让大模型自由编规则，而是让规则引擎和信念/行动层决定局势，再由仓库
+内按角色分类的本地发言库和 Gemini 润色表达；发言库的外部来源与许可状态未验证。
 
 首阶段支持两种板型：
 
@@ -33,7 +33,7 @@ metadata:
 | 游戏规则 | `src/gameEngine.ts` + `src/hooks/useGameState.ts` | 阶段机、夜晚结算、投票、死亡、胜负、猎人和女巫规则。 |
 | AI 决策 | `src/ai/beliefTracker.ts` + `actionSelector.ts` | 可解释的怀疑度和行动候选，不把规则判断交给 LLM。 |
 | AI 表达 | `aiOrchestrator.ts` + `speechLibrary.ts` + Gemini | 角色人设、发言库、狼队夜聊、Gemini 润色和失败回退。 |
-| 后端代理 | `netlify/functions/genai-proxy.js` | Gemini API key 隔离、CORS、输入长度、模型白名单和每实例限流。 |
+| 后端代理 | `netlify/functions/genai-proxy.cjs` | Gemini API key 隔离、CORS、输入长度、模型白名单和每实例限流。 |
 | 账户和战绩 | Supabase Auth + Postgres | 邮箱 OTP、`profiles`、`game_records`、RLS、游客本地记录。 |
 
 Gemini 当前默认模型是 `gemini-2.5-flash`。本地 Vite 场景不会调用生产代理，AI
@@ -45,8 +45,8 @@ Gemini 当前默认模型是 `gemini-2.5-flash`。本地 Vite 场景不会调用
 - `src/hooks/useGameState.ts`：客户端游戏流程主状态机。
 - `src/gameEngine.ts`：可单测的纯规则和对局摘要函数。
 - `src/ai/aiOrchestrator.ts`：唯一应继续使用的 AI 对外入口。
-- `src/services/aiPlayer.ts`：未被导入的旧实现，保留待明确清理，不得作为新功能基础。
-- `src/data/*_speeches.json`：按角色拆分的蒸馏发言库；摘要统计为 11,449 条。
+- 旧 `src/services/aiPlayer.ts` 实现已删除；活动 AI 入口仍是 `src/ai/aiOrchestrator.ts`，不得重新引入旧路径。
+- `src/data/*_speeches.json`：6 个按角色拆分的本地发言文件，Git 观察总计 8,521 条；外部语料来源与许可状态未验证。
 - `src/hooks/useAuth.ts`、`src/services/supabaseClient.ts`：OTP、30 天本地会话恢复、
   档案和战绩访问。
 - `docs/supabase-init.sql`、`docs/supabase-setup.md`：Supabase 初始化和 RLS 操作说明。

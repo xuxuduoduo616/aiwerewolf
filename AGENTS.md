@@ -24,7 +24,7 @@
   或他人卡。实现 → 写 report → 设 Status 为 Ready for review 或 Blocked。
 - **Antigravity**：同 worker 限制；协调与集成由 Claude Code coordinator 执行。
 - 规则逻辑冻结在 `gameEngine.ts`/`beliefTracker`/`actionSelector`；LLM 层只
-  塑造表达。`src/services/aiPlayer.ts` 是待清理死代码，不要引用。
+  塑造表达。旧 `src/services/aiPlayer.ts` 已删除，不要重新引入。
 
 ## 完工后写回
 
