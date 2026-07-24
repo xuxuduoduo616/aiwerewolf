@@ -3,16 +3,16 @@
 **Canonical owner:** coordinator。当前已验证状态见
 [coordination/PROJECT_STATE.md](coordination/PROJECT_STATE.md)（本文件不记录状态）。
 
-**更新日期:** 2026-07-24（TC-005 local integration checkpoint）
+**更新日期:** 2026-07-24（TC-006 local integration checkpoint）
 
 ## 当前派发状态
 
 `coordination/tasks/` 中没有可直接派发的 active card；其中卡片是保留用于
 追溯的历史记录：已完成卡标记为 `Accepted`，被后续实现取代的旧卡标记为
 `Superseded`。当前 owner-approved coordinator 工作在独立 invocation artifacts
-中跟踪。S0-GATE 与 TC-001 至 TC-005 已有独立 PASS 证据；TC-002 至 TC-004
-已集成到本地提交 `6320f5f`，TC-005 已集成到 `b762cd2`，均尚未发布。
-下一项是 TC-006 应用集成与受控单人开始流程。
+中跟踪。S0-GATE 与 TC-001 至 TC-006 已有独立 PASS 证据；TC-002 至 TC-004
+已集成到本地提交 `6320f5f`，TC-005 已集成到 `b762cd2`，TC-006 已集成到
+`a7ba1e7`，均尚未发布。下一项是 TC-009 全站英文界面文案。
 
 ## 待重新规划（不是现成任务卡）
 
