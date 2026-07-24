@@ -3,11 +3,13 @@ import LobbySideMenus from './LobbySideMenus';
 import LobbyActionButtons from './LobbyActionButtons';
 import ActivityBanner from './ActivityBanner';
 import type { ShellView } from './GlobalShell';
+import type { LobbySubview } from '../lobbyFeatures';
+import { CalendarDays, Heart, Play, Ticket } from 'lucide-react';
 
 interface Props {
-  onBuildRoom: () => void;
-  onJoinRoom: () => void;
-  onSpectate: () => void;
+  onStartGame: () => void;
+  onOpenSubview: (subview: Extract<LobbySubview, 'activity' | 'faction-support' | 'battle-pass'>) => void;
+  onOpenUtilityMenu: () => void;
   onNavigate: (view: ShellView) => void;
 }
 
@@ -37,7 +39,12 @@ const LevelBadge = ({ level }: { level: number }) => (
 
 /* ─── Lobby Home ─────────────────────────────────────────────────────── */
 
-const LobbyHome: React.FC<Props> = ({ onBuildRoom, onJoinRoom, onSpectate, onNavigate }) => {
+const LobbyHome: React.FC<Props> = ({
+  onStartGame,
+  onOpenSubview,
+  onOpenUtilityMenu,
+  onNavigate,
+}) => {
   return (
     <section className="wol-lobby" aria-label="大厅">
       {/* ── User Profile Panel (top-left) ───────────────────────────── */}
@@ -105,7 +112,12 @@ const LobbyHome: React.FC<Props> = ({ onBuildRoom, onJoinRoom, onSpectate, onNav
         padding: '0 8px',
       }}>
         {/* Left sidebar */}
-        <LobbySideMenus side="left" onNavigate={onNavigate} />
+        <LobbySideMenus
+          side="left"
+          onNavigate={onNavigate}
+          onOpenSubview={onOpenSubview}
+          onOpenUtilityMenu={onOpenUtilityMenu}
+        />
 
         {/* Center character showcase */}
         <div className="wol-lobby-showcase" style={{
@@ -140,7 +152,12 @@ const LobbyHome: React.FC<Props> = ({ onBuildRoom, onJoinRoom, onSpectate, onNav
         </div>
 
         {/* Right sidebar */}
-        <LobbySideMenus side="right" onNavigate={onNavigate} />
+        <LobbySideMenus
+          side="right"
+          onNavigate={onNavigate}
+          onOpenSubview={onOpenSubview}
+          onOpenUtilityMenu={onOpenUtilityMenu}
+        />
       </div>
 
       {/* ── Activity Banner Carousel ─────────────────────────────────── */}
@@ -148,44 +165,61 @@ const LobbyHome: React.FC<Props> = ({ onBuildRoom, onJoinRoom, onSpectate, onNav
         <ActivityBanner />
       </div>
 
-      {/* ── Chat preview + Action buttons row ────────────────────────── */}
-      <div className="wol-lobby-footer" style={{
-        display: 'flex', alignItems: 'flex-end', gap: 8,
-        padding: '12px',
-        marginTop: 8,
-      }}>
-        {/* Lobby chat preview */}
-        <div className="wol-lobby-chat" style={{
-          flex: 1,
-          minWidth: 0,
-          background: 'rgba(255,255,255,0.03)',
-          border: '1px solid rgba(255,255,255,0.06)',
-          borderRadius: 10,
-          padding: '8px 10px',
-          position: 'relative',
-        }}>
-          {/* Unread dot */}
-          <div style={{
-            position: 'absolute', top: 6, right: 8,
-            width: 7, height: 7, borderRadius: '50%',
-            background: '#ef4444',
-            boxShadow: '0 0 4px rgba(239,68,68,0.6)',
-          }} />
-          <div style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.4)', marginBottom: 4 }}>
-            大厅聊天
+      <div className="wol-lobby-lower">
+        {/* ── Primary single-player launch and local feature surfaces ── */}
+        <section className="wol-lobby-launchpad" aria-label="大厅主要操作">
+          <button className="wol-start-game" type="button" onClick={onStartGame}>
+            <Play aria-hidden="true" />
+            <span><strong>开始游戏</strong><small>单人 AI 对局</small></span>
+          </button>
+          <div className="wol-lobby-feature-links">
+            <button type="button" onClick={() => onOpenSubview('activity')}>
+              <CalendarDays aria-hidden="true" /><span>活动</span>
+            </button>
+            <button type="button" onClick={() => onOpenSubview('faction-support')}>
+              <Heart aria-hidden="true" /><span>阵营应援</span>
+            </button>
+            <button type="button" onClick={() => onOpenSubview('battle-pass')}>
+              <Ticket aria-hidden="true" /><span>通行证</span>
+            </button>
           </div>
-          <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.28)', lineHeight: 1.5 }}>
-            <div>夜行者：有人一起开黑吗？</div>
-            <div style={{ marginTop: 1 }}>魔法少女：求带新手场~</div>
-          </div>
-        </div>
+        </section>
 
-        {/* Action buttons */}
-        <LobbyActionButtons
-          onBuildRoom={onBuildRoom}
-          onJoinRoom={onJoinRoom}
-          onSpectate={onSpectate}
-        />
+        {/* ── Chat preview + Action buttons row ──────────────────────── */}
+        <div className="wol-lobby-footer" style={{
+          display: 'flex', alignItems: 'flex-end', gap: 8,
+          padding: '12px',
+          marginTop: 8,
+        }}>
+          {/* Lobby chat preview */}
+          <div className="wol-lobby-chat" style={{
+            flex: 1,
+            minWidth: 0,
+            background: 'rgba(255,255,255,0.03)',
+            border: '1px solid rgba(255,255,255,0.06)',
+            borderRadius: 8,
+            padding: '8px 10px',
+            position: 'relative',
+          }}>
+            {/* Unread dot */}
+            <div style={{
+              position: 'absolute', top: 6, right: 8,
+              width: 7, height: 7, borderRadius: '50%',
+              background: '#ef4444',
+              boxShadow: '0 0 4px rgba(239,68,68,0.6)',
+            }} />
+            <div style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.4)', marginBottom: 4 }}>
+              大厅聊天
+            </div>
+            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.28)', lineHeight: 1.5 }}>
+              <div>夜行者：有人一起开黑吗？</div>
+              <div style={{ marginTop: 1 }}>魔法少女：求带新手场~</div>
+            </div>
+          </div>
+
+          {/* Action buttons */}
+          <LobbyActionButtons />
+        </div>
       </div>
     </section>
   );

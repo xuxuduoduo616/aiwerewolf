@@ -1,5 +1,6 @@
 import React from 'react';
 import type { ShellView } from './GlobalShell';
+import type { LobbySubview } from '../lobbyFeatures';
 import {
   BadgeCheck,
   Gamepad2,
@@ -11,37 +12,71 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 
-interface Props {
-  side: 'left' | 'right';
+type SideMenuLobbySubview = Extract<LobbySubview, 'activity' | 'faction-support' | 'battle-pass'>;
+
+export type LobbySideMenuAction =
+  | { type: 'shell'; view: ShellView }
+  | { type: 'lobby'; subview: SideMenuLobbySubview }
+  | { type: 'utility' };
+
+export interface LobbySideMenuHandlers {
   onNavigate: (view: ShellView) => void;
+  onOpenSubview: (subview: SideMenuLobbySubview) => void;
+  onOpenUtilityMenu: () => void;
+}
+
+interface Props extends LobbySideMenuHandlers {
+  side: 'left' | 'right';
 }
 
 /* ─── Menu definitions ────────────────────────────────────────────────── */
 
-interface MenuItem {
+interface MenuItemBase {
   label: string;
   Icon: LucideIcon;
   hasRedDot?: boolean;
-  targetView?: ShellView;
 }
 
-const LEFT_MENUS: MenuItem[] = [
-  { label: '活动', Icon: Sparkles, hasRedDot: true, targetView: 'shop' },
-  { label: '阵营应援', Icon: UsersRound },
-  { label: '限时娱乐', Icon: Gamepad2, hasRedDot: true, targetView: 'wolfvillage' },
+export type LobbySideMenuItem = MenuItemBase & (
+  | { action: LobbySideMenuAction; disabled?: false; unavailableLabel?: never }
+  | { action?: never; disabled: true; unavailableLabel: string }
+);
+
+export const LEFT_MENUS: readonly LobbySideMenuItem[] = [
+  { label: '活动', Icon: Sparkles, hasRedDot: true, action: { type: 'lobby', subview: 'activity' } },
+  { label: '阵营应援', Icon: UsersRound, action: { type: 'lobby', subview: 'faction-support' } },
+  { label: '限时娱乐', Icon: Gamepad2, hasRedDot: true, action: { type: 'shell', view: 'wolfvillage' } },
 ];
 
-const RIGHT_MENUS: MenuItem[] = [
-  { label: '功能菜单', Icon: MoreHorizontal },
-  { label: '任务', Icon: ListChecks, hasRedDot: true },
-  { label: '通行证', Icon: BadgeCheck },
-  { label: '首充', Icon: Zap, hasRedDot: true, targetView: 'shop' },
+export const RIGHT_MENUS: readonly LobbySideMenuItem[] = [
+  { label: '功能菜单', Icon: MoreHorizontal, action: { type: 'utility' } },
+  { label: '任务', Icon: ListChecks, disabled: true, unavailableLabel: '未开放' },
+  { label: '通行证', Icon: BadgeCheck, action: { type: 'lobby', subview: 'battle-pass' } },
+  { label: '首充', Icon: Zap, hasRedDot: true, action: { type: 'shell', view: 'shop' } },
 ];
+
+export const activateLobbySideMenuItem = (
+  item: LobbySideMenuItem,
+  handlers: LobbySideMenuHandlers,
+): boolean => {
+  if (item.disabled) return false;
+
+  if (item.action.type === 'shell') handlers.onNavigate(item.action.view);
+  if (item.action.type === 'lobby') handlers.onOpenSubview(item.action.subview);
+  if (item.action.type === 'utility') handlers.onOpenUtilityMenu();
+  return true;
+};
 
 /* ─── Component ───────────────────────────────────────────────────────── */
 
-const LobbySideMenus: React.FC<Props> = ({ side, onNavigate }) => {
+const LobbySideMenus: React.FC<Props> = ({
+  side,
+  onNavigate,
+  onOpenSubview,
+  onOpenUtilityMenu,
+}) => {
   const menus = side === 'left' ? LEFT_MENUS : RIGHT_MENUS;
+  const handlers = { onNavigate, onOpenSubview, onOpenUtilityMenu };
 
   return (
     <div className={`wol-side-menu wol-side-menu--${side}`} style={{
@@ -57,14 +92,23 @@ const LobbySideMenus: React.FC<Props> = ({ side, onNavigate }) => {
           key={item.label}
           type="button"
           className="wol-icon-circle"
-          style={{ position: 'relative' }}
-          onClick={() => item.targetView ? onNavigate(item.targetView) : undefined}
-          aria-label={item.label}
+          style={{
+            position: 'relative',
+            opacity: item.disabled ? 0.48 : undefined,
+            cursor: item.disabled ? 'not-allowed' : undefined,
+          }}
+          onClick={item.disabled ? undefined : () => activateLobbySideMenuItem(item, handlers)}
+          disabled={item.disabled}
+          aria-label={item.disabled ? `${item.label}，${item.unavailableLabel}` : item.label}
+          title={item.disabled ? `${item.label}${item.unavailableLabel}` : item.label}
         >
           <item.Icon aria-hidden="true" />
           <span style={{ fontSize: 8, lineHeight: 1.2 }}>{item.label}</span>
+          {item.disabled && (
+            <small style={{ fontSize: 7, lineHeight: 1.1 }}>{item.unavailableLabel}</small>
+          )}
           {item.hasRedDot && (
-            <div style={{
+            <span aria-hidden="true" style={{
               position: 'absolute', top: 3, right: 5,
               width: 6, height: 6, borderRadius: '50%',
               background: '#ef4444',

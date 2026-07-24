@@ -1,14 +1,23 @@
 import React from 'react';
-import { CircleDollarSign, Gem, Plus, Ticket } from 'lucide-react';
+import { CircleDollarSign, Gem, Plus, Settings as Gear, Ticket } from 'lucide-react';
 
 interface Props {
   coins: number;
   coupons: number;
   crystals: number;
   onNavigateToShop?: () => void;
+  onOpenUtilityMenu: () => void;
+  utilityTriggerRef?: React.RefObject<HTMLButtonElement>;
 }
 
-const TopStatusBar: React.FC<Props> = ({ coins, coupons, crystals, onNavigateToShop }) => {
+const TopStatusBar: React.FC<Props> = ({
+  coins,
+  coupons,
+  crystals,
+  onNavigateToShop,
+  onOpenUtilityMenu,
+  utilityTriggerRef,
+}) => {
   const plusBtn = (
     <button type="button" className="wol-currency-plus" aria-label="前往商店购买" onClick={onNavigateToShop}>
       <Plus aria-hidden="true" />
@@ -34,6 +43,17 @@ const TopStatusBar: React.FC<Props> = ({ coins, coupons, crystals, onNavigateToS
           <span className="wol-currency-value" title={crystals.toLocaleString()}>{crystals.toLocaleString()}</span>
           {plusBtn}
         </div>
+        <button
+          ref={utilityTriggerRef}
+          type="button"
+          className="wol-utility-trigger"
+          onClick={onOpenUtilityMenu}
+          aria-label="打开功能菜单"
+          title="功能菜单"
+          aria-haspopup="menu"
+        >
+          <Gear aria-hidden="true" />
+        </button>
       </div>
 
       {/* Marquee ticker */}

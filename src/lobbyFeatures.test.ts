@@ -74,6 +74,20 @@ describe('versioned storage', () => {
     expect(loadLobbyFeatureState(null, storage).factionContributions.deepseek).toBe(4);
   });
 
+  it('resets a wrong-version user without disturbing another user state', () => {
+    const { storage } = createMemoryStorage();
+    const validState = claimLobbyActivity(createDefaultLobbyFeatureState(), 'daily-roll-call');
+    saveLobbyFeatureState('valid-user', validState, storage);
+    storage.setItem(
+      getLobbyFeatureStorageKey('future-user'),
+      JSON.stringify({ ...createDefaultLobbyFeatureState(), version: 999 }),
+    );
+
+    expect(loadLobbyFeatureState('future-user', storage)).toEqual(createDefaultLobbyFeatureState());
+    expect(loadLobbyFeatureState('valid-user', storage)).toEqual(validState);
+    expect(loadLobbyFeatureState(null, storage)).toEqual(createDefaultLobbyFeatureState());
+  });
+
   it('writes only the active namespaced key', () => {
     const { storage, values } = createMemoryStorage();
     expect(saveLobbyFeatureState('account-a', createDefaultLobbyFeatureState(), storage)).toBe(true);

@@ -56,7 +56,7 @@ const MATCH_TABS: readonly SubTab[] = ['home', 'beginner', 'entertainment', 'adv
 
 /* ─── Component ──────────────────────────────────────────────────────── */
 
-const MatchSelection: React.FC<Props> = ({ onBack, onSelectBoard, onMultiMatch, onLimitedSelect }) => {
+const MatchSelection: React.FC<Props> = ({ onBack, onSelectBoard }) => {
   const [subTab, setSubTab] = useState<SubTab>('home');
 
   return (
@@ -133,9 +133,10 @@ const MatchSelection: React.FC<Props> = ({ onBack, onSelectBoard, onMultiMatch, 
           type="button"
           className="wol-btn wol-btn--primary wol-btn--lg"
           style={{ width: '100%', marginBottom: 20, fontSize: 15, fontWeight: 800 }}
-          onClick={() => onMultiMatch?.()}
+          disabled
+          title="多选匹配未开放"
         >
-          多选匹配
+          多选匹配 · 未开放
         </button>
 
         {/* ── Grid columns (限时活动场) ──────────────────────────────────── */}
@@ -151,7 +152,7 @@ const MatchSelection: React.FC<Props> = ({ onBack, onSelectBoard, onMultiMatch, 
                 roleSummary={board.roleSummary}
                 season={board.season}
                 deadline={board.deadline}
-                onSelect={onLimitedSelect}
+                disabled
               />
             ))}
           </div>

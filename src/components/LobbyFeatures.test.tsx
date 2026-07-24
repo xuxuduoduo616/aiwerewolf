@@ -6,6 +6,8 @@ import FactionSupportView from './FactionSupportView';
 import LobbyActivityView from './LobbyActivityView';
 import LobbyFeatureMenu from './LobbyFeatureMenu';
 import WolfVillagePreview from './WolfVillagePreview';
+import LobbyActionButtons from './LobbyActionButtons';
+import MatchSelection from './MatchSelection';
 
 describe('standalone lobby feature surfaces', () => {
   it('renders explicit current and limited activity categories with login rewards', () => {
@@ -151,5 +153,22 @@ describe('standalone lobby feature surfaces', () => {
     expect(html).toContain('本页面不创建房间、不连接真人对局');
     expect(html.match(/disabled=""/g)).toHaveLength(7);
     for (const action of ['建房', '跟房', '观战']) expect(html).toContain(action);
+  });
+
+  it('keeps lobby build, join, and spectate native-disabled', () => {
+    const html = renderToStaticMarkup(<LobbyActionButtons />);
+    for (const action of ['建房', '跟房', '观战']) expect(html).toContain(action);
+    expect(html.match(/disabled=""/g)).toHaveLength(3);
+    expect(html).toContain('当前不创建或连接房间');
+  });
+
+  it('keeps multi-match and limited boards native-disabled', () => {
+    const html = renderToStaticMarkup(
+      <MatchSelection onBack={() => undefined} onSelectBoard={() => undefined} />,
+    );
+    expect(html).toContain('多选匹配 · 未开放');
+    expect(html).toContain('12人觉醒摄梦人');
+    expect(html).toContain('9人血月猎魔人');
+    expect(html.match(/disabled=""/g)).toHaveLength(3);
   });
 });

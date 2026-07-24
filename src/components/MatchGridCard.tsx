@@ -6,9 +6,10 @@ interface Props {
   season: string;
   deadline: string;
   onSelect?: () => void;
+  disabled?: boolean;
 }
 
-const MatchGridCard: React.FC<Props> = ({ name, roleSummary, season, deadline, onSelect }) => {
+const MatchGridCard: React.FC<Props> = ({ name, roleSummary, season, deadline, onSelect, disabled = false }) => {
   const cardContent = (
     <>
       {/* Top: character placeholder */}
@@ -58,14 +59,17 @@ const MatchGridCard: React.FC<Props> = ({ name, roleSummary, season, deadline, o
     </>
   );
 
-  if (onSelect) {
+  if (onSelect || disabled) {
     return (
       <button
         type="button"
-        onClick={onSelect}
+        onClick={disabled ? undefined : onSelect}
         className="wol-match-grid-card"
+        disabled={disabled}
+        title={disabled ? `${name}未开放` : name}
       >
         {cardContent}
+        {disabled && <span className="wol-match-unavailable">未开放</span>}
       </button>
     );
   }

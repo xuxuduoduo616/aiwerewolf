@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { GamePhase, Role, DIFFICULTY_CONFIGS, difficultyLabel, difficultyDescription } from './types';
-import { GAME_MODES, getPhaseLabel, ROLE_DESCRIPTIONS, ROLE_LABELS } from './constants';
+import { GamePhase, Role } from './types';
+import { getPhaseLabel, ROLE_DESCRIPTIONS, ROLE_LABELS } from './constants';
 import useAuth from './hooks/useAuth';
 import { useRecords } from './hooks/useRecords';
 import { useGameState } from './hooks/useGameState';
@@ -15,11 +15,20 @@ import GameLogDialog, { GameLogFeed } from './components/GameLogDialog';
 import GlobalShell from './components/GlobalShell';
 import type { ShellView } from './components/GlobalShell';
 import LobbyHome from './components/LobbyHome';
-import MatchSelection from './components/MatchSelection';
 import ProfileView from './components/ProfileView';
 import CoinStore from './components/CoinStore';
+import StartGameFlow from './components/StartGameFlow';
+import UtilityMenu, { type UtilityDestination } from './components/UtilityMenu';
+import UtilityView from './components/UtilityView';
+import UnavailableNotice from './components/UnavailableNotice';
+import LobbyActivityView from './components/LobbyActivityView';
+import FactionSupportView from './components/FactionSupportView';
+import BattlePassView from './components/BattlePassView';
+import WolfVillagePreview from './components/WolfVillagePreview';
 import TurnstileWidget from './components/TurnstileWidget';
 import { useDisplayLanguage } from './i18n';
+import { mapGameSetupToConfig, type GameSetup, type LobbySubview } from './lobbyFeatures';
+import { useLobbyFeatures } from './hooks/useLobbyFeatures';
 import { resolveVoteResult } from './gameEngine';
 import { playTick } from './services/speechAudio';
 import './styles/game-responsive.css';
@@ -47,11 +56,16 @@ const App: React.FC = () => {
   const auth = useAuth();
   const [displayLanguage, toggleDisplayLanguage] = useDisplayLanguage();
   const [activeView, setActiveView] = useState<ShellView>('home');
+  const [lobbySubview, setLobbySubview] = useState<LobbySubview>('home');
+  const [utilityView, setUtilityView] = useState<'menu' | UtilityDestination | null>(null);
+  const [startRequestRevision, setStartRequestRevision] = useState(0);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [isGameInfoOpen, setIsGameInfoOpen] = useState(false);
   const gameInfoTriggerRef = React.useRef<HTMLButtonElement>(null);
+  const utilityTriggerRef = React.useRef<HTMLButtonElement>(null);
   const rec = useRecords(auth.session);
   const wallet = useWallet(auth.session, auth.isGuest);
+  const lobbyFeatures = useLobbyFeatures(auth.session?.user.id ?? null);
   const game = useGameState({
     session: auth.session,
     isGuest: auth.isGuest,
@@ -62,6 +76,30 @@ const App: React.FC = () => {
     recordError: rec.recordError,
     setRecordError: rec.setRecordError,
   });
+  const startRequestLockedRef = React.useRef(false);
+  const pendingStartRef = React.useRef<{ setup: GameSetup; config: NonNullable<ReturnType<typeof mapGameSetupToConfig>> } | null>(null);
+
+  const finishStartRequest = React.useCallback((setup: GameSetup) => {
+    const config = mapGameSetupToConfig(setup);
+    if (!config || startRequestLockedRef.current) return;
+
+    startRequestLockedRef.current = true;
+    pendingStartRef.current = { setup, config };
+    if (game.difficulty === setup.difficulty) {
+      setStartRequestRevision(revision => revision + 1);
+    } else {
+      game.setDifficulty(setup.difficulty);
+    }
+  }, [game.difficulty, game.setDifficulty]);
+
+  React.useEffect(() => {
+    const pending = pendingStartRef.current;
+    if (!pending || game.difficulty !== pending.setup.difficulty) return;
+
+    pendingStartRef.current = null;
+    game.startGame(pending.config, displayLanguage);
+    rec.setShowRecords(false);
+  }, [displayLanguage, game.difficulty, game.startGame, rec.setShowRecords, startRequestRevision]);
 
   // Vote-countdown tick: one short beep per second during the final 3s of the
   // human vote countdown (browser-tts-mvp). The audio service enforces mute
@@ -193,7 +231,11 @@ const App: React.FC = () => {
 
   if (isInGame) {
     const returnToLobby = () => {
+      startRequestLockedRef.current = false;
+      pendingStartRef.current = null;
       setIsGameInfoOpen(false);
+      setActiveView('home');
+      setLobbySubview('home');
       game.setPhase(GamePhase.LOBBY);
       rec.setShowRecords(true);
     };
@@ -414,44 +456,99 @@ const App: React.FC = () => {
   }
 
   // Determine which content view to show inside the shell
+  const navigateShell = (view: ShellView) => {
+    setUtilityView(null);
+    setActiveView(view);
+    if (view === 'home') setLobbySubview('home');
+  };
+
+  const closeUtilityMenu = () => {
+    setUtilityView(null);
+    requestAnimationFrame(() => utilityTriggerRef.current?.focus());
+  };
+
+  const renderLobbyContent = () => {
+    switch (lobbySubview) {
+      case 'home':
+        return (
+          <LobbyHome
+            onStartGame={() => setLobbySubview('mode-choice')}
+            onOpenSubview={setLobbySubview}
+            onOpenUtilityMenu={() => setUtilityView('menu')}
+            onNavigate={navigateShell}
+          />
+        );
+      case 'mode-choice':
+      case 'match-setup':
+        return (
+          <StartGameFlow
+            initialStep={lobbySubview}
+            onSubviewChange={setLobbySubview}
+            onBackToLobby={() => setLobbySubview('home')}
+            onConfirm={finishStartRequest}
+          />
+        );
+      case 'activity':
+        return (
+          <LobbyActivityView
+            claimedActivityIds={lobbyFeatures.state.claimedActivityIds}
+            onClaimActivity={lobbyFeatures.claimActivity}
+            onBack={() => setLobbySubview('home')}
+          />
+        );
+      case 'faction-support':
+        return (
+          <FactionSupportView
+            contributions={lobbyFeatures.state.factionContributions}
+            onContribute={lobbyFeatures.contributeToFaction}
+            onBack={() => setLobbySubview('home')}
+          />
+        );
+      case 'battle-pass':
+        return (
+          <BattlePassView
+            claimedTierIds={lobbyFeatures.state.claimedBattlePassTierIds}
+            onClaimTier={lobbyFeatures.claimBattlePassTier}
+            onClaimEligibleTiers={lobbyFeatures.claimEligibleBattlePassTiers}
+            onBack={() => setLobbySubview('home')}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
   const renderShellContent = () => {
     // Game views are rendered OUTSIDE the shell (full-screen) — see isInGame above.
     // Lobby/shop/profile views remain inside the application shell.
 
+    if (utilityView === 'menu') {
+      return <UtilityMenu onSelect={setUtilityView} onBack={closeUtilityMenu} />;
+    }
+    if (utilityView) {
+      return (
+        <UtilityView
+          destination={utilityView}
+          displayLanguage={displayLanguage}
+          onToggleLanguage={toggleDisplayLanguage}
+          onBack={() => setUtilityView('menu')}
+        />
+      );
+    }
+
     switch (activeView) {
       case 'home':
-        return (
-          <LobbyHome
-            onBuildRoom={() => setActiveView('wolfvillage')}
-            onJoinRoom={() => setActiveView('wolfvillage')}
-            onSpectate={() => setActiveView('wolfvillage')}
-            onNavigate={setActiveView}
-          />
-        );
+        return renderLobbyContent();
       case 'friends':
         return (
-          <div className="wol-placeholder-view" style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            minHeight: '60vh', color: 'rgba(255,255,255,0.25)', fontSize: 14, fontWeight: 600,
-          }}>
-            好友功能即将开放
-          </div>
-        );
-      case 'wolfvillage':
-        return (
-          <MatchSelection
-            onBack={() => setActiveView('home')}
-            onSelectBoard={(mode) => {
-              game.startGame(mode, displayLanguage);
-              rec.setShowRecords(false);
-            }}
-            onLimitedSelect={() => {
-              // Limited-time boards not yet implemented — show coming soon via game start
-              game.startGame(GAME_MODES[0], displayLanguage);
-              rec.setShowRecords(false);
-            }}
+          <UnavailableNotice
+            title="好友"
+            description="好友与消息属于社交基础路线预览，当前页面不会连接真人社交服务。"
+            onBack={() => navigateShell('home')}
           />
         );
+      case 'wolfvillage':
+        return <WolfVillagePreview onBack={() => navigateShell('home')} />;
       case 'shop':
         return (
           <CoinStore
@@ -474,7 +571,9 @@ const App: React.FC = () => {
   return (
     <GlobalShell
       activeView={activeView}
-      onNavigate={setActiveView}
+      onNavigate={navigateShell}
+      onOpenUtilityMenu={() => setUtilityView('menu')}
+      utilityTriggerRef={utilityTriggerRef}
       fullscreen={false}
       coins={wallet.coins}
       coupons={wallet.coupons}

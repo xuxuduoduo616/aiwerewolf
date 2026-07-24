@@ -1,3 +1,6 @@
+import { GAME_MODES } from './constants';
+import type { Difficulty, GameConfig } from './types';
+
 export const LOBBY_SUBVIEWS = [
   'home',
   'mode-choice',
@@ -8,6 +11,33 @@ export const LOBBY_SUBVIEWS = [
 ] as const;
 
 export type LobbySubview = (typeof LOBBY_SUBVIEWS)[number];
+
+export interface GameSetup {
+  mode: 'single';
+  boardId: 'nine-player' | 'twelve-player';
+  difficulty: Difficulty;
+}
+
+const GAME_SETUP_BOARD_CONFIG_IDS: Record<GameSetup['boardId'], GameConfig['id']> = {
+  'nine-player': '9-standard',
+  'twelve-player': '12-standard',
+};
+
+const GAME_SETUP_DIFFICULTIES: readonly Difficulty[] = ['easy', 'normal', 'hard'];
+
+export const isGameSetup = (value: unknown): value is GameSetup => {
+  if (!value || typeof value !== 'object') return false;
+  const candidate = value as Partial<GameSetup>;
+  return candidate.mode === 'single'
+    && (candidate.boardId === 'nine-player' || candidate.boardId === 'twelve-player')
+    && GAME_SETUP_DIFFICULTIES.includes(candidate.difficulty as Difficulty);
+};
+
+export const mapGameSetupToConfig = (value: unknown): GameConfig | null => {
+  if (!isGameSetup(value)) return null;
+  const configId = GAME_SETUP_BOARD_CONFIG_IDS[value.boardId];
+  return GAME_MODES.find(config => config.id === configId) ?? null;
+};
 
 export const LOBBY_FEATURES_VERSION = 1 as const;
 export const LOBBY_FEATURES_STORAGE_PREFIX = 'aiwerewolf:lobby-features:v1:';
