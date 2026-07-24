@@ -17,11 +17,11 @@ describe('difficulty config i18n fields', () => {
   });
 
   it('maps zh labels to the required English labels', () => {
-    expect(DIFFICULTY_CONFIGS.easy.label).toBe('新手');
+    expect(DIFFICULTY_CONFIGS.easy.label).toBe('Beginner');
     expect(DIFFICULTY_CONFIGS.easy.labelEn).toBe('Beginner');
-    expect(DIFFICULTY_CONFIGS.normal.label).toBe('进阶');
+    expect(DIFFICULTY_CONFIGS.normal.label).toBe('Intermediate');
     expect(DIFFICULTY_CONFIGS.normal.labelEn).toBe('Intermediate');
-    expect(DIFFICULTY_CONFIGS.hard.label).toBe('高手');
+    expect(DIFFICULTY_CONFIGS.hard.label).toBe('Expert');
     expect(DIFFICULTY_CONFIGS.hard.labelEn).toBe('Expert');
   });
 

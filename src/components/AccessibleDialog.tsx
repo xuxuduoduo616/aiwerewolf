@@ -87,7 +87,7 @@ const AccessibleDialog: React.FC<AccessibleDialogProps> = ({
   description,
   children,
   onClose,
-  closeLabel = '关闭对话框',
+  closeLabel = 'Close dialog',
   className = '',
   initialFocusRef,
   returnFocusRef,

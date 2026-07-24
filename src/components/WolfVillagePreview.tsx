@@ -22,60 +22,60 @@ const VILLAGE_SOCIAL_PREVIEWS: readonly {
   status: string;
   Icon: LucideIcon;
 }[] = [
-  { title: '添加好友', status: '好友入口预告', Icon: UserPlus },
-  { title: '消息中心', status: '私信与通知预告', Icon: MessageSquare },
-  { title: '创建狼村', status: '社群创建预告', Icon: Home },
-  { title: '加入狼村', status: '社群加入预告', Icon: DoorOpen },
+  { title: 'Add Friends', status: 'Friend entry preview', Icon: UserPlus },
+  { title: 'Message Center', status: 'Direct message and notification preview', Icon: MessageSquare },
+  { title: 'Create Village', status: 'Community creation preview', Icon: Home },
+  { title: 'Join Village', status: 'Community joining preview', Icon: DoorOpen },
 ] as const;
 
 const WolfVillagePreview: React.FC<WolfVillagePreviewProps> = ({ onBack }) => (
   <main className="lobby-feature-page" aria-labelledby="wolf-village-title">
     <header className="lobby-feature-header">
       {onBack ? (
-        <button className="lobby-feature-icon-button" type="button" onClick={onBack} aria-label="返回" title="返回">
+        <button className="lobby-feature-icon-button" type="button" onClick={onBack} aria-label="Back" title="Back">
           <ArrowLeft aria-hidden="true" />
         </button>
       ) : <span className="lobby-feature-header-spacer" />}
       <div>
-        <h1 id="wolf-village-title">狼村</h1>
-        <span className="lobby-feature-kicker">社交路线预告</span>
+        <h1 id="wolf-village-title">Wolf Village</h1>
+        <span className="lobby-feature-kicker">Social Roadmap Preview</span>
       </div>
       <Home className="lobby-feature-header-icon" aria-hidden="true" />
     </header>
 
     <div className="lobby-feature-status" role="status">
       <Bot aria-hidden="true" />
-      <span>当前仅单人 AI 对局可用；以下为狼村社交预告</span>
+      <span>Only single-player AI matches are available. The features below are social previews.</span>
     </div>
 
     <div className="lobby-feature-section-heading">
-      <h2>社交功能预览</h2>
-      <span>暂未接入服务</span>
+      <h2>Social Feature Preview</h2>
+      <span>Services are not connected</span>
     </div>
-    <section className="lobby-village-social-grid" aria-label="狼村社交功能预览">
+    <section className="lobby-village-social-grid" aria-label="Wolf Village social feature preview">
       {VILLAGE_SOCIAL_PREVIEWS.map(({ title, status, Icon }) => (
         <article className="lobby-feature-card lobby-village-social-preview" key={title}>
           <Icon aria-hidden="true" />
           <div><h3>{title}</h3><span>{status}</span></div>
-          <button type="button" disabled><Lock aria-hidden="true" />预告</button>
+          <button type="button" disabled><Lock aria-hidden="true" />Preview</button>
         </article>
       ))}
     </section>
 
     <div className="lobby-feature-section-heading lobby-village-room-heading">
-      <h2>真人多人房间</h2>
-      <span>未来阶段</span>
+      <h2>Live Multiplayer Rooms</h2>
+      <span>Future stage</span>
     </div>
 
-    <section className="lobby-village-room-actions" aria-label="多人房间操作">
-      <button type="button" disabled title="多人房间未开放"><Home aria-hidden="true" />建房<span>未开放</span></button>
-      <button type="button" disabled title="多人房间未开放"><Users aria-hidden="true" />跟房<span>未开放</span></button>
-      <button type="button" disabled title="多人房间未开放"><Eye aria-hidden="true" />观战<span>未开放</span></button>
+    <section className="lobby-village-room-actions" aria-label="Multiplayer room actions">
+      <button type="button" disabled title="Multiplayer rooms are unavailable"><Home aria-hidden="true" />Create<span>Unavailable</span></button>
+      <button type="button" disabled title="Multiplayer rooms are unavailable"><Users aria-hidden="true" />Join<span>Unavailable</span></button>
+      <button type="button" disabled title="Multiplayer rooms are unavailable"><Eye aria-hidden="true" />Spectate<span>Unavailable</span></button>
     </section>
 
     <div className="lobby-feature-status lobby-village-disabled-status" role="status">
       <Lock aria-hidden="true" />
-      <span>本页面不创建房间、不连接真人对局</span>
+      <span>This page does not create rooms or connect to live matches.</span>
     </div>
   </main>
 );

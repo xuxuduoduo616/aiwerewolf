@@ -10,10 +10,10 @@ interface BattlePassTier {
 }
 
 export const BATTLE_PASS_TIERS: readonly BattlePassTier[] = [
-  { id: 'tier-1', level: 1, freeRewardLabel: '新月印记', premiumRewardLabel: '银月头像框预览' },
-  { id: 'tier-2', level: 2, freeRewardLabel: '推理家徽记', premiumRewardLabel: '狼王入场效果预览' },
-  { id: 'tier-3', level: 3, freeRewardLabel: '守村人称号', premiumRewardLabel: '星夜名片预览' },
-  { id: 'tier-4', level: 4, freeRewardLabel: '满月边框预览', premiumRewardLabel: '月蚀时装预览' },
+  { id: 'tier-1', level: 1, freeRewardLabel: 'Crescent Mark', premiumRewardLabel: 'Silver Moon Avatar Frame Preview' },
+  { id: 'tier-2', level: 2, freeRewardLabel: 'Deduction Badge', premiumRewardLabel: 'Wolf King Entrance Effect Preview' },
+  { id: 'tier-3', level: 3, freeRewardLabel: 'Village Guardian Title', premiumRewardLabel: 'Starlight Profile Card Preview' },
+  { id: 'tier-4', level: 4, freeRewardLabel: 'Full Moon Frame Preview', premiumRewardLabel: 'Eclipse Outfit Preview' },
 ] as const;
 
 export interface BattlePassViewProps {
@@ -61,20 +61,20 @@ const BattlePassView: React.FC<BattlePassViewProps> = ({
     <main className="lobby-feature-page" aria-labelledby="battle-pass-title">
       <header className="lobby-feature-header">
         {onBack ? (
-          <button className="lobby-feature-icon-button" type="button" onClick={onBack} aria-label="返回" title="返回">
+          <button className="lobby-feature-icon-button" type="button" onClick={onBack} aria-label="Back" title="Back">
             <ArrowLeft aria-hidden="true" />
           </button>
         ) : <span className="lobby-feature-header-spacer" />}
         <div>
-          <h1 id="battle-pass-title">通行证</h1>
-          <span className="lobby-feature-kicker">免费本地进度</span>
+          <h1 id="battle-pass-title">Battle Pass</h1>
+          <span className="lobby-feature-kicker">Free Local Progress</span>
         </div>
         <Ticket className="lobby-feature-header-icon" aria-hidden="true" />
       </header>
 
-      <section className="lobby-pass-progress" aria-label={`当前通行证等级 ${boundedTier}，EXP ${normalizedCurrentExp} / ${normalizedTargetExp}`}>
+      <section className="lobby-pass-progress" aria-label={`Current Battle Pass level ${boundedTier}, EXP ${normalizedCurrentExp} / ${normalizedTargetExp}`}>
         <div>
-          <span>当前等级</span>
+          <span>Current Level</span>
           <strong>{boundedTier}</strong>
         </div>
         <div className="lobby-pass-progress-track" aria-hidden="true">
@@ -82,7 +82,7 @@ const BattlePassView: React.FC<BattlePassViewProps> = ({
         </div>
         <div className="lobby-pass-exp-row">
           <span><Zap aria-hidden="true" />EXP {normalizedCurrentExp} / {normalizedTargetExp}</span>
-          <small>距离下一级 {normalizedTargetExp - normalizedCurrentExp} EXP</small>
+          <small>{normalizedTargetExp - normalizedCurrentExp} EXP to next level</small>
         </div>
       </section>
 
@@ -93,10 +93,10 @@ const BattlePassView: React.FC<BattlePassViewProps> = ({
         onClick={claimAllEligible}
       >
         {eligibleTierIds.length === 0 ? <Check aria-hidden="true" /> : <Gift aria-hidden="true" />}
-        {eligibleTierIds.length === 0 ? '免费奖励已全部领取' : `一键领取免费奖励 (${eligibleTierIds.length})`}
+        {eligibleTierIds.length === 0 ? 'All Free Rewards Claimed' : `Claim All Free Rewards (${eligibleTierIds.length})`}
       </button>
 
-      <section className="lobby-feature-list" aria-label="免费通行证等级">
+      <section className="lobby-feature-list" aria-label="Free Battle Pass tiers">
         {BATTLE_PASS_TIERS.map(tier => {
           const claimed = claimedTierIds.includes(tier.id);
           const locked = tier.level > boundedTier;
@@ -106,11 +106,11 @@ const BattlePassView: React.FC<BattlePassViewProps> = ({
               <div className="lobby-feature-card-body">
                 <div className="lobby-pass-reward-preview lobby-pass-reward-preview--free">
                   <ShieldCheck aria-hidden="true" />
-                  <span><small>免费奖励预览</small>{tier.freeRewardLabel}</span>
+                  <span><small>Free Reward Preview</small>{tier.freeRewardLabel}</span>
                 </div>
                 <div className="lobby-pass-reward-preview lobby-pass-reward-preview--premium">
                   <Star aria-hidden="true" />
-                  <span><small>高级奖励预览</small>{tier.premiumRewardLabel}</span>
+                  <span><small>Premium Reward Preview</small>{tier.premiumRewardLabel}</span>
                   <Lock aria-hidden="true" />
                 </div>
               </div>
@@ -121,7 +121,7 @@ const BattlePassView: React.FC<BattlePassViewProps> = ({
                 onClick={() => onClaimTier(tier.id)}
               >
                 {claimed ? <Check aria-hidden="true" /> : locked ? <Lock aria-hidden="true" /> : <ShieldCheck aria-hidden="true" />}
-                {claimed ? '本地已领取' : locked ? '未解锁' : '标记领取'}
+                {claimed ? 'Claimed Locally' : locked ? 'Locked' : 'Mark as Claimed'}
               </button>
             </article>
           );
@@ -131,10 +131,10 @@ const BattlePassView: React.FC<BattlePassViewProps> = ({
       <section className="lobby-feature-unavailable lobby-pass-premium" aria-labelledby="premium-pass-title">
         <Lock aria-hidden="true" />
         <div>
-          <h2 id="premium-pass-title">高级通行证</h2>
-          <span>高级轨仅供奖励预览；购买、付费奖励与真实资产均未开放</span>
+          <h2 id="premium-pass-title">Premium Battle Pass</h2>
+          <span>The premium track is a reward preview only. Purchases, paid rewards, and real assets are unavailable.</span>
         </div>
-        <button type="button" disabled>升级购买未开放</button>
+        <button type="button" disabled>Upgrade Unavailable</button>
       </section>
     </main>
   );

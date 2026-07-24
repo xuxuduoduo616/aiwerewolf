@@ -29,9 +29,6 @@ interface GameLogDialogProps extends Omit<GameLogFeedProps, 'endRef'> {
   recordError?: string;
 }
 
-const labelFor = (language: DisplayLanguage, zh: string, en: string): string =>
-  language === 'zh' ? zh : en;
-
 export const GameLogFeed: React.FC<GameLogFeedProps> = ({
   logs,
   language,
@@ -58,7 +55,7 @@ export const GameLogFeed: React.FC<GameLogFeedProps> = ({
             <div className="text-[10px] font-bold opacity-70 mb-1">
               {log.speakerId === 1
                 ? 'YOU'
-                : labelFor(language, `${log.speakerId}号`, `PLAYER ${log.speakerId}`)}
+                : `PLAYER ${log.speakerId}`}
             </div>
             <LogMessage log={log} language={language} />
           </div>
@@ -76,7 +73,7 @@ export const GameLogFeed: React.FC<GameLogFeedProps> = ({
     {isProcessingAI && (
       <div className="text-xs text-zinc-500 flex items-center gap-2" role="status">
         <Loader2 className="w-3 h-3 animate-spin" />
-        {labelFor(language, 'AI正在思考局势...', 'AI is considering the situation...')}
+        AI is considering the situation...
       </div>
     )}
     {endRef && <div ref={endRef} />}
@@ -124,14 +121,14 @@ const GameLogDialog: React.FC<GameLogDialogProps> = ({
   return (
     <AccessibleDialog
       open={open}
-      title={labelFor(language, '对局信息', 'Game information')}
+      title="Game information"
       onClose={handleClose}
-      closeLabel={labelFor(language, '关闭对局信息', 'Close game information')}
+      closeLabel="Close game information"
       className="game-log-dialog"
       initialFocusRef={logTabRef}
       returnFocusRef={returnFocusRef}
     >
-      <div className="game-info-tabs" role="tablist" aria-label={labelFor(language, '对局信息视图', 'Game information views')}>
+      <div className="game-info-tabs" role="tablist" aria-label="Game information views">
         <button
           ref={logTabRef}
           id={logTabId}
@@ -143,7 +140,7 @@ const GameLogDialog: React.FC<GameLogDialogProps> = ({
           onClick={() => selectView('log')}
           onKeyDown={handleTabKeyDown}
         >
-          {labelFor(language, '对局日志', 'Game log')}
+          Game log
         </button>
         <button
           ref={recordsTabRef}
@@ -156,7 +153,7 @@ const GameLogDialog: React.FC<GameLogDialogProps> = ({
           onClick={() => selectView('records')}
           onKeyDown={handleTabKeyDown}
         >
-          {labelFor(language, '我的战绩', 'My records')}
+          My records
         </button>
       </div>
 

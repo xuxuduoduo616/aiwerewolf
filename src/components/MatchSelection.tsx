@@ -29,12 +29,12 @@ const ROLE_COLORS: Record<string, string> = {
 };
 
 const ROLE_SHORT: Record<string, string> = {
-  Werewolf: '狼',
-  Villager: '民',
-  Seer: '预',
-  Witch: '女',
-  Hunter: '猎',
-  Idiot: '白',
+  Werewolf: 'W',
+  Villager: 'V',
+  Seer: 'S',
+  Witch: 'Wt',
+  Hunter: 'H',
+  Idiot: 'I',
 };
 
 /* ─── Count role config ──────────────────────────────────────────────── */
@@ -48,8 +48,8 @@ const countRoles = (roles: Role[]): { role: Role; count: number }[] => {
 /* ─── Limited-time boards (hardcoded test data) ──────────────────────── */
 
 const LIMITED_BOARDS = [
-  { id: 'limited-1', name: '12人觉醒摄梦人', season: '逐浪季', deadline: '剩余3天10小时', roleSummary: '4狼/4民/预/女/猎/摄梦人' },
-  { id: 'limited-2', name: '9人血月猎魔人', season: '逐浪季', deadline: '剩余1天6小时', roleSummary: '3狼/3民/预/女/猎魔人' },
+  { id: 'limited-1', name: '12-Player Awakened Dreamweaver', season: 'Tidal Season', deadline: '3d 10h remaining', roleSummary: '4 Werewolves / 4 Villagers / Seer / Witch / Hunter / Dreamweaver' },
+  { id: 'limited-2', name: '9-Player Blood Moon Demon Hunter', season: 'Tidal Season', deadline: '1d 6h remaining', roleSummary: '3 Werewolves / 3 Villagers / Seer / Witch / Demon Hunter' },
 ];
 
 const MATCH_TABS: readonly SubTab[] = ['home', 'beginner', 'entertainment', 'advanced'];
@@ -60,7 +60,7 @@ const MatchSelection: React.FC<Props> = ({ onBack, onSelectBoard }) => {
   const [subTab, setSubTab] = useState<SubTab>('home');
 
   return (
-    <section className="wol-match-view" aria-label="快速游戏">
+    <section className="wol-match-view" aria-label="Quick game">
       {/* Top bar */}
       <div className="wol-match-header" style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -72,16 +72,16 @@ const MatchSelection: React.FC<Props> = ({ onBack, onSelectBoard }) => {
           className="wol-match-header-action"
         >
           <ArrowLeft aria-hidden="true" />
-          <span>返回</span>
+          <span>Back</span>
         </button>
 
-        <span style={{ fontSize: 14, fontWeight: 700, color: '#fff' }}>快速游戏</span>
+        <span style={{ fontSize: 14, fontWeight: 700, color: '#fff' }}>Quick Game</span>
 
         <button
           type="button"
           className="wol-match-header-action wol-match-header-action--icon"
-          title="帮助"
-          aria-label="帮助"
+          title="Help"
+          aria-label="Help"
         >
           <HelpCircle aria-hidden="true" />
         </button>
@@ -111,7 +111,7 @@ const MatchSelection: React.FC<Props> = ({ onBack, onSelectBoard }) => {
         {/* ── Wide card stack (常驻开放场) ────────────────────────── */}
         <div style={{ marginBottom: 12 }}>
           <div className="wol-section-title" style={{ padding: '0 0 10px' }}>
-            常驻开放场
+            Standard Boards
           </div>
           <div className="wol-match-wide-grid">
             {GAME_MODES.map(mode => {
@@ -134,15 +134,15 @@ const MatchSelection: React.FC<Props> = ({ onBack, onSelectBoard }) => {
           className="wol-btn wol-btn--primary wol-btn--lg"
           style={{ width: '100%', marginBottom: 20, fontSize: 15, fontWeight: 800 }}
           disabled
-          title="多选匹配未开放"
+          title="Multi-board matching is unavailable"
         >
-          多选匹配 · 未开放
+          Multi-Board Match · Unavailable
         </button>
 
         {/* ── Grid columns (限时活动场) ──────────────────────────────────── */}
         <div>
           <div className="wol-section-title" style={{ padding: '0 0 10px' }}>
-            限时活动场
+            Limited-Time Boards
           </div>
           <div className="wol-grid-2 wol-match-limited-grid">
             {LIMITED_BOARDS.map(board => (

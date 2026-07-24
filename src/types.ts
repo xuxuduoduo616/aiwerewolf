@@ -58,9 +58,9 @@ export interface GameLog {
 export type Difficulty = 'easy' | 'normal' | 'hard';
 
 export const DIFFICULTY_LABELS: Record<Difficulty, string> = {
-  easy:   '新手',
-  normal: '进阶',
-  hard:   '高手',
+  easy:   'Beginner',
+  normal: 'Intermediate',
+  hard:   'Expert',
 };
 
 export interface DifficultyConfig {
@@ -82,9 +82,9 @@ export interface DifficultyConfig {
 export const DIFFICULTY_CONFIGS: Record<Difficulty, DifficultyConfig> = {
   easy: {
     id: 'easy',
-    label: '新手',
+    label: 'Beginner',
     labelEn: 'Beginner',
-    description: 'AI 故意暴露逻辑漏洞，适合第一次玩狼人杀的玩家',
+    description: 'AI deliberately exposes logical flaws - ideal for first-time werewolf players.',
     descriptionEn: 'AI deliberately exposes logical flaws — ideal for first-time werewolf players.',
     actionAccuracy: 0.45,
     speechQuality: 0.3,
@@ -93,9 +93,9 @@ export const DIFFICULTY_CONFIGS: Record<Difficulty, DifficultyConfig> = {
   },
   normal: {
     id: 'normal',
-    label: '进阶',
+    label: 'Intermediate',
     labelEn: 'Intermediate',
-    description: 'AI 使用标准策略，偶有逻辑失误，适合有一定基础的玩家',
+    description: 'AI uses standard strategy with occasional mistakes - for players with some experience.',
     descriptionEn: 'AI uses standard strategy with occasional mistakes — for players with some experience.',
     actionAccuracy: 0.72,
     speechQuality: 0.7,
@@ -104,9 +104,9 @@ export const DIFFICULTY_CONFIGS: Record<Difficulty, DifficultyConfig> = {
   },
   hard: {
     id: 'hard',
-    label: '高手',
+    label: 'Expert',
     labelEn: 'Expert',
-    description: 'AI 接近最优策略，发言真实，难以区分，适合老手挑战',
+    description: 'AI plays near-optimal strategy with realistic speech, hard to tell apart - a challenge for veterans.',
     descriptionEn: 'AI plays near-optimal strategy with realistic speech, hard to tell apart — a challenge for veterans.',
     actionAccuracy: 0.92,
     speechQuality: 0.95,

@@ -29,14 +29,14 @@ const ProfileView: React.FC<Props> = () => {
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             minHeight: 200, color: 'rgba(255,255,255,0.25)', fontSize: 13,
           }}>
-            即将开放
+            Coming Soon
           </div>
         );
     }
   };
 
   return (
-    <section className="wol-profile-view" aria-label="个人资料">
+    <section className="wol-profile-view" aria-label="Profile">
       {/* Profile header */}
       <div className="wol-profile-header" style={{
         display: 'flex', alignItems: 'center', gap: 12,
@@ -69,7 +69,7 @@ const ProfileView: React.FC<Props> = () => {
           </div>
         </div>
         <div style={{ minWidth: 0 }}>
-          <div className="wol-break-text" style={{ fontSize: 16, fontWeight: 700, color: '#fff' }}>狼村旅人</div>
+          <div className="wol-break-text" style={{ fontSize: 16, fontWeight: 700, color: '#fff' }}>Village Traveler</div>
           <div className="wol-break-text" style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginTop: 2 }}>
             ID: 1000242 · Lv.10
           </div>

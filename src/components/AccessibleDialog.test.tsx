@@ -24,7 +24,7 @@ describe('AccessibleDialog', () => {
     expect(markup).toContain('aria-modal="true"');
     expect(markup).toMatch(/aria-labelledby="dialog-title-[^"]+"/);
     expect(markup).toMatch(/aria-describedby="dialog-description-[^"]+"/);
-    expect(markup).toContain('aria-label="关闭对话框"');
+    expect(markup).toContain('aria-label="Close dialog"');
     expect(markup).toContain('Room details');
   });
 

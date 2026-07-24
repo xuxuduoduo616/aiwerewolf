@@ -18,41 +18,41 @@ export const LOBBY_ACTIVITIES: readonly LobbyActivity[] = [
     id: 'daily-roll-call',
     category: 'current',
     type: 'regular',
-    title: '每日点名',
-    schedule: '今日有效',
-    deadline: '每日 23:59 刷新',
-    countdown: '倒计时 05:42:18',
-    localRewardLabel: '村民印记',
+    title: 'Daily Roll Call',
+    schedule: 'Available today',
+    deadline: 'Refreshes daily at 23:59',
+    countdown: '05:42:18 remaining',
+    localRewardLabel: 'Villager Mark',
   },
   {
     id: 'seven-day-login',
     category: 'current',
     type: 'login',
-    title: '七日登录奖励',
-    schedule: '登录奖励 · 第 3 天',
-    deadline: '本周日 23:59 截止',
-    countdown: '剩余 2天 05:42',
-    localRewardLabel: '旅人签到章',
+    title: 'Seven-Day Login Reward',
+    schedule: 'Login reward · Day 3',
+    deadline: 'Ends Sunday at 23:59',
+    countdown: '2 days 05:42 remaining',
+    localRewardLabel: 'Traveler Check-In Badge',
   },
   {
     id: 'full-moon-festival',
     category: 'limited',
     type: 'holiday',
-    title: '满月节庆典',
-    schedule: '节日活动 · 限时开放',
-    deadline: '7月31日 23:59 截止',
-    countdown: '剩余 7天 05:42',
-    localRewardLabel: '满月庆典徽记',
+    title: 'Full Moon Festival',
+    schedule: 'Festival event · Limited time',
+    deadline: 'Ends July 31 at 23:59',
+    countdown: '7 days 05:42 remaining',
+    localRewardLabel: 'Full Moon Festival Badge',
   },
   {
     id: 'summer-deduction',
     category: 'limited',
     type: 'regular',
-    title: '盛夏推理赛',
-    schedule: '限时活动',
-    deadline: '8月3日 20:00 截止',
-    countdown: '剩余 10天 01:43',
-    localRewardLabel: '推理家纪念章',
+    title: 'Midsummer Deduction Cup',
+    schedule: 'Limited-time event',
+    deadline: 'Ends August 3 at 20:00',
+    countdown: '10 days 01:43 remaining',
+    localRewardLabel: 'Deduction Cup Badge',
   },
 ] as const;
 
@@ -70,27 +70,27 @@ const LobbyActivityView: React.FC<LobbyActivityViewProps> = ({
   <main className="lobby-feature-page" aria-labelledby="lobby-activity-title">
     <header className="lobby-feature-header">
       {onBack ? (
-        <button className="lobby-feature-icon-button" type="button" onClick={onBack} aria-label="返回" title="返回">
+        <button className="lobby-feature-icon-button" type="button" onClick={onBack} aria-label="Back" title="Back">
           <ArrowLeft aria-hidden="true" />
         </button>
       ) : <span className="lobby-feature-header-spacer" />}
       <div>
-        <h1 id="lobby-activity-title">活动</h1>
-        <span className="lobby-feature-kicker">本地活动记录</span>
+        <h1 id="lobby-activity-title">Activities</h1>
+        <span className="lobby-feature-kicker">Local Activity Progress</span>
       </div>
       <CalendarDays className="lobby-feature-header-icon" aria-hidden="true" />
     </header>
 
     <div className="lobby-feature-status" role="status">
       <Gift aria-hidden="true" />
-      <span>领取仅更新当前账号的本地展示</span>
+      <span>Claiming updates only this account's local preview.</span>
     </div>
 
     {(['current', 'limited'] as const).map(category => (
       <section className="lobby-activity-section" aria-labelledby={`activity-${category}`} key={category}>
         <div className="lobby-feature-section-heading">
-          <h2 id={`activity-${category}`}>{category === 'current' ? '当前活动' : '限时活动'}</h2>
-          <span>{category === 'current' ? '本期可参与' : '到期后关闭'}</span>
+          <h2 id={`activity-${category}`}>{category === 'current' ? 'Current Activities' : 'Limited Activities'}</h2>
+          <span>{category === 'current' ? 'Available now' : 'Closes at expiration'}</span>
         </div>
         <div className="lobby-feature-list">
           {LOBBY_ACTIVITIES.filter(activity => activity.category === category).map(activity => {
@@ -103,13 +103,13 @@ const LobbyActivityView: React.FC<LobbyActivityViewProps> = ({
                 <div className="lobby-feature-card-icon"><ActivityIcon aria-hidden="true" /></div>
                 <div className="lobby-feature-card-body">
                   <span className="lobby-feature-tag">
-                    {activity.type === 'login' ? '登录奖励' : activity.type === 'holiday' ? '节日活动' : '活动'}
+                    {activity.type === 'login' ? 'Login Reward' : activity.type === 'holiday' ? 'Festival Event' : 'Activity'}
                   </span>
                   <h3>{activity.title}</h3>
                   <span className="lobby-feature-meta"><Clock3 aria-hidden="true" />{activity.schedule}</span>
                   <span className="lobby-feature-meta"><CalendarDays aria-hidden="true" />{activity.deadline}</span>
                   <span className="lobby-activity-countdown"><Timer aria-hidden="true" />{activity.countdown}</span>
-                  <span className="lobby-feature-local-reward">{activity.localRewardLabel} · 本地展示</span>
+                  <span className="lobby-feature-local-reward">{activity.localRewardLabel} · Local preview</span>
                 </div>
                 <button
                   className="lobby-feature-action"
@@ -118,7 +118,7 @@ const LobbyActivityView: React.FC<LobbyActivityViewProps> = ({
                   onClick={() => onClaimActivity(activity.id)}
                 >
                   {claimed ? <Check aria-hidden="true" /> : <Gift aria-hidden="true" />}
-                  {claimed ? '本地已记录' : '标记领取'}
+                  {claimed ? 'Recorded Locally' : 'Mark as Claimed'}
                 </button>
               </article>
             );
@@ -130,10 +130,10 @@ const LobbyActivityView: React.FC<LobbyActivityViewProps> = ({
     <section className="lobby-feature-unavailable" aria-labelledby="activity-real-rewards">
       <Lock aria-hidden="true" />
       <div>
-        <h2 id="activity-real-rewards">真实经济奖励</h2>
-        <span>未开放</span>
+        <h2 id="activity-real-rewards">Real-Value Rewards</h2>
+        <span>Unavailable</span>
       </div>
-      <button type="button" disabled>不可领取</button>
+      <button type="button" disabled>Cannot Claim</button>
     </section>
   </main>
 );

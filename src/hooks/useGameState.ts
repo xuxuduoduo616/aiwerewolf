@@ -15,7 +15,7 @@ import {
   Winner,
   WolfChatMessage,
 } from '../types';
-import { AI_NAMES, AVATAR_SEEDS, ROLE_DESCRIPTIONS, ROLE_LABELS } from '../constants';
+import { AI_NAMES, AVATAR_SEEDS } from '../constants';
 import { generateAIAction, generateAIDialogue, generateWolfChat, resetAIMemory, setAIDifficulty } from '../ai/aiOrchestrator';
 import { CUSTOM_AI_STYLES } from '../services/aiStyles';
 import {
@@ -37,6 +37,22 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 const AI_STYLE_KEYS = Object.keys(CUSTOM_AI_STYLES);
 const MY_PLAYER_ID = 1;
 const LOCAL_RECORD_KEY = 'werewolf_guest_records';
+const ROLE_LABELS_EN: Record<Role, string> = {
+  [Role.WEREWOLF]: 'Werewolf',
+  [Role.VILLAGER]: 'Villager',
+  [Role.SEER]: 'Seer',
+  [Role.WITCH]: 'Witch',
+  [Role.HUNTER]: 'Hunter',
+  [Role.IDIOT]: 'Idiot',
+};
+const ROLE_DESCRIPTIONS_EN: Record<Role, string> = {
+  [Role.WEREWOLF]: 'Choose a victim with your pack at night and conceal your identity during the day.',
+  [Role.VILLAGER]: 'Find the werewolves through speeches, votes, and deduction.',
+  [Role.SEER]: 'Check one player each night to learn whether they are a werewolf.',
+  [Role.WITCH]: 'Use one antidote and one poison during the game.',
+  [Role.HUNTER]: 'When killed normally, you may shoot one player.',
+  [Role.IDIOT]: 'If exiled, reveal and survive but lose your vote.',
+};
 
 /**
  * Audio preferences (card: browser-tts-mvp), persisted with the same
@@ -295,7 +311,7 @@ export function useGameState(authContext: AuthContext) {
     if (phase !== GamePhase.NIGHT_WEREWOLVES || wolfCountdown !== 0 || !me?.isAlive || me.role !== Role.WEREWOLF || nightState.wolfKillId) return;
     const fallbackTarget = players.find(player => player.isAlive && player.role !== Role.WEREWOLF);
     if (fallbackTarget) {
-      addLog(`Wolf timer expired. Auto selected Player ${fallbackTarget.id}.`, true, undefined, `狼队倒计时结束，自动选择${fallbackTarget.id}号。`, 'wolf');
+      addLog(`Wolf timer expired. Auto selected Player ${fallbackTarget.id}.`, true, undefined, `Wolf timer expired. Auto selected Player ${fallbackTarget.id}.`, 'wolf');
       setNightState(prev => ({ ...prev, wolfKillId: fallbackTarget.id }));
     }
     setPhase(GamePhase.NIGHT_SEER);
@@ -346,7 +362,7 @@ export function useGameState(authContext: AuthContext) {
   // Auto-skip human speech when timer reaches 0
   useEffect(() => {
     if (!shouldAutoSkipSpeech(speechTimer, currentSpeaker?.id)) return;
-    addLog('Time expired.', true, undefined, '发言时间到，自动跳过。', 'system');
+    addLog('Time expired. Speech skipped.', true, undefined, 'Time expired. Speech skipped.', 'system');
     setSpokenPlayerIds(prev => new Set(prev).add(MY_PLAYER_ID));
     setCurrentSpeaker(null);
   }, [speechTimer]);
@@ -390,7 +406,7 @@ export function useGameState(authContext: AuthContext) {
           setSavedRecordId(record.id);
         })
         .catch(error => {
-          setRecordError(error.message || '战绩保存失败。');
+          setRecordError(error.message || 'Could not save the game record.');
           setSavedRecordId('failed');
         });
     } else {
@@ -484,7 +500,7 @@ export function useGameState(authContext: AuthContext) {
           id: `proxy-${Date.now()}`,
           phase: GamePhase.LOBBY,
           message: 'Local Vite preview does not run Netlify Functions. AI fallback speech is active.',
-          translation: '本地 Vite 预览不会运行 Netlify Functions；当前使用本地AI fallback话术。部署到Netlify并配置 API_KEY 后会启用服务端Gemini。',
+          translation: 'Local Vite preview does not run Netlify Functions. AI fallback speech is active. Deploy to Netlify with API_KEY configured to enable server-side Gemini.',
           isSystem: true,
           tone: 'warning' as const,
         }]
@@ -495,21 +511,21 @@ export function useGameState(authContext: AuthContext) {
         id: 'init',
         phase: GamePhase.LOBBY,
         message: `Game Start. You are ${nextPlayers[0].role}.`,
-        translation: `游戏开始。你的身份是：${ROLE_LABELS[nextPlayers[0].role]}。${ROLE_DESCRIPTIONS[nextPlayers[0].role]}`,
+        translation: `Game start. Your role is ${ROLE_LABELS_EN[nextPlayers[0].role]}. ${ROLE_DESCRIPTIONS_EN[nextPlayers[0].role]}`,
         isSystem: true,
         tone: 'system',
       },
       ...localProxyNotice,
     ]);
     if (nextPlayers[0].role === Role.WEREWOLF) {
-      const teammates = nextPlayers.filter(player => player.role === Role.WEREWOLF && player.id !== MY_PLAYER_ID).map(player => `${player.id}号`);
+      const teammates = nextPlayers.filter(player => player.role === Role.WEREWOLF && player.id !== MY_PLAYER_ID).map(player => `Player ${player.id}`);
       setLogs(prev => [
         ...prev,
         {
           id: `wolves-${Date.now()}`,
           phase: GamePhase.LOBBY,
           message: `Wolf teammates: ${teammates.join(', ') || 'none'}.`,
-          translation: `你的狼队友：${teammates.join('、') || '无'}。夜晚可查看狼队频道。`,
+          translation: `Your werewolf teammates: ${teammates.join(', ') || 'none'}. Open the werewolf channel at night.`,
           isSystem: true,
           tone: 'wolf',
         },
@@ -540,7 +556,7 @@ export function useGameState(authContext: AuthContext) {
     setDeadThisRound([]);
     setSelectedPlayerId(null);
     setWolfChat([]);
-    addLog('Night falls.', true, undefined, '天黑请闭眼。', 'system');
+    addLog('Night falls. Close your eyes.', true, undefined, 'Night falls. Close your eyes.', 'system');
     setPhase(GamePhase.NIGHT_WEREWOLVES);
   };
 
@@ -564,7 +580,7 @@ export function useGameState(authContext: AuthContext) {
       const targetId = action.targetId || fallback?.id || null;
       if (targetId) setNightState(prev => ({ ...prev, wolfKillId: targetId }));
     }, () => {
-      addLog('AI error. Default wolf target used.', true, undefined, 'AI出错，狼队采用保底刀口。', 'system');
+      addLog('AI error. Default wolf target used.', true, undefined, 'AI error. Default wolf target used.', 'system');
       const fallback = players.find(player => player.isAlive && player.role !== Role.WEREWOLF);
       if (fallback) setNightState(prev => ({ ...prev, wolfKillId: fallback.id }));
     });
@@ -581,7 +597,7 @@ export function useGameState(authContext: AuthContext) {
         if (target) setAiSeerLastCheck({ targetId: target.id, isGood: target.role !== Role.WEREWOLF });
       }
     }, () => {
-      addLog('AI error. Seer check skipped.', true, undefined, 'AI出错，本晚查验跳过。', 'system');
+      addLog('AI error. Seer check skipped.', true, undefined, 'AI error. Seer check skipped.', 'system');
     });
     setPhase(GamePhase.NIGHT_WITCH);
   };
@@ -608,7 +624,7 @@ export function useGameState(authContext: AuthContext) {
         setWitchStatus(nextWitch);
       }
     }, () => {
-      addLog('AI error. Witch action skipped.', true, undefined, 'AI出错，女巫本晚不用药。', 'system');
+      addLog('AI error. Witch action skipped.', true, undefined, 'AI error. Witch action skipped.', 'system');
     });
     setPhase(GamePhase.DAY_ANNOUNCE);
   };
@@ -630,8 +646,8 @@ export function useGameState(authContext: AuthContext) {
     setDeadThisRound(outcome.deadIds);
     const msg = outcome.deadIds.length ? `Deaths: ${outcome.deadIds.join(', ')}` : 'Peaceful night.';
     const trans = outcome.deadIds.length
-      ? `昨晚倒牌：${outcome.deadIds.map(id => `${id}号`).join('、')}`
-      : '昨晚平安夜。';
+      ? `Eliminated last night: ${outcome.deadIds.map(id => `Player ${id}`).join(', ')}`
+      : 'No one was eliminated last night.';
     addLog(msg, true, undefined, trans, 'system');
 
     if (outcome.winner) {
@@ -669,14 +685,14 @@ export function useGameState(authContext: AuthContext) {
       if (hunter.isHuman) {
         setPendingHunterId(hunter.id);
         setHunterReturnPhase(GamePhase.DAY_DISCUSSION);
-        addLog('Hunter may shoot.', true, undefined, '猎人死亡，可以开枪带走一名玩家。', 'action');
+        addLog('Hunter may shoot.', true, undefined, 'The Hunter was eliminated and may shoot one player.', 'action');
         setPhase(GamePhase.DAY_HUNTER_SHOT);
         return;
       }
       const targets = players.filter(player => player.isAlive && player.id !== hunter.id);
       const target = targets[Math.floor(Math.random() * targets.length)];
       if (target) {
-        addLog(`Hunter shoots Player ${target.id}.`, true, undefined, `猎人开枪带走${target.id}号。`, 'action');
+        addLog(`Hunter shoots Player ${target.id}.`, true, undefined, `Hunter shoots Player ${target.id}.`, 'action');
         const outcome = applyElimination(players, target.id, 'HUNTER');
         setPlayers(outcome.players);
         if (outcome.winner) {
@@ -694,7 +710,7 @@ export function useGameState(authContext: AuthContext) {
   const handleDiscussion = async () => {
     if (currentSpeaker || isProcessingAI) return;
     if (speakingQueue.length === 0) {
-      addLog('Discussion ended. Voting starts.', true, undefined, '发言结束，开始放逐投票。', 'system');
+      addLog('Discussion ended. Voting starts.', true, undefined, 'Discussion ended. Exile voting starts.', 'system');
       setPhase(GamePhase.DAY_VOTING);
       return;
     }
@@ -704,7 +720,7 @@ export function useGameState(authContext: AuthContext) {
     setCurrentSpeaker(nextSpeaker);
     // Skip dead human players — they spoke their last words already
   if (!nextSpeaker.isAlive && nextSpeaker.isHuman) {
-    addLog(`Dead player ${nextSpeaker.id} has no further speech.`, true, undefined, `${nextSpeaker.id}号已出局，跳过发言。`, 'system');
+    addLog(`Dead player ${nextSpeaker.id} has no further speech.`, true, undefined, `Player ${nextSpeaker.id} is out. Speech skipped.`, 'system');
     setSpokenPlayerIds(prev => new Set(prev).add(nextSpeaker.id));
     setCurrentSpeaker(null);
     return;
@@ -738,7 +754,7 @@ export function useGameState(authContext: AuthContext) {
       );
       setSpokenPlayerIds(prev => new Set(prev).add(nextSpeaker.id));
     }, () => {
-      addLog(`Player ${nextSpeaker.id} speech skipped (AI error).`, true, undefined, `AI出错，${nextSpeaker.id}号发言跳过。`, 'system');
+      addLog(`Player ${nextSpeaker.id} speech skipped (AI error).`, true, undefined, `AI error. Player ${nextSpeaker.id}'s speech was skipped.`, 'system');
       setSpokenPlayerIds(prev => new Set(prev).add(nextSpeaker.id));
     });
     // Presentation-only TTS: awaited so audio and pacing stay in sync, but
@@ -768,10 +784,10 @@ export function useGameState(authContext: AuthContext) {
       if (humanCanVote && humanTargetId) {
         votes[humanTargetId] = (votes[humanTargetId] || 0) + 1;
         votesByVoter[MY_PLAYER_ID] = humanTargetId;
-        addLog(`You voted Player ${humanTargetId}.`, true, undefined, `你投给了${humanTargetId}号。`, 'vote');
+        addLog(`You voted Player ${humanTargetId}.`, true, undefined, `You voted for Player ${humanTargetId}.`, 'vote');
       } else {
         votesByVoter[MY_PLAYER_ID] = null;
-        addLog('You have no vote or abstained.', true, undefined, '你无票或弃票。', 'vote');
+        addLog('You have no vote or abstained.', true, undefined, 'You have no vote or abstained.', 'vote');
       }
 
       const aiVoters = players.filter(player => player.isAlive && !player.isHuman && player.canVote);
@@ -793,13 +809,13 @@ export function useGameState(authContext: AuthContext) {
         `Vote record: ${newVoteRecords.map(v => `${v.voterId}->${v.targetId || 'skip'}`).join(', ')}`,
         true,
         undefined,
-        `票型：${newVoteRecords.map(v => `${v.voterId}号→${v.targetId ? `${v.targetId}号` : '弃票'}`).join('，')}`,
+        `Votes: ${newVoteRecords.map(v => `Player ${v.voterId} -> ${v.targetId ? `Player ${v.targetId}` : 'abstain'}`).join(', ')}`,
         'vote'
       );
 
       const eliminatedPlayerId = resolveVoteResult(votes);
       if (!eliminatedPlayerId) {
-        addLog('Tie vote. No one is exiled.', true, undefined, '平票，无人出局。', 'vote');
+        addLog('Tie vote. No one is exiled.', true, undefined, 'Tie vote. No one is exiled.', 'vote');
         setPhase(GamePhase.NIGHT_START);
         return;
       }
@@ -808,12 +824,12 @@ export function useGameState(authContext: AuthContext) {
       const outcome = applyElimination(players, eliminatedPlayerId, 'VOTE');
       setPlayers(outcome.players);
       if (outcome.sparedByIdiot) {
-        addLog(`Player ${eliminatedPlayerId} reveals Idiot and survives.`, true, undefined, `${eliminatedPlayerId}号白痴翻牌免死，但之后失去投票权。`, 'action');
+        addLog(`Player ${eliminatedPlayerId} reveals Idiot and survives.`, true, undefined, `Player ${eliminatedPlayerId} reveals as the Idiot and survives, but loses their vote.`, 'action');
         setPhase(GamePhase.NIGHT_START);
         return;
       }
 
-      addLog(`Player ${eliminatedPlayerId} was exiled.`, true, undefined, `${eliminatedPlayerId}号被放逐出局。`, 'vote');
+      addLog(`Player ${eliminatedPlayerId} was exiled.`, true, undefined, `Player ${eliminatedPlayerId} was exiled.`, 'vote');
       if (outcome.winner) {
         setWinner(outcome.winner);
         setPhase(GamePhase.GAME_OVER);
@@ -831,7 +847,7 @@ export function useGameState(authContext: AuthContext) {
         const shot = aliveTargets[Math.floor(Math.random() * aliveTargets.length)];
         if (shot) {
           const shotOutcome = applyElimination(outcome.players, shot.id, 'HUNTER');
-          addLog(`Hunter shoots Player ${shot.id}.`, true, undefined, `猎人开枪带走${shot.id}号。`, 'action');
+          addLog(`Hunter shoots Player ${shot.id}.`, true, undefined, `Hunter shoots Player ${shot.id}.`, 'action');
           setPlayers(shotOutcome.players);
           if (shotOutcome.winner) {
             setWinner(shotOutcome.winner);
@@ -843,7 +859,7 @@ export function useGameState(authContext: AuthContext) {
 
       setPhase(GamePhase.NIGHT_START);
     }, () => {
-      addLog('AI error during voting. Night begins.', true, undefined, 'AI投票处理出错，直接进入夜晚。', 'system');
+      addLog('AI error during voting. Night begins.', true, undefined, 'AI error during voting. Night begins.', 'system');
       setPhase(GamePhase.NIGHT_START);
     });
   };
@@ -861,7 +877,7 @@ export function useGameState(authContext: AuthContext) {
   const handleHunterShot = (targetId: number) => {
     if (!pendingHunterId || !isTargetableAliveOther(players, pendingHunterId, targetId)) return;
     const outcome = applyElimination(players, targetId, 'HUNTER');
-    addLog(`Hunter shoots Player ${targetId}.`, true, undefined, `猎人开枪带走${targetId}号。`, 'action');
+    addLog(`Hunter shoots Player ${targetId}.`, true, undefined, `Hunter shoots Player ${targetId}.`, 'action');
     setPlayers(outcome.players);
     setPendingHunterId(null);
     if (outcome.winner) {
@@ -886,19 +902,19 @@ export function useGameState(authContext: AuthContext) {
     if (phase === GamePhase.NIGHT_WEREWOLVES && me.role === Role.WEREWOLF) {
       if (!target.isAlive || target.role === Role.WEREWOLF) return;
       setNightState(prev => ({ ...prev, wolfKillId: targetId }));
-      addLog(`Wolf target locked: Player ${targetId}.`, true, undefined, `狼队刀口已锁定：${targetId}号。`, 'wolf');
+      addLog(`Wolf target locked: Player ${targetId}.`, true, undefined, `Werewolf target locked: Player ${targetId}.`, 'wolf');
       setPhase(GamePhase.NIGHT_SEER);
     } else if (phase === GamePhase.NIGHT_SEER && me.role === Role.SEER) {
       if (!isTargetableAliveOther(players, MY_PLAYER_ID, targetId)) return;
       const isGood = target.role !== Role.WEREWOLF;
-      addLog(`Check Player ${targetId}: ${isGood ? 'GOOD' : 'WOLF'}.`, true, undefined, `${targetId}号查验结果：${isGood ? '金水/好人' : '查杀/狼人'}。`, 'action');
+      addLog(`Check Player ${targetId}: ${isGood ? 'GOOD' : 'WOLF'}.`, true, undefined, `Player ${targetId} check result: ${isGood ? 'GOOD' : 'WOLF'}.`, 'action');
       setAiSeerLastCheck({ targetId, isGood });
       setPhase(GamePhase.NIGHT_WITCH);
     } else if (phase === GamePhase.NIGHT_WITCH && me.role === Role.WITCH) {
       if (!isTargetableAliveOther(players, MY_PLAYER_ID, targetId) || !witchStatus.hasPoison) return;
       setNightState(prev => ({ ...prev, witchPoisonId: targetId }));
       setWitchStatus(prev => ({ ...prev, hasPoison: false }));
-      addLog(`Poison Player ${targetId}.`, true, undefined, `你选择毒杀${targetId}号。`, 'action');
+      addLog(`Poison Player ${targetId}.`, true, undefined, `You chose to poison Player ${targetId}.`, 'action');
       setPhase(GamePhase.DAY_ANNOUNCE);
     } else if (phase === GamePhase.DAY_HUNTER_SHOT) {
       handleHunterShot(targetId);
@@ -912,12 +928,12 @@ export function useGameState(authContext: AuthContext) {
     if (!witchStatus.hasSave || !nightState.wolfKillId) return;
     setNightState(prev => ({ ...prev, witchSaved: true }));
     setWitchStatus(prev => ({ ...prev, hasSave: false }));
-    addLog('Witch used antidote.', true, undefined, `你使用解药救下${nightState.wolfKillId}号。`, 'action');
+    addLog('Witch used antidote.', true, undefined, `You used the antidote to save Player ${nightState.wolfKillId}.`, 'action');
     setPhase(GamePhase.DAY_ANNOUNCE);
   };
 
   const skipWitch = () => {
-    addLog('Witch passed.', true, undefined, '女巫选择不使用药。', 'action');
+    addLog('Witch passed.', true, undefined, 'The Witch chose not to use a potion.', 'action');
     setPhase(GamePhase.DAY_ANNOUNCE);
   };
 
@@ -927,13 +943,13 @@ export function useGameState(authContext: AuthContext) {
 
   const phaseHint = (() => {
     if (!me) return '';
-    if (phase === GamePhase.NIGHT_WEREWOLVES && me.role === Role.WEREWOLF) return '选择一名非狼人玩家作为刀口。';
-    if (phase === GamePhase.NIGHT_SEER && me.role === Role.SEER) return '选择一名玩家查验身份。';
-    if (phase === GamePhase.NIGHT_WITCH && me.role === Role.WITCH) return '选择救人、毒人或跳过。';
-    if (phase === GamePhase.DAY_DISCUSSION && currentSpeaker?.id === MY_PLAYER_ID) return '轮到你公开发言。';
-    if (phase === GamePhase.DAY_VOTING) return me.canVote ? '选择一名玩家进行放逐投票。' : '你已无票，只能旁观本轮投票。';
-    if (phase === GamePhase.DAY_HUNTER_SHOT) return '猎人开枪阶段，选择一名存活玩家。';
-    return '等待系统和AI玩家行动。';
+    if (phase === GamePhase.NIGHT_WEREWOLVES && me.role === Role.WEREWOLF) return 'Choose a non-werewolf player as the night target.';
+    if (phase === GamePhase.NIGHT_SEER && me.role === Role.SEER) return 'Choose a player to check.';
+    if (phase === GamePhase.NIGHT_WITCH && me.role === Role.WITCH) return 'Choose to save, poison, or pass.';
+    if (phase === GamePhase.DAY_DISCUSSION && currentSpeaker?.id === MY_PLAYER_ID) return 'It is your turn to speak publicly.';
+    if (phase === GamePhase.DAY_VOTING) return me.canVote ? 'Choose a player for the exile vote.' : 'You have no vote and can only observe this round.';
+    if (phase === GamePhase.DAY_HUNTER_SHOT) return 'Hunter shot: choose a living player.';
+    return 'Waiting for the system and AI players.';
   })();
 
   return {

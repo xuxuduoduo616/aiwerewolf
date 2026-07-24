@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { GamePhase, Role } from './types';
-import { getPhaseLabel, ROLE_DESCRIPTIONS, ROLE_LABELS } from './constants';
+import { getPhaseLabel } from './constants';
 import useAuth from './hooks/useAuth';
 import { useRecords } from './hooks/useRecords';
 import { useGameState } from './hooks/useGameState';
@@ -51,6 +51,24 @@ export const nextTurnstileToken = (event: TurnstileGuestGateEvent): string | nul
 export const isTurnstileGuestGateOpen = (token: string | null): boolean => Boolean(token);
 
 const MY_PLAYER_ID = 1;
+
+const ROLE_LABELS_EN: Record<Role, string> = {
+  [Role.WEREWOLF]: 'Werewolf',
+  [Role.VILLAGER]: 'Villager',
+  [Role.SEER]: 'Seer',
+  [Role.WITCH]: 'Witch',
+  [Role.HUNTER]: 'Hunter',
+  [Role.IDIOT]: 'Idiot',
+};
+
+const ROLE_DESCRIPTIONS_EN: Record<Role, string> = {
+  [Role.WEREWOLF]: 'Choose a victim with your pack at night, then conceal your identity during the day.',
+  [Role.VILLAGER]: 'You have no night ability. Find the werewolves through speeches, votes, and deduction.',
+  [Role.SEER]: 'Check one player each night to learn whether they are a werewolf.',
+  [Role.WITCH]: 'You have one antidote and one poison, and each can be used only once per game.',
+  [Role.HUNTER]: 'When killed normally, you may shoot one player. You cannot shoot if poisoned.',
+  [Role.IDIOT]: 'If exiled during the day, reveal and survive, but lose your vote for the rest of the game.',
+};
 
 const App: React.FC = () => {
   const auth = useAuth();
@@ -146,7 +164,7 @@ const App: React.FC = () => {
       <div className="login-page sketch-scene flex font-sans text-zinc-200" aria-busy="true">
         <div className="text-center">
           <Loader2 className="w-8 h-8 mx-auto animate-spin text-zinc-400" />
-          <p className="mt-3 text-sm text-zinc-500">正在恢复登录状态…</p>
+          <p className="mt-3 text-sm text-zinc-500">Restoring your session...</p>
         </div>
       </div>
     );
@@ -210,12 +228,12 @@ const App: React.FC = () => {
             >Guest Trial</button>
           </div>
           <p className="mt-5 text-[11px] leading-relaxed text-zinc-500 text-center border-t border-zinc-800 pt-4">
-            新手推荐：点击 <span className="text-zinc-300">Guest Trial</span> 直接试玩，选择「新手」难度。
-            AI 会引导你熟悉预言家查验、女巫用药、狼人夜刀等机制。
+            New players can choose <span className="text-zinc-300">Guest Trial</span> and select Beginner difficulty.
+            The AI will guide you through Seer checks, Witch potions, and werewolf night actions.
           </p>
           {!turnstileToken && (
             <p className="mt-2 text-[10px] text-zinc-600 text-center">
-              请先完成上方人机验证，即可开始游戏
+              Complete the verification above to start playing.
             </p>
           )}
         </div>
@@ -258,8 +276,8 @@ const App: React.FC = () => {
             {Math.max(1, game.roundCount)}
           </div>
           <div className="min-w-0">
-            <h2 className="text-xs md:text-sm font-bold tracking-wide">{game.config?.displayName}</h2>
-            <p className="text-[10px] md:text-xs text-zinc-400">{getPhaseLabel(game.phase, game.gameLanguage)}</p>
+            <h2 className="text-xs md:text-sm font-bold tracking-wide">{game.config?.name}</h2>
+            <p className="text-[10px] md:text-xs text-zinc-400">{getPhaseLabel(game.phase, 'en')}</p>
           </div>
         </div>
         <div className="game-room-audio-controls flex items-center gap-1 md:gap-2">
@@ -267,8 +285,8 @@ const App: React.FC = () => {
             onClick={() => game.setTtsEnabled(!game.ttsEnabled)}
             className="icon-button"
             aria-pressed={game.ttsEnabled}
-            title={displayLanguage === 'zh' ? 'AI语音开关' : 'AI voice on/off'}
-            aria-label={displayLanguage === 'zh' ? 'AI语音开关' : 'AI voice on/off'}
+            title="Toggle AI voice"
+            aria-label="Toggle AI voice"
           >
             <Power className={`w-3.5 h-3.5 md:w-4 md:h-4${game.ttsEnabled ? ' text-emerald-300' : ''}`} />
           </button>
@@ -277,18 +295,18 @@ const App: React.FC = () => {
             value={game.audioVolume}
             onChange={e => game.setAudioVolume(Number(e.target.value))}
             className="game-audio-slider w-10 md:w-16 cursor-pointer accent-zinc-200"
-            title={displayLanguage === 'zh' ? '音量' : 'Volume'}
-            aria-label={displayLanguage === 'zh' ? '音量' : 'Volume'}
+            title="Volume"
+            aria-label="Volume"
           />
           <input
             type="range" min={0.5} max={2} step={0.1}
             value={game.ttsRate}
             onChange={e => game.setTtsRate(Number(e.target.value))}
             className="game-audio-slider w-10 md:w-16 cursor-pointer accent-zinc-200"
-            title={displayLanguage === 'zh' ? '语速' : 'Speech rate'}
-            aria-label={displayLanguage === 'zh' ? '语速' : 'Speech rate'}
+            title="Speech rate"
+            aria-label="Speech rate"
           />
-          <button onClick={() => game.setIsMuted(!game.isMuted)} className="icon-button" title={displayLanguage === 'zh' ? '静音/取消静音' : 'Mute / Unmute'} aria-label={displayLanguage === 'zh' ? '静音/取消静音' : 'Mute / Unmute'}>
+          <button onClick={() => game.setIsMuted(!game.isMuted)} className="icon-button" title="Mute or unmute" aria-label="Mute or unmute">
             {game.isMuted ? <VolumeX className="w-3.5 h-3.5 md:w-4 md:h-4" /> : <Volume2 className="w-3.5 h-3.5 md:w-4 md:h-4" />}
           </button>
           <button
@@ -296,13 +314,13 @@ const App: React.FC = () => {
             type="button"
             onClick={() => setIsGameInfoOpen(true)}
             className="game-log-trigger icon-button"
-            title={displayLanguage === 'zh' ? '对局日志和战绩' : 'Game log and records'}
-            aria-label={displayLanguage === 'zh' ? '打开对局日志和战绩' : 'Open game log and records'}
+            title="Game log and records"
+            aria-label="Open game log and records"
             aria-haspopup="dialog"
           >
             <ScrollText className="w-4 h-4" />
           </button>
-          <button onClick={returnToLobby} className="icon-button" title={displayLanguage === 'zh' ? '返回大厅' : 'Return to lobby'} aria-label={displayLanguage === 'zh' ? '返回大厅' : 'Return to lobby'}>
+          <button onClick={returnToLobby} className="icon-button" title="Return to lobby" aria-label="Return to lobby">
             <RefreshCw className="w-3.5 h-3.5 md:w-4 md:h-4" />
           </button>
         </div>
@@ -310,22 +328,18 @@ const App: React.FC = () => {
     );
 
     const gameSidebar = (
-      <aside className="game-room-sidebar bg-zinc-950/88" aria-label={displayLanguage === 'zh' ? '对局日志侧栏' : 'Game log sidebar'}>
+      <aside className="game-room-sidebar bg-zinc-950/88" aria-label="Game log sidebar">
         <div className="h-16 px-4 border-b border-zinc-800 flex items-center justify-between">
           <div className="flex items-center gap-2 text-sm font-bold">
             <ScrollText className="w-4 h-4" />
-            {rec.showRecords
-              ? (displayLanguage === 'zh' ? '我的战绩' : 'My records')
-              : (displayLanguage === 'zh' ? '对局日志' : 'Game log')}
+            {rec.showRecords ? 'My records' : 'Game log'}
           </div>
           <button
             type="button"
             onClick={() => rec.setShowRecords(!rec.showRecords)}
             className="min-h-11 min-w-11 text-xs text-zinc-400 hover:text-white"
           >
-            {rec.showRecords
-              ? (displayLanguage === 'zh' ? '日志' : 'Log')
-              : (displayLanguage === 'zh' ? '战绩' : 'Records')}
+            {rec.showRecords ? 'Log' : 'Records'}
           </button>
         </div>
         {rec.showRecords ? (
@@ -343,7 +357,7 @@ const App: React.FC = () => {
         <GameRoom
           header={gameHeader}
           sidebar={gameSidebar}
-          boardLabel={displayLanguage === 'zh' ? '狼人杀对局座位和操作区' : 'Werewolf seats and action console'}
+          boardLabel="Werewolf seats and action console"
         >
           <div className="seat-stage">
             {game.players.map((player, index) => {
@@ -364,8 +378,8 @@ const App: React.FC = () => {
                         ? <Skull className="w-5 h-5 text-red-300" />
                         : game.aiSeerLastCheck && game.aiSeerLastCheck.targetId === player.id && (game.me?.role === Role.SEER || game.me?.role === Role.WITCH)
                           ? (game.aiSeerLastCheck.isGood
-                            ? <span className="bg-emerald-900/80 border border-emerald-500 text-emerald-200 text-[10px] px-1.5 py-0.5 rounded-full font-bold">金水</span>
-                            : <span className="bg-red-950/80 border border-red-500 text-red-200 text-[10px] px-1.5 py-0.5 rounded-full font-bold">查杀</span>)
+                            ? <span className="bg-emerald-900/80 border border-emerald-500 text-emerald-200 text-[10px] px-1.5 py-0.5 rounded-full font-bold">Known Good</span>
+                            : <span className="bg-red-950/80 border border-red-500 text-red-200 text-[10px] px-1.5 py-0.5 rounded-full font-bold">Confirmed Wolf</span>)
                           : undefined
                     }
                   />
@@ -377,17 +391,17 @@ const App: React.FC = () => {
               {game.winner ? (
                 <div className={`text-center ${game.winner === 'WEREWOLVES' ? 'game-over-wolves' : 'game-over-village'}`}>
                   <Trophy className="w-10 h-10 mx-auto mb-3 text-zinc-100" />
-                  <h1 className="text-3xl font-black">{game.winner === 'WEREWOLVES' ? '狼人胜利' : '好人胜利'}</h1>
-                  <p className="text-sm text-zinc-300 mt-2">第{Math.max(1, game.roundCount)}轮结束{game.me ? ` · ${ROLE_LABELS[game.me.role]}` : ''}</p>
-                  <p className="text-xs text-zinc-400 mt-2">{game.savedRecordId ? '战绩已记录。' : '正在记录战绩...'}</p>
-                  <button onClick={returnToLobby} className="mt-5 action-button">返回大厅</button>
+                  <h1 className="text-3xl font-black">{game.winner === 'WEREWOLVES' ? 'Werewolves Win' : 'Village Wins'}</h1>
+                  <p className="text-sm text-zinc-300 mt-2">Round {Math.max(1, game.roundCount)} complete{game.me ? ` · ${ROLE_LABELS_EN[game.me.role]}` : ''}</p>
+                  <p className="text-xs text-zinc-400 mt-2">{game.savedRecordId ? 'Record saved.' : 'Saving record...'}</p>
+                  <button onClick={returnToLobby} className="mt-5 action-button">Return to Lobby</button>
                 </div>
               ) : (
                 <>
                   <div className="flex items-center justify-between gap-3">
                     <div>
                       <div className="text-xs text-zinc-500">PHASE</div>
-                      <div className="text-lg font-bold">{getPhaseLabel(game.phase, game.gameLanguage)}</div>
+                      <div className="text-lg font-bold">{getPhaseLabel(game.phase, 'en')}</div>
                     </div>
                     {game.wolfCountdown !== null && (
                       <div className="timer-pill"><Clock3 className="w-4 h-4" />{game.wolfCountdown}s</div>
@@ -407,13 +421,13 @@ const App: React.FC = () => {
                   <div key={`role-${game.phase}`} className="role-reveal mt-4 rounded border border-zinc-700 bg-black/35 p-3 text-xs text-zinc-300">
                     <div className="flex items-center gap-2 font-bold text-zinc-100">
                       <UserIcon className="w-4 h-4" />
-                      你的身份：{game.me ? ROLE_LABELS[game.me.role] : '未知'}
+                      Your role: {game.me ? ROLE_LABELS_EN[game.me.role] : 'Unknown'}
                     </div>
-                    <p className="mt-2 text-zinc-400">{game.me ? ROLE_DESCRIPTIONS[game.me.role] : ''}</p>
-                    {game.selectedPlayer && <p className="mt-2 text-zinc-300">已选择：{game.selectedPlayer.id}号 {game.selectedPlayer.name}</p>}
+                    <p className="mt-2 text-zinc-400">{game.me ? ROLE_DESCRIPTIONS_EN[game.me.role] : ''}</p>
+                    {game.selectedPlayer && <p className="mt-2 text-zinc-300">Selected: Player {game.selectedPlayer.id} <span data-ui-copy-category="USER_AUTHORED" data-ui-copy-allow="USER_APP_SELECTED_PLAYER">{game.selectedPlayer.name}</span></p>}
                     {game.me?.role === Role.WITCH && game.nightState.wolfKillId && (
                       <p className="mt-2 text-amber-200 text-xs">
-                        昨夜 {game.nightState.wolfKillId}号 被狼人袭击
+                        Player {game.nightState.wolfKillId} was attacked by the werewolves last night.
                       </p>
                     )}
                   </div>
@@ -542,8 +556,8 @@ const App: React.FC = () => {
       case 'friends':
         return (
           <UnavailableNotice
-            title="好友"
-            description="好友与消息属于社交基础路线预览，当前页面不会连接真人社交服务。"
+            title="Friends"
+            description="Friends and messaging are a preview of the social roadmap. This page does not connect to live social services."
             onBack={() => navigateShell('home')}
           />
         );

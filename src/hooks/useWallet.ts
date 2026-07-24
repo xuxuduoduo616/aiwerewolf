@@ -69,7 +69,7 @@ export const DEFAULT_WALLET: LocalWallet = {
 };
 
 /** Stable user-facing result for every purchase attempt while payments close. */
-export const PAYMENTS_UNAVAILABLE_ERROR = '充值功能暂不可用';
+export const PAYMENTS_UNAVAILABLE_ERROR = 'Purchases are currently unavailable.';
 
 export const purchaseUnavailable = async (_packId: string): Promise<PurchaseResult> => ({
   success: false,

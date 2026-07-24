@@ -26,10 +26,10 @@ export type StartGameFlowStep =
   | 'multiplayer-unavailable';
 
 export const START_GAME_STEPS = [
-  '开始游戏',
-  '选择模式',
-  '板型与难度',
-  '最终确认',
+  'Start',
+  'Choose Mode',
+  'Board and Difficulty',
+  'Confirm',
 ] as const;
 
 export const getPreviousStartGameStep = (
@@ -71,8 +71,8 @@ const BOARD_OPTIONS: readonly {
   title: string;
   summary: string;
 }[] = [
-  { id: 'nine-player', title: '9人标准场', summary: '3民 / 3狼 / 预言家 / 女巫 / 猎人' },
-  { id: 'twelve-player', title: '12人预女猎白', summary: '4民 / 4狼 / 预言家 / 女巫 / 猎人 / 白痴' },
+  { id: 'nine-player', title: '9-Player Standard', summary: '3 Villagers / 3 Werewolves / Seer / Witch / Hunter' },
+  { id: 'twelve-player', title: '12-Player Standard', summary: '4 Villagers / 4 Werewolves / Seer / Witch / Hunter / Idiot' },
 ] as const;
 
 const DIFFICULTIES = Object.values(DIFFICULTY_CONFIGS) as readonly (typeof DIFFICULTY_CONFIGS)[Difficulty][];
@@ -82,7 +82,7 @@ const StartGameProgress: React.FC<{ step: StartGameFlowStep }> = ({ step }) => {
     ? 1
     : step === 'match-setup' ? 2 : 3;
   return (
-    <ol className="start-game-progress" aria-label="开始游戏进度">
+    <ol className="start-game-progress" aria-label="Start game progress">
       {START_GAME_STEPS.map((label, index) => (
         <li key={label} className={index <= activeIndex ? 'is-active' : ''} aria-current={index === activeIndex ? 'step' : undefined}>
           <span>{index + 1}</span>
@@ -131,8 +131,8 @@ const StartGameFlow: React.FC<StartGameFlowProps> = ({
       <div className="start-game-page">
         <StartGameProgress step={step} />
         <UnavailableNotice
-          title="真人多人模式"
-          description="多人房间属于 ADR-003 的后续路线。当前版本只启动本地单人 AI 对局，不会创建房间或连接真人服务。"
+          title="Live Multiplayer"
+          description="Multiplayer rooms belong to a later stage of ADR-003. This version starts only local single-player AI matches and does not create rooms or connect to live player services."
           onBack={goBack}
         />
       </div>
@@ -142,13 +142,13 @@ const StartGameFlow: React.FC<StartGameFlowProps> = ({
   return (
     <main className="start-game-page" aria-labelledby="start-game-title">
       <header className="app-page-header">
-        <button className="app-page-back" type="button" onClick={goBack} aria-label="返回上一步">
+        <button className="app-page-back" type="button" onClick={goBack} aria-label="Go back one step">
           <ArrowLeft aria-hidden="true" />
-          <span>返回</span>
+          <span>Back</span>
         </button>
         <div>
-          <p className="app-page-kicker">单人 AI 对局</p>
-          <h1 id="start-game-title">开始游戏</h1>
+          <p className="app-page-kicker">Single-Player AI Match</p>
+          <h1 id="start-game-title">Start Game</h1>
         </div>
         <Play aria-hidden="true" />
       </header>
@@ -159,10 +159,10 @@ const StartGameFlow: React.FC<StartGameFlowProps> = ({
         <section className="start-game-panel" aria-labelledby="start-mode-title">
           <div className="app-section-heading">
             <div>
-              <p className="app-page-kicker">第 2 步</p>
-              <h2 id="start-mode-title">选择模式</h2>
+              <p className="app-page-kicker">Step 2</p>
+              <h2 id="start-mode-title">Choose Mode</h2>
             </div>
-            <span>仅单人模式可启动</span>
+            <span>Only single-player can start</span>
           </div>
           <div className="start-mode-grid">
             <button
@@ -174,8 +174,8 @@ const StartGameFlow: React.FC<StartGameFlowProps> = ({
               }}
             >
               <Bot aria-hidden="true" />
-              <strong>单人模式</strong>
-              <span>与 AI 玩家完成完整对局</span>
+              <strong>Single-Player</strong>
+              <span>Play a complete match with AI players</span>
               <ChevronRight aria-hidden="true" />
             </button>
             <button
@@ -185,11 +185,11 @@ const StartGameFlow: React.FC<StartGameFlowProps> = ({
                 setSetup(DEFAULT_SETUP);
                 moveTo('multiplayer-unavailable');
               }}
-              aria-label="真人多人模式，暂未开放"
+              aria-label="Live multiplayer, currently unavailable"
             >
               <Users aria-hidden="true" />
-              <strong>真人多人模式</strong>
-              <span>路线预览 · 暂未开放</span>
+              <strong>Live Multiplayer</strong>
+              <span>Roadmap preview · Unavailable</span>
               <Lock aria-hidden="true" />
             </button>
           </div>
@@ -200,14 +200,14 @@ const StartGameFlow: React.FC<StartGameFlowProps> = ({
         <section className="start-game-panel" aria-labelledby="match-setup-title">
           <div className="app-section-heading">
             <div>
-              <p className="app-page-kicker">第 3 步</p>
-              <h2 id="match-setup-title">选择板型与难度</h2>
+              <p className="app-page-kicker">Step 3</p>
+              <h2 id="match-setup-title">Choose Board and Difficulty</h2>
             </div>
-            <span>标准单人场</span>
+            <span>Standard single-player match</span>
           </div>
 
           <fieldset className="start-game-fieldset">
-            <legend>板型</legend>
+            <legend>Board</legend>
             <div className="start-board-grid">
               {BOARD_OPTIONS.map(board => (
                 <label className={setup.boardId === board.id ? 'is-selected' : ''} key={board.id}>
@@ -227,7 +227,7 @@ const StartGameFlow: React.FC<StartGameFlowProps> = ({
           </fieldset>
 
           <fieldset className="start-game-fieldset">
-            <legend>难度</legend>
+            <legend>Difficulty</legend>
             <div className="start-difficulty-grid">
               {DIFFICULTIES.map(difficulty => (
                 <label className={setup.difficulty === difficulty.id ? 'is-selected' : ''} key={difficulty.id}>
@@ -238,21 +238,21 @@ const StartGameFlow: React.FC<StartGameFlowProps> = ({
                     checked={setup.difficulty === difficulty.id}
                     onChange={() => setSetup(current => ({ ...current, difficulty: difficulty.id }))}
                   />
-                  <strong>{difficulty.label}</strong>
-                  <span>{difficulty.description}</span>
+                  <strong>{difficulty.labelEn}</strong>
+                  <span>{difficulty.descriptionEn}</span>
                 </label>
               ))}
             </div>
           </fieldset>
 
-          <section className="start-unavailable-routes" aria-label="其他匹配方式">
-            <button type="button" disabled><Lock aria-hidden="true" />多选匹配 · 未开放</button>
-            <button type="button" disabled><Lock aria-hidden="true" />12人觉醒摄梦人 · 限时板未开放</button>
-            <button type="button" disabled><Lock aria-hidden="true" />9人血月猎魔人 · 限时板未开放</button>
+          <section className="start-unavailable-routes" aria-label="Other matchmaking options">
+            <button type="button" disabled><Lock aria-hidden="true" />Multi-Board Match · Unavailable</button>
+            <button type="button" disabled><Lock aria-hidden="true" />12-Player Awakened Dreamweaver · Limited board unavailable</button>
+            <button type="button" disabled><Lock aria-hidden="true" />9-Player Blood Moon Demon Hunter · Limited board unavailable</button>
           </section>
 
           <button className="app-primary-button" type="button" onClick={() => moveTo('confirmation')}>
-            检查配置
+            Review Setup
             <ChevronRight aria-hidden="true" />
           </button>
         </section>
@@ -262,17 +262,17 @@ const StartGameFlow: React.FC<StartGameFlowProps> = ({
         <section className="start-game-panel start-confirmation" aria-labelledby="start-confirm-title">
           <div className="app-section-heading">
             <div>
-              <p className="app-page-kicker">第 4 步</p>
-              <h2 id="start-confirm-title">最终确认</h2>
+              <p className="app-page-kicker">Step 4</p>
+              <h2 id="start-confirm-title">Final Confirmation</h2>
             </div>
             <Check aria-hidden="true" />
           </div>
           <dl>
-            <div><dt>模式</dt><dd>单人 AI 对局</dd></div>
-            <div><dt>板型</dt><dd>{BOARD_OPTIONS.find(board => board.id === setup.boardId)?.title}</dd></div>
-            <div><dt>难度</dt><dd>{DIFFICULTY_CONFIGS[setup.difficulty].label}</dd></div>
+            <div><dt>Mode</dt><dd>Single-Player AI Match</dd></div>
+            <div><dt>Board</dt><dd>{BOARD_OPTIONS.find(board => board.id === setup.boardId)?.title}</dd></div>
+            <div><dt>Difficulty</dt><dd>{DIFFICULTY_CONFIGS[setup.difficulty].labelEn}</dd></div>
           </dl>
-          <p role="status">确认后才会创建本地对局。重复点击只会启动一次。</p>
+          <p role="status">The local match is created only after confirmation. Repeated clicks still start it once.</p>
           <button
             className="app-primary-button"
             type="button"
@@ -282,7 +282,7 @@ const StartGameFlow: React.FC<StartGameFlowProps> = ({
             }}
           >
             <Play aria-hidden="true" />
-            确认并开始
+            Confirm and Start
           </button>
         </section>
       )}

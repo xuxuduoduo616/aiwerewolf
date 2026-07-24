@@ -5,9 +5,9 @@ export const MODE_9_PLAYER: GameConfig = {
   id: '9-standard',
   playerCount: 9,
   name: '9-Player Standard',
-  displayName: '9人标准场',
-  description: '3民3狼 + 预言家、女巫、猎人。节奏快，适合第一阶段调试AI发言和基础规则。',
-  roleSummary: '3民 / 3狼 / 预言家 / 女巫 / 猎人',
+  displayName: '9-Player Standard',
+  description: '3 Villagers, 3 Werewolves + Seer, Witch, Hunter. Fast-paced and ideal for first-stage AI speech and core-rule testing.',
+  roleSummary: '3 Villagers / 3 Werewolves / Seer / Witch / Hunter',
   enabled: true,
   roles: [
     Role.WEREWOLF, Role.WEREWOLF, Role.WEREWOLF,
@@ -20,9 +20,9 @@ export const MODE_12_PLAYER: GameConfig = {
   id: '12-standard',
   playerCount: 12,
   name: '12-Player Standard',
-  displayName: '12人预女猎白',
-  description: '4民4狼 + 预言家、女巫、猎人、白痴。更接近完整标准局。',
-  roleSummary: '4民 / 4狼 / 预言家 / 女巫 / 猎人 / 白痴',
+  displayName: '12-Player Seer-Witch-Hunter-Idiot',
+  description: '4 Villagers, 4 Werewolves + Seer, Witch, Hunter, Idiot. Closer to a complete standard game.',
+  roleSummary: '4 Villagers / 4 Werewolves / Seer / Witch / Hunter / Idiot',
   enabled: true,
   roles: [
     Role.WEREWOLF, Role.WEREWOLF, Role.WEREWOLF, Role.WEREWOLF,
@@ -44,36 +44,36 @@ export const AVATAR_SEEDS = [
 ];
 
 export const ROLE_DESCRIPTIONS: Record<Role, string> = {
-  [Role.WEREWOLF]: '夜晚共同刀人，白天隐藏身份、扰乱好人视角。',
-  [Role.VILLAGER]: '没有夜间技能，依靠发言、票型和逻辑找狼。',
-  [Role.SEER]: '每晚查验一名玩家，得知其是否为狼人。',
-  [Role.WITCH]: '拥有一瓶解药和一瓶毒药，每瓶全局只能使用一次。',
-  [Role.HUNTER]: '正常死亡时可以开枪带走一名玩家，被毒死不能开枪。',
-  [Role.IDIOT]: '白天被投出时翻牌免死，但之后失去投票权。',
+  [Role.WEREWOLF]: "Hunt together at night; hide your identity and disrupt the village's perspective by day.",
+  [Role.VILLAGER]: 'No night ability; find werewolves through speeches, vote patterns, and logic.',
+  [Role.SEER]: 'Check one player each night to learn whether they are a werewolf.',
+  [Role.WITCH]: 'Has one antidote and one poison; each can be used only once per game.',
+  [Role.HUNTER]: 'May shoot and eliminate one player when normally killed, but cannot shoot if poisoned.',
+  [Role.IDIOT]: 'Reveals and survives when exiled during the day, but loses the right to vote afterward.',
 };
 
 export const ROLE_LABELS: Record<Role, string> = {
-  [Role.WEREWOLF]: '狼人',
-  [Role.VILLAGER]: '平民',
-  [Role.SEER]: '预言家',
-  [Role.WITCH]: '女巫',
-  [Role.HUNTER]: '猎人',
-  [Role.IDIOT]: '白痴',
+  [Role.WEREWOLF]: 'Werewolf',
+  [Role.VILLAGER]: 'Villager',
+  [Role.SEER]: 'Seer',
+  [Role.WITCH]: 'Witch',
+  [Role.HUNTER]: 'Hunter',
+  [Role.IDIOT]: 'Idiot',
 };
 
 export const PHASE_LABELS: Record<string, string> = {
-  LOGIN: '登录',
-  LOBBY: '大厅',
-  NIGHT_START: '入夜',
-  NIGHT_WEREWOLVES: '狼人夜聊/刀人',
-  NIGHT_SEER: '预言家查验',
-  NIGHT_WITCH: '女巫行动',
-  DAY_ANNOUNCE: '公布死讯',
-  DAY_HUNTER_CHECK: '猎人状态',
-  DAY_HUNTER_SHOT: '猎人开枪',
-  DAY_DISCUSSION: '白天发言',
-  DAY_VOTING: '放逐投票',
-  GAME_OVER: '游戏结束',
+  LOGIN: 'Login',
+  LOBBY: 'Lobby',
+  NIGHT_START: 'Nightfall',
+  NIGHT_WEREWOLVES: 'Werewolves Hunt',
+  NIGHT_SEER: 'Seer Checks',
+  NIGHT_WITCH: 'Witch Acts',
+  DAY_ANNOUNCE: 'Dawn Report',
+  DAY_HUNTER_CHECK: 'Hunter Status',
+  DAY_HUNTER_SHOT: 'Hunter Shot',
+  DAY_DISCUSSION: 'Day Discussion',
+  DAY_VOTING: 'Exile Vote',
+  GAME_OVER: 'Game Over',
 };
 
 export const PHASE_LABELS_EN: Record<string, string> = {

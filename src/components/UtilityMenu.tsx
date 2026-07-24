@@ -20,17 +20,17 @@ interface UtilityMenuProps {
 const UtilityMenu: React.FC<UtilityMenuProps> = ({ onSelect, onBack }) => (
   <main className="utility-page" aria-labelledby="utility-menu-title">
     <header className="app-page-header">
-      <button className="app-page-back" type="button" onClick={onBack} aria-label="关闭功能菜单">
+      <button className="app-page-back" type="button" onClick={onBack} aria-label="Close utility menu">
         <ArrowLeft aria-hidden="true" />
-        <span>返回</span>
+        <span>Back</span>
       </button>
       <div>
-        <p className="app-page-kicker">狼村服务</p>
-        <h1 id="utility-menu-title">功能菜单</h1>
+        <p className="app-page-kicker">Village Services</p>
+        <h1 id="utility-menu-title">Utility Menu</h1>
       </div>
       <Settings aria-hidden="true" />
     </header>
-    <nav className="utility-menu-grid" aria-label="功能菜单目的地">
+    <nav className="utility-menu-grid" aria-label="Utility menu destinations">
       {UTILITY_DESTINATIONS.map(({ id, label, Icon }, index) => (
         <button type="button" key={id} onClick={() => onSelect(id)} autoFocus={index === 0}>
           <Icon aria-hidden="true" />

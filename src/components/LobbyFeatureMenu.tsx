@@ -29,14 +29,14 @@ interface MenuItem {
 }
 
 export const LOBBY_FEATURE_MENU_ITEMS: readonly MenuItem[] = [
-  { id: 'settings', label: '设置', Icon: Settings },
-  { id: 'announcements', label: '公告', Icon: Bell },
-  { id: 'mail', label: '邮件', Icon: Mail },
-  { id: 'support', label: '客服', Icon: Headphones },
-  { id: 'help', label: '帮助', Icon: HelpCircle },
-  { id: 'user-center', label: '用户中心', Icon: UserRound },
-  { id: 'redeem-code', label: '兑换码', Icon: TicketCheck },
-  { id: 'about', label: '关于游戏', Icon: Info },
+  { id: 'settings', label: 'Settings', Icon: Settings },
+  { id: 'announcements', label: 'Announcements', Icon: Bell },
+  { id: 'mail', label: 'Mail', Icon: Mail },
+  { id: 'support', label: 'Support', Icon: Headphones },
+  { id: 'help', label: 'Help', Icon: HelpCircle },
+  { id: 'user-center', label: 'User Center', Icon: UserRound },
+  { id: 'redeem-code', label: 'Redeem Code', Icon: TicketCheck },
+  { id: 'about', label: 'About', Icon: Info },
 ] as const;
 
 export interface LobbyFeatureMenuProps {
@@ -53,18 +53,18 @@ const LobbyFeatureMenu: React.FC<LobbyFeatureMenuProps> = ({
   <main className="lobby-feature-page" aria-labelledby="lobby-feature-menu-title">
     <header className="lobby-feature-header">
       {onBack ? (
-        <button className="lobby-feature-icon-button" type="button" onClick={onBack} aria-label="返回" title="返回">
+        <button className="lobby-feature-icon-button" type="button" onClick={onBack} aria-label="Back" title="Back">
           <ArrowLeft aria-hidden="true" />
         </button>
       ) : <span className="lobby-feature-header-spacer" />}
       <div>
-        <h1 id="lobby-feature-menu-title">功能菜单</h1>
-        <span className="lobby-feature-kicker">狼村服务</span>
+        <h1 id="lobby-feature-menu-title">Utility Menu</h1>
+        <span className="lobby-feature-kicker">Village Services</span>
       </div>
       <Settings className="lobby-feature-header-icon" aria-hidden="true" />
     </header>
 
-    <section className="lobby-feature-menu-grid" aria-label="功能列表">
+    <section className="lobby-feature-menu-grid" aria-label="Utility list">
       {LOBBY_FEATURE_MENU_ITEMS.map(({ id, label, Icon }) => {
         const disabled = disabledItems.includes(id);
         return (
@@ -74,11 +74,11 @@ const LobbyFeatureMenu: React.FC<LobbyFeatureMenuProps> = ({
             key={id}
             disabled={disabled}
             onClick={() => onSelect(id)}
-            title={disabled ? `${label}未开放` : label}
+            title={disabled ? `${label} is unavailable` : label}
           >
             <Icon aria-hidden="true" />
             <span>{label}</span>
-            {disabled && <small>未开放</small>}
+            {disabled && <small>Unavailable</small>}
           </button>
         );
       })}

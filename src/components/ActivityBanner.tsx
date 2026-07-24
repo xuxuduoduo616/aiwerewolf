@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 const BANNERS = [
-  { id: 1, title: '逐浪季限定', subtitle: '夏日海滩主题皮肤限时上架', color: '#3b82f6' },
-  { id: 2, title: '线上海选赛', subtitle: '月度狼人杀锦标赛报名中', color: '#f59e0b' },
-  { id: 3, title: '每日签到', subtitle: '连续签到7天送限定头像框', color: '#8b5cf6' },
+  { id: 1, title: 'Tidal Season Exclusive', subtitle: 'Summer beach skins available for a limited time', color: '#3b82f6' },
+  { id: 2, title: 'Online Qualifier', subtitle: 'Registration is open for the monthly Werewolf tournament', color: '#f59e0b' },
+  { id: 3, title: 'Daily Check-In', subtitle: 'Check in for 7 days to earn an exclusive avatar frame', color: '#8b5cf6' },
 ];
 
 const ActivityBanner: React.FC = () => {

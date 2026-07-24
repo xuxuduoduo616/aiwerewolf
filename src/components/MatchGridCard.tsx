@@ -66,10 +66,10 @@ const MatchGridCard: React.FC<Props> = ({ name, roleSummary, season, deadline, o
         onClick={disabled ? undefined : onSelect}
         className="wol-match-grid-card"
         disabled={disabled}
-        title={disabled ? `${name}未开放` : name}
+        title={disabled ? `${name} is unavailable` : name}
       >
         {cardContent}
-        {disabled && <span className="wol-match-unavailable">未开放</span>}
+        {disabled && <span className="wol-match-unavailable">Unavailable</span>}
       </button>
     );
   }

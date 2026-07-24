@@ -10,10 +10,10 @@ interface Props {
 }
 
 const COIN_PACKS: CoinPackData[] = [
-  { amount: 60,   price: 6,   bonus: 60,   badge: '首充双倍' },
+  { amount: 60,   price: 6,   bonus: 60,   badge: 'First Purchase Bonus' },
   { amount: 300,  price: 30,  bonus: 30 },
-  { amount: 680,  price: 68,  bonus: 68,   badge: '限时' },
-  { amount: 1280, price: 128, bonus: 128,  badge: '最热门' },
+  { amount: 680,  price: 68,  bonus: 68,   badge: 'Limited Time' },
+  { amount: 1280, price: 128, bonus: 128,  badge: 'Most Popular' },
   { amount: 3280, price: 328, bonus: 680 },
   { amount: 6480, price: 648, bonus: 1600 },
 ];
@@ -45,8 +45,8 @@ const CoinStore: React.FC<Props> = ({ coins, coupons, crystals }) => {
       {/* Hero Banner */}
       <div className="wol-store-hero">
         <div className="wol-store-hero-glow" />
-        <h1 className="wol-store-hero-title">狼村商会</h1>
-        <p className="wol-store-hero-sub">为你的狼村之旅添砖加瓦</p>
+        <h1 className="wol-store-hero-title">Village Exchange</h1>
+        <p className="wol-store-hero-sub">Supplies for your journey through the village</p>
         <div className="wol-store-hero-decor">
           <span className="wol-store-hero-line" />
           <svg viewBox="0 0 24 24" fill="currentColor" className="wol-store-hero-icon">
@@ -62,23 +62,23 @@ const CoinStore: React.FC<Props> = ({ coins, coupons, crystals }) => {
         <div className="wol-store-wallet-item wol-store-wallet-item--coin">
           {coinIcon}
           <span className="wol-store-wallet-value">{coins.toLocaleString()}</span>
-          <span className="wol-store-wallet-label">金币</span>
+          <span className="wol-store-wallet-label">Coins</span>
         </div>
         <div className="wol-store-wallet-item wol-store-wallet-item--coupon">
           {couponIcon}
           <span className="wol-store-wallet-value">{coupons.toLocaleString()}</span>
-          <span className="wol-store-wallet-label">抵用券</span>
+          <span className="wol-store-wallet-label">Coupons</span>
         </div>
         <div className="wol-store-wallet-item wol-store-wallet-item--crystal">
           {crystalIcon}
           <span className="wol-store-wallet-value">{crystals.toLocaleString()}</span>
-          <span className="wol-store-wallet-label">水晶</span>
+          <span className="wol-store-wallet-label">Crystals</span>
         </div>
       </div>
 
       {/* Coin Pack Grid */}
       <div className="wol-store-section">
-        <h2 className="wol-section-title">金币充值</h2>
+        <h2 className="wol-section-title">Coin Packs</h2>
         <div className="wol-store-grid">
           {COIN_PACKS.map((pack) => (
             <CoinPackCard
@@ -98,17 +98,17 @@ const CoinStore: React.FC<Props> = ({ coins, coupons, crystals }) => {
               <rect x="2" y="4" width="20" height="16" rx="2" strokeLinecap="round"/>
               <path d="M2 10h20" strokeLinecap="round"/>
             </svg>
-            <span>支付方式</span>
+            <span>Payment Method</span>
           </div>
           <p className="wol-store-payment-method">
-            当前状态：<strong>充值功能暂不可用</strong>
+            Current status: <strong>Purchases are unavailable</strong>
           </p>
           <p
             id="payments-unavailable-description"
             className="wol-store-payment-hint"
             role="status"
           >
-            当前未配置支付服务，暂时无法创建订单或发放金币。
+            Payment services are not configured, so no order can be created and no coins can be issued.
           </p>
         </div>
       </div>
@@ -121,7 +121,7 @@ const CoinStore: React.FC<Props> = ({ coins, coupons, crystals }) => {
           disabled
           aria-describedby="payments-unavailable-description"
         >
-          <span>充值功能暂不可用</span>
+          <span>Purchases are unavailable</span>
         </button>
       </div>
     </div>

@@ -9,16 +9,16 @@ interface Props {
 }
 
 const TABS = [
-  { key: 'outfits' as const,     label: '时装' },
-  { key: 'decorations' as const, label: '装饰' },
-  { key: 'runwolf' as const,     label: '跑跑狼' },
-  { key: 'scenes' as const,      label: '场景' },
-  { key: 'skins' as const,       label: '皮肤' },
-  { key: 'backpack' as const,    label: '背包' },
+  { key: 'outfits' as const,     label: 'Outfits' },
+  { key: 'decorations' as const, label: 'Decor' },
+  { key: 'runwolf' as const,     label: 'Run Wolf' },
+  { key: 'scenes' as const,      label: 'Scenes' },
+  { key: 'skins' as const,       label: 'Skins' },
+  { key: 'backpack' as const,    label: 'Backpack' },
 ];
 
 const ProfileSubTabs: React.FC<Props> = ({ active, onSelect }) => (
-  <TabBar id="profile" label="个人资料分类" tabs={TABS} active={active} onSelect={onSelect} />
+  <TabBar id="profile" label="Profile categories" tabs={TABS} active={active} onSelect={onSelect} />
 );
 
 export default ProfileSubTabs;

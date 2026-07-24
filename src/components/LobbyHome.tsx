@@ -13,6 +13,11 @@ interface Props {
   onNavigate: (view: ShellView) => void;
 }
 
+const LOBBY_CHAT_PREVIEW = [
+  '夜行者：有人一起开黑吗？',
+  '魔法少女：求带新手场~',
+] as const;
+
 /* ─── SVG sub-components ──────────────────────────────────────────────── */
 
 const GenderFemale = () => (
@@ -46,7 +51,7 @@ const LobbyHome: React.FC<Props> = ({
   onNavigate,
 }) => {
   return (
-    <section className="wol-lobby" aria-label="大厅">
+    <section className="wol-lobby" aria-label="Lobby">
       {/* ── User Profile Panel (top-left) ───────────────────────────── */}
       <div className="wol-lobby-profile" style={{
         display: 'flex', alignItems: 'center', gap: 10,
@@ -72,7 +77,7 @@ const LobbyHome: React.FC<Props> = ({
         {/* Name, title, rank */}
         <div className="wol-lobby-profile-copy" style={{ minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 3 }}>
-            <span className="wol-break-text" style={{ fontSize: 15, fontWeight: 700, color: '#fff' }}>狼村旅人</span>
+            <span className="wol-break-text" style={{ fontSize: 15, fontWeight: 700, color: '#fff' }}>Village Traveler</span>
             <GenderFemale />
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
@@ -84,7 +89,7 @@ const LobbyHome: React.FC<Props> = ({
               border: '1px solid rgba(251,191,36,0.25)',
               borderRadius: 4, padding: '1px 6px',
             }}>
-              真相洞悉
+              Truth Seeker
             </span>
             {/* Rank badge */}
             <span style={{
@@ -98,7 +103,7 @@ const LobbyHome: React.FC<Props> = ({
               <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" style={{ width: 10, height: 10 }}>
                 <path d="M8 2l2 4 4 .5-3 3 .5 4.5-3.5-2-3.5 2 .5-4.5-3-3 4-.5z" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
-              二阶 5星
+              Tier 2 · 5 Stars
             </span>
           </div>
         </div>
@@ -146,7 +151,7 @@ const LobbyHome: React.FC<Props> = ({
               fontSize: 10, fontWeight: 600,
               color: 'rgba(255,255,255,0.35)',
             }}>
-              默认时装
+              Default Outfit
             </div>
           </div>
         </div>
@@ -167,20 +172,20 @@ const LobbyHome: React.FC<Props> = ({
 
       <div className="wol-lobby-lower">
         {/* ── Primary single-player launch and local feature surfaces ── */}
-        <section className="wol-lobby-launchpad" aria-label="大厅主要操作">
+        <section className="wol-lobby-launchpad" aria-label="Primary lobby actions">
           <button className="wol-start-game" type="button" onClick={onStartGame}>
             <Play aria-hidden="true" />
-            <span><strong>开始游戏</strong><small>单人 AI 对局</small></span>
+            <span><strong>Start Game</strong><small>Single-Player AI Match</small></span>
           </button>
           <div className="wol-lobby-feature-links">
             <button type="button" onClick={() => onOpenSubview('activity')}>
-              <CalendarDays aria-hidden="true" /><span>活动</span>
+              <CalendarDays aria-hidden="true" /><span>Activities</span>
             </button>
             <button type="button" onClick={() => onOpenSubview('faction-support')}>
-              <Heart aria-hidden="true" /><span>阵营应援</span>
+              <Heart aria-hidden="true" /><span>Faction Support</span>
             </button>
             <button type="button" onClick={() => onOpenSubview('battle-pass')}>
-              <Ticket aria-hidden="true" /><span>通行证</span>
+              <Ticket aria-hidden="true" /><span>Battle Pass</span>
             </button>
           </div>
         </section>
@@ -209,11 +214,16 @@ const LobbyHome: React.FC<Props> = ({
               boxShadow: '0 0 4px rgba(239,68,68,0.6)',
             }} />
             <div style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.4)', marginBottom: 4 }}>
-              大厅聊天
+              Lobby Chat
             </div>
-            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.28)', lineHeight: 1.5 }}>
-              <div>夜行者：有人一起开黑吗？</div>
-              <div style={{ marginTop: 1 }}>魔法少女：求带新手场~</div>
+            <div
+              data-ui-copy-category="AI_OR_PLAYER_SPEECH_OR_CHAT"
+              data-ui-copy-allow="AI_LOBBY_CHAT_PREVIEW"
+              style={{ fontSize: 10, color: 'rgba(255,255,255,0.28)', lineHeight: 1.5 }}
+            >
+              {LOBBY_CHAT_PREVIEW.map((message, index) => (
+                <div key={message} style={index === 0 ? undefined : { marginTop: 1 }}>{message}</div>
+              ))}
             </div>
           </div>
 

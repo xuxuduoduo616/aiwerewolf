@@ -1,0 +1,252 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "id": "AI_LOBBY_CHAT_PREVIEW",
+      "path": "src/components/LobbyHome.tsx",
+      "symbol": "LOBBY_CHAT_PREVIEW",
+      "selector": "[data-ui-copy-allow=\"AI_LOBBY_CHAT_PREVIEW\"]",
+      "category": "AI_OR_PLAYER_SPEECH_OR_CHAT",
+      "provenance": "Static player chat preview supplied by the integrated lobby surface.",
+      "reason": "Player chat content must remain byte-for-byte unchanged while its Lobby Chat heading stays English."
+    },
+    {
+      "id": "AI_PRIVATE_WOLF_KNOWLEDGE",
+      "path": "src/hooks/useGameState.ts",
+      "symbol": "nextPlayers",
+      "property": "privateKnowledge",
+      "category": "AI_OR_PLAYER_SPEECH_OR_CHAT",
+      "provenance": "Private werewolf context supplied to AI players at game start.",
+      "reason": "This expression input shapes AI speech and is not interface chrome."
+    },
+    {
+      "id": "AI_STYLE_BACKGROUND_PROMPT",
+      "path": "src/services/aiStyles.ts",
+      "symbol": "DEFAULT_BACKGROUND_PROMPT",
+      "category": "AI_OR_PLAYER_SPEECH_OR_CHAT",
+      "provenance": "System prompt for AI player expression.",
+      "reason": "Prompt content is not rendered as interface copy and must preserve AI speech behavior."
+    },
+    {
+      "id": "AI_STYLE_LABELS",
+      "path": "src/services/aiStyles.ts",
+      "symbol": "CUSTOM_AI_STYLES",
+      "property": "label",
+      "category": "AI_OR_PLAYER_SPEECH_OR_CHAT",
+      "provenance": "AI persona metadata assigned to generated players.",
+      "reason": "Persona expression metadata is not rendered as interface chrome."
+    },
+    {
+      "id": "AI_STYLE_SPEAKING_STYLE",
+      "path": "src/services/aiStyles.ts",
+      "symbol": "CUSTOM_AI_STYLES",
+      "property": "speakingStyle",
+      "category": "AI_OR_PLAYER_SPEECH_OR_CHAT",
+      "provenance": "AI speaking-style instructions.",
+      "reason": "Speech-generation input must remain byte-for-byte unchanged."
+    },
+    {
+      "id": "AI_STYLE_CATCHPHRASES",
+      "path": "src/services/aiStyles.ts",
+      "symbol": "CUSTOM_AI_STYLES",
+      "property": "catchphrases",
+      "category": "AI_OR_PLAYER_SPEECH_OR_CHAT",
+      "provenance": "AI catchphrase source content.",
+      "reason": "Player speech content must remain byte-for-byte unchanged."
+    },
+    {
+      "id": "AI_ROLE_PERSONA_LABELS",
+      "path": "src/services/aiStyles.ts",
+      "symbol": "ROLE_PERSONAS",
+      "property": "label",
+      "category": "AI_OR_PLAYER_SPEECH_OR_CHAT",
+      "provenance": "Role-specific AI persona metadata.",
+      "reason": "AI expression metadata is not interface chrome."
+    },
+    {
+      "id": "AI_ROLE_PERSONA_PROMPTS",
+      "path": "src/services/aiStyles.ts",
+      "symbol": "ROLE_PERSONAS",
+      "property": "personalityPrompt",
+      "category": "AI_OR_PLAYER_SPEECH_OR_CHAT",
+      "provenance": "Role-specific AI personality prompts.",
+      "reason": "Speech-generation input must remain byte-for-byte unchanged."
+    },
+    {
+      "id": "AI_ROLE_PERSONA_STYLES",
+      "path": "src/services/aiStyles.ts",
+      "symbol": "ROLE_PERSONAS",
+      "property": "speakingStyle",
+      "category": "AI_OR_PLAYER_SPEECH_OR_CHAT",
+      "provenance": "Role-specific speaking-style instructions.",
+      "reason": "Speech-generation input must remain byte-for-byte unchanged."
+    },
+    {
+      "id": "AI_ROLE_PERSONA_CATCHPHRASES",
+      "path": "src/services/aiStyles.ts",
+      "symbol": "ROLE_PERSONAS",
+      "property": "catchphrases",
+      "category": "AI_OR_PLAYER_SPEECH_OR_CHAT",
+      "provenance": "Role-specific catchphrase source content.",
+      "reason": "Player speech content must remain byte-for-byte unchanged."
+    },
+    {
+      "id": "AI_ROLE_PROFILE_STYLES",
+      "path": "src/services/roleProfiles.ts",
+      "symbol": "ROLE_BEHAVIOR_PROFILES",
+      "property": "speechStyle",
+      "category": "AI_OR_PLAYER_SPEECH_OR_CHAT",
+      "provenance": "Role behavior profile speaking-style input.",
+      "reason": "Speech-generation input is not rendered interface copy."
+    },
+    {
+      "id": "AI_ROLE_PROFILE_PROMPTS",
+      "path": "src/services/roleProfiles.ts",
+      "symbol": "ROLE_BEHAVIOR_PROFILES",
+      "property": "systemPromptAddendum",
+      "category": "AI_OR_PLAYER_SPEECH_OR_CHAT",
+      "provenance": "Role behavior profile prompt input.",
+      "reason": "Speech-generation input is not rendered interface copy."
+    },
+    {
+      "id": "AI_ROSTER_PLACEHOLDERS",
+      "path": "src/services/rosterGuard.ts",
+      "symbol": "PLACEHOLDERS",
+      "property": "zh",
+      "category": "AI_OR_PLAYER_SPEECH_OR_CHAT",
+      "provenance": "AI speech referent-repair placeholders.",
+      "reason": "The guard must preserve its existing speech-repair semantics."
+    },
+    {
+      "id": "AI_ROSTER_PROMPT_PLACEHOLDER",
+      "path": "src/services/rosterGuard.ts",
+      "symbol": "PROMPT_PLACEHOLDER",
+      "property": "zh",
+      "category": "AI_OR_PLAYER_SPEECH_OR_CHAT",
+      "provenance": "AI speech prompt referent placeholder.",
+      "reason": "The guard must preserve its existing speech-repair semantics."
+    },
+    {
+      "id": "AI_ROSTER_NAMELESS_FALLBACK",
+      "path": "src/services/rosterGuard.ts",
+      "symbol": "NAMELESS_FALLBACK",
+      "property": "zh",
+      "category": "AI_OR_PLAYER_SPEECH_OR_CHAT",
+      "provenance": "AI speech fallback used after entity sanitization.",
+      "reason": "Fallback speech must remain byte-for-byte unchanged."
+    },
+    {
+      "id": "AI_ROSTER_KATAKANA_PATTERN",
+      "path": "src/services/rosterGuard.ts",
+      "symbol": "katakanaNamePatterns",
+      "property": "re",
+      "category": "AI_OR_PLAYER_SPEECH_OR_CHAT",
+      "provenance": "AI speech entity-sanitization pattern.",
+      "reason": "The pattern is part of speech sanitization, not interface copy."
+    },
+    {
+      "id": "AI_ROSTER_SEAT_REPAIR",
+      "path": "src/services/rosterGuard.ts",
+      "symbol": "repairText",
+      "category": "AI_OR_PLAYER_SPEECH_OR_CHAT",
+      "provenance": "AI speech seat-reference repair output.",
+      "reason": "The replacement is player speech content and must preserve behavior."
+    },
+    {
+      "id": "AI_TRANSLATION_PROTECTED_NOTE",
+      "path": "src/services/translationService.ts",
+      "symbol": "protectedNote",
+      "category": "AI_OR_PLAYER_SPEECH_OR_CHAT",
+      "provenance": "Protected player-reference instructions for AI speech translation.",
+      "reason": "Translation prompt input is not interface copy."
+    },
+    {
+      "id": "AI_TRANSLATION_PROMPT",
+      "path": "src/services/translationService.ts",
+      "symbol": "response",
+      "property": "prompt",
+      "category": "AI_OR_PLAYER_SPEECH_OR_CHAT",
+      "provenance": "AI speech translation prompt.",
+      "reason": "Translation prompt input is not interface copy."
+    },
+    {
+      "id": "AI_WEREWOLF_SLANG_CONSTANTS",
+      "path": "src/constants.ts",
+      "symbol": "WEREWOLF_SLANG",
+      "category": "AI_OR_PLAYER_SPEECH_OR_CHAT",
+      "provenance": "Werewolf vocabulary injected into AI speech-generation prompts.",
+      "reason": "Speech-generation vocabulary must remain byte-for-byte unchanged and is not interface chrome."
+    },
+    {
+      "id": "AI_WOLF_CHAT_STRATEGY_TYPE",
+      "path": "src/types.ts",
+      "line": 184,
+      "category": "AI_OR_PLAYER_SPEECH_OR_CHAT",
+      "provenance": "Type-level vocabulary for generated werewolf strategy tags.",
+      "reason": "These values describe protected AI chat content rendered only inside the explicit wolf-channel dynamic-content boundary."
+    },
+    {
+      "id": "AI_LOG_MESSAGE",
+      "path": "src/components/LogMessage.tsx",
+      "selector": "[data-ui-copy-allow=\"AI_LOG_MESSAGE\"]",
+      "runtimeOnly": true,
+      "category": "AI_OR_PLAYER_SPEECH_OR_CHAT",
+      "provenance": "GameLog non-system speech fields supplied by AI or the human player.",
+      "reason": "Speech text is displayed byte-for-byte while log controls remain English."
+    },
+    {
+      "id": "AI_WOLF_CHANNEL",
+      "path": "src/components/WolfChannel.tsx",
+      "selector": "[data-ui-copy-allow=\"AI_WOLF_CHANNEL\"]",
+      "runtimeOnly": true,
+      "category": "AI_OR_PLAYER_SPEECH_OR_CHAT",
+      "provenance": "Generated werewolf strategy tag and chat message.",
+      "reason": "Werewolf chat content must remain byte-for-byte unchanged."
+    },
+    {
+      "id": "USER_APP_SELECTED_PLAYER",
+      "path": "src/App.tsx",
+      "selector": "[data-ui-copy-allow=\"USER_APP_SELECTED_PLAYER\"]",
+      "runtimeOnly": true,
+      "category": "USER_AUTHORED",
+      "provenance": "Selected player's display name from the player profile.",
+      "reason": "User-authored display names must remain byte-for-byte unchanged."
+    },
+    {
+      "id": "USER_PLAYER_NAME",
+      "path": "src/components/PlayerCard.tsx",
+      "selector": "[data-ui-copy-allow=\"USER_PLAYER_NAME\"]",
+      "runtimeOnly": true,
+      "category": "USER_AUTHORED",
+      "provenance": "Player display name supplied by the current profile or roster.",
+      "reason": "User-authored display names must remain byte-for-byte unchanged."
+    },
+    {
+      "id": "USER_SPEECH_INPUT",
+      "path": "src/components/SpeechInput.tsx",
+      "selector": "[data-ui-copy-allow=\"USER_SPEECH_INPUT\"]",
+      "runtimeOnly": true,
+      "category": "USER_AUTHORED",
+      "provenance": "Human player's free-text speech input.",
+      "reason": "User-authored speech must remain byte-for-byte unchanged."
+    },
+    {
+      "id": "USER_VOTE_PLAYER_NAME",
+      "path": "src/components/VoteSummary.tsx",
+      "selector": "[data-ui-copy-allow=\"USER_VOTE_PLAYER_NAME\"]",
+      "runtimeOnly": true,
+      "category": "USER_AUTHORED",
+      "provenance": "Player display names rendered in vote results.",
+      "reason": "User-authored display names must remain byte-for-byte unchanged."
+    },
+    {
+      "id": "HISTORY_RECORDS_PANEL",
+      "path": "src/components/RecordsPanel.tsx",
+      "selector": "[data-ui-copy-allow=\"HISTORY_RECORDS_PANEL\"]",
+      "runtimeOnly": true,
+      "category": "STORED_HISTORICAL_RECORD",
+      "provenance": "Previously stored result, role, and summary fields plus derived top-role text.",
+      "reason": "Stored historical record values must remain byte-for-byte unchanged."
+    }
+  ]
+}

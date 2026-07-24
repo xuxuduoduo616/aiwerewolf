@@ -213,6 +213,9 @@
 
 .wol-marquee-track {
   display: flex;
+  flex: 0 0 auto;
+  width: max-content;
+  min-width: max-content;
   align-items: center;
   gap: 48px;
   white-space: nowrap;
@@ -232,6 +235,8 @@
 
 .wol-marquee-item {
   display: inline-flex;
+  flex: 0 0 auto;
+  width: max-content;
   align-items: center;
   gap: 6px;
 }

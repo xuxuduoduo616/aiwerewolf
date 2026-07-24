@@ -9,14 +9,14 @@ interface Props {
 }
 
 const TABS = [
-  { key: 'home' as const, label: '首页' },
-  { key: 'beginner' as const, label: '新手场' },
-  { key: 'entertainment' as const, label: '娱乐场' },
-  { key: 'advanced' as const, label: '进阶场' },
+  { key: 'home' as const, label: 'Home' },
+  { key: 'beginner' as const, label: 'Beginner' },
+  { key: 'entertainment' as const, label: 'Entertainment' },
+  { key: 'advanced' as const, label: 'Advanced' },
 ];
 
 const MatchSubTabs: React.FC<Props> = ({ active, onSelect }) => (
-  <TabBar id="match" label="游戏场分类" tabs={TABS} active={active} onSelect={onSelect} />
+  <TabBar id="match" label="Game categories" tabs={TABS} active={active} onSelect={onSelect} />
 );
 
 export default MatchSubTabs;

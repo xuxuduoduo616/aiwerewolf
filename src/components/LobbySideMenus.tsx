@@ -43,16 +43,16 @@ export type LobbySideMenuItem = MenuItemBase & (
 );
 
 export const LEFT_MENUS: readonly LobbySideMenuItem[] = [
-  { label: '活动', Icon: Sparkles, hasRedDot: true, action: { type: 'lobby', subview: 'activity' } },
-  { label: '阵营应援', Icon: UsersRound, action: { type: 'lobby', subview: 'faction-support' } },
-  { label: '限时娱乐', Icon: Gamepad2, hasRedDot: true, action: { type: 'shell', view: 'wolfvillage' } },
+  { label: 'Activities', Icon: Sparkles, hasRedDot: true, action: { type: 'lobby', subview: 'activity' } },
+  { label: 'Faction Support', Icon: UsersRound, action: { type: 'lobby', subview: 'faction-support' } },
+  { label: 'Limited Events', Icon: Gamepad2, hasRedDot: true, action: { type: 'shell', view: 'wolfvillage' } },
 ];
 
 export const RIGHT_MENUS: readonly LobbySideMenuItem[] = [
-  { label: '功能菜单', Icon: MoreHorizontal, action: { type: 'utility' } },
-  { label: '任务', Icon: ListChecks, disabled: true, unavailableLabel: '未开放' },
-  { label: '通行证', Icon: BadgeCheck, action: { type: 'lobby', subview: 'battle-pass' } },
-  { label: '首充', Icon: Zap, hasRedDot: true, action: { type: 'shell', view: 'shop' } },
+  { label: 'Utility Menu', Icon: MoreHorizontal, action: { type: 'utility' } },
+  { label: 'Tasks', Icon: ListChecks, disabled: true, unavailableLabel: 'Unavailable' },
+  { label: 'Battle Pass', Icon: BadgeCheck, action: { type: 'lobby', subview: 'battle-pass' } },
+  { label: 'First Purchase', Icon: Zap, hasRedDot: true, action: { type: 'shell', view: 'shop' } },
 ];
 
 export const activateLobbySideMenuItem = (
@@ -99,8 +99,8 @@ const LobbySideMenus: React.FC<Props> = ({
           }}
           onClick={item.disabled ? undefined : () => activateLobbySideMenuItem(item, handlers)}
           disabled={item.disabled}
-          aria-label={item.disabled ? `${item.label}，${item.unavailableLabel}` : item.label}
-          title={item.disabled ? `${item.label}${item.unavailableLabel}` : item.label}
+          aria-label={item.disabled ? `${item.label}, ${item.unavailableLabel}` : item.label}
+          title={item.disabled ? `${item.label}: ${item.unavailableLabel}` : item.label}
         >
           <item.Icon aria-hidden="true" />
           <span style={{ fontSize: 8, lineHeight: 1.2 }}>{item.label}</span>

@@ -13,37 +13,37 @@ interface BackpackItem {
 
 const ITEMS_BY_CATEGORY: Record<string, BackpackItem[]> = {
   gift: [
-    { id: 'g1', name: '玫瑰花', effect: '亲密度+1', count: 9, icon: '🌹' },
-    { id: 'g2', name: '小喇叭', effect: '全服喊话1次', count: 3, icon: '📢' },
-    { id: 'g3', name: '精致礼盒', effect: '随机开出道具', count: 5, icon: '🎁' },
+    { id: 'g1', name: 'Rose', effect: 'Affinity +1', count: 9, icon: '🌹' },
+    { id: 'g2', name: 'Village Horn', effect: 'Send 1 village announcement', count: 3, icon: '📢' },
+    { id: 'g3', name: 'Deluxe Gift Box', effect: 'Contains a random item', count: 5, icon: '🎁' },
   ],
   chest: [
-    { id: 'c1', name: '青铜宝箱', effect: '随机获得普通道具', count: 2, icon: '📦' },
-    { id: 'c2', name: '赛季宝箱', effect: '获得赛季限定奖励', count: 1, icon: '✨' },
+    { id: 'c1', name: 'Bronze Chest', effect: 'Contains a random common item', count: 2, icon: '📦' },
+    { id: 'c2', name: 'Season Chest', effect: 'Contains a season reward', count: 1, icon: '✨' },
   ],
   item: [
-    { id: 'i1', name: '改名卡', effect: '修改一次昵称', count: 1, icon: '🪪' },
-    { id: 'i2', name: '经验药水', effect: '经验值+100', count: 12, icon: '🧪' },
-    { id: 'i3', name: '体力恢复剂', effect: '恢复体力50点', count: 6, icon: '💊' },
+    { id: 'i1', name: 'Rename Card', effect: 'Change your display name once', count: 1, icon: '🪪' },
+    { id: 'i2', name: 'Experience Potion', effect: 'Experience +100', count: 12, icon: '🧪' },
+    { id: 'i3', name: 'Energy Tonic', effect: 'Restore 50 energy', count: 6, icon: '💊' },
   ],
   shard: [
-    { id: 's1', name: '狼魂碎片', effect: '集齐50个兑换皮肤', count: 14, icon: '💎' },
-    { id: 's2', name: '星光碎片', effect: '集齐30个兑换头像框', count: 8, icon: '⭐' },
+    { id: 's1', name: 'Wolf Soul Shard', effect: 'Collect 50 to redeem a skin', count: 14, icon: '💎' },
+    { id: 's2', name: 'Starlight Shard', effect: 'Collect 30 to redeem an avatar frame', count: 8, icon: '⭐' },
   ],
   coupon: [
-    { id: 'co1', name: '首充双倍券', effect: '首次充值金额翻倍', count: 1, icon: '🎫' },
-    { id: 'co2', name: '8折优惠券', effect: '商城消费享8折', count: 2, icon: '🏷️' },
+    { id: 'co1', name: 'First Purchase Voucher', effect: 'Double the first purchase amount', count: 1, icon: '🎫' },
+    { id: 'co2', name: '20% Off Coupon', effect: 'Save 20% in the shop', count: 2, icon: '🏷️' },
   ],
 };
 
 type Category = 'gift' | 'chest' | 'item' | 'shard' | 'coupon';
 
 const CATEGORIES: { key: Category; label: string }[] = [
-  { key: 'gift', label: '礼物' },
-  { key: 'chest', label: '宝箱' },
-  { key: 'item', label: '道具' },
-  { key: 'shard', label: '碎片' },
-  { key: 'coupon', label: '优惠券' },
+  { key: 'gift', label: 'Gifts' },
+  { key: 'chest', label: 'Chests' },
+  { key: 'item', label: 'Items' },
+  { key: 'shard', label: 'Shards' },
+  { key: 'coupon', label: 'Coupons' },
 ];
 
 /* ─── Gift icon ───────────────────────────────────────────────────────── */
@@ -62,7 +62,7 @@ const BackpackPanel: React.FC = () => {
   const items = ITEMS_BY_CATEGORY[category] || [];
 
   return (
-    <section className="wol-backpack" aria-label="背包">
+    <section className="wol-backpack" aria-label="Backpack">
       {/* Filter bar */}
       <FilterChipBar chips={CATEGORIES} active={category} onSelect={setCategory} />
 
@@ -78,7 +78,7 @@ const BackpackPanel: React.FC = () => {
               fontSize: 12,
               fontWeight: 600,
             }}>
-              该分类暂无道具
+              No items in this category
             </div>
           ) : (
             items.map(item => (
@@ -130,7 +130,7 @@ const BackpackPanel: React.FC = () => {
                 }}
               >
                 <GiftIcon />
-                送礼
+                Send Gift
               </button>
 
               {/* Count badge */}

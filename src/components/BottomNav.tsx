@@ -16,18 +16,18 @@ interface TabDef {
 }
 
 const TABS: TabDef[] = [
-  { view: 'home',        label: '首页',   Icon: Home },
-  { view: 'friends',     label: '好友',   Icon: UsersRound },
-  { view: 'wolfvillage', label: '狼村',   Icon: Castle },
-  { view: 'shop',        label: '商店街', Icon: Store },
-  { view: 'profile',     label: '我的',   Icon: UserRound },
+  { view: 'home',        label: 'Home',       Icon: Home },
+  { view: 'friends',     label: 'Friends',    Icon: UsersRound },
+  { view: 'wolfvillage', label: 'Village',    Icon: Castle },
+  { view: 'shop',        label: 'Shop',       Icon: Store },
+  { view: 'profile',     label: 'Profile',    Icon: UserRound },
 ];
 
 /* ─── Component ───────────────────────────────────────────────────────── */
 
 const BottomNav: React.FC<Props> = ({ activeView, onNavigate }) => {
   return (
-    <nav className="wol-bottom-nav" role="navigation" aria-label="主导航">
+    <nav className="wol-bottom-nav" role="navigation" aria-label="Main navigation">
       {TABS.map(tab => {
         const isActive = activeView === tab.view;
         return (

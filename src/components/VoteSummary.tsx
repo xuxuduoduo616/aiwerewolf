@@ -72,17 +72,17 @@ const VoteSummary: React.FC<Props> = ({ voteRecords, players, round, eliminatedP
 
   const nameOf = (id: number) => {
     const player = players.find(p => p.id === id);
-    return player ? `${player.id}号 ${player.name}` : `${id}号`;
+    return player ? `Player ${player.id} ${player.name}` : `Player ${id}`;
   };
-  const shortOf = (id: number) => `${id}号`;
+  const shortOf = (id: number) => `Player ${id}`;
 
   if (summary.totalVotes === 0) {
     return (
       <div className="rounded-lg border border-zinc-700 bg-zinc-900 p-3 text-center">
         <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-zinc-300">
-          <Vote className="w-3.5 h-3.5" />放逐投票结果
+          <Vote className="w-3.5 h-3.5" />Exile Vote Results
         </div>
-        <p className="mt-2 text-[11px] text-zinc-500">本轮没有投票记录。</p>
+        <p className="mt-2 text-[11px] text-zinc-500">No votes were recorded this round.</p>
       </div>
     );
   }
@@ -92,9 +92,9 @@ const VoteSummary: React.FC<Props> = ({ voteRecords, players, round, eliminatedP
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1.5 text-xs font-bold text-zinc-200">
-          <Vote className="w-3.5 h-3.5" />放逐投票结果
+          <Vote className="w-3.5 h-3.5" />Exile Vote Results
         </div>
-        <span className="text-[10px] text-zinc-500">第 {round} 天 · {summary.totalVotes} 票</span>
+        <span className="text-[10px] text-zinc-500">Day {round} · {summary.totalVotes} votes</span>
       </div>
 
       {/* Grouped by target */}
@@ -107,11 +107,11 @@ const VoteSummary: React.FC<Props> = ({ voteRecords, players, round, eliminatedP
               className={`rounded border p-2 ${isExiled ? 'border-red-700 bg-red-950/40' : 'border-zinc-700 bg-zinc-900'}`}
             >
               <div className="flex items-center justify-between text-[11px]">
-                <span className={`font-bold ${isExiled ? 'text-red-100' : 'text-zinc-200'}`}>
+                <span data-ui-copy-category="USER_AUTHORED" data-ui-copy-allow="USER_VOTE_PLAYER_NAME" className={`font-bold ${isExiled ? 'text-red-100' : 'text-zinc-200'}`}>
                   {nameOf(group.targetId)}
                 </span>
                 <span className={isExiled ? 'text-red-200' : 'text-zinc-400'}>
-                  {group.count} 票 · {group.percent}%
+                  {group.count} votes · {group.percent}%
                 </span>
               </div>
               {/* count bar */}
@@ -137,8 +137,8 @@ const VoteSummary: React.FC<Props> = ({ voteRecords, players, round, eliminatedP
       {summary.abstainVoterIds.length > 0 && (
         <div className="rounded border border-zinc-700 bg-zinc-800 p-2">
           <div className="flex items-center justify-between text-[11px]">
-            <span className="font-bold text-zinc-300">弃票</span>
-            <span className="text-zinc-400">{summary.abstainVoterIds.length} 票</span>
+            <span className="font-bold text-zinc-300">Abstained</span>
+            <span className="text-zinc-400">{summary.abstainVoterIds.length} votes</span>
           </div>
           <div className="mt-1.5 flex flex-wrap gap-1">
             {summary.abstainVoterIds.map(voterId => (
@@ -154,15 +154,15 @@ const VoteSummary: React.FC<Props> = ({ voteRecords, players, round, eliminatedP
       {eliminatedPlayerId !== null ? (
         <div className="rounded-lg border-2 border-red-700 bg-red-950/80 p-2.5 text-center">
           <div className="flex items-center justify-center gap-1.5 text-[10px] text-red-300/80 uppercase tracking-wide">
-            <Gavel className="w-3 h-3" />放逐出局
+            <Gavel className="w-3 h-3" />Exiled
           </div>
-          <div className="mt-1 flex items-center justify-center gap-1.5 text-sm font-black text-red-100">
+          <div data-ui-copy-category="USER_AUTHORED" data-ui-copy-allow="USER_VOTE_PLAYER_NAME" className="mt-1 flex items-center justify-center gap-1.5 text-sm font-black text-red-100">
             <Skull className="w-4 h-4" />{nameOf(eliminatedPlayerId)}
           </div>
         </div>
       ) : (
         <div className="rounded-lg border border-zinc-600 bg-zinc-800 p-2.5 text-center">
-          <div className="text-sm font-bold text-zinc-300">平票 · 无人出局</div>
+          <div className="text-sm font-bold text-zinc-300">Tie · No One Exiled</div>
         </div>
       )}
 
@@ -175,7 +175,7 @@ const VoteSummary: React.FC<Props> = ({ voteRecords, players, round, eliminatedP
           aria-controls="vote-detail-panel"
         >
           <ChevronDown className={`w-3 h-3 transition-transform ${showDetail ? 'rotate-180' : ''}`} />
-          详情
+          Details
         </button>
         {showDetail && (
           <div id="vote-detail-panel" className="mt-1.5 grid grid-cols-2 gap-x-3 gap-y-0.5">
@@ -183,7 +183,7 @@ const VoteSummary: React.FC<Props> = ({ voteRecords, players, round, eliminatedP
               <div key={pair.voterId} className="text-[10px] text-zinc-500 flex justify-between">
                 <span>{shortOf(pair.voterId)}</span>
                 <span className="text-zinc-600">→</span>
-                <span>{pair.targetId === null ? '弃票' : shortOf(pair.targetId)}</span>
+                <span>{pair.targetId === null ? 'Abstain' : shortOf(pair.targetId)}</span>
               </div>
             ))}
           </div>

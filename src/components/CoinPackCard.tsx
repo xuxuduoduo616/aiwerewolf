@@ -4,7 +4,7 @@ export interface CoinPackData {
   amount: number;
   price: number;
   bonus: number;
-  badge?: string; // '首充双倍' | '最热门' | '限时'
+  badge?: string;
 }
 
 interface Props {
@@ -20,9 +20,9 @@ const CoinPackCard: React.FC<Props> = ({
   unavailableDescriptionId = 'payments-unavailable-description',
 }) => {
   const badgeClass =
-    pack.badge === '首充双倍' ? 'wol-coin-pack-badge--first'
-    : pack.badge === '最热门' ? 'wol-coin-pack-badge--hot'
-    : pack.badge === '限时' ? 'wol-coin-pack-badge--limited'
+    pack.badge === 'First Purchase Bonus' ? 'wol-coin-pack-badge--first'
+    : pack.badge === 'Most Popular' ? 'wol-coin-pack-badge--hot'
+    : pack.badge === 'Limited Time' ? 'wol-coin-pack-badge--limited'
     : '';
 
   return (
@@ -31,18 +31,18 @@ const CoinPackCard: React.FC<Props> = ({
       className="wol-coin-pack"
       disabled
       aria-describedby={unavailableDescriptionId}
-      aria-label={`${pack.amount}金币 ¥${pack.price}，充值功能暂不可用`}
+      aria-label={`${pack.amount} coins, ¥${pack.price}. Purchases are currently unavailable.`}
     >
       {pack.badge && (
         <span className={`wol-coin-pack-badge ${badgeClass}`}>{pack.badge}</span>
       )}
       <div className="wol-coin-pack-amount">
         <span className="wol-coin-pack-coins">{pack.amount.toLocaleString()}</span>
-        <span className="wol-coin-pack-label">金币</span>
+        <span className="wol-coin-pack-label">Coins</span>
       </div>
       <div className="wol-coin-pack-price">¥{pack.price}</div>
       {pack.bonus > 0 && (
-        <div className="wol-coin-pack-bonus">+{pack.bonus}赠送</div>
+        <div className="wol-coin-pack-bonus">+{pack.bonus} bonus</div>
       )}
     </button>
   );

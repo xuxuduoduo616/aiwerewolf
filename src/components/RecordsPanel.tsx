@@ -33,7 +33,7 @@ const RecordsPanel: React.FC<Props> = ({ records, show, error, compact }) => {
       {/* Header */}
       <div className="flex items-center gap-2 mb-4">
         <History className="w-4 h-4" />
-        <h3 className="font-bold text-sm">我的战绩</h3>
+        <h3 className="font-bold text-sm">My Records</h3>
       </div>
 
       {/* Error */}
@@ -48,24 +48,24 @@ const RecordsPanel: React.FC<Props> = ({ records, show, error, compact }) => {
         <div className="grid grid-cols-3 gap-2 mb-4">
           <div className="bg-zinc-900/70 border border-zinc-800 rounded p-2 text-center">
             <div className="text-lg font-black text-zinc-100">{stats.total}</div>
-            <div className="text-[10px] text-zinc-500 mt-0.5">对局</div>
+            <div className="text-[10px] text-zinc-500 mt-0.5">Games</div>
           </div>
           <div className="bg-zinc-900/70 border border-zinc-800 rounded p-2 text-center">
             <div className={`text-lg font-black ${stats.winRate >= 50 ? 'text-emerald-300' : 'text-red-300'}`}>
               {stats.winRate}%
             </div>
-            <div className="text-[10px] text-zinc-500 mt-0.5">胜率</div>
+            <div className="text-[10px] text-zinc-500 mt-0.5">Win Rate</div>
           </div>
           <div className="bg-zinc-900/70 border border-zinc-800 rounded p-2 text-center">
-            <div className="text-xs font-bold text-zinc-200 truncate">{stats.topRole}</div>
-            <div className="text-[10px] text-zinc-500 mt-0.5">常用</div>
+            <div className="text-xs font-bold text-zinc-200 truncate" data-ui-copy-category="STORED_HISTORICAL_RECORD" data-ui-copy-allow="HISTORY_RECORDS_PANEL">{stats.topRole}</div>
+            <div className="text-[10px] text-zinc-500 mt-0.5">Top Role</div>
           </div>
         </div>
       )}
 
       {/* Records list */}
       {records.length === 0 ? (
-        <p className="text-sm text-zinc-500">暂无历史对局。完成一局后会显示在这里。</p>
+        <p className="text-sm text-zinc-500">No game history yet. Completed games will appear here.</p>
       ) : (
         <div className="space-y-2">
           {records.map(record => (
@@ -75,16 +75,16 @@ const RecordsPanel: React.FC<Props> = ({ records, show, error, compact }) => {
                   {record.result === 'WIN'
                     ? <TrendingUp className="w-3 h-3 text-emerald-400" />
                     : <Skull className="w-3 h-3 text-red-400" />}
-                  <span className={record.result === 'WIN' ? 'text-emerald-300 font-bold' : 'text-red-300 font-bold'}>
+                  <span data-ui-copy-category="STORED_HISTORICAL_RECORD" data-ui-copy-allow="HISTORY_RECORDS_PANEL" className={record.result === 'WIN' ? 'text-emerald-300 font-bold' : 'text-red-300 font-bold'}>
                     {record.result}
                   </span>
                   <span className="text-zinc-500">·</span>
                   <Shield className="w-3 h-3 text-zinc-500" />
-                  <span className="text-zinc-400">{record.role}</span>
+                  <span className="text-zinc-400" data-ui-copy-category="STORED_HISTORICAL_RECORD" data-ui-copy-allow="HISTORY_RECORDS_PANEL">{record.role}</span>
                 </div>
-                <span className="text-zinc-600">{new Date(record.createdAt).toLocaleDateString('zh-CN')}</span>
+                <span className="text-zinc-600">{new Date(record.createdAt).toLocaleDateString('en-US')}</span>
               </div>
-              <p className="text-[11px] leading-relaxed text-zinc-400 line-clamp-2">{record.summary}</p>
+              <p className="text-[11px] leading-relaxed text-zinc-400 line-clamp-2" data-ui-copy-category="STORED_HISTORICAL_RECORD" data-ui-copy-allow="HISTORY_RECORDS_PANEL">{record.summary}</p>
             </article>
           ))}
         </div>

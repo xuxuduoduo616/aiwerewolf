@@ -16,7 +16,7 @@ export const isSupabaseConfigured = () => Boolean(supabaseUrl && supabaseAnonKey
 
 const getClient = (): SupabaseClient => {
   if (!supabaseUrl || !supabaseAnonKey) {
-    throw new Error('Supabase 未配置：请设置 VITE_SUPABASE_URL 和 VITE_SUPABASE_ANON_KEY。');
+    throw new Error('Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
   }
   return createClient(supabaseUrl, supabaseAnonKey);
 };
@@ -28,7 +28,7 @@ export const requestEmailOtp = async (email: string): Promise<void> => {
     email,
     options: { shouldCreateUser: true },
   });
-  if (error) throw new Error(error.message || '验证码发送失败。');
+  if (error) throw new Error(error.message || 'Could not send the verification code.');
 };
 
 export const verifyEmailOtp = async (
@@ -48,7 +48,7 @@ export const verifyEmailOtp = async (
     type: 'email',
   });
   if (error || !data.session || !data.user) {
-    throw new Error(error?.message || '验证码无效或已过期。');
+    throw new Error(error?.message || 'The verification code is invalid or expired.');
   }
 
   const accessToken = data.session.access_token;
@@ -71,7 +71,7 @@ export const verifyEmailOtp = async (
     .select()
     .single();
 
-  if (profileErr) throw new Error(profileErr.message || '档案保存失败。');
+  if (profileErr) throw new Error(profileErr.message || 'Could not save the profile.');
 
   // Step 3: Fetch records using the same token
   const { data: recordData, error: recordErr } = await client
@@ -81,7 +81,7 @@ export const verifyEmailOtp = async (
     .order('created_at', { ascending: false })
     .limit(20);
 
-  if (recordErr) throw new Error(recordErr.message || '战绩加载失败。');
+  if (recordErr) throw new Error(recordErr.message || 'Could not load game records.');
 
   return {
     session: {
@@ -119,7 +119,7 @@ export const upsertProfile = async (
     .select()
     .single();
 
-  if (error) throw new Error(error.message || '档案保存失败。');
+  if (error) throw new Error(error.message || 'Could not save the profile.');
   return toProfile(data);
 };
 
@@ -141,7 +141,7 @@ export const fetchGameRecords = async (
     .order('created_at', { ascending: false })
     .limit(20);
 
-  if (error) throw new Error(error.message || '战绩加载失败。');
+  if (error) throw new Error(error.message || 'Could not load game records.');
   return (data || []).map(toGameRecord);
 };
 
@@ -168,7 +168,7 @@ export const saveGameRecord = async (
     .select()
     .single();
 
-  if (error) throw new Error(error.message || '战绩保存失败。');
+  if (error) throw new Error(error.message || 'Could not save the game record.');
   return toGameRecord(data);
 };
 
@@ -196,7 +196,7 @@ export const fetchUserCoins = async (
     .eq('user_id', session.user.id)
     .maybeSingle();
 
-  if (error) throw new Error(error.message || '钱包数据加载失败。');
+  if (error) throw new Error(error.message || 'Could not load wallet data.');
 
   return {
     coins: (data?.coins as number) ?? 0,
@@ -229,7 +229,7 @@ export const upsertUserCoins = async (
       { onConflict: 'user_id' },
     );
 
-  if (error) throw new Error(error.message || '钱包保存失败。');
+  if (error) throw new Error(error.message || 'Could not save wallet data.');
 };
 
 // ─── Mappers ──────────────────────────────────────────────────────────────────

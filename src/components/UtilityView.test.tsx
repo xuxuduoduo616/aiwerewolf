@@ -15,14 +15,14 @@ describe('utility destinations', () => {
     );
     expect(html).toContain(content.title);
     expect(html).toContain(content.description);
-    expect(html).toContain('aria-label="返回功能菜单"');
+    expect(html).toContain('aria-label="Return to utility menu"');
   });
 
   it('provides a local language control in Settings', () => {
     const html = renderToStaticMarkup(
       <UtilityView destination="settings" displayLanguage="en" onToggleLanguage={() => undefined} onBack={() => undefined} />,
     );
-    expect(html).toContain('显示语言：English');
+    expect(html).toContain('Speech display: English');
     expect(html).not.toContain('disabled=""');
   });
 
@@ -30,7 +30,7 @@ describe('utility destinations', () => {
     const html = renderToStaticMarkup(
       <UtilityView destination="redeem-code" displayLanguage="zh" onToggleLanguage={() => undefined} onBack={() => undefined} />,
     );
-    expect(html).toContain('兑换服务尚未接入');
+    expect(html).toContain('Redemption is not connected');
     expect(html.match(/disabled=""/g)).toHaveLength(2);
   });
 });

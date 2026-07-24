@@ -18,14 +18,14 @@ describe('CoinStore payment availability', () => {
       [3280, 328],
       [6480, 648],
     ]) {
-      expect(html).toContain(`${amount}金币 ¥${price}，充值功能暂不可用`);
+      expect(html).toContain(`${amount} coins, ¥${price}. Purchases are currently unavailable.`);
     }
 
     expect(html.match(/<button/g)).toHaveLength(7);
     expect(html.match(/<button[^>]*disabled=""/g)).toHaveLength(7);
     expect(html).toContain('1,234');
-    expect(html).toContain('充值功能暂不可用');
-    expect(html).toContain('当前未配置支付服务，暂时无法创建订单或发放金币。');
+    expect(html).toContain('Purchases are unavailable');
+    expect(html).toContain('Payment services are not configured, so no order can be created and no coins can be issued.');
     expect(onPurchase).not.toHaveBeenCalled();
   });
 

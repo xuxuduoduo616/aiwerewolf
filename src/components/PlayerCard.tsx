@@ -1,6 +1,5 @@
 import React from 'react';
 import { Player, Role } from '../types';
-import { ROLE_LABELS } from '../constants';
 import { User, Eye, FlaskConical, Crosshair, Skull, Mic, Cpu, BadgeHelp, PawPrint, Moon, Check } from 'lucide-react';
 
 interface PlayerCardProps {
@@ -15,6 +14,15 @@ interface PlayerCardProps {
   customBadge?: React.ReactNode;
   isWolfTeammate?: boolean;
 }
+
+const ROLE_LABELS_EN: Record<Role, string> = {
+  [Role.WEREWOLF]: 'Werewolf',
+  [Role.VILLAGER]: 'Villager',
+  [Role.SEER]: 'Seer',
+  [Role.WITCH]: 'Witch',
+  [Role.HUNTER]: 'Hunter',
+  [Role.IDIOT]: 'Idiot',
+};
 
 const RoleIcon = ({ role }: { role: Role }) => {
   switch (role) {
@@ -70,7 +78,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
 
       {!player.canVote && player.isAlive && (
         <div className="absolute -top-2 -right-2 bg-cyan-950 border border-cyan-500 text-cyan-200 text-[9px] px-1.5 py-0.5 rounded-full z-20">
-          无票
+          No Vote
         </div>
       )}
 
@@ -78,13 +86,15 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
         <img
           src={player.avatarUrl}
           alt={player.name}
+          data-ui-copy-category="USER_AUTHORED"
+          data-ui-copy-allow="USER_PLAYER_NAME"
           className={`${compact ? 'w-14 h-14' : 'w-16 h-16'} rounded-full object-cover border-2 border-zinc-600 bg-zinc-950 shadow-md`}
         />
         {customBadge && <div className="absolute -top-2 -right-2 z-10">{customBadge}</div>}
         {isWolfTeammate && (
           <div
             className="absolute -bottom-1 -left-1 z-10 bg-red-950/90 border border-red-700 rounded-full p-1 shadow-lg"
-            aria-label="狼队友"
+            aria-label="Werewolf teammate"
           >
             <PawPrint className="w-3 h-3 text-red-300" />
           </div>
@@ -102,7 +112,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
         {hasSpoken && player.isAlive && !isSpeaking && (
           <div
             className="absolute -bottom-1 -right-1 z-10 bg-emerald-600 rounded-full p-1 shadow-lg border border-emerald-400"
-            aria-label="已发言"
+            aria-label="Finished speaking"
           >
             <Check className="w-3 h-3 text-white" />
           </div>
@@ -111,9 +121,9 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
 
       <div className="mt-2 w-full text-center flex flex-col items-center gap-1">
         <div className="text-xs font-bold text-zinc-100 truncate w-full px-1 flex items-center justify-center gap-1">
-          {isMe ? 'YOU' : player.name}
+          {isMe ? 'YOU' : <span data-ui-copy-category="USER_AUTHORED" data-ui-copy-allow="USER_PLAYER_NAME">{player.name}</span>}
           {isMe && player.role === Role.WEREWOLF && (
-            <Moon className="w-3 h-3 text-red-400 shrink-0" aria-label="我是狼人" />
+            <Moon className="w-3 h-3 text-red-400 shrink-0" aria-label="I am a werewolf" />
           )}
         </div>
 
@@ -123,7 +133,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
           <div className="mt-1 flex items-center justify-center gap-1 text-[9px] font-bold uppercase tracking-wide bg-black/55 px-2 py-0.5 rounded-full w-fit border border-white/10">
             <RoleIcon role={player.role} />
             <span className={player.role === Role.WEREWOLF ? 'text-red-300' : 'text-zinc-200'}>
-              {ROLE_LABELS[player.role]}
+              {ROLE_LABELS_EN[player.role]}
             </span>
           </div>
         )}

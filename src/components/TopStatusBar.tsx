@@ -19,7 +19,7 @@ const TopStatusBar: React.FC<Props> = ({
   utilityTriggerRef,
 }) => {
   const plusBtn = (
-    <button type="button" className="wol-currency-plus" aria-label="前往商店购买" onClick={onNavigateToShop}>
+    <button type="button" className="wol-currency-plus" aria-label="Go to shop" onClick={onNavigateToShop}>
       <Plus aria-hidden="true" />
     </button>
   );
@@ -48,8 +48,8 @@ const TopStatusBar: React.FC<Props> = ({
           type="button"
           className="wol-utility-trigger"
           onClick={onOpenUtilityMenu}
-          aria-label="打开功能菜单"
-          title="功能菜单"
+          aria-label="Open utility menu"
+          title="Utility menu"
           aria-haspopup="menu"
         >
           <Gear aria-hidden="true" />
@@ -59,15 +59,15 @@ const TopStatusBar: React.FC<Props> = ({
       {/* Marquee ticker */}
       <div className="wol-marquee">
         <div className="wol-marquee-track">
-          <span className="wol-marquee-item">全服赠言：欢迎来到狼人杀村落 · 每日签到领好礼</span>
-          <span className="wol-marquee-item">逐浪季限定皮肤即将下架 · 欲购从速</span>
-          <span className="wol-marquee-item">新手保护期：前10局免体力消耗</span>
-          <span className="wol-marquee-item">本周活动：完成3局对局送限定头像框</span>
+          <span className="wol-marquee-item">Village message: Welcome to AI Werewolf · Check in daily for rewards</span>
+          <span className="wol-marquee-item">Tidal Season skins leave the shop soon</span>
+          <span className="wol-marquee-item">New-player protection: No energy cost for your first 10 games</span>
+          <span className="wol-marquee-item">This week: Complete 3 games for an exclusive avatar frame</span>
           {/* Duplicate for seamless loop */}
-          <span className="wol-marquee-item">全服赠言：欢迎来到狼人杀村落 · 每日签到领好礼</span>
-          <span className="wol-marquee-item">逐浪季限定皮肤即将下架 · 欲购从速</span>
-          <span className="wol-marquee-item">新手保护期：前10局免体力消耗</span>
-          <span className="wol-marquee-item">本周活动：完成3局对局送限定头像框</span>
+          <span className="wol-marquee-item">Village message: Welcome to AI Werewolf · Check in daily for rewards</span>
+          <span className="wol-marquee-item">Tidal Season skins leave the shop soon</span>
+          <span className="wol-marquee-item">New-player protection: No energy cost for your first 10 games</span>
+          <span className="wol-marquee-item">This week: Complete 3 games for an exclusive avatar frame</span>
         </div>
       </div>
     </div>

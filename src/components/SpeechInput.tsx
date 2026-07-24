@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Send } from 'lucide-react';
-import { useDisplayLanguage, type DisplayLanguage } from '../i18n';
+import type { DisplayLanguage } from '../i18n';
 
 export const speechPlaceholder = (language: DisplayLanguage): string =>
-  language === 'zh' ? '轮到你发言...' : 'Your turn to speak...';
+  language === 'zh' ? 'Your turn to speak...' : 'Your turn to speak...';
 
 // ── Quick speech presets ────────────────────────────────────────────
 
 interface QuickSpeechData {
-  zh: string;
-  en: string;
+  text: string;
   needsTarget: boolean;
   tone: 'neutral' | 'suspicion' | 'defend';
 }
@@ -21,18 +20,18 @@ export interface QuickSpeechPreset {
 }
 
 const PRESETS: QuickSpeechData[] = [
-  { zh: '过', en: 'Pass', needsTarget: false, tone: 'neutral' },
-  { zh: '我是好人', en: "I'm a villager", needsTarget: false, tone: 'defend' },
-  { zh: '我听发言', en: 'Let me listen', needsTarget: false, tone: 'neutral' },
-  { zh: 'X号铁狼', en: 'Player X is wolf', needsTarget: true, tone: 'suspicion' },
-  { zh: 'X号有问题', en: 'Player X is suspicious', needsTarget: true, tone: 'suspicion' },
-  { zh: 'X号像好人', en: 'Player X seems good', needsTarget: true, tone: 'defend' },
-  { zh: '我信X号', en: 'I trust Player X', needsTarget: true, tone: 'defend' },
+  { text: 'Pass', needsTarget: false, tone: 'neutral' },
+  { text: "I'm a villager", needsTarget: false, tone: 'defend' },
+  { text: 'Let me listen', needsTarget: false, tone: 'neutral' },
+  { text: 'Player X is a werewolf', needsTarget: true, tone: 'suspicion' },
+  { text: 'Player X is suspicious', needsTarget: true, tone: 'suspicion' },
+  { text: 'Player X seems good', needsTarget: true, tone: 'defend' },
+  { text: 'I trust Player X', needsTarget: true, tone: 'defend' },
 ];
 
-export const buildQuickSpeeches = (language: DisplayLanguage): QuickSpeechPreset[] =>
-  PRESETS.map(({ zh, en, needsTarget, tone }) => ({
-    text: language === 'zh' ? zh : en,
+export const buildQuickSpeeches = (_language: DisplayLanguage): QuickSpeechPreset[] =>
+  PRESETS.map(({ text, needsTarget, tone }) => ({
+    text,
     needsTarget,
     tone,
   }));
@@ -55,7 +54,7 @@ const SpeechInput = ({
   visible: boolean;
   selectedPlayer?: { id: number; isAlive: boolean } | null;
 }) => {
-  const [language] = useDisplayLanguage();
+  const language: DisplayLanguage = 'en';
   const [pendingTemplate, setPendingTemplate] = useState<QuickSpeechPreset | null>(null);
 
   // Apply a pending target template when a valid player is selected.
@@ -115,20 +114,22 @@ const SpeechInput = ({
       {/* Pending-target hint */}
       {showPendingHint && (
         <div className="text-xs text-amber-400">
-          {language === 'zh' ? '点击一名玩家卡片填入号码' : 'Tap a player card to fill in the number'}
+          Tap a player card to fill in the number
         </div>
       )}
 
       {/* Free-text input row */}
-      <div className="flex gap-2">
+      <div className="flex w-full min-w-0 flex-wrap gap-2" data-speech-input-row>
         <input
-          className="flex-1 bg-black/70 border border-zinc-700 rounded px-3 py-2 text-sm outline-none focus:border-zinc-200"
+          className="min-w-0 flex-[1_1_8rem] bg-black/70 border border-zinc-700 rounded px-3 py-2 text-sm outline-none focus:border-zinc-200"
           value={value}
+          data-ui-copy-category="USER_AUTHORED"
+          data-ui-copy-allow="USER_SPEECH_INPUT"
           onChange={e => onChange(e.target.value)}
           placeholder={speechPlaceholder(language)}
           onKeyDown={e => { if (e.key === 'Enter') onSubmit(); }}
         />
-        <button onClick={onSubmit} className="action-button px-3" aria-label="Send speech"><Send className="w-4 h-4" /></button>
+        <button onClick={onSubmit} className="action-button shrink-0 px-3" aria-label="Send speech"><Send className="w-4 h-4" /></button>
       </div>
     </div>
   );

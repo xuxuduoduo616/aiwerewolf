@@ -23,7 +23,7 @@ describe('Gear utility menu', () => {
 
   it('renders every destination as a keyboard-native button', () => {
     const html = renderToStaticMarkup(<UtilityMenu onSelect={() => undefined} onBack={() => undefined} />);
-    for (const label of ['设置', '公告', '邮件', '客服', '帮助', '用户中心', '兑换码', '关于游戏']) {
+    for (const label of ['Settings', 'Announcements', 'Mail', 'Support', 'Help', 'User Center', 'Redeem Code', 'About']) {
       expect(html).toContain(label);
     }
     expect(html.match(/<button/g)).toHaveLength(9);
@@ -35,7 +35,7 @@ describe('Gear utility menu', () => {
       <TopStatusBar coins={0} coupons={0} crystals={0} onOpenUtilityMenu={() => undefined} />,
     );
     expect(html).toContain('class="wol-utility-trigger"');
-    expect(html).toContain('aria-label="打开功能菜单"');
+    expect(html).toContain('aria-label="Open utility menu"');
     expect(html).toContain('aria-haspopup="menu"');
   });
 });

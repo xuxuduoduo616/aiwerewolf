@@ -12,12 +12,12 @@ const UnavailableNotice: React.FC<UnavailableNoticeProps> = ({
   title,
   description,
   onBack,
-  statusLabel = '暂未开放',
+  statusLabel = 'Unavailable',
 }) => (
   <main className="app-unavailable" aria-labelledby="app-unavailable-title">
-    <button className="app-page-back" type="button" onClick={onBack} aria-label="返回">
+    <button className="app-page-back" type="button" onClick={onBack} aria-label="Back">
       <ArrowLeft aria-hidden="true" />
-      <span>返回</span>
+      <span>Back</span>
     </button>
     <div className="app-unavailable-symbol" aria-hidden="true">
       <LockKeyhole />

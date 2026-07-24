@@ -27,7 +27,7 @@ export function useRecords(session: SupabaseSession | null) {
         setRecordError('');
       })
       .catch(error => {
-        setRecordError(error.message || '战绩加载失败。');
+        setRecordError(error.message || 'Could not load game records.');
       });
   }, [session]);
 

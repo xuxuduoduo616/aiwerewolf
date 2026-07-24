@@ -12,26 +12,26 @@ interface Outfit {
 }
 
 const OUTFITS: Outfit[] = [
-  { id: 'default', name: '默认时装', quality: 'common', status: '永久拥有', owned: true },
-  { id: 'launch', name: '新服盛典限定时装', quality: 'advanced', status: '永久拥有', owned: true },
+  { id: 'default', name: 'Default Outfit', quality: 'common', status: 'Owned Forever', owned: true },
+  { id: 'launch', name: 'Launch Celebration Outfit', quality: 'advanced', status: 'Owned Forever', owned: true },
 ];
 
 const QUALITY_LABELS: Record<string, string> = {
-  common: '普通',
-  advanced: '高级',
-  rare: '稀有',
-  epic: '极品',
-  legendary: '传说',
+  common: 'Common',
+  advanced: 'Advanced',
+  rare: 'Rare',
+  epic: 'Epic',
+  legendary: 'Legendary',
 };
 
 type FilterKey = 'my' | 'common' | 'advanced' | 'rare' | 'epic';
 
 const FILTERS: { key: FilterKey; label: string }[] = [
-  { key: 'my', label: '我的' },
-  { key: 'common', label: '普通' },
-  { key: 'advanced', label: '高级' },
-  { key: 'rare', label: '稀有' },
-  { key: 'epic', label: '极品' },
+  { key: 'my', label: 'Mine' },
+  { key: 'common', label: 'Common' },
+  { key: 'advanced', label: 'Advanced' },
+  { key: 'rare', label: 'Rare' },
+  { key: 'epic', label: 'Epic' },
 ];
 
 const OutfitsPanel: React.FC = () => {
@@ -39,7 +39,7 @@ const OutfitsPanel: React.FC = () => {
   const [selectedOutfit, setSelectedOutfit] = useState<string>('default');
 
   return (
-    <section className="wol-outfits" aria-label="时装">
+    <section className="wol-outfits" aria-label="Outfits">
       {/* ── Fitting room preview ──────────────────────────────────── */}
       <div className="wol-outfit-preview" style={{
         display: 'flex', gap: 12,
@@ -68,7 +68,7 @@ const OutfitsPanel: React.FC = () => {
             fontSize: 10, fontWeight: 600,
             color: 'rgba(255,255,255,0.35)',
           }}>
-            {OUTFITS.find(o => o.id === selectedOutfit)?.name || '默认时装'}
+            {OUTFITS.find(o => o.id === selectedOutfit)?.name || 'Default Outfit'}
           </div>
         </div>
 
@@ -88,7 +88,7 @@ const OutfitsPanel: React.FC = () => {
               <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
-          <span style={{ fontSize: 9, fontWeight: 600, color: '#4ae0a6' }}>已穿戴</span>
+          <span style={{ fontSize: 9, fontWeight: 600, color: '#4ae0a6' }}>Equipped</span>
         </div>
       </div>
 

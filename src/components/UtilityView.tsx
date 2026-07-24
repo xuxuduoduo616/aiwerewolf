@@ -11,52 +11,52 @@ interface UtilityContent {
 
 export const UTILITY_CONTENT: Record<UtilityDestination, UtilityContent> = {
   settings: {
-    title: '设置',
-    kicker: '本机偏好',
-    description: '调整当前设备上的显示语言。对局规则与账号资产不会在这里变更。',
-    detail: '声音与对局内选项仍在游戏房间中管理。',
+    title: 'Settings',
+    kicker: 'Device Preferences',
+    description: 'Choose which speech translation to display on this device. Game rules and account assets do not change here.',
+    detail: 'Audio and in-game options remain available in the game room.',
   },
   announcements: {
-    title: '公告',
-    kicker: '本地公告板',
-    description: '当前版本为单人 AI 对局与社交路线预览。',
-    detail: '真人多人房间尚未开放。',
+    title: 'Announcements',
+    kicker: 'Local Notice Board',
+    description: 'The current version offers single-player AI matches and a preview of the social roadmap.',
+    detail: 'Live multiplayer rooms are not available yet.',
   },
   mail: {
-    title: '邮件',
-    kicker: '消息预览',
-    description: '暂无可领取邮件。本页面不会连接消息服务或发放真实奖励。',
-    detail: '0 封未读邮件',
+    title: 'Mail',
+    kicker: 'Message Preview',
+    description: 'There is no mail to claim. This page does not connect to messaging services or issue real rewards.',
+    detail: '0 unread messages',
   },
   support: {
-    title: '客服',
-    kicker: '客户服务',
-    description: '客服工单服务尚未接入。请勿在本地预览中提交个人或支付信息。',
-    detail: '服务状态：预览',
+    title: 'Support',
+    kicker: 'Customer Service',
+    description: 'Support tickets are not connected. Do not submit personal or payment information in this local preview.',
+    detail: 'Service status: Preview',
   },
   help: {
-    title: '帮助',
-    kicker: '游戏指南',
-    description: '标准单人场支持 9 人与 12 人板型，并提供新手、进阶、高手三档难度。',
-    detail: '选择“开始游戏”并在最终确认后进入对局。',
+    title: 'Help',
+    kicker: 'Game Guide',
+    description: 'Standard single-player supports 9- and 12-player boards at Beginner, Intermediate, and Expert difficulty.',
+    detail: 'Choose Start Game and enter the match after final confirmation.',
   },
   'user-center': {
-    title: '用户中心',
-    kicker: '账号概览',
-    description: '账号资料与本地大厅进度按当前用户隔离。',
-    detail: '资料修改与社交管理尚未开放。',
+    title: 'User Center',
+    kicker: 'Account Overview',
+    description: 'Account details and local lobby progress are isolated by the current user.',
+    detail: 'Profile editing and social management are not available yet.',
   },
   'redeem-code': {
-    title: '兑换码',
-    kicker: '功能预览',
-    description: '兑换服务尚未接入；本页面不会写入钱包、库存或服务器。',
-    detail: '兑换入口暂未开放。',
+    title: 'Redeem Code',
+    kicker: 'Feature Preview',
+    description: 'Redemption is not connected. This page does not write to the wallet, inventory, or server.',
+    detail: 'Code redemption is unavailable.',
   },
   about: {
-    title: '关于游戏',
+    title: 'About',
     kicker: 'AI Werewolf',
-    description: '一名真人与 AI 玩家完成完整狼人杀对局的推理游戏。',
-    detail: '当前阶段：单人 AI 对局与社交基础预览。',
+    description: 'A social deduction game where one human completes a Werewolf match with AI players.',
+    detail: 'Current stage: Single-player AI matches and a social feature preview.',
   },
 };
 
@@ -78,9 +78,9 @@ const UtilityView: React.FC<UtilityViewProps> = ({
   return (
     <main className="utility-page utility-detail" aria-labelledby="utility-view-title">
       <header className="app-page-header">
-        <button className="app-page-back" type="button" onClick={onBack} aria-label="返回功能菜单" autoFocus>
+        <button className="app-page-back" type="button" onClick={onBack} aria-label="Return to utility menu" autoFocus>
           <ArrowLeft aria-hidden="true" />
-          <span>返回</span>
+          <span>Back</span>
         </button>
         <div>
           <p className="app-page-kicker">{content.kicker}</p>
@@ -94,14 +94,14 @@ const UtilityView: React.FC<UtilityViewProps> = ({
         {destination === 'settings' && (
           <button className="app-secondary-button" type="button" onClick={onToggleLanguage}>
             <Languages aria-hidden="true" />
-            显示语言：{displayLanguage === 'zh' ? '中文' : 'English'}
+            Speech display: {displayLanguage === 'zh' ? 'Chinese' : 'English'}
           </button>
         )}
         {destination === 'redeem-code' && (
           <div className="utility-redeem-preview">
-            <label htmlFor="utility-redeem-code">兑换码</label>
-            <input id="utility-redeem-code" value="" placeholder="暂未开放" disabled readOnly />
-            <button type="button" disabled>兑换未开放</button>
+            <label htmlFor="utility-redeem-code">Redeem Code</label>
+            <input id="utility-redeem-code" value="" placeholder="Unavailable" disabled readOnly />
+            <button type="button" disabled>Redemption Unavailable</button>
           </div>
         )}
       </section>

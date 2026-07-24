@@ -69,18 +69,18 @@ describe('StartGameFlow surfaces and navigation', () => {
   it('renders the visible four-step sequence and mode choice', () => {
     const html = renderToStaticMarkup(<StartGameFlow {...callbacks} />);
     for (const label of START_GAME_STEPS) expect(html).toContain(label);
-    expect(html).toContain('单人模式');
-    expect(html).toContain('真人多人模式');
-    expect(html).toContain('路线预览 · 暂未开放');
+    expect(html).toContain('Single-Player');
+    expect(html).toContain('Live Multiplayer');
+    expect(html).toContain('Roadmap preview · Unavailable');
   });
 
   it('renders both supported boards, every difficulty, and native-disabled routes', () => {
     const html = renderToStaticMarkup(<StartGameFlow {...callbacks} initialStep="match-setup" />);
-    for (const label of ['9人标准场', '12人预女猎白', '新手', '进阶', '高手']) {
+    for (const label of ['9-Player Standard', '12-Player Standard', 'Beginner', 'Intermediate', 'Expert']) {
       expect(html).toContain(label);
     }
-    expect(html).toContain('多选匹配 · 未开放');
-    expect(html).toContain('限时板未开放');
+    expect(html).toContain('Multi-Board Match · Unavailable');
+    expect(html).toContain('Limited board unavailable');
     expect(html.match(/disabled=""/g)).toHaveLength(3);
   });
 
@@ -92,19 +92,19 @@ describe('StartGameFlow surfaces and navigation', () => {
         initialSetup={{ mode: 'single', boardId: 'twelve-player', difficulty: 'hard' }}
       />,
     );
-    expect(html).toContain('最终确认');
-    expect(html).toContain('12人预女猎白');
-    expect(html).toContain('高手');
-    expect(html).toContain('确认并开始');
+    expect(html).toContain('Final Confirmation');
+    expect(html).toContain('12-Player Standard');
+    expect(html).toContain('Expert');
+    expect(html).toContain('Confirm and Start');
   });
 
   it('renders multiplayer as an unavailable preview without a start control', () => {
     const html = renderToStaticMarkup(
       <StartGameFlow {...callbacks} initialStep="multiplayer-unavailable" />,
     );
-    expect(html).toContain('真人多人模式');
-    expect(html).toContain('不会创建房间或连接真人服务');
-    expect(html).not.toContain('确认并开始');
+    expect(html).toContain('Live Multiplayer');
+    expect(html).toContain('does not create rooms or connect to live player services');
+    expect(html).not.toContain('Confirm and Start');
   });
 
   it('defines deterministic back navigation at every flow step', () => {

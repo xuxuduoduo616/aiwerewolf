@@ -9,6 +9,9 @@ interface Props {
 }
 
 const MatchWideCard: React.FC<Props> = ({ config, roleCounts, onSelect }) => {
+  const description = config.id === '9-standard'
+    ? 'Fast 9-player game with Villagers, Werewolves, Seer, Witch, and Hunter.'
+    : 'Full 12-player game that adds the Idiot role.';
   return (
     <button
       type="button"
@@ -19,10 +22,10 @@ const MatchWideCard: React.FC<Props> = ({ config, roleCounts, onSelect }) => {
       <div className="wol-match-wide-copy">
         <div>
           <div className="wol-break-text" style={{ fontSize: 15, fontWeight: 700, color: '#fff', marginBottom: 4 }}>
-            {config.displayName}
+            {config.name}
           </div>
           <div className="wol-break-text" style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', lineHeight: 1.4 }}>
-            {config.description.length > 40 ? config.description.slice(0, 40) + '...' : config.description}
+            {description}
           </div>
         </div>
 
@@ -62,7 +65,7 @@ const MatchWideCard: React.FC<Props> = ({ config, roleCounts, onSelect }) => {
             border: '1px solid rgba(251,191,36,0.2)',
             borderRadius: 4, padding: '1px 6px',
           }}>
-            逐浪季
+            Tidal Season
           </span>
         </div>
       </div>

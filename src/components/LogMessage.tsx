@@ -38,22 +38,20 @@ const LogMessage: React.FC<Props> = ({ log, language }) => {
     return () => { cancelled = true; };
   }, [log.id, log.isSystem, baseText, language]);
 
-  if (!translated) return <>{baseText}</>;
+  const dynamicCategory = log.isSystem ? undefined : 'AI_OR_PLAYER_SPEECH_OR_CHAT';
+
+  if (!translated) return <span data-ui-copy-category={dynamicCategory} data-ui-copy-allow={dynamicCategory ? 'AI_LOG_MESSAGE' : undefined}>{baseText}</span>;
 
   return (
     <>
-      {showOriginal ? baseText : translated}
+      <span data-ui-copy-category={dynamicCategory} data-ui-copy-allow={dynamicCategory ? 'AI_LOG_MESSAGE' : undefined}>{showOriginal ? baseText : translated}</span>
       <button
         onClick={event => { event.stopPropagation(); setShowOriginal(value => !value); }}
         className="block mt-1 text-[9px] underline opacity-60 hover:opacity-100"
         aria-expanded={showOriginal}
-        aria-label={showOriginal
-          ? (language === 'zh' ? '查看译文' : 'Show translation')
-          : (language === 'zh' ? '查看原文' : 'Show original')}
+        aria-label={showOriginal ? 'Show translation' : 'Show original'}
       >
-        {showOriginal
-          ? (language === 'zh' ? '查看译文' : 'Show translation')
-          : (language === 'zh' ? '查看原文' : 'Show original')}
+        {showOriginal ? 'Show translation' : 'Show original'}
       </button>
     </>
   );

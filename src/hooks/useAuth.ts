@@ -130,9 +130,9 @@ const useAuth = (): AuthState => {
 
   const handleSendOtp = async () => {
     const email = authEmail.trim();
-    if (!email) { setAuthError('请输入邮箱。'); return; }
+    if (!email) { setAuthError('Enter your email address.'); return; }
     if (!isSupabaseConfigured()) {
-      setAuthError('Supabase 环境变量未配置。');
+      setAuthError('Supabase environment variables are not configured.');
       return;
     }
     setIsAuthLoading(true);
@@ -141,14 +141,14 @@ const useAuth = (): AuthState => {
       await requestEmailOtp(email);
       setAuthStep('VERIFY');
     } catch (error: unknown) {
-      setAuthError(getErrorMessage(error, '验证码发送失败。'));
+      setAuthError(getErrorMessage(error, 'Could not send the verification code.'));
     } finally {
       setIsAuthLoading(false);
     }
   };
 
   const handleVerifyOtp = async (onRecords: (records: GameRecord[]) => void) => {
-    if (!authCode.trim()) { setAuthError('请输入邮箱验证码。'); return; }
+    if (!authCode.trim()) { setAuthError('Enter the email verification code.'); return; }
     setIsAuthLoading(true);
     setAuthError('');
     try {
@@ -159,7 +159,7 @@ const useAuth = (): AuthState => {
       saveAuthToStorage(result.session, result.profile);  // ← persist 30 days
       onRecords(result.records);
     } catch (error: unknown) {
-      setAuthError(getErrorMessage(error, '登录失败。'));
+      setAuthError(getErrorMessage(error, 'Login failed.'));
     } finally {
       setIsAuthLoading(false);
     }

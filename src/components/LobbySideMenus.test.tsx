@@ -27,9 +27,9 @@ describe('LobbySideMenus native routing', () => {
   });
 
   it.each([
-    ['活动', 'activity'],
-    ['阵营应援', 'faction-support'],
-    ['通行证', 'battle-pass'],
+    ['Activities', 'activity'],
+    ['Faction Support', 'faction-support'],
+    ['Battle Pass', 'battle-pass'],
   ] as const)('routes %s to the %s lobby surface', (label, subview) => {
     expect(activateLobbySideMenuItem(findItem(label), handlers)).toBe(true);
     expect(handlers.onOpenSubview).toHaveBeenCalledOnce();
@@ -39,15 +39,15 @@ describe('LobbySideMenus native routing', () => {
   });
 
   it('routes 功能菜单 to the existing utility surface', () => {
-    expect(activateLobbySideMenuItem(findItem('功能菜单'), handlers)).toBe(true);
+    expect(activateLobbySideMenuItem(findItem('Utility Menu'), handlers)).toBe(true);
     expect(handlers.onOpenUtilityMenu).toHaveBeenCalledOnce();
     expect(handlers.onNavigate).not.toHaveBeenCalled();
     expect(handlers.onOpenSubview).not.toHaveBeenCalled();
   });
 
   it.each([
-    ['限时娱乐', 'wolfvillage'],
-    ['首充', 'shop'],
+    ['Limited Events', 'wolfvillage'],
+    ['First Purchase', 'shop'],
   ] as const)('preserves %s shell routing to %s', (label, view) => {
     expect(activateLobbySideMenuItem(findItem(label), handlers)).toBe(true);
     expect(handlers.onNavigate).toHaveBeenCalledOnce();
@@ -57,7 +57,7 @@ describe('LobbySideMenus native routing', () => {
   });
 
   it('makes Tasks native-disabled and visibly unavailable', () => {
-    const taskItem = findItem('任务');
+    const taskItem = findItem('Tasks');
     expect(activateLobbySideMenuItem(taskItem, handlers)).toBe(false);
     expect(handlers.onNavigate).not.toHaveBeenCalled();
     expect(handlers.onOpenSubview).not.toHaveBeenCalled();
@@ -66,9 +66,9 @@ describe('LobbySideMenus native routing', () => {
     const html = renderToStaticMarkup(
       <LobbySideMenus side="right" {...handlers} />,
     );
-    expect(html).toContain('aria-label="任务，未开放"');
+    expect(html).toContain('aria-label="Tasks, Unavailable"');
     expect(html).toContain('disabled=""');
-    expect(html).toContain('未开放');
+    expect(html).toContain('Unavailable');
   });
 
   it('gives every enabled launcher an explicit typed action', () => {

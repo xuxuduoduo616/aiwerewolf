@@ -1,7 +1,7 @@
 import React from 'react';
 import { Crosshair, Eye, FlaskConical, Skull, Vote } from 'lucide-react';
 import { GamePhase, NightState, Player, Role } from '../types';
-import { useDisplayLanguage, type DisplayLanguage } from '../i18n';
+import type { DisplayLanguage } from '../i18n';
 
 const MY_PLAYER_ID = 1;
 
@@ -15,19 +15,19 @@ export type ActionLabelKey =
   | 'VOTE'
   | 'NO_VOTE';
 
-const ACTION_LABELS: Record<ActionLabelKey, Record<DisplayLanguage, string>> = {
-  KILL: { zh: '刀人', en: 'KILL' },
-  CHECK: { zh: '查验', en: 'CHECK' },
-  SAVE: { zh: '救人', en: 'SAVE' },
-  POISON: { zh: '毒药', en: 'POISON' },
-  PASS: { zh: '跳过', en: 'PASS' },
-  SHOOT: { zh: '开枪', en: 'SHOOT' },
-  VOTE: { zh: '投票', en: 'VOTE' },
-  NO_VOTE: { zh: '弃票', en: 'NO VOTE' },
+const ACTION_LABELS: Record<ActionLabelKey, string> = {
+  KILL: 'KILL',
+  CHECK: 'CHECK',
+  SAVE: 'SAVE',
+  POISON: 'POISON',
+  PASS: 'PASS',
+  SHOOT: 'SHOOT',
+  VOTE: 'VOTE',
+  NO_VOTE: 'NO VOTE',
 };
 
-export const actionLabel = (key: ActionLabelKey, language: DisplayLanguage): string =>
-  ACTION_LABELS[key][language];
+export const actionLabel = (key: ActionLabelKey, _language: DisplayLanguage): string =>
+  ACTION_LABELS[key];
 
 const ActionBar = ({
   phase,
@@ -52,7 +52,7 @@ const ActionBar = ({
   onWitchSave: () => void;
   onWitchSkip: () => void;
 }) => {
-  const [language] = useDisplayLanguage();
+  const language: DisplayLanguage = 'en';
   const selectedAlive = Boolean(selectedPlayer?.isAlive && selectedPlayer.id !== MY_PLAYER_ID);
 
   return (
