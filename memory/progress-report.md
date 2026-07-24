@@ -3,14 +3,15 @@
 **Canonical owner:** coordinator。当前已验证状态见
 [coordination/PROJECT_STATE.md](coordination/PROJECT_STATE.md)（本文件不记录状态）。
 
-**更新日期:** 2026-07-24（Stage 0 production release + TC-001 governance checkpoint）
+**更新日期:** 2026-07-24（Wave 1 local integration checkpoint）
 
 ## 当前派发状态
 
 `coordination/tasks/` 中没有可直接派发的 active card；其中卡片是保留用于
 追溯的历史记录：已完成卡标记为 `Accepted`，被后续实现取代的旧卡标记为
 `Superseded`。当前 owner-approved coordinator 工作在独立 invocation artifacts
-中跟踪，只有通过验收并集成的事实才写回本 roadmap。
+中跟踪。S0-GATE 与 TC-001 至 TC-004 已有独立 PASS 证据；TC-002 至 TC-004
+已集成到本地提交 `6320f5f`，尚未发布。下一项是 TC-005 响应式游戏房间。
 
 ## 待重新规划（不是现成任务卡）
 
