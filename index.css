@@ -35,15 +35,86 @@
 }
 
 /* ─── Base ─────────────────────────────────────────────────────────────── */
-html, body, #root { height: 100%; }
+html {
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
+body,
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
 
 body {
   margin: 0;
   background: #050505;
   font-family: 'Lato', sans-serif;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 button, input { font: inherit; }
+
+img,
+svg,
+canvas,
+video {
+  max-width: 100%;
+}
+
+.sketch-scene.login-page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding:
+    max(24px, env(safe-area-inset-top, 0px))
+    max(16px, env(safe-area-inset-right, 0px))
+    max(24px, env(safe-area-inset-bottom, 0px))
+    max(16px, env(safe-area-inset-left, 0px));
+}
+
+.login-page .auth-panel {
+  width: min(100%, 480px);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.login-title {
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+
+.turnstile-container {
+  width: 100%;
+  max-width: 100%;
+  justify-content: safe center;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+}
+
+.login-page button,
+.login-page input {
+  min-height: 44px;
+}
+
+.login-page button {
+  min-width: 44px;
+}
+
+.login-page :is(button, input, a):focus-visible {
+  outline: 3px solid rgb(var(--ink-100));
+  outline-offset: 3px;
+}
 
 .cinzel { font-family: 'Cinzel', serif; }
 
@@ -212,7 +283,7 @@ button, input { font: inherit; }
 
 /* ─── Icon Buttons ─────────────────────────────────────────────────────── */
 .icon-button {
-  width: 36px; height: 36px;
+  width: 44px; height: 44px;
   display: inline-flex;
   align-items: center; justify-content: center;
   border: 1px solid var(--border-subtle);
@@ -300,7 +371,7 @@ button, input { font: inherit; }
 
 /* ─── Action Buttons ────────────────────────────────────────────────────── */
 .action-button {
-  min-height: 40px;
+  min-height: 44px;
   display: inline-flex;
   align-items: center; justify-content: center;
   gap: 8px;
@@ -465,20 +536,105 @@ button, input { font: inherit; }
 @media (max-width: 640px) {
   .center-console { width: calc(100vw - 32px); min-height: 260px; }
   .wolf-channel   { width: calc(100vw - 48px); left: 16px; }
+
+  .login-page .auth-panel {
+    padding: 24px 18px;
+  }
 }
 
 /* ─── Keyboard Focus Visibility ─────────────────────────────────────────── */
 .icon-button:focus-visible,
 .action-button:focus-visible,
-.mode-card:focus-visible {
+.mode-card:focus-visible,
+.accessible-dialog__close:focus-visible {
   outline: 2px solid var(--ink-bright);
   outline-offset: 2px;
+}
+
+/* ─── Accessible dialog ───────────────────────────────────────────────── */
+.accessible-dialog__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  overflow: auto;
+  padding:
+    max(24px, env(safe-area-inset-top, 0px))
+    max(16px, env(safe-area-inset-right, 0px))
+    max(24px, env(safe-area-inset-bottom, 0px))
+    max(16px, env(safe-area-inset-left, 0px));
+  background: rgba(0, 0, 0, 0.76);
+}
+
+.accessible-dialog {
+  width: min(100%, 42rem);
+  max-height: calc(100vh - 48px);
+  max-height: calc(100dvh - 48px);
+  overflow: auto;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  background: rgb(var(--ink-950));
+  color: rgb(var(--ink-100));
+  box-shadow: var(--shadow-panel);
+  overflow-wrap: anywhere;
+}
+
+.accessible-dialog__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 18px 10px;
+}
+
+.accessible-dialog__title {
+  margin: 0;
+  font-size: 1.125rem;
+  line-height: 1.4;
+}
+
+.accessible-dialog__description {
+  margin: 4px 0 0;
+  color: rgb(var(--ink-300));
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.accessible-dialog__close {
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.accessible-dialog__body {
+  padding: 8px 18px 18px;
 }
 
 /* ─── Reduced Motion ────────────────────────────────────────────────────────
    Neutralize all animations for users who prefer reduced motion, settling any
    mid-keyframe opacity/transform to a static, fully-visible readable state. */
 @media (prefers-reduced-motion: reduce) {
+  html:focus-within { scroll-behavior: auto; }
+
+  .login-page *,
+  .wol-shell *,
+  .accessible-dialog,
+  .accessible-dialog * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+
   .sketch-scene::after { animation: none; }
   .sketch-tree::after  { animation: none; }
   .sketch-moon         { animation: none; }
@@ -509,4 +665,3 @@ button, input { font: inherit; }
   .wol-progress-bar-fill { transition: none; }
   .wol-store-toast { animation: none; }
 }
-

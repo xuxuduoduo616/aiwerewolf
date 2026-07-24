@@ -9,15 +9,16 @@ interface Props<T extends string> {
   chips: readonly FilterChip<T>[];
   active: T;
   onSelect: (key: T) => void;
+  label?: string;
 }
 
 /**
  * Generic filter-chip bar. Renders a horizontal scrollable row of pill-shaped
  * toggle buttons with ARIA pressed semantics.
  */
-const FilterChipBar = <T extends string>({ chips, active, onSelect }: Props<T>) => {
+const FilterChipBar = <T extends string>({ chips, active, onSelect, label = '筛选选项' }: Props<T>) => {
   return (
-    <div className="wol-filter-bar">
+    <div className="wol-filter-bar" role="group" aria-label={label}>
       {chips.map(chip => (
         <button
           key={chip.key}

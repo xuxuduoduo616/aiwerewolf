@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import type { GameConfig, Role } from '../types';
 import { ROLE_COLORS, ROLE_SHORT } from './MatchSelection';
 
@@ -9,37 +9,19 @@ interface Props {
 }
 
 const MatchWideCard: React.FC<Props> = ({ config, roleCounts, onSelect }) => {
-  const [hovered, setHovered] = useState(false);
-
   return (
     <button
       type="button"
       onClick={onSelect}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        display: 'flex',
-        width: '100%',
-        textAlign: 'left',
-        background: hovered ? 'rgba(30,30,40,0.94)' : 'rgba(22,22,28,0.94)',
-        border: hovered ? '1px solid rgba(255,255,255,0.12)' : '1px solid rgba(255,255,255,0.06)',
-        borderRadius: 12,
-        padding: '14px',
-        cursor: 'pointer',
-        transition: 'all 180ms ease',
-        position: 'relative',
-        overflow: 'hidden',
-        transform: hovered ? 'translateY(-1px)' : 'translateY(0)',
-        boxShadow: hovered ? '0 4px 20px rgba(0,0,0,0.3)' : 'none',
-      }}
+      className="wol-match-wide-card"
     >
       {/* Left content */}
-      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+      <div className="wol-match-wide-copy">
         <div>
-          <div style={{ fontSize: 15, fontWeight: 700, color: '#fff', marginBottom: 4 }}>
+          <div className="wol-break-text" style={{ fontSize: 15, fontWeight: 700, color: '#fff', marginBottom: 4 }}>
             {config.displayName}
           </div>
-          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', lineHeight: 1.4 }}>
+          <div className="wol-break-text" style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', lineHeight: 1.4 }}>
             {config.description.length > 40 ? config.description.slice(0, 40) + '...' : config.description}
           </div>
         </div>
@@ -86,7 +68,7 @@ const MatchWideCard: React.FC<Props> = ({ config, roleCounts, onSelect }) => {
       </div>
 
       {/* Right: character illustration placeholder */}
-      <div style={{
+      <div className="wol-match-wide-art" style={{
         flexShrink: 0, width: 80, marginLeft: 12,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}>

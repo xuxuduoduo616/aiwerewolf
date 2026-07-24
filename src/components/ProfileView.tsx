@@ -3,8 +3,10 @@ import OutfitsPanel from './OutfitsPanel';
 import BackpackPanel from './BackpackPanel';
 import SkinCollectionPanel from './SkinCollectionPanel';
 import ProfileSubTabs from './ProfileSubTabs';
+import { getTabId, getTabPanelId } from './TabBar';
 
 type SubTab = 'outfits' | 'decorations' | 'runwolf' | 'scenes' | 'skins' | 'backpack';
+const PROFILE_TABS: readonly SubTab[] = ['outfits', 'decorations', 'runwolf', 'scenes', 'skins', 'backpack'];
 
 interface Props {
   onBack?: () => void;
@@ -34,9 +36,9 @@ const ProfileView: React.FC<Props> = () => {
   };
 
   return (
-    <div style={{ paddingBottom: 24 }}>
+    <section className="wol-profile-view" aria-label="个人资料">
       {/* Profile header */}
-      <div style={{
+      <div className="wol-profile-header" style={{
         display: 'flex', alignItems: 'center', gap: 12,
         padding: '16px 12px 12px',
       }}>
@@ -66,9 +68,9 @@ const ProfileView: React.FC<Props> = () => {
             10
           </div>
         </div>
-        <div>
-          <div style={{ fontSize: 16, fontWeight: 700, color: '#fff' }}>狼村旅人</div>
-          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginTop: 2 }}>
+        <div style={{ minWidth: 0 }}>
+          <div className="wol-break-text" style={{ fontSize: 16, fontWeight: 700, color: '#fff' }}>狼村旅人</div>
+          <div className="wol-break-text" style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginTop: 2 }}>
             ID: 1000242 · Lv.10
           </div>
         </div>
@@ -78,10 +80,25 @@ const ProfileView: React.FC<Props> = () => {
       <ProfileSubTabs active={subTab} onSelect={setSubTab} />
 
       {/* Panel content */}
-      <div style={{ padding: '0 0 16px' }}>
+      {PROFILE_TABS.filter(tab => tab !== subTab).map(tab => (
+        <div
+          key={tab}
+          id={getTabPanelId('profile', tab)}
+          role="tabpanel"
+          aria-labelledby={getTabId('profile', tab)}
+          hidden
+        />
+      ))}
+      <div
+        id={getTabPanelId('profile', subTab)}
+        role="tabpanel"
+        aria-labelledby={getTabId('profile', subTab)}
+        tabIndex={0}
+        className="wol-tabpanel"
+      >
         {renderPanel()}
       </div>
-    </div>
+    </section>
   );
 };
 

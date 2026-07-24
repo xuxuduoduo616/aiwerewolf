@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { GAME_MODES } from '../constants';
 import type { GameConfig } from '../types';
-import { ROLE_LABELS } from '../constants';
 import type { Role } from '../types';
 import MatchWideCard from './MatchWideCard';
 import MatchGridCard from './MatchGridCard';
 import MatchSubTabs from './MatchSubTabs';
+import { getTabId, getTabPanelId } from './TabBar';
+import { ArrowLeft, HelpCircle } from 'lucide-react';
 
 type SubTab = 'home' | 'beginner' | 'entertainment' | 'advanced';
 
@@ -15,22 +16,6 @@ interface Props {
   onMultiMatch?: () => void;
   onLimitedSelect?: () => void;
 }
-
-/* ─── Help icon ──────────────────────────────────────────────────────── */
-
-const HelpIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" style={{ width: 20, height: 20 }}>
-    <circle cx="12" cy="12" r="10" strokeLinecap="round"/>
-    <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3" strokeLinecap="round" strokeLinejoin="round"/>
-    <circle cx="12" cy="17" r="0.5" fill="currentColor"/>
-  </svg>
-);
-
-const BackIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 20, height: 20 }}>
-    <path d="M19 12H5M12 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
 
 /* ─── Role badge data ────────────────────────────────────────────────── */
 
@@ -67,29 +52,26 @@ const LIMITED_BOARDS = [
   { id: 'limited-2', name: '9人血月猎魔人', season: '逐浪季', deadline: '剩余1天6小时', roleSummary: '3狼/3民/预/女/猎魔人' },
 ];
 
+const MATCH_TABS: readonly SubTab[] = ['home', 'beginner', 'entertainment', 'advanced'];
+
 /* ─── Component ──────────────────────────────────────────────────────── */
 
 const MatchSelection: React.FC<Props> = ({ onBack, onSelectBoard, onMultiMatch, onLimitedSelect }) => {
   const [subTab, setSubTab] = useState<SubTab>('home');
 
   return (
-    <div style={{ paddingBottom: 24 }}>
+    <section className="wol-match-view" aria-label="快速游戏">
       {/* Top bar */}
-      <div style={{
+      <div className="wol-match-header" style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: '12px 12px 4px',
       }}>
         <button
           type="button"
           onClick={onBack}
-          style={{
-            display: 'inline-flex', alignItems: 'center', gap: 4,
-            background: 'none', border: 'none',
-            color: 'rgba(255,255,255,0.7)', fontSize: 13, fontWeight: 600,
-            cursor: 'pointer', padding: '4px 0',
-          }}
+          className="wol-match-header-action"
         >
-          <BackIcon />
+          <ArrowLeft aria-hidden="true" />
           <span>返回</span>
         </button>
 
@@ -97,30 +79,41 @@ const MatchSelection: React.FC<Props> = ({ onBack, onSelectBoard, onMultiMatch, 
 
         <button
           type="button"
-          style={{
-            display: 'inline-flex', alignItems: 'center',
-            background: 'none', border: 'none',
-            color: 'rgba(255,255,255,0.5)', cursor: 'pointer',
-            padding: 4,
-          }}
+          className="wol-match-header-action wol-match-header-action--icon"
           title="帮助"
           aria-label="帮助"
         >
-          <HelpIcon />
+          <HelpCircle aria-hidden="true" />
         </button>
       </div>
 
       {/* Sub-tabs */}
       <MatchSubTabs active={subTab} onSelect={setSubTab} />
 
+      {MATCH_TABS.filter(tab => tab !== subTab).map(tab => (
+        <div
+          key={tab}
+          id={getTabPanelId('match', tab)}
+          role="tabpanel"
+          aria-labelledby={getTabId('match', tab)}
+          hidden
+        />
+      ))}
+
       {/* Content area */}
-      <div style={{ padding: '12px' }}>
+      <div
+        id={getTabPanelId('match', subTab)}
+        role="tabpanel"
+        aria-labelledby={getTabId('match', subTab)}
+        tabIndex={0}
+        className="wol-match-content wol-tabpanel"
+      >
         {/* ── Wide card stack (常驻开放场) ────────────────────────── */}
         <div style={{ marginBottom: 12 }}>
           <div className="wol-section-title" style={{ padding: '0 0 10px' }}>
             常驻开放场
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div className="wol-match-wide-grid">
             {GAME_MODES.map(mode => {
               const roleCounts = countRoles(mode.roles);
               return (
@@ -150,7 +143,7 @@ const MatchSelection: React.FC<Props> = ({ onBack, onSelectBoard, onMultiMatch, 
           <div className="wol-section-title" style={{ padding: '0 0 10px' }}>
             限时活动场
           </div>
-          <div className="wol-grid-2">
+          <div className="wol-grid-2 wol-match-limited-grid">
             {LIMITED_BOARDS.map(board => (
               <MatchGridCard
                 key={board.id}
@@ -164,7 +157,7 @@ const MatchSelection: React.FC<Props> = ({ onBack, onSelectBoard, onMultiMatch, 
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

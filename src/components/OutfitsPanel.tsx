@@ -39,14 +39,14 @@ const OutfitsPanel: React.FC = () => {
   const [selectedOutfit, setSelectedOutfit] = useState<string>('default');
 
   return (
-    <div>
+    <section className="wol-outfits" aria-label="时装">
       {/* ── Fitting room preview ──────────────────────────────────── */}
-      <div style={{
+      <div className="wol-outfit-preview" style={{
         display: 'flex', gap: 12,
         padding: '16px 12px',
       }}>
         {/* Character preview */}
-        <div style={{
+        <div className="wol-outfit-character" style={{
           flex: 1,
           minHeight: 200,
           background: 'linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.005))',
@@ -73,7 +73,7 @@ const OutfitsPanel: React.FC = () => {
         </div>
 
         {/* Equipped status */}
-        <div style={{
+        <div className="wol-outfit-equipped" style={{
           flexShrink: 0,
           display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
           padding: '8px 0',
@@ -105,6 +105,8 @@ const OutfitsPanel: React.FC = () => {
                 key={outfit.id}
                 type="button"
                 onClick={() => setSelectedOutfit(outfit.id)}
+                className="wol-outfit-card"
+                aria-pressed={isSelected}
                 style={{
                   display: 'flex', flexDirection: 'column',
                   background: 'rgba(22,22,28,0.94)',
@@ -133,7 +135,7 @@ const OutfitsPanel: React.FC = () => {
                 </div>
 
                 {/* Name */}
-                <div style={{ fontSize: 11, fontWeight: 700, color: '#fff', marginBottom: 4, textAlign: 'center' }}>
+                <div className="wol-break-text" style={{ fontSize: 11, fontWeight: 700, color: '#fff', marginBottom: 4, textAlign: 'center' }}>
                   {outfit.name}
                 </div>
 
@@ -153,7 +155,7 @@ const OutfitsPanel: React.FC = () => {
           })}
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

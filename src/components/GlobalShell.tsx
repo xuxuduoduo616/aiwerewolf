@@ -36,9 +36,9 @@ const GlobalShell: React.FC<Props> = ({
         crystals={crystals}
         onNavigateToShop={() => onNavigate('shop')}
       />
-      <div className="wol-shell-content">
+      <main className="wol-shell-content" id="shell-content">
         {children}
-      </div>
+      </main>
       <BottomNav activeView={activeView} onNavigate={onNavigate} />
     </div>
   );

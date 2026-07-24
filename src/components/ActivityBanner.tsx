@@ -23,10 +23,10 @@ const ActivityBanner: React.FC = () => {
   }, []);
 
   return (
-    <div>
+    <div className="wol-activity-banner">
       <div
         ref={scrollRef}
-        className="wol-scrollbar-hide"
+        className="wol-scrollbar-hide wol-activity-track"
         style={{
           display: 'flex', gap: 10, overflowX: 'auto',
           padding: '4px 0',
@@ -37,6 +37,7 @@ const ActivityBanner: React.FC = () => {
         {BANNERS.map(banner => (
           <div
             key={banner.id}
+            className="wol-activity-card"
             style={{
               flexShrink: 0,
               width: '75%',
@@ -83,6 +84,7 @@ const ActivityBanner: React.FC = () => {
         {BANNERS.map((banner, i) => (
           <div
             key={banner.id}
+            aria-hidden="true"
             style={{
               width: activeIndex === i ? 14 : 4,
               height: 4,

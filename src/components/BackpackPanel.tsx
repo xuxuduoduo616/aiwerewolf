@@ -62,7 +62,7 @@ const BackpackPanel: React.FC = () => {
   const items = ITEMS_BY_CATEGORY[category] || [];
 
   return (
-    <div>
+    <section className="wol-backpack" aria-label="背包">
       {/* Filter bar */}
       <FilterChipBar chips={CATEGORIES} active={category} onSelect={setCategory} />
 
@@ -84,6 +84,7 @@ const BackpackPanel: React.FC = () => {
             items.map(item => (
             <div
               key={item.id}
+              className="wol-backpack-card"
               style={{
                 display: 'flex', flexDirection: 'column',
                 background: 'rgba(22,22,28,0.94)',
@@ -107,12 +108,12 @@ const BackpackPanel: React.FC = () => {
               </div>
 
               {/* Name */}
-              <div style={{ fontSize: 10, fontWeight: 700, color: '#fff', textAlign: 'center', marginBottom: 2 }}>
+              <div className="wol-break-text" style={{ fontSize: 10, fontWeight: 700, color: '#fff', textAlign: 'center', marginBottom: 2 }}>
                 {item.name}
               </div>
 
               {/* Effect description */}
-              <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.4)', textAlign: 'center', marginBottom: 6 }}>
+              <div className="wol-break-text" style={{ fontSize: 9, color: 'rgba(255,255,255,0.4)', textAlign: 'center', marginBottom: 6 }}>
                 {item.effect}
               </div>
 
@@ -134,7 +135,7 @@ const BackpackPanel: React.FC = () => {
 
               {/* Count badge */}
               <div style={{
-                position: 'absolute', bottom: 6, right: 6,
+                position: 'absolute', top: 6, right: 6,
                 fontSize: 10, fontWeight: 800, color: 'rgba(255,255,255,0.55)',
                 background: 'rgba(0,0,0,0.6)', borderRadius: 4,
                 padding: '1px 5px',
@@ -145,7 +146,7 @@ const BackpackPanel: React.FC = () => {
           )))}
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

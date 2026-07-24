@@ -39,9 +39,9 @@ const LevelBadge = ({ level }: { level: number }) => (
 
 const LobbyHome: React.FC<Props> = ({ onBuildRoom, onJoinRoom, onSpectate, onNavigate }) => {
   return (
-    <div style={{ paddingBottom: 16, position: 'relative', minHeight: '100%' }}>
+    <section className="wol-lobby" aria-label="大厅">
       {/* ── User Profile Panel (top-left) ───────────────────────────── */}
-      <div style={{
+      <div className="wol-lobby-profile" style={{
         display: 'flex', alignItems: 'center', gap: 10,
         padding: '14px 12px 8px',
       }}>
@@ -63,9 +63,9 @@ const LobbyHome: React.FC<Props> = ({ onBuildRoom, onJoinRoom, onSpectate, onNav
         </div>
 
         {/* Name, title, rank */}
-        <div style={{ minWidth: 0 }}>
+        <div className="wol-lobby-profile-copy" style={{ minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 3 }}>
-            <span style={{ fontSize: 15, fontWeight: 700, color: '#fff' }}>狼村旅人</span>
+            <span className="wol-break-text" style={{ fontSize: 15, fontWeight: 700, color: '#fff' }}>狼村旅人</span>
             <GenderFemale />
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
@@ -98,7 +98,7 @@ const LobbyHome: React.FC<Props> = ({ onBuildRoom, onJoinRoom, onSpectate, onNav
       </div>
 
       {/* ── Side Menus & Character Showcase ──────────────────────────── */}
-      <div style={{
+      <div className="wol-lobby-stage" style={{
         position: 'relative',
         display: 'flex',
         minHeight: 320,
@@ -108,13 +108,13 @@ const LobbyHome: React.FC<Props> = ({ onBuildRoom, onJoinRoom, onSpectate, onNav
         <LobbySideMenus side="left" onNavigate={onNavigate} />
 
         {/* Center character showcase */}
-        <div style={{
+        <div className="wol-lobby-showcase" style={{
           flex: 1,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           position: 'relative',
         }}>
           {/* Character silhouette placeholder */}
-          <div style={{
+          <div className="wol-lobby-character" style={{
             width: '70%', maxWidth: 220, aspectRatio: '3/4',
             background: 'linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))',
             border: '1px solid rgba(255,255,255,0.05)',
@@ -144,18 +144,18 @@ const LobbyHome: React.FC<Props> = ({ onBuildRoom, onJoinRoom, onSpectate, onNav
       </div>
 
       {/* ── Activity Banner Carousel ─────────────────────────────────── */}
-      <div style={{ padding: '0 12px', marginTop: 4 }}>
+      <div className="wol-lobby-activity">
         <ActivityBanner />
       </div>
 
       {/* ── Chat preview + Action buttons row ────────────────────────── */}
-      <div style={{
+      <div className="wol-lobby-footer" style={{
         display: 'flex', alignItems: 'flex-end', gap: 8,
         padding: '12px',
         marginTop: 8,
       }}>
         {/* Lobby chat preview */}
-        <div style={{
+        <div className="wol-lobby-chat" style={{
           flex: 1,
           minWidth: 0,
           background: 'rgba(255,255,255,0.03)',
@@ -187,7 +187,7 @@ const LobbyHome: React.FC<Props> = ({ onBuildRoom, onJoinRoom, onSpectate, onNav
           onSpectate={onSpectate}
         />
       </div>
-    </div>
+    </section>
   );
 };
 

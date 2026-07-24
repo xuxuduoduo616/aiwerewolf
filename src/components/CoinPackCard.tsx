@@ -9,11 +9,16 @@ export interface CoinPackData {
 
 interface Props {
   pack: CoinPackData;
-  isSelected: boolean;
-  onClick: () => void;
+  /** Legacy selection inputs remain accepted while purchases are unavailable. */
+  isSelected?: boolean;
+  onClick?: () => void;
+  unavailableDescriptionId?: string;
 }
 
-const CoinPackCard: React.FC<Props> = ({ pack, isSelected, onClick }) => {
+const CoinPackCard: React.FC<Props> = ({
+  pack,
+  unavailableDescriptionId = 'payments-unavailable-description',
+}) => {
   const badgeClass =
     pack.badge === '首充双倍' ? 'wol-coin-pack-badge--first'
     : pack.badge === '最热门' ? 'wol-coin-pack-badge--hot'
@@ -23,9 +28,10 @@ const CoinPackCard: React.FC<Props> = ({ pack, isSelected, onClick }) => {
   return (
     <button
       type="button"
-      className={`wol-coin-pack${isSelected ? ' wol-coin-pack--selected' : ''}`}
-      onClick={onClick}
-      aria-label={`${pack.amount}金币 ¥${pack.price}`}
+      className="wol-coin-pack"
+      disabled
+      aria-describedby={unavailableDescriptionId}
+      aria-label={`${pack.amount}金币 ¥${pack.price}，充值功能暂不可用`}
     >
       {pack.badge && (
         <span className={`wol-coin-pack-badge ${badgeClass}`}>{pack.badge}</span>

@@ -102,7 +102,7 @@ const App: React.FC = () => {
   // ── LOGIN ─────────────────────────────────────────────────────────────
   if (auth.isRestoringSession) {
     return (
-      <div className="sketch-scene min-h-screen flex items-center justify-center font-sans text-zinc-200">
+      <div className="login-page sketch-scene flex font-sans text-zinc-200" aria-busy="true">
         <div className="text-center">
           <Loader2 className="w-8 h-8 mx-auto animate-spin text-zinc-400" />
           <p className="mt-3 text-sm text-zinc-500">正在恢复登录状态…</p>
@@ -113,11 +113,11 @@ const App: React.FC = () => {
 
   if (!auth.isAuthenticated) {
     return (
-      <div className="sketch-scene min-h-screen flex items-center justify-center font-sans text-zinc-200">
-        <div className="auth-panel parchment-border w-[min(92vw,430px)] p-8 border border-zinc-600 bg-zinc-950/86 rounded-lg shadow-[0_0_45px_rgba(0,0,0,0.6)]">
+      <main className="login-page sketch-scene flex font-sans text-zinc-200">
+        <div className="auth-panel parchment-border p-8 border border-zinc-600 bg-zinc-950/86 rounded-lg shadow-[0_0_45px_rgba(0,0,0,0.6)]">
           <div className="text-center mb-7">
             <Moon className="w-10 h-10 mx-auto mb-3 opacity-40" />
-            <h1 className="text-4xl text-zinc-100 font-bold tracking-wide cinzel">AI WEREWOLF</h1>
+            <h1 className="login-title text-4xl text-zinc-100 font-bold tracking-wide cinzel">AI WEREWOLF</h1>
             <p className="text-xs text-zinc-400 mt-2">Shadows of the Village</p>
           </div>
           <div className="space-y-3">
@@ -141,7 +141,7 @@ const App: React.FC = () => {
           {auth.authError && <p className="mt-4 text-xs leading-relaxed text-amber-200 bg-amber-950/35 border border-amber-900 rounded p-3">{auth.authError}</p>}
 
           {/* Cloudflare Turnstile — human verification before login */}
-          <div className="mt-4 flex justify-center">
+          <div className="turnstile-container mt-4 flex justify-center">
             <TurnstileWidget
               siteKey={TURNSTILE_SITE_KEY}
               onVerify={token => setTurnstileToken(nextTurnstileToken({ type: 'verified', token }))}
@@ -178,14 +178,14 @@ const App: React.FC = () => {
             </p>
           )}
         </div>
-      </div>
+      </main>
     );
   }
 
   // ── After login, everything renders inside the mobile shell ──────────
   // IMPORTANT: Game view renders full-screen (outside the mobile shell)
   // so it can be responsive on both desktop and mobile. Lobby/shop/profile
-  // views remain inside the 430px phone-frame shell.
+  // views remain inside the responsive application shell.
   const isInGame = game.phase !== GamePhase.LOBBY && game.phase !== GamePhase.LOGIN;
 
   if (isInGame) {
@@ -396,7 +396,7 @@ const App: React.FC = () => {
   // Determine which content view to show inside the shell
   const renderShellContent = () => {
     // Game views are rendered OUTSIDE the shell (full-screen) — see isInGame above.
-    // Lobby/shop/profile views remain inside the phone-frame shell.
+    // Lobby/shop/profile views remain inside the application shell.
 
     switch (activeView) {
       case 'home':
@@ -410,7 +410,7 @@ const App: React.FC = () => {
         );
       case 'friends':
         return (
-          <div style={{
+          <div className="wol-placeholder-view" style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             minHeight: '60vh', color: 'rgba(255,255,255,0.25)', fontSize: 14, fontWeight: 600,
           }}>

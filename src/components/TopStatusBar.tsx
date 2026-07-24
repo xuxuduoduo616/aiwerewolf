@@ -1,4 +1,5 @@
 import React from 'react';
+import { CircleDollarSign, Gem, Plus, Ticket } from 'lucide-react';
 
 interface Props {
   coins: number;
@@ -7,29 +8,11 @@ interface Props {
   onNavigateToShop?: () => void;
 }
 
-const coinIcon = (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <circle cx="12" cy="12" r="10" strokeLinecap="round"/>
-    <path d="M12 6v12M9 9h5a2 2 0 010 4h-4" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-
-const couponIcon = (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <rect x="3" y="5" width="18" height="14" rx="2" strokeLinecap="round"/>
-    <path d="M3 10h18M9 14l.01.01M15 14l.01.01" strokeLinecap="round"/>
-  </svg>
-);
-
-const crystalIcon = (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M12 2l3 5 5 2-3 5 1 8-6-2-6 2 1-8-3-5 5-2z" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-
 const TopStatusBar: React.FC<Props> = ({ coins, coupons, crystals, onNavigateToShop }) => {
   const plusBtn = (
-    <button type="button" className="wol-currency-plus" aria-label="购买" onClick={onNavigateToShop}>+</button>
+    <button type="button" className="wol-currency-plus" aria-label="前往商店购买" onClick={onNavigateToShop}>
+      <Plus aria-hidden="true" />
+    </button>
   );
 
   return (
@@ -37,18 +20,18 @@ const TopStatusBar: React.FC<Props> = ({ coins, coupons, crystals, onNavigateToS
       {/* Currency row */}
       <div className="wol-currency-row">
         <div className="wol-currency-item wol-currency-item--coin">
-          {coinIcon}
-          <span>{coins.toLocaleString()}</span>
+          <CircleDollarSign aria-hidden="true" />
+          <span className="wol-currency-value" title={coins.toLocaleString()}>{coins.toLocaleString()}</span>
           {plusBtn}
         </div>
         <div className="wol-currency-item wol-currency-item--coupon">
-          {couponIcon}
-          <span>{coupons.toLocaleString()}</span>
+          <Ticket aria-hidden="true" />
+          <span className="wol-currency-value" title={coupons.toLocaleString()}>{coupons.toLocaleString()}</span>
           {plusBtn}
         </div>
         <div className="wol-currency-item wol-currency-item--crystal">
-          {crystalIcon}
-          <span>{crystals.toLocaleString()}</span>
+          <Gem aria-hidden="true" />
+          <span className="wol-currency-value" title={crystals.toLocaleString()}>{crystals.toLocaleString()}</span>
           {plusBtn}
         </div>
       </div>

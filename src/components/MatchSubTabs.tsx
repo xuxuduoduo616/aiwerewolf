@@ -16,7 +16,7 @@ const TABS = [
 ];
 
 const MatchSubTabs: React.FC<Props> = ({ active, onSelect }) => (
-  <TabBar tabs={TABS} active={active} onSelect={onSelect} />
+  <TabBar id="match" label="游戏场分类" tabs={TABS} active={active} onSelect={onSelect} />
 );
 
 export default MatchSubTabs;

@@ -18,7 +18,7 @@ const TABS = [
 ];
 
 const ProfileSubTabs: React.FC<Props> = ({ active, onSelect }) => (
-  <TabBar tabs={TABS} active={active} onSelect={onSelect} />
+  <TabBar id="profile" label="个人资料分类" tabs={TABS} active={active} onSelect={onSelect} />
 );
 
 export default ProfileSubTabs;

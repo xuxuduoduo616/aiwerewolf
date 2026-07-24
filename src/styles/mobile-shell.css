@@ -24,21 +24,29 @@
   --wol-surface-light: rgba(28, 28, 33, 0.88);
   --wol-card:          rgba(22, 22, 28, 0.94);
 
-  /* Mobile shell sizing */
-  --wol-max-width:     430px;
+  /* Responsive shell sizing */
+  --wol-max-width:     30rem;
   --wol-bottom-nav-h:  64px;
-  --wol-top-bar-h:     72px;
+  --wol-top-bar-h:     64px;
   --wol-marquee-h:     28px;
+  --wol-tablet-rail-w: 88px;
+  --wol-desktop-rail-w: 208px;
 }
 
-/* ─── Mobile Shell Container ──────────────────────────────────────────── */
+/* ─── Responsive Shell Container ─────────────────────────────────────── */
 .wol-shell {
-  max-width: var(--wol-max-width);
-  margin: 0 auto;
+  width: 100%;
+  max-width: none;
+  min-width: 0;
   min-height: 100vh;
   min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "top"
+    "content"
+    "nav";
   background:
     radial-gradient(ellipse at 50% 20%, rgba(60, 45, 20, 0.25), transparent 55%),
     radial-gradient(ellipse at 80% 80%, rgba(30, 20, 50, 0.20), transparent 50%),
@@ -46,33 +54,34 @@
   color: #e0ddd5;
   font-family: 'Lato', 'PingFang SC', 'Noto Sans SC', sans-serif;
   position: relative;
-  overflow-x: hidden;
-  overflow-y: auto;
-  box-shadow: 0 0 80px rgba(0,0,0,0.5), 0 0 2px rgba(200,170,80,0.08);
+  overflow: visible;
+  overflow-wrap: anywhere;
 }
 
-/* Desktop: center the phone frame with a subtle ambient glow */
-@media (min-width: 431px) {
-  .wol-shell {
-    border-left: 1px solid rgba(255,255,255,0.04);
-    border-right: 1px solid rgba(255,255,255,0.04);
-  }
+.wol-shell *,
+.wol-shell *::before,
+.wol-shell *::after {
+  min-width: 0;
 }
 
 /* ─── Bottom Navigation Bar ───────────────────────────────────────────── */
 .wol-bottom-nav {
+  grid-area: nav;
   position: sticky;
   bottom: 0;
   z-index: 50;
   display: flex;
   align-items: center;
   justify-content: space-around;
-  height: var(--wol-bottom-nav-h);
+  min-height: calc(var(--wol-bottom-nav-h) + env(safe-area-inset-bottom, 0px));
   background: rgba(10, 10, 14, 0.96);
   border-top: 1px solid rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  padding-bottom: env(safe-area-inset-bottom, 0);
+  padding:
+    0 max(4px, env(safe-area-inset-right, 0px))
+    env(safe-area-inset-bottom, 0px)
+    max(4px, env(safe-area-inset-left, 0px));
 }
 
 .wol-nav-tab {
@@ -82,7 +91,8 @@
   justify-content: center;
   gap: 2px;
   flex: 1;
-  height: 100%;
+  min-width: 44px;
+  min-height: 56px;
   border: none;
   background: transparent;
   color: rgba(255, 255, 255, 0.38);
@@ -110,6 +120,7 @@
 
 /* ─── Top Status Bar ──────────────────────────────────────────────────── */
 .wol-top-bar {
+  grid-area: top;
   position: sticky;
   top: 0;
   z-index: 40;
@@ -120,11 +131,16 @@
 }
 
 .wol-currency-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: center;
   gap: 8px;
-  padding: 8px 12px;
-  height: var(--wol-top-bar-h);
+  min-height: calc(var(--wol-top-bar-h) + env(safe-area-inset-top, 0px));
+  padding:
+    max(8px, env(safe-area-inset-top, 0px))
+    max(12px, env(safe-area-inset-right, 0px))
+    8px
+    max(12px, env(safe-area-inset-left, 0px));
 }
 
 .wol-currency-item {
@@ -137,7 +153,9 @@
   padding: 4px 8px;
   font-size: 11px;
   font-weight: 700;
+  min-height: 44px;
   white-space: nowrap;
+  overflow: hidden;
 }
 
 .wol-currency-item svg {
@@ -150,19 +168,27 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
-  height: 18px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: rgba(255,255,255,0.12);
   border: 1px solid rgba(255,255,255,0.16);
   color: rgba(255,255,255,0.65);
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1;
   cursor: pointer;
   flex-shrink: 0;
   margin-left: 2px;
   transition: background 160ms ease;
+}
+
+.wol-currency-plus svg {
+  width: 16px;
+  height: 16px;
+}
+
+.wol-currency-value {
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .wol-currency-plus:hover {
@@ -222,10 +248,15 @@
 
 /* ─── Shell content area ──────────────────────────────────────────────── */
 .wol-shell-content {
-  flex: 1;
+  grid-area: content;
+  width: 100%;
   min-height: 0;
-  overflow-y: auto;
+  min-width: 0;
+  overflow: visible;
   position: relative;
+  padding-inline:
+    env(safe-area-inset-left, 0px)
+    env(safe-area-inset-right, 0px);
 }
 
 /* ─── Section header (reusable) ───────────────────────────────────────── */
@@ -234,7 +265,7 @@
   font-weight: 700;
   color: rgba(255,255,255,0.72);
   padding: 12px 16px 6px;
-  letter-spacing: 0.5px;
+  letter-spacing: 0;
 }
 
 /* ─── Generic card surface ────────────────────────────────────────────── */
@@ -274,10 +305,13 @@
   padding: 0 12px;
   border-bottom: 1px solid rgba(255,255,255,0.06);
   -webkit-overflow-scrolling: touch;
+  scroll-padding-inline: 12px;
 }
 
 .wol-subtab {
   flex-shrink: 0;
+  min-width: 44px;
+  min-height: 44px;
   padding: 10px 14px;
   font-size: 12px;
   font-weight: 600;
@@ -302,11 +336,14 @@
   overflow-x: auto;
   padding: 10px 12px;
   -webkit-overflow-scrolling: touch;
+  scroll-padding-inline: 12px;
 }
 
 .wol-filter-chip {
   flex-shrink: 0;
-  padding: 5px 14px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px 14px;
   font-size: 11px;
   font-weight: 600;
   border-radius: 999px;
@@ -331,7 +368,7 @@
   font-weight: 700;
   padding: 1px 6px;
   border-radius: 3px;
-  letter-spacing: 0.5px;
+  letter-spacing: 0;
 }
 
 .wol-quality--common   { background: rgba(160,160,170,0.18); color: #a0a0aa; }
@@ -354,6 +391,8 @@
   transition: all 180ms ease;
   -webkit-tap-highlight-color: transparent;
   padding: 10px 20px;
+  min-width: 44px;
+  min-height: 44px;
 }
 
 .wol-btn:active { transform: scale(0.97); }
@@ -383,7 +422,7 @@
   border: 1px solid rgba(220,38,38,0.25);
 }
 
-.wol-btn--sm { padding: 5px 10px; font-size: 10px; border-radius: 6px; }
+.wol-btn--sm { padding: 8px 10px; font-size: 10px; border-radius: 6px; }
 .wol-btn--lg { padding: 14px 28px; font-size: 14px; border-radius: 10px; }
 
 /* ─── Badge (notification dot) ────────────────────────────────────────── */
@@ -408,8 +447,8 @@
   align-items: center;
   justify-content: center;
   gap: 2px;
-  width: 46px;
-  height: 46px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   background: rgba(255,255,255,0.05);
   border: 1px solid rgba(255,255,255,0.08);
@@ -482,6 +521,554 @@
   gap: 3px;
 }
 
+/* ─── Shared responsive/accessibility contracts ──────────────────────── */
+.wol-shell :where(button, input, select, textarea, a[href]) {
+  min-height: 44px;
+}
+
+.wol-shell :where(button, a[href]) {
+  min-width: 44px;
+}
+
+.wol-shell :where(button, input, select, textarea, a[href], [tabindex]):focus-visible {
+  outline: 3px solid #f8fafc;
+  outline-offset: 3px;
+}
+
+.wol-tabpanel:focus-visible {
+  outline: 2px solid var(--wol-gold);
+  outline-offset: -2px;
+}
+
+.wol-break-text,
+.wol-shell :where(p, h1, h2, h3, span) {
+  overflow-wrap: anywhere;
+}
+
+.wol-placeholder-view {
+  min-height: 60vh;
+  min-height: 60dvh;
+  padding: 24px;
+  text-align: center;
+}
+
+/* ─── Lobby ──────────────────────────────────────────────────────────── */
+.wol-lobby {
+  min-height: 100%;
+  padding-bottom: 16px;
+  position: relative;
+}
+
+.wol-lobby-profile,
+.wol-profile-header {
+  min-width: 0;
+}
+
+.wol-lobby-profile-copy {
+  overflow: hidden;
+}
+
+.wol-lobby-stage {
+  min-width: 0;
+}
+
+.wol-lobby-showcase,
+.wol-lobby-character {
+  min-width: 0;
+}
+
+.wol-side-menu {
+  flex: 0 0 56px;
+}
+
+.wol-lobby-activity {
+  min-width: 0;
+  padding: 0 12px;
+  margin-top: 4px;
+}
+
+.wol-activity-track {
+  overscroll-behavior-inline: contain;
+}
+
+.wol-activity-card {
+  overflow-wrap: anywhere;
+}
+
+.wol-lobby-footer {
+  flex-wrap: wrap;
+}
+
+.wol-lobby-chat {
+  flex: 1 1 14rem !important;
+}
+
+.wol-room-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(44px, 1fr));
+  gap: 8px;
+  width: min(100%, 300px);
+  flex: 1 1 240px;
+  margin-inline: auto;
+}
+
+.wol-room-action {
+  min-width: 44px;
+  min-height: 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: background 180ms ease, border-color 180ms ease, color 180ms ease;
+}
+
+.wol-room-action svg {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+}
+
+.wol-room-action--build {
+  color: #c9a44b;
+  background: rgba(201, 164, 75, 0.12);
+  border: 1px solid rgba(201, 164, 75, 0.3);
+}
+
+.wol-room-action--join {
+  color: #4ae0a6;
+  background: rgba(74, 224, 166, 0.12);
+  border: 1px solid rgba(74, 224, 166, 0.3);
+}
+
+.wol-room-action--spectate {
+  color: #a78bfa;
+  background: rgba(167, 139, 250, 0.12);
+  border: 1px solid rgba(167, 139, 250, 0.3);
+}
+
+.wol-room-action:hover {
+  color: #fff;
+}
+
+/* ─── Match selection ────────────────────────────────────────────────── */
+.wol-match-view,
+.wol-profile-view {
+  width: 100%;
+  min-width: 0;
+  padding-bottom: 24px;
+}
+
+.wol-match-header {
+  min-height: 60px;
+}
+
+.wol-match-header-action {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: rgba(255,255,255,0.7);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.wol-match-header-action--icon {
+  width: 44px;
+  padding: 0;
+  color: rgba(255,255,255,0.5);
+}
+
+.wol-match-header-action svg {
+  width: 20px;
+  height: 20px;
+}
+
+.wol-match-content {
+  padding: 12px;
+}
+
+.wol-match-wide-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+}
+
+.wol-match-wide-card,
+.wol-match-grid-card {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 8px;
+  background: rgba(22,22,28,0.94);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.wol-match-wide-card {
+  position: relative;
+  overflow: hidden;
+  padding: 14px;
+}
+
+.wol-match-grid-card {
+  min-height: 100%;
+  flex-direction: column;
+  padding: 12px;
+}
+
+.wol-match-wide-card:hover,
+.wol-match-grid-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255,255,255,0.16);
+  background: rgba(30,30,40,0.94);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.wol-match-wide-copy {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.wol-match-grid-meta {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+}
+
+/* ─── Profile and inventory ──────────────────────────────────────────── */
+.wol-tabpanel {
+  min-width: 0;
+  padding-bottom: 16px;
+}
+
+.wol-outfit-preview,
+.wol-skin-card {
+  min-width: 0;
+}
+
+.wol-outfit-character {
+  min-width: 0;
+}
+
+.wol-outfit-equipped {
+  flex: 0 0 52px;
+}
+
+.wol-outfit-card {
+  min-width: 0;
+  color: inherit;
+}
+
+.wol-backpack-card,
+.wol-skin-card-copy {
+  min-width: 0;
+}
+
+.wol-skin-progress-summary {
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+
+.wol-grid-2,
+.wol-store-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+}
+
+.wol-grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 120px), 1fr));
+}
+
+.wol-grid-4 {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 104px), 1fr));
+}
+
+/* Store is owned elsewhere; these rules only make its existing markup fit. */
+.wol-store-wallet {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.wol-store-wallet-item,
+.wol-store-wallet-value,
+.wol-store-payment,
+.wol-store-purchase-btn {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.wol-store-wallet-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wol-shell .wol-store-toast {
+  width: min(calc(100% - 32px), 30rem);
+  max-width: min(calc(100% - 32px), 30rem);
+  overflow-wrap: anywhere;
+}
+
+/* ─── Tier 1: mobile, <= 640px ───────────────────────────────────────── */
+@media (max-width: 640px) {
+  .wol-lobby-stage {
+    min-height: 300px !important;
+  }
+
+  .wol-lobby-footer {
+    align-items: stretch !important;
+  }
+
+  .wol-lobby-chat {
+    flex-basis: 100% !important;
+  }
+
+  .wol-activity-card {
+    width: min(82%, 300px) !important;
+  }
+
+  .wol-match-wide-art {
+    width: 72px !important;
+    margin-left: 8px !important;
+  }
+
+  .wol-store-wallet {
+    gap: 8px;
+    padding-inline: 10px;
+  }
+
+  .wol-store-wallet-item {
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+@media (max-width: 320px) {
+  .wol-currency-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .wol-bottom-nav {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(44px, 1fr));
+  }
+
+  .wol-lobby-stage {
+    padding-inline: 2px !important;
+  }
+
+  .wol-icon-circle {
+    width: 48px;
+    height: 48px;
+  }
+
+  .wol-room-actions {
+    gap: 4px;
+  }
+
+  .wol-match-header > span {
+    text-align: center;
+  }
+
+  .wol-store-wallet {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ─── Tier 2: tablet, 641px-1023px ───────────────────────────────────── */
+@media (min-width: 641px) and (max-width: 1023px) {
+  .wol-shell {
+    grid-template-columns: var(--wol-tablet-rail-w) minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas:
+      "nav top"
+      "nav content";
+  }
+
+  .wol-bottom-nav {
+    top: 0;
+    bottom: auto;
+    align-self: start;
+    width: var(--wol-tablet-rail-w);
+    height: 100vh;
+    height: 100dvh;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 8px;
+    padding:
+      max(12px, env(safe-area-inset-top, 0px)) 8px
+      max(12px, env(safe-area-inset-bottom, 0px));
+    border-top: 0;
+    border-right: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .wol-nav-tab {
+    width: 100%;
+    min-height: 64px;
+    flex: 0 0 auto;
+  }
+
+  .wol-currency-row {
+    grid-template-columns: repeat(3, minmax(0, 180px));
+    justify-content: end;
+  }
+
+  .wol-lobby,
+  .wol-match-view,
+  .wol-profile-view,
+  .wol-store {
+    padding-inline: 20px;
+  }
+
+  .wol-lobby-stage {
+    min-height: 400px !important;
+  }
+
+  .wol-activity-card {
+    width: min(48%, 340px) !important;
+    max-width: none !important;
+  }
+
+  .wol-match-wide-grid,
+  .wol-match-limited-grid,
+  .wol-store-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ─── Tier 3: desktop, >= 1024px ─────────────────────────────────────── */
+@media (min-width: 1024px) {
+  .wol-shell {
+    grid-template-columns: var(--wol-desktop-rail-w) minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas:
+      "nav top"
+      "nav content";
+  }
+
+  .wol-bottom-nav {
+    top: 0;
+    bottom: auto;
+    align-self: start;
+    width: var(--wol-desktop-rail-w);
+    height: 100vh;
+    height: 100dvh;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 8px;
+    padding:
+      max(20px, env(safe-area-inset-top, 0px)) 12px
+      max(20px, env(safe-area-inset-bottom, 0px));
+    border-top: 0;
+    border-right: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .wol-nav-tab {
+    width: 100%;
+    min-height: 56px;
+    flex: 0 0 auto;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+
+  .wol-currency-row {
+    grid-template-columns: repeat(3, minmax(0, 200px));
+    justify-content: end;
+    padding-inline: max(24px, env(safe-area-inset-right, 0px)) max(24px, env(safe-area-inset-left, 0px));
+  }
+
+  .wol-lobby {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
+    grid-template-areas:
+      "profile activity"
+      "stage footer";
+    gap: 20px;
+    padding: 24px 28px 36px;
+  }
+
+  .wol-lobby-profile { grid-area: profile; }
+  .wol-lobby-stage { grid-area: stage; min-height: 520px !important; }
+  .wol-lobby-activity { grid-area: activity; padding: 0; }
+  .wol-lobby-footer {
+    grid-area: footer;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-end;
+    margin-top: 0 !important;
+    padding: 0 !important;
+  }
+
+  .wol-activity-track {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px !important;
+    overflow: visible !important;
+  }
+
+  .wol-activity-card {
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  .wol-activity-banner > div:last-child {
+    display: none !important;
+  }
+
+  .wol-room-actions {
+    width: 100%;
+    max-width: none;
+    flex: 0 0 auto;
+  }
+
+  .wol-match-view,
+  .wol-profile-view,
+  .wol-store {
+    padding: 24px 28px 40px;
+  }
+
+  .wol-match-wide-grid,
+  .wol-match-limited-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .wol-store-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .wol-profile-header {
+    padding-inline: 0 !important;
+  }
+
+  .wol-outfit-preview {
+    max-width: 52rem;
+  }
+}
+
 /* ─── Coin Store ─────────────────────────────────────────────────────── */
 .wol-store {
   padding: 0 0 24px;
@@ -511,7 +1098,7 @@
   font-size: 28px;
   font-weight: 800;
   color: var(--wol-gold);
-  letter-spacing: 4px;
+  letter-spacing: 0;
   margin: 0;
 }
 
@@ -637,7 +1224,7 @@
   font-size: 9px;
   font-weight: 700;
   border-radius: 0 9px 0 6px;
-  letter-spacing: 0.5px;
+  letter-spacing: 0;
   line-height: 1.4;
 }
 
@@ -771,4 +1358,41 @@
 .wol-card-interactive:active {
   transform: scale(0.98) translateY(0);
   transition: transform 80ms ease;
+}
+
+/* CoinStore markup is outside this card; keep its existing behavior while
+   reasserting responsive shell layout after its component-level base rules. */
+.wol-shell .wol-store {
+  width: 100%;
+}
+
+.wol-shell .wol-store-wallet {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 320px) {
+  .wol-shell .wol-store-wallet {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1023px) {
+  .wol-shell .wol-store {
+    padding: 0 20px 32px;
+  }
+
+  .wol-shell .wol-store-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .wol-shell .wol-store {
+    padding: 24px 28px 40px;
+  }
+
+  .wol-shell .wol-store-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }

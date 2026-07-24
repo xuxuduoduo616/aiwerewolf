@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 interface Props {
   name: string;
@@ -9,8 +9,6 @@ interface Props {
 }
 
 const MatchGridCard: React.FC<Props> = ({ name, roleSummary, season, deadline, onSelect }) => {
-  const [hovered, setHovered] = useState(false);
-
   const cardContent = (
     <>
       {/* Top: character placeholder */}
@@ -29,17 +27,17 @@ const MatchGridCard: React.FC<Props> = ({ name, roleSummary, season, deadline, o
       </div>
 
       {/* Board name */}
-      <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', marginBottom: 3 }}>
+      <div className="wol-break-text" style={{ fontSize: 13, fontWeight: 700, color: '#fff', marginBottom: 3 }}>
         {name}
       </div>
 
       {/* Role config */}
-      <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', marginBottom: 6 }}>
+      <div className="wol-break-text" style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', marginBottom: 6 }}>
         {roleSummary}
       </div>
 
       {/* Bottom row: season + countdown */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto' }}>
+      <div className="wol-match-grid-meta">
         <span style={{
           fontSize: 9, fontWeight: 700,
           color: '#fbbf24',
@@ -60,36 +58,19 @@ const MatchGridCard: React.FC<Props> = ({ name, roleSummary, season, deadline, o
     </>
   );
 
-  const sharedStyle: React.CSSProperties = {
-    background: hovered ? 'rgba(30,30,40,0.94)' : 'rgba(22,22,28,0.94)',
-    border: hovered ? '1px solid rgba(255,255,255,0.12)' : '1px solid rgba(255,255,255,0.06)',
-    borderRadius: 12,
-    padding: '12px',
-    display: 'flex',
-    flexDirection: 'column',
-    cursor: 'pointer',
-    transition: 'all 180ms ease',
-    transform: hovered ? 'translateY(-1px)' : 'translateY(0)',
-    boxShadow: hovered ? '0 4px 20px rgba(0,0,0,0.3)' : 'none',
-    textAlign: 'left',
-    width: '100%',
-  };
-
   if (onSelect) {
     return (
       <button
         type="button"
         onClick={onSelect}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        style={sharedStyle}
+        className="wol-match-grid-card"
       >
         {cardContent}
       </button>
     );
   }
 
-  return <div style={sharedStyle}>{cardContent}</div>;
+  return <div className="wol-match-grid-card">{cardContent}</div>;
 };
 
 export default MatchGridCard;

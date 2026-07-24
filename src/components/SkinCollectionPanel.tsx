@@ -43,9 +43,9 @@ const SkinCollectionPanel: React.FC = () => {
   const totalThemes = 8;
 
   return (
-    <div>
+    <section className="wol-skins" aria-label="皮肤收藏">
       {/* Progress header */}
-      <div style={{
+      <div className="wol-skin-progress-summary" style={{
         padding: '12px 12px 10px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         fontSize: 11, color: 'rgba(255,255,255,0.5)', fontWeight: 600,
@@ -74,6 +74,7 @@ const SkinCollectionPanel: React.FC = () => {
           return (
             <div
               key={set.id}
+              className="wol-skin-card"
               style={{
                 display: 'flex', gap: 12,
                 background: 'rgba(22,22,28,0.94)',
@@ -97,8 +98,8 @@ const SkinCollectionPanel: React.FC = () => {
               </div>
 
               {/* Info */}
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', marginBottom: 6 }}>
+              <div className="wol-skin-card-copy" style={{ flex: 1, minWidth: 0 }}>
+                <div className="wol-break-text" style={{ fontSize: 13, fontWeight: 700, color: '#fff', marginBottom: 6 }}>
                   {set.name}
                 </div>
                 <div className="wol-progress-bar" style={{ marginBottom: 4 }}>
@@ -130,7 +131,7 @@ const SkinCollectionPanel: React.FC = () => {
           );
         })}
       </div>
-    </div>
+    </section>
   );
 };
 

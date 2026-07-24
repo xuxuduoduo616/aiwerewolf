@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import CoinPackCard, { type CoinPackData } from './CoinPackCard';
-import type { WalletState } from '../hooks/useWallet';
 
 interface Props {
   coins: number;
   coupons: number;
   crystals: number;
-  /** Wallet purchase callback — wired from App.tsx. */
+  /** Retained integration signature; unavailable controls never invoke it. */
   onPurchase: (packId: string) => Promise<{ success: boolean; error?: string }>;
 }
 
@@ -40,46 +39,9 @@ const crystalIcon = (
   </svg>
 );
 
-const CoinStore: React.FC<Props> = ({ coins, coupons, crystals, onPurchase }) => {
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const [purchasing, setPurchasing] = useState(false);
-  const [toast, setToast] = useState<string | null>(null);
-  const selectedPack = selectedIndex !== null ? COIN_PACKS[selectedIndex] : null;
-
-  const showToast = (msg: string) => {
-    setToast(msg);
-    setTimeout(() => {
-      // Trigger exit animation class
-      const el = document.querySelector('.wol-store-toast');
-      if (el) { el.classList.add('wol-store-toast--out'); }
-      setTimeout(() => setToast(null), 220);
-    }, 2300);
-  };
-
-  const handlePurchase = async () => {
-    if (!selectedPack || purchasing) return;
-    setPurchasing(true);
-    try {
-      const packId = `coin-${selectedPack.amount}`;
-      const result = await onPurchase(packId);
-      if (result.success) {
-        showToast('购买成功');
-        setSelectedIndex(null);
-      } else {
-        showToast(result.error ?? '购买失败');
-      }
-    } catch {
-      showToast('网络错误，请稍后重试');
-    } finally {
-      setPurchasing(false);
-    }
-  };
-
+const CoinStore: React.FC<Props> = ({ coins, coupons, crystals }) => {
   return (
     <div className="wol-store">
-      {/* Toast overlay */}
-      {toast && <div className="wol-store-toast" role="status" aria-live="polite">{toast}</div>}
-
       {/* Hero Banner */}
       <div className="wol-store-hero">
         <div className="wol-store-hero-glow" />
@@ -118,12 +80,11 @@ const CoinStore: React.FC<Props> = ({ coins, coupons, crystals, onPurchase }) =>
       <div className="wol-store-section">
         <h2 className="wol-section-title">金币充值</h2>
         <div className="wol-store-grid">
-          {COIN_PACKS.map((pack, i) => (
+          {COIN_PACKS.map((pack) => (
             <CoinPackCard
               key={pack.amount}
               pack={pack}
-              isSelected={selectedIndex === i}
-              onClick={() => setSelectedIndex(i === selectedIndex ? null : i)}
+              unavailableDescriptionId="payments-unavailable-description"
             />
           ))}
         </div>
@@ -140,10 +101,14 @@ const CoinStore: React.FC<Props> = ({ coins, coupons, crystals, onPurchase }) =>
             <span>支付方式</span>
           </div>
           <p className="wol-store-payment-method">
-            当前支付方式：<strong>第三方充值助手（测试模式）</strong>
+            当前状态：<strong>充值功能暂不可用</strong>
           </p>
-          <p className="wol-store-payment-hint">
-            测试模式下购买直接到账，无需实际支付。生产环境中将由第三方托管平台担保。
+          <p
+            id="payments-unavailable-description"
+            className="wol-store-payment-hint"
+            role="status"
+          >
+            当前未配置支付服务，暂时无法创建订单或发放金币。
           </p>
         </div>
       </div>
@@ -152,51 +117,13 @@ const CoinStore: React.FC<Props> = ({ coins, coupons, crystals, onPurchase }) =>
       <div className="wol-store-section wol-store-purchase-section">
         <button
           type="button"
-          className={`wol-btn wol-btn--primary wol-btn--lg wol-store-purchase-btn${selectedPack && !purchasing ? '' : ' wol-store-purchase-btn--disabled'}`}
-          disabled={!selectedPack || purchasing}
-          onClick={handlePurchase}
+          className="wol-btn wol-btn--primary wol-btn--lg wol-store-purchase-btn wol-store-purchase-btn--disabled"
+          disabled
+          aria-describedby="payments-unavailable-description"
         >
-          {purchasing ? (
-            <span>处理中…</span>
-          ) : selectedPack ? (
-            <span>确认购买 · {selectedPack.amount}金币 · ¥{selectedPack.price}</span>
-          ) : (
-            <span>请选择充值档位</span>
-          )}
+          <span>充值功能暂不可用</span>
         </button>
       </div>
-
-      {/* Toast styles */}
-      <style>{`
-        .wol-store-toast {
-          position: fixed;
-          top: 80px;
-          left: 50%;
-          transform: translateX(-50%);
-          z-index: 1000;
-          background: #1a3a1a;
-          border: 1px solid #4ae0a6;
-          color: #4ae0a6;
-          padding: 0.5rem 1.5rem;
-          border-radius: 8px;
-          font-size: 14px;
-          font-weight: 600;
-          animation: wol-toast-in 0.3s ease;
-          max-width: var(--wol-max-width, 430px);
-          text-align: center;
-        }
-        .wol-store-toast--out {
-          animation: wol-toast-out 0.2s ease forwards;
-        }
-        @keyframes wol-toast-in {
-          from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
-          to   { opacity: 1; transform: translateX(-50%) translateY(0); }
-        }
-        @keyframes wol-toast-out {
-          from { opacity: 1; transform: translateX(-50%) translateY(0); }
-          to   { opacity: 0; transform: translateX(-50%) translateY(-10px); }
-        }
-      `}</style>
     </div>
   );
 };
