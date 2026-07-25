@@ -36,6 +36,27 @@
   min-height: 44px;
 }
 
+.game-quick-speech-button {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.25;
+  white-space: normal;
+}
+
+.game-vote-details-button {
+  min-height: 44px;
+  padding-right: 8px;
+  padding-left: 8px;
+}
+
+/* The village victory intro begins at scale(0.9), so 49px keeps the live hit
+   rectangle above 44px throughout the existing animation. */
+.game-room .game-return-button {
+  min-height: 49px;
+}
+
 .game-room-board {
   position: relative;
   flex: 1 1 auto;
@@ -128,6 +149,28 @@
 @media (min-width: 1024px) {
   .game-room-sidebar {
     border-left: 1px solid rgb(var(--ink-800));
+  }
+
+  .game-room .center-console.game-action-console:has(.game-speech-presets) {
+    width: 336px;
+  }
+
+  .game-room .game-speech-presets {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 6px;
+    row-gap: 4px;
+  }
+
+  .game-room .game-speech-input {
+    margin-top: 12px;
+  }
+
+  .game-room .game-speech-presets .game-quick-speech-button {
+    min-width: 0;
+    padding-right: 4px;
+    padding-left: 4px;
+    overflow-wrap: anywhere;
   }
 }
 

@@ -91,14 +91,14 @@ const SpeechInput = ({
   };
 
   return (
-    <div className="mt-4 flex flex-col gap-2">
+    <div className="game-speech-input mt-4 flex flex-col gap-2">
       {/* Quick speech buttons */}
-      <div className="flex flex-wrap gap-1.5">
+      <div className="game-speech-presets flex flex-wrap gap-1.5">
         {speeches.map((preset, i) => (
           <button
             key={i}
             onClick={() => handlePresetClick(preset)}
-            className={`px-2.5 py-1 text-xs rounded-full border transition-colors ${
+            className={`game-quick-speech-button px-2.5 py-1 text-xs rounded-full border transition-colors ${
               preset.tone === 'suspicion'
                 ? 'border-red-700/50 text-red-300 hover:bg-red-900/30'
                 : preset.tone === 'defend'

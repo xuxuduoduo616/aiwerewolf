@@ -1,4 +1,6 @@
 import React from 'react';
+import { readFileSync } from 'node:fs';
+import postcss from 'postcss';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import BattlePassView, { getEligibleBattlePassTierIds } from './BattlePassView';
@@ -8,6 +10,19 @@ import LobbyFeatureMenu from './LobbyFeatureMenu';
 import WolfVillagePreview from './WolfVillagePreview';
 import LobbyActionButtons from './LobbyActionButtons';
 import MatchSelection from './MatchSelection';
+
+const lobbyFeaturesCss = readFileSync(new URL('../styles/lobby-features.css', import.meta.url), 'utf8');
+
+const effectiveDeclarationsFor = (selector: string): Record<string, string> => {
+  const declarations: Record<string, string> = {};
+  postcss.parse(lobbyFeaturesCss).walkRules(rule => {
+    if (!rule.selectors.includes(selector)) return;
+    rule.walkDecls(declaration => {
+      declarations[declaration.prop] = declaration.value;
+    });
+  });
+  return declarations;
+};
 
 describe('standalone lobby feature surfaces', () => {
   it('renders explicit current and limited activity categories with login rewards', () => {
@@ -145,6 +160,21 @@ describe('standalone lobby feature surfaces', () => {
     }
     expect(html).toContain('Social Feature Preview');
     expect(html).toContain('Services are not connected');
+  });
+
+  it('keeps all four native-disabled social previews on the 44px production CSS target contract', () => {
+    const html = renderToStaticMarkup(<WolfVillagePreview />);
+    const socialPreviewCards = [...html.matchAll(
+      /<article class="lobby-feature-card lobby-village-social-preview">([\s\S]*?)<\/article>/g,
+    )];
+
+    expect(socialPreviewCards).toHaveLength(4);
+    for (const [, cardMarkup] of socialPreviewCards) {
+      expect(cardMarkup).toMatch(/<button type="button" disabled="">[\s\S]*?Preview<\/button>/);
+    }
+    expect(effectiveDeclarationsFor('.lobby-village-social-preview button')).toMatchObject({
+      'min-height': '44px',
+    });
   });
 
   it('keeps all social previews and multiplayer room actions visibly disabled', () => {

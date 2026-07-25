@@ -132,9 +132,12 @@ const App: React.FC = () => {
   const seatStyle = (index: number, total: number): React.CSSProperties => {
     const angle = -90 + (360 / total) * index;
     const rad = (angle * Math.PI) / 180;
+    const isFinalTwelvePlayerShoulderSeat =
+      game.phase === GamePhase.GAME_OVER && total === 12 && [2, 4, 8, 10].includes(index);
+    const verticalRadius = isFinalTwelvePlayerShoulderSeat ? 40.5 : 37;
     return {
       left: `${50 + 42 * Math.cos(rad)}%`,
-      top: `${50 + 37 * Math.sin(rad)}%`,
+      top: `${50 + verticalRadius * Math.sin(rad)}%`,
       transform: 'translate(-50%, -50%)',
     };
   };
@@ -394,7 +397,7 @@ const App: React.FC = () => {
                   <h1 className="text-3xl font-black">{game.winner === 'WEREWOLVES' ? 'Werewolves Win' : 'Village Wins'}</h1>
                   <p className="text-sm text-zinc-300 mt-2">Round {Math.max(1, game.roundCount)} complete{game.me ? ` · ${ROLE_LABELS_EN[game.me.role]}` : ''}</p>
                   <p className="text-xs text-zinc-400 mt-2">{game.savedRecordId ? 'Record saved.' : 'Saving record...'}</p>
-                  <button onClick={returnToLobby} className="mt-5 action-button">Return to Lobby</button>
+                  <button onClick={returnToLobby} className="mt-5 action-button game-return-button">Return to Lobby</button>
                 </div>
               ) : (
                 <>

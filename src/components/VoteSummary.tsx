@@ -170,7 +170,7 @@ const VoteSummary: React.FC<Props> = ({ voteRecords, players, round, eliminatedP
       <div>
         <button
           onClick={() => setShowDetail(v => !v)}
-          className="flex items-center gap-1 text-[10px] text-zinc-500 hover:text-zinc-300"
+          className="game-vote-details-button flex items-center gap-1 text-[10px] text-zinc-500 hover:text-zinc-300"
           aria-expanded={showDetail}
           aria-controls="vote-detail-panel"
         >

@@ -7,6 +7,7 @@ import GameRoom, { GamePlayerSeat } from './GameRoom';
 
 const responsiveCss = readFileSync(new URL('../styles/game-responsive.css', import.meta.url), 'utf8');
 const legacyCss = readFileSync(new URL('../../index.css', import.meta.url), 'utf8');
+const appSource = readFileSync(new URL('../App.tsx', import.meta.url), 'utf8');
 
 const mediaAppliesAtWidth = (rule: Rule, width: number): boolean => {
   const parent = rule.parent;
@@ -66,6 +67,74 @@ const effectiveStageCascade = (width: number): Record<string, string> =>
 
 const effectiveWolfChannelCascade = (width: number): Record<string, string> =>
   effectiveCascade(width, matchesWolfChannel);
+
+const matchesSpeechConsole = (selector: string): boolean => {
+  const normalized = selector.trim();
+  return normalized === '.center-console'
+    || normalized === '.game-room .center-console.game-action-console:has(.game-speech-presets)';
+};
+
+const finalTwelvePlayerSeatRect = (index: number, shoulderRadius: number) => {
+  const angle = -90 + (360 / 12) * index;
+  const radians = (angle * Math.PI) / 180;
+  const isShoulderSeat = [2, 4, 8, 10].includes(index);
+  const verticalRadius = isShoulderSeat ? shoulderRadius : 37;
+  const centerX = ((50 + 42 * Math.cos(radians)) / 100) * 1068;
+  const centerY = ((50 + verticalRadius * Math.sin(radians)) / 100) * 804;
+  return {
+    left: centerX - 54,
+    right: centerX + 54,
+    top: centerY - 80,
+    bottom: centerY + 80,
+  };
+};
+
+const intersectingSeatPairs = (shoulderRadius: number): string[] => {
+  const seats = Array.from({ length: 12 }, (_, index) => finalTwelvePlayerSeatRect(index, shoulderRadius));
+  const intersections: string[] = [];
+  for (let leftIndex = 0; leftIndex < seats.length; leftIndex += 1) {
+    for (let rightIndex = leftIndex + 1; rightIndex < seats.length; rightIndex += 1) {
+      const left = seats[leftIndex];
+      const right = seats[rightIndex];
+      const overlapWidth = Math.min(left.right, right.right) - Math.max(left.left, right.left);
+      const overlapHeight = Math.min(left.bottom, right.bottom) - Math.max(left.top, right.top);
+      if (overlapWidth > 1 && overlapHeight > 1) intersections.push(`${leftIndex + 1}/${rightIndex + 1}`);
+    }
+  }
+  return intersections;
+};
+
+const dynamicPlayerRect = (index: number, total: number) => {
+  const angle = -90 + (360 / total) * index;
+  const radians = (angle * Math.PI) / 180;
+  const centerX = 16 + ((50 + 42 * Math.cos(radians)) / 100) * 1068;
+  const centerY = 80 + ((50 + 37 * Math.sin(radians)) / 100) * 804;
+  const halfHeight = index === 0 ? 68 : 66;
+  return {
+    left: centerX - 54,
+    right: centerX + 54,
+    top: centerY - halfHeight,
+    bottom: centerY + halfHeight,
+  };
+};
+
+const centeredConsoleRect = (width: number, height: number) => ({
+  left: 550 - width / 2,
+  right: 550 + width / 2,
+  top: 482 - height / 2,
+  bottom: 482 + height / 2,
+});
+
+const intersectingDynamicPlayers = (total: number, consoleWidth: number, consoleHeight: number): number[] => {
+  const consoleRect = centeredConsoleRect(consoleWidth, consoleHeight);
+  return Array.from({ length: total }, (_, index) => ({ index, rect: dynamicPlayerRect(index, total) }))
+    .filter(({ rect }) => {
+      const overlapWidth = Math.min(rect.right, consoleRect.right) - Math.max(rect.left, consoleRect.left);
+      const overlapHeight = Math.min(rect.bottom, consoleRect.bottom) - Math.max(rect.top, consoleRect.top);
+      return overlapWidth > 1 && overlapHeight > 1;
+    })
+    .map(({ index }) => index + 1);
+};
 
 describe('GameRoom responsive layout contract', () => {
   it('renders named board, desktop seat coordinates, and persistent sidebar regions', () => {
@@ -142,5 +211,33 @@ describe('GameRoom responsive layout contract', () => {
     expect(stage.position).toBe('absolute');
     expect(stage.inset).toBe('16px');
     expect(stage.overflow).toBe('hidden');
+  });
+
+  it('separates the four final-state 12-player shoulder-seat intersections', () => {
+    expect(intersectingSeatPairs(37)).toEqual(['3/4', '4/5', '9/10', '10/11']);
+    expect(intersectingSeatPairs(40.5)).toEqual([]);
+    expect(appSource).toContain("total === 12 && [2, 4, 8, 10].includes(index)");
+    expect(appSource).toContain('isFinalTwelvePlayerShoulderSeat ? 40.5 : 37');
+  });
+
+  it('keeps Return to Lobby above 44px during the scaled victory intro', () => {
+    expect(appSource).toContain('className="mt-5 action-button game-return-button"');
+    expect(responsiveCss).toMatch(/\.game-room \.game-return-button\s*\{[\s\S]*?min-height:\s*49px;/);
+    const returnTarget = effectiveCascade(1440, selector => selector.trim() === '.game-room .game-return-button' || selector.trim() === '.action-button');
+    expect(returnTarget['min-height']).toBe('49px');
+    expect(49 * 0.9).toBeGreaterThanOrEqual(43.5);
+  });
+
+  it('compacts only the complete desktop speech composition away from the 12-player ring', () => {
+    expect(intersectingDynamicPlayers(12, 420, 462)).toEqual([1, 2, 6, 8, 12]);
+    expect(intersectingDynamicPlayers(12, 420, 478)).toEqual([1, 2, 6, 7, 8, 12]);
+    expect(intersectingDynamicPlayers(12, 336, 440)).toEqual([]);
+    expect(intersectingDynamicPlayers(9, 336, 424)).toEqual([]);
+
+    const desktopSpeechConsole = effectiveCascade(1440, matchesSpeechConsole);
+    const responsiveSpeechConsole = effectiveCascade(768, matchesSpeechConsole);
+    expect(desktopSpeechConsole.width).toBe('336px');
+    expect(responsiveSpeechConsole.width).toBe('min(390px, 54vw)');
+    expect(responsiveCss).toMatch(/\.game-room \.game-speech-presets\s*\{[\s\S]*?grid-template-columns:\s*repeat\(4, minmax\(0, 1fr\)\);/);
   });
 });

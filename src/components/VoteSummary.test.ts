@@ -1,7 +1,12 @@
+import React from 'react';
+import { readFileSync } from 'node:fs';
+import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, it, expect } from 'vitest';
 import { GamePhase } from '../types';
 import type { VoteRecord } from '../types';
-import { computeVoteSummary } from './VoteSummary';
+import VoteSummary, { computeVoteSummary } from './VoteSummary';
+
+const responsiveCss = readFileSync(new URL('../styles/game-responsive.css', import.meta.url), 'utf8');
 
 const vote = (round: number, voterId: number, targetId: number | null): VoteRecord => ({
   round,
@@ -87,5 +92,20 @@ describe('computeVoteSummary', () => {
 
     expect(summary.totalVotes).toBe(1);
     expect(summary.groups[0].targetId).toBe(3);
+  });
+});
+
+describe('VoteSummary target geometry', () => {
+  it('renders Details with the 44px target contract', () => {
+    const html = renderToStaticMarkup(React.createElement(VoteSummary, {
+      voteRecords: [vote(1, 1, 2)],
+      players: [],
+      round: 1,
+      eliminatedPlayerId: 2,
+    }));
+
+    expect(html).toContain('class="game-vote-details-button');
+    expect(html).toContain('aria-controls="vote-detail-panel"');
+    expect(responsiveCss).toMatch(/\.game-vote-details-button\s*\{[\s\S]*?min-height:\s*44px;/);
   });
 });
