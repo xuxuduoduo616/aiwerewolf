@@ -161,6 +161,12 @@ export const runAIPhaseSafely = async (
 export const resolveGameLanguage = (language?: DisplayLanguage): DisplayLanguage =>
   language ?? DEFAULT_DISPLAY_LANGUAGE;
 
+export const scrollLogTailIntoView = (
+  element: Pick<Element, 'scrollIntoView'> | null,
+): void => {
+  element?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+};
+
 /**
  * P0 fix (speech-timer-autoskip-fix): the speech-timer tick must land on 0 so
  * the auto-skip effect can fire. The old tick jumped 1 → null, and the
@@ -265,7 +271,7 @@ export function useGameState(authContext: AuthContext) {
 
   // Scroll logs to bottom
   useEffect(() => {
-    logsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    scrollLogTailIntoView(logsEndRef.current);
   }, [logs, currentSpeaker, wolfChat]);
 
   // Audio: mute cancels current speech immediately (speechAudio owns the API).

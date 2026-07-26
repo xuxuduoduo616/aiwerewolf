@@ -3,7 +3,61 @@ import { readFileSync } from 'node:fs';
 import postcss, { type AtRule, type Rule } from 'postcss';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import GameRoom, { GamePlayerSeat } from './GameRoom';
+import GameRoom, { bindResponsiveRoomScrollReset, GamePlayerSeat } from './GameRoom';
+
+class ControlledMediaQuery {
+  matches: boolean;
+  private readonly listeners = new Set<(event: { matches: boolean }) => void>();
+
+  constructor(matches: boolean) {
+    this.matches = matches;
+  }
+
+  addEventListener(_type: 'change', listener: (event: { matches: boolean }) => void) {
+    this.listeners.add(listener);
+  }
+
+  removeEventListener(_type: 'change', listener: (event: { matches: boolean }) => void) {
+    this.listeners.delete(listener);
+  }
+
+  setMatches(matches: boolean) {
+    this.matches = matches;
+    this.listeners.forEach(listener => listener({ matches }));
+  }
+
+  get listenerCount() {
+    return this.listeners.size;
+  }
+}
+
+class ControlledAnimationFrames {
+  private nextId = 1;
+  private readonly callbacks = new Map<number, FrameRequestCallback>();
+  readonly cancelled: number[] = [];
+
+  request = (callback: FrameRequestCallback) => {
+    const id = this.nextId;
+    this.nextId += 1;
+    this.callbacks.set(id, callback);
+    return id;
+  };
+
+  cancel = (id: number) => {
+    this.cancelled.push(id);
+    this.callbacks.delete(id);
+  };
+
+  flush() {
+    const queued = [...this.callbacks.entries()];
+    this.callbacks.clear();
+    queued.forEach(([, callback]) => callback(0));
+  }
+
+  get pendingCount() {
+    return this.callbacks.size;
+  }
+}
 
 const responsiveCss = readFileSync(new URL('../styles/game-responsive.css', import.meta.url), 'utf8');
 const legacyCss = readFileSync(new URL('../../index.css', import.meta.url), 'utf8');
@@ -230,11 +284,86 @@ describe('GameRoom responsive layout contract', () => {
       expect(room.height).toBe('100dvh');
       expect(room['overflow-x']).toBe('hidden');
       expect(room['overflow-y']).toBe('auto');
+      expect(room['overflow-anchor']).toBe('none');
       expect(header.position).toBe('sticky');
       expect(header.top).toBe('0');
       expect(stage.position).toBe('relative');
     },
   );
+
+  it('resets only the room once after each desktop-to-responsive layout crossing', () => {
+    const mediaQuery = new ControlledMediaQuery(false);
+    const frames = new ControlledAnimationFrames();
+    const room = { scrollTop: 91 };
+    const unrelatedWindowScroll = { scrollTop: 17 };
+    const unrelatedDocumentScroll = { scrollTop: 23 };
+    const cleanup = bindResponsiveRoomScrollReset(room, mediaQuery, frames.request, frames.cancel);
+
+    expect(mediaQuery.listenerCount).toBe(1);
+    expect(frames.pendingCount).toBe(0);
+
+    mediaQuery.setMatches(true);
+    expect(room.scrollTop).toBe(91);
+    expect(frames.pendingCount).toBe(1);
+    mediaQuery.setMatches(true);
+    expect(frames.pendingCount).toBe(1);
+    frames.flush();
+    expect(room.scrollTop).toBe(0);
+
+    room.scrollTop = 48;
+    mediaQuery.setMatches(true);
+    mediaQuery.setMatches(true);
+    expect(frames.pendingCount).toBe(0);
+    expect(room.scrollTop).toBe(48);
+
+    mediaQuery.setMatches(false);
+    mediaQuery.setMatches(false);
+    mediaQuery.setMatches(true);
+    expect(frames.pendingCount).toBe(1);
+    frames.flush();
+    expect(room.scrollTop).toBe(0);
+    expect(unrelatedWindowScroll.scrollTop).toBe(17);
+    expect(unrelatedDocumentScroll.scrollTop).toBe(23);
+
+    cleanup();
+    expect(mediaQuery.listenerCount).toBe(0);
+  });
+
+  it('does not reset an initial responsive room or ordinary responsive scrolling', () => {
+    const mediaQuery = new ControlledMediaQuery(true);
+    const frames = new ControlledAnimationFrames();
+    const room = { scrollTop: 64 };
+    const cleanup = bindResponsiveRoomScrollReset(room, mediaQuery, frames.request, frames.cancel);
+
+    expect(frames.pendingCount).toBe(0);
+    mediaQuery.setMatches(true);
+    room.scrollTop = 120;
+    mediaQuery.setMatches(true);
+    frames.flush();
+    expect(room.scrollTop).toBe(120);
+
+    cleanup();
+  });
+
+  it('removes its listener and cancels pending work without a stale mutation', () => {
+    const mediaQuery = new ControlledMediaQuery(false);
+    const frames = new ControlledAnimationFrames();
+    const room = { scrollTop: 77 };
+    const cleanup = bindResponsiveRoomScrollReset(room, mediaQuery, frames.request, frames.cancel);
+
+    mediaQuery.setMatches(true);
+    expect(frames.pendingCount).toBe(1);
+    cleanup();
+    expect(mediaQuery.listenerCount).toBe(0);
+    expect(frames.pendingCount).toBe(0);
+    expect(frames.cancelled).toEqual([1]);
+
+    frames.flush();
+    mediaQuery.setMatches(false);
+    mediaQuery.setMatches(true);
+    expect(room.scrollTop).toBe(77);
+    expect(frames.pendingCount).toBe(0);
+  });
 
   it('uses a two-column normal-flow stage at 200% mobile effective width', () => {
     const stage = effectiveStageCascade(195);

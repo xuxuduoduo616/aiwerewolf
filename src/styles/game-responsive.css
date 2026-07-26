@@ -178,6 +178,7 @@
   .game-room.sketch-scene {
     overflow-x: hidden;
     overflow-y: auto;
+    overflow-anchor: none;
   }
 
   .game-room-layout {
