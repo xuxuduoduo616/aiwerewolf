@@ -8,6 +8,14 @@ import GameRoom, { GamePlayerSeat } from './GameRoom';
 const responsiveCss = readFileSync(new URL('../styles/game-responsive.css', import.meta.url), 'utf8');
 const legacyCss = readFileSync(new URL('../../index.css', import.meta.url), 'utf8');
 const appSource = readFileSync(new URL('../App.tsx', import.meta.url), 'utf8');
+const renderedGameRoom = renderToStaticMarkup(
+  <GameRoom header={<header>Round header</header>} sidebar={<aside>Game log</aside>} boardLabel="Game board">
+    <div>Actions</div>
+  </GameRoom>,
+);
+const renderedGameRoomClassAttribute = renderedGameRoom.match(/^<div class="([^"]+)"/);
+if (!renderedGameRoomClassAttribute) throw new Error('GameRoom must render a classed root element');
+const renderedGameRoomClasses = new Set(renderedGameRoomClassAttribute[1].split(/\s+/));
 
 const mediaAppliesAtWidth = (rule: Rule, width: number): boolean => {
   const parent = rule.parent;
@@ -25,6 +33,16 @@ const matchesGameStage = (selector: string): boolean => {
   const normalized = selector.trim();
   return normalized === '.seat-stage' || normalized === '.game-room .seat-stage';
 };
+
+const matchesGameRoom = (selector: string): boolean => {
+  const normalized = selector.trim();
+  if (!/^(?:\.[a-zA-Z0-9_-]+)+$/.test(normalized)) return false;
+
+  const requiredClasses = normalized.match(/\.([a-zA-Z0-9_-]+)/g) ?? [];
+  return requiredClasses.every(classSelector => renderedGameRoomClasses.has(classSelector.slice(1)));
+};
+
+const matchesGameRoomHeader = (selector: string): boolean => selector.trim() === '.game-room-header';
 
 const matchesWolfChannel = (selector: string): boolean => {
   const normalized = selector.trim();
@@ -52,10 +70,20 @@ const effectiveCascade = (
     const specificity = Math.max(...selectors.map(selectorSpecificity));
 
     rule.walkDecls(declaration => {
-      const current = winners.get(declaration.prop);
-      if (!current || specificity > current.specificity || (specificity === current.specificity && order >= current.order)) {
-        winners.set(declaration.prop, { specificity, order, value: declaration.value });
-      }
+      const declarations = declaration.prop === 'overflow'
+        ? [
+            ['overflow', declaration.value],
+            ['overflow-x', declaration.value.split(/\s+/)[0]],
+            ['overflow-y', declaration.value.split(/\s+/)[1] ?? declaration.value.split(/\s+/)[0]],
+          ] as const
+        : [[declaration.prop, declaration.value]] as const;
+
+      declarations.forEach(([property, value]) => {
+        const current = winners.get(property);
+        if (!current || specificity > current.specificity || (specificity === current.specificity && order >= current.order)) {
+          winners.set(property, { specificity, order, value });
+        }
+      });
     });
   });
 
@@ -186,6 +214,27 @@ describe('GameRoom responsive layout contract', () => {
     expect(stage.overflow).toBe('visible');
     expect(stage['grid-template-columns']).toBe(columns);
   });
+
+  it.each([390, 768])(
+    'keeps the sticky header and normal-flow stage in the same bounded scroll container at %ipx',
+    width => {
+      const room = effectiveCascade(width, matchesGameRoom);
+      const header = effectiveCascade(width, matchesGameRoomHeader);
+      const stage = effectiveStageCascade(width);
+
+      expect(matchesGameRoom('.game-room')).toBe(true);
+      expect(matchesGameRoom('.sketch-scene')).toBe(true);
+      expect(matchesGameRoom('.game-room.sketch-scene')).toBe(true);
+      expect(matchesGameRoom('.sketch-scene.login-page')).toBe(false);
+      expect(matchesGameRoom('.sketch-scene::before')).toBe(false);
+      expect(room.height).toBe('100dvh');
+      expect(room['overflow-x']).toBe('hidden');
+      expect(room['overflow-y']).toBe('auto');
+      expect(header.position).toBe('sticky');
+      expect(header.top).toBe('0');
+      expect(stage.position).toBe('relative');
+    },
+  );
 
   it('uses a two-column normal-flow stage at 200% mobile effective width', () => {
     const stage = effectiveStageCascade(195);

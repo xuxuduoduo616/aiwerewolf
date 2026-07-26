@@ -175,8 +175,7 @@
 }
 
 @media (max-width: 1023px) {
-  .game-room {
-    height: auto;
+  .game-room.sketch-scene {
     overflow-x: hidden;
     overflow-y: auto;
   }
