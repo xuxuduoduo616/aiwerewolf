@@ -23,6 +23,7 @@ jobs:
         with:
           publish-dir: './dist'
           functions-dir: './netlify/functions'
+          netlify-config-path: './netlify.toml'
           production-branch: main
           github-token: ${{ secrets.GITHUB_TOKEN }}
           deploy-message: "Deploy from GitHub Actions: ${{ github.event.head_commit.message }}"
