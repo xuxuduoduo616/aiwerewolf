@@ -37,4 +37,13 @@ const getAdminClient = () => {
   return _adminClient;
 };
 
-module.exports = { getAdminClient, SUPABASE_URL };
+const handler = async () => ({
+  statusCode: 405,
+  headers: {
+    'Content-Type': 'application/json',
+    'X-Content-Type-Options': 'nosniff',
+  },
+  body: JSON.stringify({ error: 'Method not allowed' }),
+});
+
+module.exports = { getAdminClient, SUPABASE_URL, handler };
