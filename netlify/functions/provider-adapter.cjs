@@ -14,9 +14,8 @@
 // live call is made. For tests and offline work, set ADAPTER_DRY_RUN=true to
 // get a deterministic mock response without any network call.
 
-// Provider registry. Protocol facts verified in
-// memory/coordination/reports/provider-discovery-initial.md — vibecoder.store
-// was unreachable and is intentionally NOT listed. Costs are approximate
+// Provider registry. Providers without a verified protocol contract are
+// intentionally not listed. Costs are approximate
 // per-1k-token figures used only for the local cost guard, not billing truth.
 const PROVIDER_REGISTRY = {
   // Gemini via the official @google/genai SDK (same route as model-adapter.js).
@@ -31,7 +30,7 @@ const PROVIDER_REGISTRY = {
     costPer1kTokens: 0.00015,
     capabilities: ['text', 'json'],
   },
-  // aicodemirror Claude proxy — Anthropic Messages protocol. Accepts x-api-key
+  // AICodeMirror Claude proxy — Anthropic Messages protocol. Accepts x-api-key
   // or Authorization: Bearer; errors are proxy-wrapped {"error": "string"}, so
   // we classify by HTTP status, never by body shape.
   'aicodemirror-claude': {

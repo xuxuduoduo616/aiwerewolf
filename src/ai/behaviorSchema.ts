@@ -7,7 +7,7 @@
 //
 // - 'aiwolf-distilled': statistics distilled from AIWolf competition logs.
 //   NO AIWolf data has been downloaded yet (log redistribution/reuse license is
-//   unresolved — see memory/coordination/reports/p2-aiwolf-feasibility.md), so
+//   unresolved), so
 //   NOTHING may currently carry this tag. It exists so future distilled values
 //   are distinguishable once license permission is confirmed.
 // - 'synthetic': template values authored from this project's own game rules,

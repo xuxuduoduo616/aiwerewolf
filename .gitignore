@@ -7,14 +7,47 @@ dist/
 # Netlify
 .netlify/
 
+# Local AI development and coordination
+/.agents/
+/.claude/
+/.codex/
+/.codex-coordinator/
+/.codex-worker-worktrees/
+/.mcp.json
+/AGENTS.md
+/CLAUDE.md
+/memory/
+/docs/agents/
+/docs/payment-audit.md
+/docs/public-demo-browser-acceptance.md
+/scripts/memory-tools.mjs
+
+# Browser automation and local evidence
+/.playwright-cli/
+/.playwright-mcp/
+/screenshots/
+/output/
+/*auth*.yml
+/*login*.yml
+/*state*.yml
+/after-*.yml
+/coin-store-live.yml
+/current-page.yml
+/final-shop-check.yml
+/netlify-*.yml
+/otp-sent.yml
+/post-verify.yml
+/shop-after-fix.yml
+/turnstile-*.yml
+
+# Local archives and generated worktrees
+/Werewolf copy/
+/aiwerewolf-worktrees/
+/npx
+
 # Build & cache
 *.log
 .DS_Store
-
-# Raw Codex worker event streams are local diagnostics; task cards and reports
-# under memory/coordination remain the versioned shared project memory.
-memory/coordination/runs/
-.codex-worker-worktrees/
 
 # Editor
 .vscode/

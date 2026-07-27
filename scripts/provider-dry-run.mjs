@@ -15,7 +15,7 @@
 // name, model, HTTP status code, and error class are ever printed; no key
 // material or auth header value appears in stdout or the report.
 //
-// Output: memory/coordination/reports/provider-adapter-dry-run-results.md
+// Output: output/provider-adapter-dry-run-results.md
 //
 // Usage:
 //   node scripts/provider-dry-run.mjs                 # offline dry-run
@@ -29,7 +29,7 @@ import vm from 'node:vm';
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(SCRIPT_DIR, '..');
 const ADAPTER_PATH = join(REPO_ROOT, 'netlify/functions/provider-adapter.cjs');
-const REPORT_PATH = join(REPO_ROOT, 'memory/coordination/reports/provider-adapter-dry-run-results.md');
+const REPORT_PATH = join(REPO_ROOT, 'output/provider-adapter-dry-run-results.md');
 const PROBE_TIMEOUT_MS = 10_000;
 
 // --- Redaction (kept dependency-free so the formatter stays pure) ------------

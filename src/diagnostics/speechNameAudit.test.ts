@@ -1,12 +1,9 @@
 /**
- * Env-gated speech-name audit (card: ai-speech-name-detection-harness).
+ * Env-gated speech-name audit.
  *
  * Run:  SPEECH_NAME_AUDIT=1 npx vitest run src/diagnostics/
  *       (wired as `npm run audit:speech-names`)
  *
- * This audit MUST FAIL on the current codebase — it reproduces the
- * wrong-player-name bug with violation count > 0. The follow-up fix card
- * (`ai-speech-roster-name-fix`) must turn this exact command green.
  * Without SPEECH_NAME_AUDIT the whole suite is skipped so the default
  * `npm run test:run` stays green.
  *
@@ -37,7 +34,7 @@ const AUDIT_ENABLED = Boolean(process.env.SPEECH_NAME_AUDIT);
 
 const SAMPLES_DIR = join(
   process.cwd(),
-  'memory/coordination/reports/ai-speech-name-detection-harness-samples',
+  'output/speech-name-audit',
 );
 
 // ─── fetch stubs (zero network) ──────────────────────────────────────────────

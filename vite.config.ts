@@ -6,18 +6,11 @@ export default defineConfig(() => {
   return {
     base: './', // Ensures assets load correctly on any path
     plugins: [react()],
-    server: {
-      watch: {
-        // Coordination worktrees churn (.claude/worktrees/*) must not trigger dev reloads.
-        ignored: ['**/.claude/**'],
-      },
-    },
     test: {
-      // Keep coordination worktrees (.claude/worktrees/*) out of the test run.
-      exclude: ['**/node_modules/**', '**/dist/**', '**/.claude/**'],
+      exclude: ['**/node_modules/**', '**/dist/**', '**/.*/**'],
     },
     // NOTE: We intentionally do NOT inject API_KEY into the frontend.
-    // The Gemini API key lives ONLY server-side in netlify/functions/genai-proxy.js.
+    // The Gemini API key lives ONLY server-side in netlify/functions/genai-proxy.cjs.
     // The frontend calls the proxy; the key is never shipped to the browser.
     build: {
       chunkSizeWarningLimit: 600,

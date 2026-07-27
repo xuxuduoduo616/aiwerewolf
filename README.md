@@ -1,105 +1,137 @@
-# 🐺 AI Werewolf · AI 狼人杀
+# AI Werewolf
 
-一款沉浸式 AI 狼人杀网站：一名真人玩家与多个 AI 玩家同台竞技。黑白灰素描风格，中英文双语，严格遵循网易狼人杀规则。
+AI Werewolf is a browser-based social deduction game where one human player faces strategic AI agents in complete, rules-driven Werewolf matches.
 
-> AI 玩家结合信念推理引擎与仓库内按角色分类的本地发言库生成局内表达。发言库的外部来源和许可尚未独立核验（未验证），公开再分发前需由 owner 确认。
+[![Production build](https://github.com/xuxuduoduo616/aiwerewolf/actions/workflows/deploy.yml/badge.svg)](https://github.com/xuxuduoduo616/aiwerewolf/actions/workflows/deploy.yml)
+[![React](https://img.shields.io/badge/React-18-61dafb?logo=react&logoColor=white)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 
-## ✨ 特性
+**Live demo:** [ai-werewolf.net](https://ai-werewolf.net)
 
-- **两种板子**：9 人标准场（3民3狼+预女猎）、12 人场（4民4狼+预女猎白）
-- **15 种 AI 性格**：悍跳狼、倒钩狼、深水狼、正统预言家、花板子预言家、保守/激进女巫等
-- **三档难度**：新手（AI 暴露漏洞）、进阶（标准策略）、高手（接近最优）
-- **严格规则**：顺时针发言、全场遗言、发言倒计时、女巫不自救、猎人被毒不开枪
-- **狼队夜聊**：刀口、悍跳、冲锋、倒钩、补位策略标签
-- **账号系统**：邮箱 OTP 登录 + 战绩记录（胜率、常用角色）；游客模式本地存储
-- **发言库 fallback**：即使 AI 服务不可用，游戏也能流畅进行
+The project separates game rules from generated expression. A deterministic rules engine and belief/action layer decide what agents know and do; the language layer turns those decisions into characterful dialogue and falls back to a bundled speech library when the external AI provider is unavailable.
 
-## 🏗️ 技术栈
+## Features
 
-| 层 | 技术 |
-|----|------|
-| 前端 | Vite + React 18 + TypeScript + Tailwind CSS |
-| AI 推理 | Gemini 2.5 Flash（服务端代理）+ 本地发言库 |
-| 托管 | Netlify（免费层）|
-| 认证/数据库 | Supabase Auth（邮箱 OTP）+ Postgres |
+- Complete single-player matches against AI-controlled players
+- 9-player and 12-player boards with Villager, Werewolf, Seer, Witch, Hunter, and Idiot roles
+- Three difficulty levels and role-specific AI behavior profiles
+- Belief tracking, strategic action selection, wolf-team coordination, voting, last words, and win resolution
+- Optional Gemini-powered dialogue refinement with a local offline fallback
+- Email OTP authentication, guest trial, local guest records, and player statistics
+- Responsive desktop, tablet, and mobile layouts with keyboard and safe-area support
+- English application interface with source-authored player and AI dialogue preserved
+- Production hosting on Netlify with build verification through GitHub Actions
 
-## 🧠 AI 架构（三层）
+Multiplayer rooms, premium purchases, real rewards, and live payment processing are intentionally unavailable. Their visible UI is a roadmap preview and does not create rooms, charge users, or grant assets.
 
+## Screenshots
+
+### Lobby
+
+![AI Werewolf desktop lobby](docs/images/lobby-desktop.jpg)
+
+### Gameplay
+
+![AI Werewolf desktop gameplay](docs/images/gameplay-desktop.jpg)
+
+| Mobile lobby | Mobile gameplay |
+| --- | --- |
+| ![AI Werewolf mobile lobby](docs/images/lobby-mobile.jpg) | ![AI Werewolf mobile gameplay](docs/images/gameplay-mobile.jpg) |
+
+### AI Conversation
+
+![Werewolf team AI conversation](docs/images/ai-conversation.jpg)
+
+## Technology Stack
+
+| Area | Technology |
+| --- | --- |
+| Frontend | React 18, TypeScript, Vite, Tailwind CSS |
+| Game and AI logic | TypeScript rules engine, belief tracker, action selector, local speech library |
+| AI provider | Gemini 2.5 Flash through a server-side Netlify Function, with local fallback |
+| Authentication and data | Supabase Auth and Postgres |
+| Hosting | Netlify CDN and Functions |
+| Continuous integration | GitHub Actions production-build verification |
+| Testing | Vitest |
+
+## Current Development Status
+
+| Feature | Status |
+| --- | --- |
+| Core 9-player and 12-player gameplay | Complete |
+| AI decision and dialogue pipeline | Complete |
+| Responsive desktop/mobile interface | Complete |
+| English application interface | Complete |
+| Guest trial and email OTP integration | Complete |
+| Player profile and game-record integration | Complete; production data policy verification remains owner-operated |
+| Social lobby surfaces | Preview only |
+| Real-player multiplayer | Planned |
+| Payment processing | Disabled; provider integration not configured |
+| Cloud text-to-speech | Planned |
+
+## Architecture
+
+```text
+React interface
+  |-- game state hook --------------------+
+  |                                       |
+  +--> deterministic game engine          |
+  +--> belief tracker + action selector   |-- complete match state
+  +--> speech library + optional Gemini --+
+
+Browser --> Netlify CDN / Functions --> Gemini API
+   |
+   +--> Supabase Auth / Postgres
 ```
-Layer 1 — BeliefTracker（信念追踪，纯 TS）
-  └── 每回合更新每位玩家对他人的可疑度 (0–1)
-Layer 2 — 发言库（仓库内 6 个角色文件，共 8,521 条）
-  └── 按角色/场景匹配真实发言模板
-Layer 3 — Gemini 润色（可选 LLM，失败自动降级）
-  └── 根据局势生成个性化中文发言
-```
 
-**关键设计**：Layer 1 决定行动目标，Layer 2/3 只负责发言——防止 AI 幻觉出未验证的信息。
+The browser can run a full match without an AI API key. Gemini access is isolated in a Netlify Function; provider keys and Supabase service-role credentials must never be exposed to the frontend. See [Architecture](docs/architecture.md) for module boundaries and security constraints.
 
-## 🚀 本地开发
+## Local Development
+
+Prerequisites: Node.js 20 and npm.
 
 ```bash
+git clone https://github.com/xuxuduoduo616/aiwerewolf.git
+cd aiwerewolf
 npm install
-npm run dev          # http://localhost:5173（AI 使用 fallback 发言）
-npm run test:run     # 运行游戏引擎单元测试
-npm run build        # 生产构建
+npm run dev
 ```
 
-> 本地 `npm run dev` 不运行 Netlify Functions，AI 使用发言库 fallback。
-> 要测试真实 Gemini，用 `netlify dev` 并配置 `API_KEY`。
-
-## 🔑 环境变量
-
-复制 `.env.example` 到 `.env.local`：
-
-| 变量 | 用途 | 获取 |
-|------|------|------|
-| `API_KEY` | Gemini API（服务端）| https://aistudio.google.com/apikey |
-| `VITE_SUPABASE_URL` | Supabase 项目 URL | Supabase Dashboard |
-| `VITE_SUPABASE_ANON_KEY` | Supabase 匿名 key | Supabase Dashboard |
-| `VITE_TURNSTILE_SITE_KEY` | Cloudflare Turnstile 公开 site key（构建必需）| Cloudflare Dashboard |
-| `SUPABASE_SERVICE_ROLE_KEY` | 支付 Function 的服务端 key；禁止放入前端或 Git | Supabase Dashboard |
-| `ALLOWED_ORIGIN` | CORS 白名单（生产）| 你的域名 |
-
-## 📦 部署到 Netlify
-
-1. 在 owner 批准后推送 `main` 到 GitHub
-2. Netlify 的 Git integration 从 `main` 构建并发布，构建设置读取 `netlify.toml`
-3. Site settings → Environment variables 添加上述变量；服务端变量不得暴露给前端
-4. Supabase 数据库设置见 [`docs/supabase-setup.md`](docs/supabase-setup.md)
-
-当前 GitHub Actions workflow 不注入构建所需的 `VITE_TURNSTILE_SITE_KEY`，因此
-不能作为已验证的生产发布路径；Stage 0 验证的生产发布来自 Netlify Git
-integration。修复 workflow 前不要把 Actions 构建失败描述为部署成功。
-
-## 📊 数据工具
+The Vite development server uses local fallback dialogue. To exercise Netlify Functions locally, install or use the included Netlify CLI and run `npx netlify dev` after configuring the required environment variables.
 
 ```bash
-python3 scripts/scrape_aiwolf.py   # 本地采集工具；外部来源与许可状态未验证
+npm run test:run
+npm run build
 ```
 
-## 🔒 安全
+Copy `.env.example` to `.env.local` for local configuration. Never commit `.env.local` or server credentials.
 
-- API key 仅存于服务端 Netlify Function，绝不暴露到前端
-- Supabase schema 要求使用 RLS 限制用户数据访问；线上策略需独立验证
-- AI 代理含限流（30 req/min/IP）、CORS 白名单、输入验证、模型白名单
+| Variable | Purpose |
+| --- | --- |
+| `API_KEY` | Server-side Gemini access |
+| `VITE_SUPABASE_URL` | Public Supabase project URL |
+| `VITE_SUPABASE_ANON_KEY` | Public Supabase anonymous key |
+| `VITE_TURNSTILE_SITE_KEY` | Public Cloudflare Turnstile site key required by production builds |
+| `SUPABASE_SERVICE_ROLE_KEY` | Server-only Supabase administration; never expose to the browser |
+| `ALLOWED_ORIGIN` | Production CORS allowlist |
 
-## 📁 项目结构
+More detail is available in [Development](docs/development.md) and [Supabase setup](docs/supabase-setup.md).
 
-```
-src/
-├── App.tsx              # UI 编排层
-├── hooks/               # useAuth, useRecords, useGameState
-├── ai/                  # beliefTracker, actionSelector, geminiAdapter, aiOrchestrator
-├── services/            # speechLibrary, aiStyles, supabaseClient
-├── data/                # 蒸馏发言库 JSON
-├── components/          # PlayerCard, ActionBar, WolfChannel, ...
-├── gameEngine.ts        # 核心规则（+ 单元测试）
-└── constants.ts         # 板子配置、角色、黑话
-netlify/functions/       # genai-proxy.cjs（Gemini 代理）
-scripts/                 # scrape_aiwolf.py
-```
+## Roadmap
 
-## 📝 License
+- **v1.0 - Playable AI Werewolf:** two boards, full role resolution, AI strategy, responsive UI, authentication, and production deployment
+- **v1.1 - AI quality:** resolve remaining dialogue placeholders, improve language consistency, and evaluate cloud text-to-speech
+- **v1.2 - Social foundation:** profiles, friend relationships, messaging, presence, moderation boundaries, and verified row-level security
+- **v2.0 - Server-authoritative multiplayer:** private rooms, invitations, reconnect support, secret-state projection, and idempotent game commands
 
-私有项目 · Mingzhe Xu 2026
+See [Roadmap](docs/roadmap.md) for scope and release gates. Planned work is not presented as an available feature.
+
+## Contributing
+
+Bug reports and focused improvements are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening an issue or pull request. Security concerns should follow [SECURITY.md](SECURITY.md) rather than a public issue.
+
+## License and Data Notice
+
+This repository is currently source-available under the terms in [LICENSE](LICENSE); it is not yet released under an OSI-approved open-source license.
+
+The provenance and redistribution rights of the bundled role-specific speech corpus are still being reviewed. Do not redistribute or reuse corpus files independently. A permissive software license will be considered only after those rights are resolved or the corpus is replaced.

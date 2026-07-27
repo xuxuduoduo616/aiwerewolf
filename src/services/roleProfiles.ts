@@ -18,7 +18,7 @@ import type {
 export type BehaviorVariant = 'cautious' | 'balanced' | 'aggressive';
 
 // Source-tag helpers. NO AIWolf data has been downloaded (log reuse license is
-// unresolved — see memory/coordination/reports/p2-aiwolf-feasibility.md), so no
+// unresolved), so no
 // value below may be labeled 'aiwolf-distilled'. Werewolf/Villager/Seer use
 // 'heuristic' (hand-authored, distillation pending license confirmation);
 // Witch/Hunter/Idiot have no AIWolf equivalent and use 'synthetic' templates.
