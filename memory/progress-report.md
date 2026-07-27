@@ -1,70 +1,55 @@
 # AI Werewolf ROADMAP 与剩余工作
 
 **Canonical owner:** coordinator。当前已验证状态见
-[coordination/PROJECT_STATE.md](coordination/PROJECT_STATE.md)（本文件不记录状态）。
+[coordination/PROJECT_STATE.md](coordination/PROJECT_STATE.md)（本文件不重复维护发布身份或测试基线）。
 
-**更新日期:** 2026-07-24（TC-006 local integration checkpoint）
+**更新日期:** 2026-07-27（产品任务池已发布、完成生产验收，并由 TC-008 R4 完成 evidence-only closeout）
 
 ## 当前派发状态
 
-`coordination/tasks/` 中没有可直接派发的 active card；其中卡片是保留用于
-追溯的历史记录：已完成卡标记为 `Accepted`，被后续实现取代的旧卡标记为
-`Superseded`。当前 owner-approved coordinator 工作在独立 invocation artifacts
-中跟踪。S0-GATE 与 TC-001 至 TC-006 已有独立 PASS 证据；TC-002 至 TC-004
-已集成到本地提交 `6320f5f`，TC-005 已集成到 `b762cd2`，TC-006 已集成到
-`a7ba1e7`，均尚未发布。下一项是 TC-009 全站英文界面文案。
+`coordination/tasks/` 中没有可直接派发的 active card；其中内容是历史任务记录。
+本次 owner-approved run 位于 `.codex-coordinator/runs/20260723T023929Z-b2258e1d/`。
+TC-001 至 TC-007、TC-009、TC-012、TC-011 R13 和 TC-008 R4 均有 sealed
+independent PASS。当前计划任务池与 closeout 队列为空。
+
+## 本轮已完成范围
+
+| Area | Result | Current boundary |
+|---|---|---|
+| Memory governance | TC-001 PASS | 唯一/不确定历史资料保留；仅删除有精确哈希证据的重复 Function aliases。 |
+| Payments | TC-002 PASS + production replay | 生产 payment POST fail-closed；真实 PSP 未接入，订单/余额正确性 `未验证`。 |
+| Lobby operations | TC-003 PASS R3 | Activity、Faction Support、Battle Pass 和 Wolf Village Preview 为本地展示状态；premium/real rewards 禁用。 |
+| Responsive shell | TC-004 PASS R2 | `390x844`、`768x1024`、`1440x900`、safe area、44px targets、Dialog/Tab/focus restore 通过。 |
+| Responsive game room | TC-005 R19 / tester R11 PASS | R17 transitions 与 R19 nearest-aligned log follow 为最终实现；R18 timing compensation 已被取代。 |
+| Application integration | TC-006 PASS R2 | 单人启动流和 utility surfaces 可用；多人/房间/高级能力禁用。 |
+| English interface | TC-009 PASS R4 | 应用自有 UI 文案为英文；动态用户/AI/历史/artwork 内容保留来源语义。 |
+| Integrated acceptance | TC-007 PASS R2 | `111 total = 93 nominal + 18 effective-200%-zoom`，payment/copy/art/rule/geometry gates 通过。 |
+| Function packaging | TC-012 PASS R1 | `supabase-admin` generic 405 contract 通过；AC-05 由精确生产 replay 闭合。 |
+| Production release | TC-011 PASS R13 | Exact commit/deploy、Actions、14/14 bytes、Functions/payment guards 和直接生产 Chrome matrix 通过。 |
+| Final closeout | TC-008 PASS R4 | R3 artifact identity FAIL 经两行 metadata repair 修复；AC-01..12 独立复跑通过。 |
+
+## Owner 后续工作（不属于当前任务池）
+
+1. **Credential rotation and local cleanup:** owner 轮换凭据并清理本地敏感/auth artifacts；不得输出值，也不得使用宽泛 staging。
+2. **Production order/balance reconciliation:** owner 主导核对历史订单与余额。当前正确性为 `未验证`；不得由本轮直接修改生产数据库。
+3. **Real payment planning:** 只有在 PSP、商户认证、server-only secrets/certificates、signed webhooks、idempotency、exactly-once ledger、退款/争议和 reconciliation 方案获批后才能重新开放。
 
 ## 待重新规划（不是现成任务卡）
 
 | # | Task ID | 优先级 | 说明 |
-|---|---------|--------|------|
-| 1 | `speech-placeholder-resolution` | P1 | "that player" 等占位符在显示层原样出现，需解析为 N 号 |
-| 2 | `zh-display-language-purity` | P1 | zh 模式 fallback 发言以 EN 为主 |
-| 3 | `katakana-entity-follow-up` | P2 | 5 个片假名人名未入实体表，~300 处引用逃过清洗 |
-| 4 | `cloud-tts-implementation` | P2 | gemini-2.5-flash-preview-tts Netlify 适配层 |
-| 5 | `visibleText-dead-code-cleanup` | P3 | useGameState 中未被消费的导出 |
+|---|---|---|---|
+| 1 | `speech-placeholder-resolution` | P1 | 显示层仍可能出现 "that player" 等占位符，需单独验证并解析为座位号。 |
+| 2 | `zh-display-language-purity` | P1 | 动态中文发言模式的 fallback 语言纯度不属于 English application chrome 范围。 |
+| 3 | `katakana-entity-follow-up` | P2 | 片假名实体清理属于语料/表达层，不属于 TC-009 应用 UI 文案。 |
+| 4 | `cloud-tts-implementation` | P2 | Gemini TTS Netlify 适配层；外部服务配置状态 `未验证`。 |
+| 5 | `visibleText-dead-code-cleanup` | P3 | `useGameState` 中未消费导出的独立清理。 |
 
-## 已完成（2026-07-07 ～ 2026-07-22 打磨期）
+## 长期路线约束
 
-- ✅ 预言家查验结果在被验者头顶显示"金水"/"查杀"标记（仅预言家可见）
-- ✅ 真人玩家死后不再可发言（遗言后自动跳过）
-- ✅ AI 发言中英混杂修复：`isChinese()` 三层检测（Gemini→发言库→fallback 全程优先中文）
-- ✅ 女巫可看刀口：控制台显示"昨夜X号被狼人袭击"
-- ✅ 30天免登录：localStorage 持久化 session token
-- ✅ 暗牌场：夜间死亡/毒死/枪死不展露角色身份
-- ✅ 登录验证码过期bug修复：`getClient()` 不再缓存 Supabase 客户端
-- ✅ SSL 证书修复：Resend SMTP + Let's Encrypt + Cloudflare DNS 切换
-- ✅ 重定向循环修复：移除 Cloudflare 重复 redirect 规则
-- `provider-adapter.cjs` 多模型路由源码存在；生产 endpoint 状态未验证
-- ✅ Cloudflare Turnstile 集成完毕
-- ✅ 移动端 UI 壳完工（GlobalShell, BottomNav, TopStatusBar, etc.）
-- ✅ 玩家充值系统接入完成（CoinStore → useWallet → payment-escrow → Supabase coin_orders + user_coins，游客+注册用户双路径已验证 live）
-
-## 已知缺口（非阻塞）
-
-- 浏览器 E2E 未覆盖全部角色/板型（12 人局、狼队徽章路径）。
-- AIWolf 原始数据下载/蒸馏 — license 待 owner/法务决定。
-- vibecoder.store 集成 — 网络不可达，待重试。
-- AICODEMIRROR_API_KEY / DEEPSEEK_API_KEY 的当前配置状态未验证。**GPT/Claude/DeepSeek/Doubao 多模型 per-player 接入仍需 owner 选择平台并提供相应商户/API 配置。**
-- 音效系统仅有 TTS 与投票 tick；无环境音/事件音（可选增强）。
-- Netlify CLI 当前认证状态未验证。Netlify Git integration 已从 `main` 发布精确 commit；GitHub Actions workflow 因未注入必需 Turnstile build input 而失败，尚不是已验证发布路径。
-
-## 人工核验清单（owner 或线上操作）
-
-1. Supabase RLS 策略、邮件 OTP 闭环 ✅（已验证 2026-07-07 — Resend SMTP 正常工作）
-2. Netlify 环境变量与 `ALLOWED_ORIGIN` ✅
-3. 完整真人对局验收：12 人局、每个特殊身份、断网回退（待 owner 试玩）
-4. 多模型 API key 收集：GPT-5.6/5.5、DeepSeek v4-pro、Doubao、Claude、NotebookLLM
-
-## 历史任务卡
-
-以下历史卡已被后续实现覆盖并关闭，不得直接重新派发：
-
-`p0-fix-guest-lobby-deadlock`、`p0-wolf-teammate-visual`、
-`p1-final-screen-polish`、`p1-ui-design-system`、`p1-ui-screen-polish`、
-`p1-vote-summary-redesign`、`p2-model-adapter`。
+- 当前阶段仍是单机 AI 对局加社交基础；真人联机必须遵守 ADR-003 的服务端权威、秘密信息隔离、RLS、幂等和恢复约束。
+- 不得把本地运营展示、disabled room actions 或 future multiplayer copy 描述为已上线能力。
+- 游戏规则继续由 `gameEngine.ts`、`beliefTracker` 和 `actionSelector` 决定；LLM 只负责表达。
 
 ## 历史说明
 
-旧 task cards、reports 和 handoffs 是历史证据，不代表当前 roadmap 或当前
-部署状态。新增任务以 `PROJECT_STATE.md`、本文件和相关 ADR 为准。
+旧 task cards、reports、handoffs、失败报告和被 supersede 的 revision 均为不可变历史证据，不代表当前状态。当前状态只认 [coordination/PROJECT_STATE.md](coordination/PROJECT_STATE.md)；本次 run 的最终生产 verdict 只认 TC-011 R13/release evidence R6，最终 closeout verdict 只认 TC-008 tester R4 PASS。

@@ -24,7 +24,9 @@ Build an immersive AI Werewolf web app where one human player can play full Were
   - 9-player standard: 3 villagers, 3 werewolves, Seer, Witch, Hunter.
   - 12-player standard: 4 villagers, 4 werewolves, Seer, Witch, Hunter, Idiot.
 - Use a black/white/gray sketch-style interface with subtle dynamic village background motion.
-- Keep Chinese/English display switching.
+- Use English for application-owned interface terms. Preserve user-authored
+  content, AI/player speech or chat, stored historical text, and artwork text
+  without misclassifying them as interface chrome.
 - Add player game records.
 - Enforce public speaking turns: players can only publicly speak on their own turn.
 - Improve AI player speech with real Werewolf slang and contextual reasoning.
@@ -36,9 +38,31 @@ Build an immersive AI Werewolf web app where one human player can play full Were
 
 - Frontend: Vite + React + TypeScript.
 - Hosting/runtime: Netlify.
-- AI proxy: `netlify/functions/genai-proxy.js` with server-side `API_KEY`.
+- AI proxy: `netlify/functions/genai-proxy.cjs` with server-side `API_KEY`.
 - Auth/database: Supabase Auth email OTP and Supabase Postgres.
 - Guest mode remains available for local/demo play; guest records stay local only.
+
+## Availability Boundaries
+
+- The first-stage product scope enables single-player AI matches, not real-player
+  multiplayer rooms. Multiplayer requires the server-authoritative design in
+  `memory/decisions/ADR-003-scalable-social-multiplayer-roadmap.md`.
+- Lobby activities, faction support, battle pass, and Wolf Village Preview may
+  use versioned user-isolated local presentation state, but must not grant
+  wallet, backend, premium, multiplayer, or production-asset authority.
+- Coin products and balances may remain visible, but purchase controls remain
+  unavailable until a separately approved PSP, signed-webhook, idempotency,
+  ledger, reconciliation, refund/dispute, and production rollout plan exists.
+
+Accepted implementation evidence for these requirement corrections is retained
+under `.codex-coordinator/runs/20260723T023929Z-b2258e1d/`: TC-001 tester R2
+for the `.cjs` path, TC-002 tester R1 for payment closure, TC-006 tester R2 for
+availability, TC-009 tester R4 for English UI, TC-007 tester R2 for the
+integrated matrix, TC-005 tester R11 for final game-room behavior, TC-012 tester
+R1 for Function packaging, and TC-011 tester R13/release evidence R6 for the
+exact published result. External provider functionality, production orders and
+balances, RLS/data, credential rotation, physical devices, and additional
+browser engines remain `未验证`.
 
 ## Supabase Tables
 

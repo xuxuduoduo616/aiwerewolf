@@ -1,186 +1,62 @@
 # Project Coordination State
 
-**Last verified:** 2026-07-24 (TC-006 local integration verified; Stage 0 remains the production release)
+**Last verified:** 2026-07-27（TC-008 R4 对精确发布与最终报告完成独立 closeout PASS）
 **Project phase:** Stage 1 — 单机 AI 对局加社交基础设施，暂不支持真人联机对局。长期路线见 `memory/decisions/ADR-003-scalable-social-multiplayer-roadmap.md`。
-**Engineering phase:** 49 tracked historical task cards: 42 Accepted and 7 Superseded. In the owner-approved release run, S0-GATE and TC-001 through TC-006 have independent PASS evidence; lobby-flow integration commit `a7ba1e7` is not yet deployed. Stage 0 release `6504603` remains live at `https://ai-werewolf.net` (Cloudflare proxy → Netlify).
+**Engineering phase:** 计划内产品实现已经发布并完成直接生产验收；TC-008 R4 已独立 PASS，evidence-only closeout 完成。
 
-## Verified Baseline
+## Verified Baselines
 
-- Local tests at integration commit `a7ba1e7`: `npm run test:run` — **476 passed / 5 skipped** (46 files passed, 1 skipped), zero regressions. The TC-006 focused suite passed 72/72; TypeScript, memory validate/audit, and the guarded production build pass when the required Turnstile build input is supplied.
-- Production deploy `commit_ref` = `650460360913c3b83c9cd4b706788ec0f82d55ac` (verified live 2026-07-24). Subsequent local integration baselines are recorded by the coordinator and do not imply a production deploy.
-- Netlify Git integration published production deploy `6a62a55064a90100088318db` from that exact commit. GitHub Actions run `30053679882` used the same head but failed before deploy because its guarded build lacked `VITE_TURNSTILE_SITE_KEY`; the Actions workflow is not currently a verified release path.
-- Coordination archives are retained for traceability: `tasks/` contains historical cards, `reports/` contains historical evidence, and `handoffs/` is reserved only for unmerged pending deltas. No card under `memory/coordination/tasks/` is directly dispatchable; current owner-approved coordinator work is tracked in its invocation artifacts until accepted.
+| Surface | Verified state | Evidence |
+|---|---|---|
+| Production identity | `HEAD`、`main`、`origin/main` 与生产 `commit_ref` 均为 `aec5c2a1be9154041ba145e031cfbfa86808ce82`；GitHub Actions `30204225961` 成功；Netlify deploy `6a660d745602a026c8001bc8` 为 `ready` / `production` / `main`，发布于 `2026-07-26T13:37:18.327Z`。 | `.codex-coordinator/runs/20260723T023929Z-b2258e1d/reports/TC-011/release-evidence-r6.md` |
+| Clean release gates | 502 tests passed / 5 skipped；TypeScript 无诊断；guarded 1,615-module / 5-Function build、memory validate/audit、范围/空白/敏感值检查通过；生产静态文件 14/14 与 clean build 字节一致。 | `reports/TC-011/release-evidence-r6.md` in the run root |
+| Integrated acceptance matrix | `111 total = 93 nominal + 18 effective-200%-zoom` application rows；另有 six marquee Range rows、24 geometry-closure rows、143 screenshots 和 31/31 art/font/binary hash pairs。该集成矩阵是发布前完整覆盖，不冒充最终生产行。 | `reports/TC-007/tester-r2.md` |
+| Responsive game room | TC-005 R19 / tester R11 PASS：9/12 人 desktop/mobile/tablet、desktop-origin transitions、room-owned wheel、responsive scroll preservation，以及 nearest-aligned log follow 均通过；R18 timing compensation 不是最终实现。 | `reports/TC-005/tester-r11.md` |
+| Production browser | TC-011 R13 以真实 Turnstile 和原生 Guest Trial 直接覆盖生产 Lobby、9/12 人游戏、resize/log/wheel/final state、Shop、运营页、utility routes 与错误/资源/布局检查。 | `reports/TC-011/tester-r13.md` |
+| Production Functions | 五个 Function 路径可达；`supabase-admin` GET/empty POST/OPTIONS 为精确 405 generic guard；empty unauthenticated payment POST 为精确 HTTP 503 `{"code":"PAYMENTS_NOT_CONFIGURED"}`；TC-012 AC-05 由生产 replay 闭合。 | `reports/TC-011/release-evidence-r6.md`; `reports/TC-012/tester-r1.md` |
 
-## Active Owner-Approved Release Run (local, not production)
+## Owner-Approved Release Run
 
-| Card | Verified local status |
-|---|---|
-| `TC-001` governance and memory cleanup | PASS; commit `ceb3aeb` |
-| `TC-002` payment fail-closed boundary | PASS; integrated in `6320f5f` |
-| `TC-003` local lobby operation surfaces | PASS after R2; integrated in `6320f5f` |
-| `TC-004` responsive accessible application shell | PASS after Dialog focus repair; integrated in `6320f5f` |
-| `TC-005` responsive game room | PASS after production-CSS cascade repair; integrated in `b762cd2` |
-| `TC-006` application integration and guarded start flow | PASS after native side-launcher repair; integrated in `a7ba1e7` |
+| Card | Current verified result | Evidence |
+|---|---|---|
+| `TC-001` | PASS；保守记忆治理和精确哈希重复清理完成。 | `reports/TC-001/tester-r2.md` |
+| `TC-002` | PASS；支付在 auth/order/wallet/provider/network mutation 前 fail closed。 | `reports/TC-002/tester-r1.md` |
+| `TC-003` | PASS R3；运营页为用户隔离的本地展示状态，禁用控件达到 44px 且 effect-free。 | `reports/TC-003/tester-r3.md` |
+| `TC-004` | PASS R2；三档 responsive shell、safe area 和 Dialog focus lifecycle 通过。 | `reports/TC-004/tester-r2.md` |
+| `TC-005` | PASS R19 / tester R11；最终采用 R17 transition behavior 与 R19 nearest-aligned log follow。 | `reports/TC-005/tester-r11.md` |
+| `TC-006` | PASS R2；单人启动流、lobby launchers 和八个 utility destinations 通过。 | `reports/TC-006/tester-r2.md` |
+| `TC-009` | PASS R4；application-owned chrome 为英文，动态内容边界保持 provenance-bound。 | `reports/TC-009/tester-r4.md` |
+| `TC-007` | PASS R2；完整集成矩阵 `111 = 93 + 18` 及 payment/copy/art/rule/geometry gates 通过。 | `reports/TC-007/tester-r2.md` |
+| `TC-012` | PASS R1；`supabase-admin` packaging repair 独立通过，AC-05 后由精确生产 replay 闭合。 | `reports/TC-012/tester-r1.md`; `reports/TC-011/release-evidence-r6.md` |
+| `TC-011` | PASS R13；精确发布身份、HTTP/Functions、字节一致和直接生产浏览器矩阵闭合。 | `reports/TC-011/tester-r13.md`; `reports/TC-011/release-evidence-r6.md` |
+| `TC-008` | PASS R4；R3 final-report identity FAIL 由精确两行 metadata repair 修复，独立 tester 复跑 AC-01..12 全部通过。 | `reports/TC-008/tester-r4.md`; `reports/TC-008/tester-evidence-r4/verification-summary.md` |
 
-The local payment closure, lobby surfaces, responsive shell/game room, and guarded single-player start integration are not live until the final run passes and an owner-approved production release is verified. Current production payment behavior remains the Stage 0 state documented below.
+Paths shown without the `.codex-coordinator/...` prefix are relative to run root `.codex-coordinator/runs/20260723T023929Z-b2258e1d/`.
 
-## Cycle 10: Payment System (2026-07-22~23 — VERIFIED, 3 cards)
+## Current Product Boundaries
 
-| Card | Status |
-|------|--------|
-| `payment-escrow-bridge` — Netlify Function (CJS), supabase-admin client, SQL schema | Verified |
-| `coin-store-ui` — CoinStore + CoinPackCard, 6 hardcoded coin packs, wallet strip | Verified |
-| `wallet-hook-and-integration` — useWallet hook (24 unit tests), App.tsx wiring, escrow fetch | Verified |
+- Application-owned interface chrome is English. User-authored content, AI/player speech or chat, stored historical text, and artwork text remain excluded from that assertion.
+- Single-player is the only enabled game mode. Multiplayer, Create/Join/Spectate, premium purchase, and real rewards remain unavailable and effect-free.
+- Activity, Faction Support, Battle Pass, and Wolf Village Preview use versioned, user-isolated local presentation state; claims/contributions grant no wallet, backend, or production-asset authority.
+- Production payment remains unavailable. Empty unauthenticated POST returns HTTP 503 with exact `{"code":"PAYMENTS_NOT_CONFIGURED"}` before privileged or mutation work; products and balances remain readable and purchase controls remain disabled.
 
-**New files (5):**
-- `netlify/functions/payment-escrow.cjs` — escrow function (JWT verify → INSERT coin_orders → UPSERT user_coins)
-- `netlify/functions/supabase-admin.cjs` — shared service_role Supabase client
-- `docs/coin-escrow-schema.sql` — DDL for `coin_orders` and `user_coins`
-- `src/hooks/useWallet.ts` + `useWallet.test.ts` — wallet state, purchase, localStorage + Supabase dual-source
-- `src/components/CoinStore.tsx` + `CoinPackCard.tsx` — coin store UI
+## External And Data Status
 
-**Modified:** `src/App.tsx`, `src/components/GlobalShell.tsx`, `src/components/TopStatusBar.tsx`, `src/services/supabaseClient.ts`, `src/styles/mobile-shell.css`
+- External AI/provider functional availability and reliability beyond observed UI fallback behavior: `未验证`.
+- Current production orders, wallet balances, reconciliation correctness, Supabase RLS/data, backups, and email-template configuration: `未验证`.
+- Current credential validity/rotation and cleanup of local sensitive/auth artifacts: `未验证`.
+- Real PSP merchant onboarding, credentials/certificates, callbacks, signed webhooks, idempotent ledger, tax, refunds, chargebacks, disputes, settlement, and reconciliation readiness: `未验证`.
+- Physical-device safe areas and browser engines beyond verified Chrome/Chromium coverage: `未验证`.
 
-**Supabase (live):** `coin_orders` + `user_coins` tables created with RLS (SELECT + INSERT + UPDATE policies). `SUPABASE_SERVICE_ROLE_KEY` set in Netlify env (219 chars). Admin client active.
+## Remaining Owner Or Coordinator Work
 
-**Verified:** `npm run test:run` 387 passed / 5 skipped, `npm run build` green.
-- Guest purchase: 4× verified on production (coin-60 × 4, coins 0→480, localStorage orders)
-- Auth purchase: 2× verified on production (coin-60 + coin-300, coins 0→450, Supabase coin_orders + user_coins rows confirmed)
-
-## What's live on `ai-werewolf.net`
-
-| Component | Status |
-|---|---|
-| Vite + React 18 + TypeScript + Tailwind | ✅ `npm run build` clean |
-| Mobile shell UI (GlobalShell, BottomNav, TopStatusBar, LobbyHome, MatchSelection, Shop, Profile) | ✅ deployed |
-| Game engine (9p / 12p, NetEase rules, dark-board) | ✅ deployed |
-| AI dual-layer: BeliefTracker + ActionSelector + Gemini 2.5 Flash proxy | ✅ deployed |
-| Chinese speech detection filter (`isChinese()`) | ✅ deployed |
-| Email OTP login (Resend SMTP via Supabase) | ✅ deployed |
-| 30-day persistent session (localStorage) | ✅ deployed |
-| Seer-check badge (金水/查杀) visible only to Seer | ✅ deployed |
-| Witch sees wolf-kill target during night phase | ✅ deployed |
-| 7 bug-fix commits deployed (see git log `143860d..6721ed5`) | ✅ deployed |
-| `netlify/functions/genai-proxy.cjs` (rate-limit, CORS, input validation) | ✅ deployed |
-| `netlify/functions/provider-adapter.cjs` (multi-model routing source) | ⚠️ production endpoint status 未验证 |
-| Custom domain `ai-werewolf.net` + `www.ai-werewolf.net` | ✅ live |
-| SSL: Google Trust Services / Let's Encrypt | ✅ live |
-| Cloudflare Turnstile | ✅ configured |
-| Supabase RLS + profiles/game_records tables | ✅ live |
-| Resend SMTP (100 emails/day free tier) | ✅ configured |
-| Coin store UI (商店街) + useWallet hook | ✅ deployed |
-| Payment escrow function (`payment-escrow.cjs`) | ✅ deployed |
-| `coin_orders` + `user_coins` Supabase tables with RLS | ✅ live |
-| Guest-mode coin purchase flow (localStorage wallet) | ✅ verified 4× on production |
-| Logged-in-user coin purchase flow (JWT → escrow → Supabase) | ✅ verified 2× on production |
-
-## Framework Architecture (2026-07-19)
-
-### Roles
-
-| Role | Tool | Owns |
-|------|------|------|
-| Coordinator/Architect | Claude Code (`/codex-orchestrator`) | Plan, dispatch, review, integrate, verify, commit, PROJECT_STATE |
-| Worker | Codex CLI (`codex exec`, `$aiwerewolf-worker` skill) | One task card per isolated worktree |
-
-The old planner/coder/debugger triple split is archived (skills at `~/.codex/skills/aiwerewolf-{planner,coder,debugger}/` preserved but unused). The unified `aiwerewolf-worker` skill is the dispatch target.
-
-### Script infrastructure
-
-| Script | Path | Status |
-|--------|------|--------|
-| Parallel dispatch | `~/.claude/skills/codex-orchestrator/scripts/codex-dispatch-parallel.sh` | Present |
-| Single dispatch | `~/.claude/skills/codex-orchestrator/scripts/codex-dispatch.sh` | Present (wraps parallel with `--max-workers 1`) |
-| Integration | `~/.claude/skills/codex-orchestrator/scripts/codex-integrate-worker.sh` | Present |
-| Cleanup | `~/.claude/skills/codex-orchestrator/scripts/codex-cleanup-worker.sh` | Present |
-| Model preflight | `~/.claude/skills/codex-orchestrator/scripts/codex-model-preflight.sh` | Present (probes gpt-5.6 only) |
-
-### Runtime environment
-
-| Item | Value |
-|------|-------|
-| Codex CLI | 0.144.1 (Homebrew, `/opt/homebrew/bin/codex`) |
-| codex in PATH | Yes (confirmed this session) |
-| OpenAI Codex provider | `deepseek-v4-flash` via custom provider (`http://127.0.0.1:15721/v1`) |
-| Project codex config | `.codex/config.toml` (personality=friendly, supabase MCP) |
-| Global codex config | `~/.codex/config.toml` (personality=pragmatic, deepseek provider) |
-| MCP servers (codex) | 2 stdio servers, 1 disabled |
-| Sandbox | restricted fs + restricted network, approval OnRequest |
-
-## Known Friction Points (pre-dispatch checklist)
-
-### 1. CODEX_MODEL gate (BLOCKER for dispatch script)
-
-`codex-dispatch-parallel.sh` lines 56-61 **hardcode** a `CODEX_MODEL=gpt-5.6-*` check and FATAL-exit if unset. The actual Codex provider is `deepseek-v4-flash`. Running the script without setting `CODEX_MODEL` to a gpt-5.6 model will fail.
-
-**Workaround for coordinator**: when dispatching via bash, set `CODEX_MODEL` to the actual Codex model (e.g. `CODEX_MODEL=gpt-5.6-Sol` to probe, or bypass the script and call `codex exec` directly). The coordinator should either (a) run `codex-model-preflight.sh` first to check gpt-5.6 availability, (b) fall back to direct `codex exec` with the active provider model, or (c) patch the script to accept a `CODEX_MODEL` override.
-
-**Owner decision needed**: whether to (a) attempt the gpt-5.6 probe each time, (b) patch the script, or (c) dispatch workers via direct `codex exec` bypassing the script.
-
-### 2. Supabase MCP OAuth
-
-Source `.mcp.json` uses OAuth auth block. Codex `.codex/config.toml` (project) only has the URL — the OAuth block was dropped during migration. First Codex session connecting to supabase MCP will require re-authentication.
-
-### 3. approval_policy flag form
-
-`codex-dispatch-parallel.sh` line 177 uses `-c approval_policy="never"`. Codex 0.144.1 supports this as a config override AND also has `-a never` as a dedicated flag. The `-c` form is confirmed working for 0.144.1.
-
-### 4. Stale Codex skills under cc-switch
-
-`~/.cc-switch/skills/` has 76 skills leftover from a prior Codex migration. The active skills are at `~/.codex/skills/`. The cc-switch path is dead and can be removed.
-
-## Cycle 8: Mobile UI Overhaul (2026-07-19 — ACCEPTED, 5 cards)
-
-| Card | Status |
-|------|--------|
-| `ui-global-shell` — mobile viewport, CSS design system, BottomNav, TopStatusBar, marquee | Accepted |
-| `ui-lobby-home` — user profile panel, side menus, character showcase, activity banner, action buttons, chat preview | Accepted |
-| `ui-match-selection` — wide card stack, 2-col grid, sub-tabs, role badges, countdown labels | Accepted |
-| `ui-profile-inventory` — Outfits panel, Backpack panel, Skin collection gallery, ProfileView | Accepted |
-| `ui-integration-wiring` — App.tsx shell wiring, view routing, bottom nav → content mapping, game view preserved | Accepted |
-
-**New files (18):**
-- `src/styles/mobile-shell.css` — shared design tokens, shell/layout/nav/marquee/filter/modal CSS
-- `src/components/GlobalShell.tsx` — mobile viewport wrapper
-- `src/components/BottomNav.tsx` — 5-tab bottom navigation (首页/好友/狼村/商店街/我的)
-- `src/components/TopStatusBar.tsx` — currency bar (金币/点卷/狼神水晶) + marquee ticker
-- `src/components/LobbyHome.tsx` — lobby view (profile panel, character showcase, side menus, action buttons, chat preview)
-- `src/components/LobbySideMenus.tsx` — left/right circular icon menus with red dot badges
-- `src/components/LobbyActionButtons.tsx` — 建房/跟房/观战 buttons
-- `src/components/ActivityBanner.tsx` — horizontal scrollable activity banner cards
-- `src/components/MatchSelection.tsx` — board/match browser with sub-tabs and two layout modes
-- `src/components/MatchWideCard.tsx` — wide card with role badges and character art placeholder
-- `src/components/MatchGridCard.tsx` — 2-column grid card with countdown
-- `src/components/MatchSubTabs.tsx` — 4-item sub-tab bar
-- `src/components/ProfileView.tsx` — 我的 view shell with 6 sub-tabs
-- `src/components/ProfileSubTabs.tsx` — 6-item sub-tab bar
-- `src/components/OutfitsPanel.tsx` — fitting room + quality filter + outfit grid
-- `src/components/BackpackPanel.tsx` — 5-category filter + item grid with send-gift buttons
-- `src/components/SkinCollectionPanel.tsx` — 3-category skin gallery with progress bars
-
-**Modified:** `src/App.tsx` — GlobalShell wrapping, view routing, game view preserved inside shell
-
-**Verified:** `npm run test:run` 363 passed / 5 skipped, `npm run build` green, zero regressions.
-
-## Owner-only follow-ups
-
-- Supabase RLS / email template / OTP verification in Dashboard
-- Netlify env vars / ALLOWED_ORIGIN check
-- Full browser E2E (12p, all roles)
-
-## Codex Migration Artifacts (project scope, 2026-07-19)
-
-| Artifact | Type | Status |
-|----------|------|--------|
-| `AGENTS.md` | Symlink → CLAUDE.md | Created (1:1 forward) |
-| `.codex/config.toml` | MCP + personality | Created (supabase OAuth noted as manual) |
-| `.agents/skills/codex-orchestrator/SKILL.md` | Skill | Created (variables fixed, tool list → guidance) |
-| `.agents/skills/codex-orchestrator/scripts/*` | Scripts | Copied (4 scripts, unchanged) |
+1. Rotate credentials and clean local sensitive/auth artifacts without exposing values or using broad staging.
+2. Perform owner-led production order/balance reconciliation; this closeout must not mutate production data.
+3. Reopen payments only after a separately approved PSP, webhook, idempotency, ledger, reconciliation, refund/dispute, security, monitoring, and rollout plan.
 
 ## Coordinator Rules
 
-- No deploy, push, or external service mutation without owner approval.
-- Worktree dispatch from clean `git HEAD` only.
-- If uncommitted product changes exist, commit or abort first.
-- Never place secrets, raw transcripts, or private session history in `memory/coordination/`.
-- Integration gate: `final_verdict=PASS` + status `Ready for review` → apply patch → `npm run test:run` + `npm run build` → mark `Accepted`.
+- No future deploy, push, or external-service mutation without owner approval and the applicable deployment gate.
+- Worktree dispatch starts from a clean recorded Git baseline; only independent tester-PASS patches may be integrated.
+- Never place secrets, raw transcripts, auth captures, or private session history in shared memory or routed evidence.
+- Current state belongs only in this file; roadmap, architecture, decisions, and historical evidence keep their separate canonical owners.
