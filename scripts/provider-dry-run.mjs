@@ -149,7 +149,11 @@ const runDryRun = async (adapter) => {
     let dryRun;
     try {
       const response = await adapter.handler(event);
-      dryRun = checkContract(provider, response, adapter.COST_CEILING_PER_CALL);
+      const costCeiling =
+        typeof adapter.getCostCeiling === 'function'
+          ? adapter.getCostCeiling(provider)
+          : adapter.COST_CEILING_PER_CALL;
+      dryRun = checkContract(provider, response, costCeiling);
     } catch (err) {
       dryRun = { ok: false, detail: `handler threw: ${redactForReport((err && err.message) || err)}` };
     }
@@ -162,6 +166,7 @@ const runDryRun = async (adapter) => {
 const MODELS_PATH_BY_PROTOCOL = {
   'anthropic-messages': '/v1/models',
   'openai-chat': '/models',
+  'openai-responses': (cfg) => `/models/${encodeURIComponent(cfg.model)}`,
 };
 
 const classifyStatus = (status) => {
@@ -174,8 +179,10 @@ const classifyStatus = (status) => {
 const probeEntry = async (provider, cfg) => {
   if (cfg.protocol === 'local') return { status: 'skipped', detail: 'local provider, no endpoint' };
   if (!cfg.baseUrl) return { status: 'skipped', detail: 'SDK-managed endpoint, no REST models URL' };
-  const modelsPath = MODELS_PATH_BY_PROTOCOL[cfg.protocol];
-  if (!modelsPath) return { status: 'skipped', detail: `no models endpoint mapping for protocol ${cfg.protocol}` };
+  const modelsPathConfig = MODELS_PATH_BY_PROTOCOL[cfg.protocol];
+  if (!modelsPathConfig) return { status: 'skipped', detail: `no models endpoint mapping for protocol ${cfg.protocol}` };
+  const modelsPath =
+    typeof modelsPathConfig === 'function' ? modelsPathConfig(cfg) : modelsPathConfig;
 
   const envNames = cfg.apiKeyEnv || [];
   const setEnvName = envNames.find((name) => process.env[name]);
@@ -191,6 +198,18 @@ const probeEntry = async (provider, cfg) => {
   try {
     // GET models listing only — never a completion/messages endpoint.
     const res = await fetch(`${cfg.baseUrl}${modelsPath}`, { method: 'GET', headers, signal: controller.signal });
+    if (res.ok && cfg.protocol === 'openai-responses') {
+      let metadata;
+      try {
+        metadata = await res.json();
+      } catch {
+        return { status: 'failed', detail: 'HTTP 200 (malformed metadata)' };
+      }
+      if (!metadata || metadata.id !== cfg.model) {
+        return { status: 'failed', detail: 'HTTP 200 (model id mismatch)' };
+      }
+      return { status: 'ok', detail: `HTTP ${res.status} exact model id (key: ${setEnvName})` };
+    }
     if (res.ok) return { status: 'ok', detail: `HTTP ${res.status} (key: ${setEnvName})` };
     return { status: 'failed', detail: `HTTP ${res.status} (${classifyStatus(res.status)}, key: ${setEnvName})` };
   } catch (err) {

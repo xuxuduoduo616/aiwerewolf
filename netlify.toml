@@ -5,6 +5,8 @@
   command = "npm run build"
   publish = "dist"
   functions = "netlify/functions"
+  # Exit 0 skips a credit-consuming build; exit 1 authorizes the consolidated release.
+  ignore = "node ./scripts/netlify-ignore-build.cjs"
 
 [build.environment]
   NODE_VERSION = "20"

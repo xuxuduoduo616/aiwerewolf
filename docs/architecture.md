@@ -13,11 +13,12 @@ Browser
   |     |-- action selector
   |     +-- AI expression pipeline
   |            |-- local role-specific speech library
-  |            +-- optional server-side Gemini refinement
+  |            +-- selected server-side expression model
   |
   |-- Supabase client --> Auth / Postgres / row-level security
   +-- Netlify Functions
-         |-- Gemini proxy
+         |-- provider adapter (Gemini default; optional OpenAI expression routes)
+         |-- legacy Gemini proxy
          |-- payment fail-closed endpoint
          +-- protected Supabase administration endpoints
 ```
@@ -41,18 +42,31 @@ Browser
 - `src/ai/beliefTracker.ts` maintains explainable suspicions and observations.
 - `src/ai/actionSelector.ts` chooses legal actions from the current state.
 - `src/ai/aiOrchestrator.ts` is the public AI-expression entry point.
+- `src/ai/modelCatalog.ts` owns the typed expression-model catalog. Gemini is
+  always available; GPT-5.5 and GPT-5.6 Luna are exposed atomically only when
+  the provider capability response proves both exact IDs.
 - `src/services/speechLibrary.ts` provides offline role- and situation-aware fallback dialogue.
-- The language model may shape wording, but it does not decide game rules or authorize actions.
+- The per-match language-model choice shapes daytime dialogue and wolf chat.
+  It does not decide game rules, legal targets, or actions; those paths retain
+  their existing deterministic/Gemini-assisted behavior.
 
 ### External services
 
-- `netlify/functions/genai-proxy.cjs` keeps the Gemini credential on the server and enforces origin, model, and input constraints.
+- `netlify/functions/provider-adapter.cjs` keeps provider credentials on the
+  server, validates requested routes, and reports a no-store capability catalog.
+  `netlify/functions/genai-proxy.cjs` remains the legacy Gemini fallback.
+- Capability lookup fails closed to Gemini-only. Missing credentials, partial
+  account access, malformed responses, timeouts, and offline clients do not
+  prevent a local-fallback match from starting.
+- A selected GPT expression request may fall through the existing Gemini
+  provider chain and then the bundled speech library. GPT routes are never
+  inserted into automatic action or default fallback routing.
 - Supabase provides email OTP authentication and Postgres-backed profiles and records.
 - Payment endpoints fail closed with `PAYMENTS_NOT_CONFIGURED`; no real payment service provider is connected.
 
 ## Security Invariants
 
-1. Model keys and Supabase service-role credentials remain server-only.
+1. `API_KEY`, `OPENAI_API_KEY`, and Supabase service-role credentials remain server-only.
 2. The browser submits intent, not trusted final state, for any future multiplayer command.
 3. Hidden roles and private actions must be projected per player before multiplayer data is delivered.
 4. Database access requires ownership-aware row-level security and production verification.

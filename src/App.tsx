@@ -31,6 +31,7 @@ import { mapGameSetupToConfig, type GameSetup, type LobbySubview } from './lobby
 import { useLobbyFeatures } from './hooks/useLobbyFeatures';
 import { resolveVoteResult } from './gameEngine';
 import { playTick } from './services/speechAudio';
+import { setAIExpressionModel } from './ai/aiOrchestrator';
 import './styles/game-responsive.css';
 import {
   Clock3, History, KeyRound, Languages, Loader2,
@@ -115,6 +116,7 @@ const App: React.FC = () => {
     if (!pending || game.difficulty !== pending.setup.difficulty) return;
 
     pendingStartRef.current = null;
+    setAIExpressionModel(pending.setup.expressionModel);
     game.startGame(pending.config, displayLanguage);
     rec.setShowRecords(false);
   }, [displayLanguage, game.difficulty, game.startGame, rec.setShowRecords, startRequestRevision]);

@@ -21,4 +21,17 @@ Thank you for helping improve AI Werewolf. The most useful contributions are foc
 
 Do not include copied game assets, speech corpora, credentials, browser profiles, authentication captures, or material you do not have permission to contribute.
 
+## Deployment and Publication Policy
+
+尽可能精简、减少部署netlify的次数，因为我每一次deploy changes on netlify都要花费credit，credit很珍贵需要拿钱买，所以我建议每次一个大变动再推送到netlify。与此同时，github上倒是可以随时随意部署，因为github是免费的。
+
+This is a binding operating policy:
+
+- Do not trigger Netlify for small, partial, or intermediate changes. Consolidate related work into one substantial release candidate.
+- Before authorizing a Netlify build, verify that the change is necessary, consolidated, reviewed, tested, and ready for production.
+- GitHub feature-branch commits, pushes, and pull-request updates may be made whenever useful, but never describe GitHub publication, CI, or deployment as complete unless the relevant push or workflow actually succeeds.
+- Do not use routine dashboard deploys, build hooks, or `netlify deploy --prod`. The Git-linked `main` update is the sole normal production publisher.
+- A production build is authorized only by the exact `Netlify-Release: true` commit trailer after all release gates pass. Never add that trailer to intermediate commits.
+- If the release authorization cannot be verified, skip the Netlify build. Do not spend another deployment to diagnose an application or provider problem that can be investigated without publishing.
+
 This project is currently source-available rather than permissively licensed. By submitting a contribution, you represent that you have the right to provide it and grant the project owner permission to use, modify, and distribute it as part of AI Werewolf. Opening an issue does not transfer ownership of its text or attachments.

@@ -429,7 +429,8 @@
 }
 
 .start-board-grid label,
-.start-difficulty-grid label {
+.start-difficulty-grid label,
+.start-model-grid label {
   min-width: 0;
   min-height: 76px;
   display: grid;
@@ -448,14 +449,16 @@
 }
 
 .start-board-grid label.is-selected,
-.start-difficulty-grid label.is-selected {
+.start-difficulty-grid label.is-selected,
+.start-model-grid label.is-selected {
   border-color: rgba(255, 255, 255, 0.45);
   background: rgba(255, 255, 255, 0.07);
   color: #fff;
 }
 
 .start-board-grid input,
-.start-difficulty-grid input {
+.start-difficulty-grid input,
+.start-model-grid input {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -469,12 +472,14 @@
 }
 
 .start-board-grid strong,
-.start-difficulty-grid strong {
+.start-difficulty-grid strong,
+.start-model-grid strong {
   font-size: 13px;
 }
 
 .start-board-grid span,
-.start-difficulty-grid span {
+.start-difficulty-grid span,
+.start-model-grid span {
   color: rgba(255, 255, 255, 0.47);
   font-size: 10px;
   line-height: 1.4;
@@ -485,6 +490,19 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
+}
+
+.start-model-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.start-model-status {
+  margin: -10px 0 18px;
+  color: rgba(255, 255, 255, 0.48);
+  font-size: 10px;
+  line-height: 1.45;
 }
 
 .start-unavailable-routes {
@@ -715,6 +733,7 @@
   }
 
   .start-difficulty-grid,
+  .start-model-grid,
   .start-unavailable-routes {
     grid-template-columns: minmax(0, 1fr);
   }

@@ -1,7 +1,8 @@
 // --- START OF FILE netlify/functions/provider-adapter.js ---
 //
 // Protocol-aware provider adapter: unified server-side routing across Gemini
-// (SDK), Anthropic-Messages, and OpenAI-Chat protocol providers, with a
+// (SDK), Anthropic-Messages, OpenAI-Chat, and OpenAI Responses protocol
+// providers, with a
 // circuit breaker, error classification, cost guard, dry-run mode, log
 // redaction, and a deterministic fallback chain that ends in the
 // local-fallback signal (the frontend then uses its speech library).
@@ -15,8 +16,11 @@
 // get a deterministic mock response without any network call.
 
 // Provider registry. Providers without a verified protocol contract are
-// intentionally not listed. Costs are approximate
-// per-1k-token figures used only for the local cost guard, not billing truth.
+// intentionally not listed. Costs are conservative per-1k-token estimates
+// used only for the local cost guard, not billing truth. The OpenAI figures
+// below are converted from the official per-1M-token model-page prices:
+// https://developers.openai.com/api/docs/models/gpt-5.5
+// https://developers.openai.com/api/docs/models/gpt-5.6-luna
 const PROVIDER_REGISTRY = {
   // Gemini via the official @google/genai SDK (same route as model-adapter.js).
   'gemini-2.5-flash': {
@@ -68,6 +72,36 @@ const PROVIDER_REGISTRY = {
     costPer1kTokens: 0.00027,
     capabilities: ['text'],
   },
+  // Direct OpenAI Responses routes. These are explicit opt-in providers only:
+  // neither appears in DEFAULT_CHAIN. OPENAI_API_KEY is read server-side.
+  'gpt-5.5': {
+    baseUrl: 'https://api.openai.com/v1',
+    protocol: 'openai-responses',
+    model: 'gpt-5.5',
+    authHeader: 'authorization-bearer',
+    apiKeyEnv: ['OPENAI_API_KEY'],
+    timeout: 15000,
+    maxRetries: 0,
+    inputCostPer1kTokens: 0.005,
+    outputCostPer1kTokens: 0.03,
+    maxOutputTokens: 128,
+    costCeilingPerCall: 0.015,
+    capabilities: ['text', 'reasoning-low'],
+  },
+  'gpt-5.6-luna': {
+    baseUrl: 'https://api.openai.com/v1',
+    protocol: 'openai-responses',
+    model: 'gpt-5.6-luna',
+    authHeader: 'authorization-bearer',
+    apiKeyEnv: ['OPENAI_API_KEY'],
+    timeout: 15000,
+    maxRetries: 0,
+    inputCostPer1kTokens: 0.001,
+    outputCostPer1kTokens: 0.006,
+    maxOutputTokens: 128,
+    costCeilingPerCall: 0.005,
+    capabilities: ['text', 'reasoning-low'],
+  },
   // Local fallback — 0 cost, never calls out.
   'local-fallback': {
     baseUrl: null,
@@ -94,6 +128,9 @@ const LOCAL_FALLBACK = 'local-fallback';
 const COST_CEILING_PER_CALL = 0.005; // $0.005 max per call.
 const MAX_PROMPT_LEN = 8000;
 const ANTHROPIC_MAX_TOKENS = 1024;
+const OPENAI_MODEL_IDS = Object.freeze(['gpt-5.5', 'gpt-5.6-luna']);
+const CAPABILITIES_CACHE_TTL_MS = 60_000;
+const CAPABILITIES_TIMEOUT_MS = 5_000;
 
 // Rough token estimate: ~4 chars per token (same heuristic as model-adapter.js).
 const estimateTokens = (text) => Math.ceil((text || '').length / 4);
@@ -101,7 +138,19 @@ const estimateTokens = (text) => Math.ceil((text || '').length / 4);
 const estimateCost = (provider, tokens) => {
   const cfg = PROVIDER_REGISTRY[provider];
   if (!cfg) return Infinity;
+  if (typeof cfg.inputCostPer1kTokens === 'number') {
+    const inputCost = (tokens / 1000) * cfg.inputCostPer1kTokens;
+    const outputCost = ((cfg.maxOutputTokens || 0) / 1000) * cfg.outputCostPer1kTokens;
+    return inputCost + outputCost;
+  }
   return (tokens / 1000) * cfg.costPer1kTokens;
+};
+
+const getCostCeiling = (provider) => {
+  const cfg = PROVIDER_REGISTRY[provider];
+  return cfg && typeof cfg.costCeilingPerCall === 'number'
+    ? cfg.costCeilingPerCall
+    : COST_CEILING_PER_CALL;
 };
 
 const getAllowedOrigin = (requestOrigin) => {
@@ -360,6 +409,44 @@ const callOpenAIChat = async (cfg, apiKey, prompt, options) => {
   return typeof text === 'string' ? text : '';
 };
 
+// OpenAI Responses protocol: POST /v1/responses. Do not send temperature for
+// reasoning models. max_output_tokens is a hard combined visible/reasoning
+// output bound; reasoning effort stays low for this expression-only use case.
+const callOpenAIResponses = async (cfg, apiKey, prompt) => {
+  const data = await fetchJsonWithTimeout(
+    `${cfg.baseUrl}/responses`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...buildAuthHeaders(cfg, apiKey),
+      },
+      body: JSON.stringify({
+        model: cfg.model,
+        input: prompt,
+        reasoning: { effort: 'low' },
+        max_output_tokens: cfg.maxOutputTokens,
+      }),
+    },
+    cfg.timeout
+  );
+
+  // output_text is present in some Responses representations. Raw REST
+  // responses also carry output_text blocks inside output[].content[].
+  if (typeof data.output_text === 'string') return data.output_text;
+  if (!Array.isArray(data.output)) return '';
+  const texts = [];
+  for (const item of data.output) {
+    if (!item || !Array.isArray(item.content)) continue;
+    for (const content of item.content) {
+      if (content && content.type === 'output_text' && typeof content.text === 'string') {
+        texts.push(content.text);
+      }
+    }
+  }
+  return texts.join('');
+};
+
 // Attempt a single live provider call. Returns text or throws.
 const callProvider = async (provider, prompt, options) => {
   const cfg = PROVIDER_REGISTRY[provider];
@@ -368,6 +455,7 @@ const callProvider = async (provider, prompt, options) => {
   if (cfg.protocol === 'gemini') return callGemini(cfg, apiKey, prompt, options);
   if (cfg.protocol === 'anthropic-messages') return callAnthropicMessages(cfg, apiKey, prompt, options);
   if (cfg.protocol === 'openai-chat') return callOpenAIChat(cfg, apiKey, prompt, options);
+  if (cfg.protocol === 'openai-responses') return callOpenAIResponses(cfg, apiKey, prompt);
   throw new Error(`unknown-protocol:${cfg.protocol}`);
 };
 
@@ -379,7 +467,7 @@ const tryProviderWithRetries = async (provider, prompt, options) => {
   for (let attempt = 0; attempt <= cfg.maxRetries; attempt++) {
     try {
       const text = await callProvider(provider, prompt, options);
-      if (typeof text === 'string' && text.length > 0) return text;
+      if (typeof text === 'string' && text.trim().length > 0) return text;
       throw new Error('empty-response');
     } catch (err) {
       const kind = classifyError(err);
@@ -390,18 +478,87 @@ const tryProviderWithRetries = async (provider, prompt, options) => {
   return null;
 };
 
+// --- Read-only capability discovery -----------------------------------------
+// GPT availability is atomic: both exact model metadata GETs must succeed and
+// return the exact requested IDs before either model is exposed. Only a
+// successful pair is cached, briefly, per warm Lambda instance. The browser
+// response never contains auth/account diagnostics or upstream bodies.
+
+const capabilitiesCache = { verifiedUntil: 0 };
+
+const resetCapabilitiesCache = () => {
+  capabilitiesCache.verifiedUntil = 0;
+};
+
+const probeExactOpenAIModel = async (model, apiKey) => {
+  const cfg = PROVIDER_REGISTRY[model];
+  try {
+    const data = await fetchJsonWithTimeout(
+      `${cfg.baseUrl}/models/${encodeURIComponent(model)}`,
+      {
+        method: 'GET',
+        headers: buildAuthHeaders(cfg, apiKey),
+      },
+      CAPABILITIES_TIMEOUT_MS
+    );
+    return Boolean(data && data.id === model);
+  } catch (err) {
+    logError(`provider-adapter capability check ${model} failed (${classifyError(err)})`);
+    return false;
+  }
+};
+
+const getProviderCapabilities = async (now = Date.now()) => {
+  const base = {
+    default_model: 'gemini-2.5-flash',
+    models: [{ id: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash' }],
+  };
+  if (capabilitiesCache.verifiedUntil > now) {
+    return {
+      ...base,
+      models: [
+        ...base.models,
+        { id: 'gpt-5.5', label: 'GPT-5.5' },
+        { id: 'gpt-5.6-luna', label: 'GPT-5.6 Luna' },
+      ],
+    };
+  }
+
+  const apiKey = process.env.OPENAI_API_KEY || '';
+  if (!apiKey) return base;
+  const access = await Promise.all(OPENAI_MODEL_IDS.map((model) => probeExactOpenAIModel(model, apiKey)));
+  if (!access.every(Boolean)) return base;
+  capabilitiesCache.verifiedUntil = now + CAPABILITIES_CACHE_TTL_MS;
+  return {
+    ...base,
+    models: [
+      ...base.models,
+      { id: 'gpt-5.5', label: 'GPT-5.5' },
+      { id: 'gpt-5.6-luna', label: 'GPT-5.6 Luna' },
+    ],
+  };
+};
+
 exports.handler = async function (event) {
-  const requestOrigin = event.headers.origin || event.headers.Origin || '';
+  const eventHeaders = event.headers || {};
+  const requestOrigin = eventHeaders.origin || eventHeaders.Origin || '';
   const headers = {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': getAllowedOrigin(requestOrigin),
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
     'X-Content-Type-Options': 'nosniff',
   };
 
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 204, headers, body: '' };
+  }
+  if (event.httpMethod === 'GET') {
+    return {
+      statusCode: 200,
+      headers: { ...headers, 'Cache-Control': 'no-store' },
+      body: JSON.stringify(await getProviderCapabilities(Date.now())),
+    };
   }
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
@@ -431,39 +588,16 @@ exports.handler = async function (event) {
   else chain = [...DEFAULT_CHAIN];
   const primary = chain[0] || LOCAL_FALLBACK;
 
-  // Cost guard against the primary route, based on the *requested* input size
-  // (before truncation) so an oversized/expensive request is rejected rather
-  // than silently trimmed.
+  // Estimate the primary route for dry-run metadata. Live cost and budget
+  // admission is checked independently for every provider immediately before
+  // its attempt, including fallbacks.
   const tokens = estimateTokens(rawPrompt);
   const cost = estimateCost(primary, tokens);
-  if (cost > COST_CEILING_PER_CALL) {
-    return {
-      statusCode: 402,
-      headers,
-      body: JSON.stringify({ error: 'Estimated cost exceeds per-call ceiling', cost_estimate: cost }),
-    };
-  }
-
-  // Daily budget guard: reject before any live call once the accumulated
-  // estimated spend for this instance would exceed the daily ceiling. The
-  // local-fallback signal shape tells the frontend to use its speech library.
   const budgetRemaining = getBudgetRemaining(Date.now());
-  if (cost > budgetRemaining) {
-    return {
-      statusCode: 402,
-      headers,
-      body: JSON.stringify({
-        error: 'Daily budget exhausted for this instance',
-        text: '',
-        model_used: LOCAL_FALLBACK,
-        cost_estimate: 0,
-        fallback_used: true,
-        budget_remaining: budgetRemaining,
-      }),
-    };
-  }
 
-  // Passed the cost guard; truncate to a safe max before any live call.
+  // Truncate to a safe max before any live call. Admission remains based on the
+  // original requested size so truncation cannot make an oversized request
+  // appear cheaper.
   const prompt = rawPrompt.length > MAX_PROMPT_LEN ? rawPrompt.slice(0, MAX_PROMPT_LEN) : rawPrompt;
 
   const options = {
@@ -493,11 +627,19 @@ exports.handler = async function (event) {
       logError(`provider-adapter ${provider} skipped: circuit open`);
       continue;
     }
+    const callCost = estimateCost(provider, tokens);
+    if (callCost > getCostCeiling(provider)) {
+      logError(`provider-adapter ${provider} skipped: per-call cost ceiling`);
+      continue;
+    }
+    if (callCost > getBudgetRemaining(Date.now())) {
+      logError(`provider-adapter ${provider} skipped: daily budget remaining`);
+      continue;
+    }
     countRequest(provider);
     const text = await tryProviderWithRetries(provider, prompt, options);
     if (text) {
       recordProviderSuccess(provider);
-      const callCost = estimateCost(provider, tokens);
       recordBudgetSpend(callCost, Date.now());
       return {
         statusCode: 200,
@@ -532,7 +674,10 @@ exports.handler = async function (event) {
 // Exported for unit tests.
 exports.PROVIDER_REGISTRY = PROVIDER_REGISTRY;
 exports.DEFAULT_CHAIN = DEFAULT_CHAIN;
+exports.OPENAI_MODEL_IDS = OPENAI_MODEL_IDS;
 exports.COST_CEILING_PER_CALL = COST_CEILING_PER_CALL;
+exports.getCostCeiling = getCostCeiling;
+exports.CAPABILITIES_CACHE_TTL_MS = CAPABILITIES_CACHE_TTL_MS;
 exports.BREAKER_THRESHOLD = BREAKER_THRESHOLD;
 exports.BREAKER_COOLDOWN_MS = BREAKER_COOLDOWN_MS;
 exports.classifyError = classifyError;
@@ -546,5 +691,7 @@ exports.getBudgetRemaining = getBudgetRemaining;
 exports.recordBudgetSpend = recordBudgetSpend;
 exports.getRequestCounters = getRequestCounters;
 exports.resetBudgetState = resetBudgetState;
+exports.getProviderCapabilities = getProviderCapabilities;
+exports.resetCapabilitiesCache = resetCapabilitiesCache;
 
 // --- END OF FILE netlify/functions/provider-adapter.js ---

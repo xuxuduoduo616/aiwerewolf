@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+  fetchAvailableExpressionModels,
   generateActionWithLLM,
   generateSpeechWithLLM,
   generateWithGemini,
@@ -195,6 +196,33 @@ describe('fetch timeout wiring (night-pipeline-exception-safety)', () => {
 });
 
 describe('caller-facing failure contract (aiOrchestrator consumers)', () => {
+  it('carries the selected expression model while action requests stay on Gemini', async () => {
+    fetchMock.mockResolvedValue(okResponse({ text: '{"zh":"你好","en":"Hello"}' }));
+
+    await generateSpeechWithLLM('SYS', 'CTX', 'gpt-5.6-luna');
+    await generateActionWithLLM('prompt', [1, 3, 5]);
+
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body).provider).toBe('gpt-5.6-luna');
+    expect(JSON.parse(fetchMock.mock.calls[1][1].body).provider).toBe('gemini-2.5-flash');
+  });
+
+  it('falls a failed selected GPT expression request back to the legacy Gemini proxy', async () => {
+    fetchMock
+      .mockResolvedValueOnce(errorResponse(503))
+      .mockResolvedValueOnce(okResponse({ text: '{"zh":"回退成功","en":"Fallback succeeded"}' }));
+
+    expect(await generateSpeechWithLLM('SYS', 'CTX', 'gpt-5.5')).toEqual({
+      zh: '回退成功',
+      en: 'Fallback succeeded',
+    });
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body).provider).toBe('gpt-5.5');
+    expect(fetchMock.mock.calls[1][0]).toBe(GENAI_PROXY);
+    expect(JSON.parse(fetchMock.mock.calls[1][1].body)).toEqual({
+      ...legacyProxyBody,
+      prompt: 'SYS\n\n---\nCTX',
+    });
+  });
+
   it('generateSpeechWithLLM returns parsed zh/en on success', async () => {
     fetchMock.mockResolvedValueOnce(okResponse({ text: '{"zh":"你好","en":"Hello"}' }));
 
@@ -223,5 +251,56 @@ describe('caller-facing failure contract (aiOrchestrator consumers)', () => {
     fetchMock.mockResolvedValueOnce(okResponse({ text: '{"targetId":9}' }));
 
     expect(await generateActionWithLLM('prompt', [1, 3, 5])).toEqual({ targetId: null });
+  });
+});
+
+describe('provider capability discovery', () => {
+  const fullCapabilities = {
+    default_model: 'gemini-2.5-flash',
+    models: [
+      { id: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash' },
+      { id: 'gpt-5.5', label: 'GPT-5.5' },
+      { id: 'gpt-5.6-luna', label: 'GPT-5.6 Luna' },
+    ],
+  };
+
+  it('uses a bounded no-store GET and exposes the atomic verified catalog', async () => {
+    fetchMock.mockResolvedValueOnce(okResponse(fullCapabilities));
+
+    const models = await fetchAvailableExpressionModels();
+
+    expect(models.map(model => model.id)).toEqual([
+      'gemini-2.5-flash',
+      'gpt-5.5',
+      'gpt-5.6-luna',
+    ]);
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(url).toBe(PROVIDER_ADAPTER);
+    expect(init).toMatchObject({
+      method: 'GET',
+      headers: { Accept: 'application/json' },
+      cache: 'no-store',
+    });
+    expect(init.signal).toBeInstanceOf(AbortSignal);
+  });
+
+  it.each([
+    ['partial catalog', { ...fullCapabilities, models: fullCapabilities.models.slice(0, 2) }],
+    ['malformed catalog', { default_model: 'gemini-2.5-flash', models: 'nope' }],
+  ])('keeps the game Gemini-only for a %s', async (_label, payload) => {
+    fetchMock.mockResolvedValueOnce(okResponse(payload));
+
+    expect((await fetchAvailableExpressionModels()).map(model => model.id)).toEqual([
+      'gemini-2.5-flash',
+    ]);
+  });
+
+  it('keeps the game Gemini-only when capability discovery fails or is offline', async () => {
+    fetchMock.mockRejectedValueOnce(new TypeError('offline'));
+
+    expect((await fetchAvailableExpressionModels()).map(model => model.id)).toEqual([
+      'gemini-2.5-flash',
+    ]);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 });

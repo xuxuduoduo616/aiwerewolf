@@ -1,7 +1,8 @@
 // Unit tests for the pure report-formatting function of provider-dry-run.mjs.
 // No live calls, no filesystem access, no network — formatter in, markdown out.
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { formatReport, redactForReport } from './provider-dry-run.mjs';
+import { OPENAI_MODEL_IDS, probeOpenAIModels } from './openai-model-preflight.mjs';
 
 const baseMeta = {
   date: '2026-07-16T00:00:00.000Z',
@@ -99,5 +100,72 @@ describe('redactForReport', () => {
 
   it('leaves non-sensitive text untouched', () => {
     expect(redactForReport('HTTP 401 (auth)')).toBe('HTTP 401 (auth)');
+  });
+});
+
+describe('OpenAI model preflight', () => {
+  it('is GET-only and succeeds only when both exact IDs are returned', async () => {
+    const calls = [];
+    const fetchImpl = async (url, init) => {
+      calls.push([url, init]);
+      const model = decodeURIComponent(String(url).split('/').pop());
+      return { ok: true, status: 200, json: async () => ({ id: model }) };
+    };
+    const result = await probeOpenAIModels({
+      apiKey: 'fake-openai-key-for-tests-only',
+      fetchImpl,
+      timeoutMs: 100,
+    });
+    expect(result.ok).toBe(true);
+    expect(result.results.map(({ model }) => model)).toEqual(Array.from(OPENAI_MODEL_IDS));
+    expect(calls).toHaveLength(2);
+    for (const [url, init] of calls) {
+      expect(url).toMatch(/^https:\/\/api\.openai\.com\/v1\/models\/gpt-5\./);
+      expect(init.method).toBe('GET');
+      expect(init).not.toHaveProperty('body');
+    }
+  });
+
+  it('fails atomically on partial access or an exact-ID mismatch', async () => {
+    const result = await probeOpenAIModels({
+      apiKey: 'fake-openai-key-for-tests-only',
+      fetchImpl: async (url) => {
+        const requested = decodeURIComponent(String(url).split('/').pop());
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({ id: requested === 'gpt-5.5' ? requested : 'another-model' }),
+        };
+      },
+      timeoutMs: 100,
+    });
+    expect(result.ok).toBe(false);
+    expect(result.results).toEqual([
+      { model: 'gpt-5.5', status: 'ok', reason: 'exact-model-id' },
+      { model: 'gpt-5.6-luna', status: 'failed', reason: 'model-id-mismatch' },
+    ]);
+  });
+
+  it('does no network work without a key and returns only safe status classes', async () => {
+    const fetchImpl = vi.fn();
+    const missing = await probeOpenAIModels({ apiKey: '', fetchImpl });
+    expect(missing.ok).toBe(false);
+    expect(fetchImpl).not.toHaveBeenCalled();
+    expect(missing.results.every(({ reason }) => reason === 'missing-key')).toBe(true);
+
+    const denied = await probeOpenAIModels({
+      apiKey: 'fake-openai-key-for-tests-only',
+      fetchImpl: async () => ({
+        ok: false,
+        status: 401,
+        json: async () => {
+          throw new Error('upstream body must not be read');
+        },
+      }),
+      timeoutMs: 100,
+    });
+    expect(denied.ok).toBe(false);
+    expect(denied.results.every(({ reason }) => reason === 'auth')).toBe(true);
+    expect(JSON.stringify(denied)).not.toContain('fake-openai-key-for-tests-only');
   });
 });

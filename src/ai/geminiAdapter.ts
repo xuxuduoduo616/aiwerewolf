@@ -1,10 +1,17 @@
 /**
- * Layer 2 — LLM Adapter (free tier)
+ * Layer 2 — LLM Adapter
  * Routes requests to the unified provider-adapter Netlify Function first
  * (requested route validated server-side against its whitelist), then falls
  * back to the legacy genai-proxy with the exact original request shape.
  * On failure, returns empty string → caller falls back to speech library.
  */
+
+import {
+  DEFAULT_EXPRESSION_MODEL,
+  type AIExpressionModelId,
+} from './modelCatalog';
+
+export { fetchAvailableExpressionModels } from './providerCapabilities';
 
 export interface SpeechRequest {
   systemPrompt: string;
@@ -14,7 +21,7 @@ export interface SpeechRequest {
 
 const PROVIDER_ADAPTER_ENDPOINT = '/.netlify/functions/provider-adapter';
 const GENAI_PROXY_ENDPOINT = '/.netlify/functions/genai-proxy';
-const DEFAULT_ROUTE = 'gemini-2.5-flash';
+const DEFAULT_ROUTE = DEFAULT_EXPRESSION_MODEL;
 
 const isLocalVite = () => {
   if (typeof window === 'undefined') return false;
@@ -49,6 +56,13 @@ const postForText = async (endpoint: string, body: Record<string, unknown>): Pro
 };
 
 export const generateWithGemini = async (req: SpeechRequest): Promise<string> => {
+  return generateWithExpressionModel(req, DEFAULT_ROUTE);
+};
+
+const generateWithExpressionModel = async (
+  req: SpeechRequest,
+  expressionModel: AIExpressionModelId,
+): Promise<string> => {
   if (isLocalVite()) return ''; // proxies not available locally
 
   const prompt = `${req.systemPrompt}\n\n---\n${req.userPrompt}`;
@@ -56,7 +70,7 @@ export const generateWithGemini = async (req: SpeechRequest): Promise<string> =>
 
   // 1. Unified provider adapter with a requested route (whitelisted server-side).
   const adapterText = await postForText(PROVIDER_ADAPTER_ENDPOINT, {
-    provider: DEFAULT_ROUTE,
+    provider: expressionModel,
     prompt,
     responseMimeType: 'application/json',
     temperature,
@@ -65,7 +79,7 @@ export const generateWithGemini = async (req: SpeechRequest): Promise<string> =>
 
   // 2. Legacy genai-proxy fallback — exact original request shape.
   return postForText(GENAI_PROXY_ENDPOINT, {
-    model: 'gemini-2.5-flash',
+    model: DEFAULT_ROUTE,
     prompt,
     responseMimeType: 'application/json',
     temperature,
@@ -84,8 +98,12 @@ const extractJson = <T,>(raw: string): T | null => {
 export const generateSpeechWithLLM = async (
   systemPrompt: string,
   contextPrompt: string,
+  expressionModel: AIExpressionModelId = DEFAULT_EXPRESSION_MODEL,
 ): Promise<{ zh: string; en: string } | null> => {
-  const raw = await generateWithGemini({ systemPrompt, userPrompt: contextPrompt });
+  const raw = await generateWithExpressionModel(
+    { systemPrompt, userPrompt: contextPrompt },
+    expressionModel,
+  );
   if (!raw) return null;
   const parsed = extractJson<{ zh?: string; en?: string }>(raw);
   if (parsed?.zh) return { zh: parsed.zh, en: parsed.en || 'Speaks.' };

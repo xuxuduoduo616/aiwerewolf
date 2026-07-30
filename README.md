@@ -16,7 +16,7 @@ The project separates game rules from generated expression. A deterministic rule
 - 9-player and 12-player boards with Villager, Werewolf, Seer, Witch, Hunter, and Idiot roles
 - Three difficulty levels and role-specific AI behavior profiles
 - Belief tracking, strategic action selection, wolf-team coordination, voting, last words, and win resolution
-- Optional Gemini-powered dialogue refinement with a local offline fallback
+- Per-match dialogue refinement with Gemini by default and capability-gated GPT-5.5 / GPT-5.6 Luna choices
 - Email OTP authentication, guest trial, local guest records, and player statistics
 - Responsive desktop, tablet, and mobile layouts with keyboard and safe-area support
 - English application interface with source-authored player and AI dialogue preserved
@@ -48,7 +48,7 @@ Multiplayer rooms, premium purchases, real rewards, and live payment processing 
 | --- | --- |
 | Frontend | React 18, TypeScript, Vite, Tailwind CSS |
 | Game and AI logic | TypeScript rules engine, belief tracker, action selector, local speech library |
-| AI provider | Gemini 2.5 Flash through a server-side Netlify Function, with local fallback |
+| AI provider | Gemini 2.5 Flash by default; capability-gated GPT-5.5 and GPT-5.6 Luna through a server-side Netlify Function, with local fallback |
 | Authentication and data | Supabase Auth and Postgres |
 | Hosting | Netlify CDN and Functions |
 | Continuous integration | GitHub Actions production-build verification |
@@ -77,14 +77,14 @@ React interface
   |                                       |
   +--> deterministic game engine          |
   +--> belief tracker + action selector   |-- complete match state
-  +--> speech library + optional Gemini --+
+  +--> speech library + selected model ---+
 
-Browser --> Netlify CDN / Functions --> Gemini API
+Browser --> Netlify CDN / Functions --> Gemini or OpenAI API
    |
    +--> Supabase Auth / Postgres
 ```
 
-The browser can run a full match without an AI API key. Gemini access is isolated in a Netlify Function; provider keys and Supabase service-role credentials must never be exposed to the frontend. See [Architecture](docs/architecture.md) for module boundaries and security constraints.
+The browser can run a full match without an AI API key. Gemini is the default expression model. GPT-5.5 and GPT-5.6 Luna appear together only after the server verifies access to both exact model IDs. Model choice affects dialogue and wolf chat, never deterministic rules or action selection. Provider keys and Supabase service-role credentials must never be exposed to the frontend. See [Architecture](docs/architecture.md) for module boundaries and security constraints.
 
 ## Local Development
 
@@ -109,6 +109,7 @@ Copy `.env.example` to `.env.local` for local configuration. Never commit `.env.
 | Variable | Purpose |
 | --- | --- |
 | `API_KEY` | Server-side Gemini access |
+| `OPENAI_API_KEY` | Optional server-side OpenAI access; never prefix with `VITE_` |
 | `VITE_SUPABASE_URL` | Public Supabase project URL |
 | `VITE_SUPABASE_ANON_KEY` | Public Supabase anonymous key |
 | `VITE_TURNSTILE_SITE_KEY` | Public Cloudflare Turnstile site key required by production builds |

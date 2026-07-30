@@ -1,5 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { generateAIAction, generateAIDialogue, generateWolfChat } from './aiOrchestrator';
+import {
+  generateAIAction,
+  generateAIDialogue,
+  generateWolfChat,
+  setAIExpressionModel,
+} from './aiOrchestrator';
 import { resolveGameLanguage } from '../hooks/useGameState';
 import { isCannedEnglishStub } from '../i18n';
 import { getRoleCamp } from '../gameEngine';
@@ -59,10 +64,34 @@ const dialogue = (
   );
 
 beforeEach(() => {
+  setAIExpressionModel('gemini-2.5-flash');
   mockLLM.mockReset().mockResolvedValue(null);
   mockActionLLM.mockReset().mockResolvedValue({ targetId: null });
   mockPickSpeech.mockReset().mockResolvedValue('');
   mockPickWolfNightSpeech.mockReset().mockResolvedValue('');
+});
+
+describe('per-match expression model routing', () => {
+  it('threads the selected model into dialogue without changing the action route contract', async () => {
+    const players = makeBoard();
+    setAIExpressionModel('gpt-5.5');
+
+    await dialogue(players[7], players);
+    await generateAIAction(players[7], players, [], 'VOTE', []);
+
+    expect(mockLLM.mock.calls[0][2]).toBe('gpt-5.5');
+    expect(mockActionLLM.mock.calls[0]).toHaveLength(2);
+  });
+
+  it('threads the selected model into wolf-chat expression', async () => {
+    const players = makeBoard();
+    const wolves = players.filter(player => player.role === Role.WEREWOLF);
+    setAIExpressionModel('gpt-5.6-luna');
+
+    await generateWolfChat(wolves, players, [], 1, []);
+
+    expect(mockLLM.mock.calls[0][2]).toBe('gpt-5.6-luna');
+  });
 });
 
 describe('resolveGameLanguage — capture at startGame', () => {

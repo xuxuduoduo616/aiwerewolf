@@ -21,7 +21,19 @@ The regular Vite server does not execute Netlify Functions. Matches still work t
 
 ## Environment Variables
 
-Only variables prefixed with `VITE_` are exposed to browser code. `API_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, and any future payment secret must remain server-only.
+Only variables prefixed with `VITE_` are exposed to browser code. `API_KEY`,
+`OPENAI_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, and any future payment secret
+must remain server-only. Never create `VITE_OPENAI_API_KEY`.
+
+`OPENAI_API_KEY` is optional for local/fallback play. When configured for the
+Netlify Function, the provider capability endpoint performs read-only access
+checks for the exact `gpt-5.5` and `gpt-5.6-luna` IDs. The setup screen exposes
+both choices together only after both checks pass; every failure mode remains
+Gemini-only and playable. Selection affects expression, not rules or actions.
+
+OpenAI routes can incur usage charges. Keep Gemini as the default, select a GPT
+route explicitly per match, retain hard server request/output budgets, and
+remove the server-side key to disable both routes in an emergency.
 
 The production build deliberately fails if `VITE_TURNSTILE_SITE_KEY` is missing or looks like a placeholder. Use a legitimate site key for production-like builds; do not commit it.
 
@@ -68,9 +80,18 @@ Database setup and row-level security declarations are documented in [supabase-s
 
 `main` is the production branch. GitHub Actions runs a clean guarded build. Netlify Git integration is the only production publisher and reads build settings from `netlify.toml`.
 
+Netlify deploy credits are paid and must be conserved. Push intermediate work
+to a feature branch and update its pull request as needed, but batch related
+changes into one tested release. Do not use dashboard deploys, build hooks, or
+`netlify deploy --prod` for routine work. A production claim requires direct
+evidence that the GitHub workflow and the single consolidated Netlify deploy
+succeeded at the same commit.
+
 Before proposing a release:
 
 1. Run `npm run test:run`.
 2. Run `npm run build` with the required public build variables.
 3. Review the staged diff and scan it for credentials and browser artifacts.
 4. Confirm that documentation does not claim planned features are available.
+5. Verify both OpenAI model IDs with the read-only preflight before authorizing
+   the one consolidated release; without that evidence, do not deploy.
