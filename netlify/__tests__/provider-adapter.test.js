@@ -18,6 +18,7 @@ const FAKE_GEMINI_KEY = 'fake-gemini-key-for-tests-only';
 const FAKE_AICODEMIRROR_KEY = 'fake-aicodemirror-key-for-tests-only';
 const FAKE_DEEPSEEK_KEY = 'fake-deepseek-key-for-tests-only';
 const FAKE_OPENAI_KEY = 'fake-openai-key-for-tests-only';
+const FAKE_GATEWAY_KEY = 'fake-ai-gateway-key-for-tests-only';
 
 const originalEnv = {
   API_KEY: process.env.API_KEY,
@@ -25,6 +26,7 @@ const originalEnv = {
   AICODEMIRROR_API_KEY: process.env.AICODEMIRROR_API_KEY,
   DEEPSEEK_API_KEY: process.env.DEEPSEEK_API_KEY,
   OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+  AI_GATEWAY_API_KEY: process.env.AI_GATEWAY_API_KEY,
   ALLOWED_ORIGIN: process.env.ALLOWED_ORIGIN,
   ADAPTER_DRY_RUN: process.env.ADAPTER_DRY_RUN,
   ADAPTER_DAILY_BUDGET_USD: process.env.ADAPTER_DAILY_BUDGET_USD,
@@ -91,6 +93,8 @@ const anthropicResponse = (text) => jsonResponse({ content: [{ type: 'text', tex
 const openaiResponse = (text) => jsonResponse({ choices: [{ message: { role: 'assistant', content: text } }] });
 const responsesResponse = (text) =>
   jsonResponse({ output: [{ type: 'message', content: [{ type: 'output_text', text }] }] });
+const gatewayModelsResponse = (ids = ['openai/gpt-5.5', 'openai/gpt-5.6-luna']) =>
+  jsonResponse({ data: ids.map((id) => ({ id })) });
 
 const httpError = (status) => Object.assign(new Error(`http-${status}`), { status });
 
@@ -101,6 +105,7 @@ describe('provider-adapter', () => {
     process.env.AICODEMIRROR_API_KEY = FAKE_AICODEMIRROR_KEY;
     process.env.DEEPSEEK_API_KEY = FAKE_DEEPSEEK_KEY;
     process.env.OPENAI_API_KEY = FAKE_OPENAI_KEY;
+    delete process.env.AI_GATEWAY_API_KEY;
     delete process.env.ALLOWED_ORIGIN;
     delete process.env.ADAPTER_DRY_RUN;
     delete process.env.ADAPTER_DAILY_BUDGET_USD;
@@ -124,7 +129,13 @@ describe('provider-adapter', () => {
   });
 
   it('registry has the existing routes plus both exact OpenAI Responses routes', () => {
-    const { PROVIDER_REGISTRY, DEFAULT_CHAIN, OPENAI_MODEL_IDS } = loadModule();
+    const {
+      PROVIDER_REGISTRY,
+      DEFAULT_CHAIN,
+      OPENAI_MODEL_IDS,
+      OPENAI_GATEWAY_SLUGS,
+      OPENAI_UPSTREAMS,
+    } = loadModule();
     const required = [
       'gemini-2.5-flash',
       'aicodemirror-claude',
@@ -152,26 +163,43 @@ describe('provider-adapter', () => {
     expect(PROVIDER_REGISTRY['local-fallback'].costPer1kTokens).toBe(0);
     expect(JSON.stringify(PROVIDER_REGISTRY)).not.toContain('vibecoder');
     expect(Array.from(OPENAI_MODEL_IDS)).toEqual(['gpt-5.5', 'gpt-5.6-luna']);
+    expect({ ...OPENAI_GATEWAY_SLUGS }).toEqual({
+      'gpt-5.5': 'openai/gpt-5.5',
+      'gpt-5.6-luna': 'openai/gpt-5.6-luna',
+    });
+    expect(OPENAI_UPSTREAMS.gateway).toMatchObject({
+      baseUrl: 'https://ai-gateway.vercel.sh/v1',
+      apiKeyEnv: 'AI_GATEWAY_API_KEY',
+    });
     expect(PROVIDER_REGISTRY['gpt-5.5']).toMatchObject({
       model: 'gpt-5.5',
       protocol: 'openai-responses',
       apiKeyEnv: ['OPENAI_API_KEY'],
-      inputCostPer1kTokens: 0.005,
-      outputCostPer1kTokens: 0.03,
+      inputCostPer1kTokens: 0.0055,
+      outputCostPer1kTokens: 0.033,
       maxOutputTokens: 128,
-      costCeilingPerCall: 0.015,
+      costCeilingPerCall: 0.016,
     });
     expect(PROVIDER_REGISTRY['gpt-5.6-luna']).toMatchObject({
       model: 'gpt-5.6-luna',
       protocol: 'openai-responses',
       apiKeyEnv: ['OPENAI_API_KEY'],
-      inputCostPer1kTokens: 0.001,
-      outputCostPer1kTokens: 0.006,
+      inputCostPer1kTokens: 0.0011,
+      outputCostPer1kTokens: 0.0066,
       maxOutputTokens: 128,
       costCeilingPerCall: 0.005,
     });
     expect(DEFAULT_CHAIN).not.toContain('gpt-5.5');
     expect(DEFAULT_CHAIN).not.toContain('gpt-5.6-luna');
+  });
+
+  it.each([
+    ['gpt-5.5', 0.0055, 0.033],
+    ['gpt-5.6-luna', 0.0011, 0.0066],
+  ])('uses conservative highest verified Gateway/Bedrock rates for %s', (model, input, output) => {
+    const { PROVIDER_REGISTRY } = loadModule();
+    expect(PROVIDER_REGISTRY[model].inputCostPer1kTokens).toBe(input);
+    expect(PROVIDER_REGISTRY[model].outputCostPer1kTokens).toBe(output);
   });
 
   it('rejects an unknown provider with 400 and no live call', async () => {
@@ -304,6 +332,113 @@ describe('provider-adapter', () => {
     }
   );
 
+  it.each([
+    ['gpt-5.5', 'openai/gpt-5.5'],
+    ['gpt-5.6-luna', 'openai/gpt-5.6-luna'],
+  ])('Gateway Responses uses exact slug but reports product model %s', async (model, gatewaySlug) => {
+    delete process.env.OPENAI_API_KEY;
+    process.env.AI_GATEWAY_API_KEY = FAKE_GATEWAY_KEY;
+    fetchMock.mockResolvedValue(responsesResponse('gateway says hi'));
+    const { handler } = loadModule();
+    const response = await handler(createEvent({ prompt: 'hello', provider: model }));
+    expect(parseBody(response)).toMatchObject({
+      text: 'gateway says hi',
+      model_used: model,
+      fallback_used: false,
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(url).toBe('https://ai-gateway.vercel.sh/v1/responses');
+    expect(init.headers.Authorization).toBe(`Bearer ${FAKE_GATEWAY_KEY}`);
+    expect(JSON.parse(init.body).model).toBe(gatewaySlug);
+  });
+
+  it('when both keys exist, an uncached request makes one Gateway GPT POST only', async () => {
+    process.env.AI_GATEWAY_API_KEY = FAKE_GATEWAY_KEY;
+    fetchMock.mockImplementation(async (url) => {
+      if (url === 'https://ai-gateway.vercel.sh/v1/responses') return responsesResponse('gateway selected');
+      if (url === 'https://api.openai.com/v1/responses') throw new Error('direct GPT must not be called');
+      throw new Error(`unexpected URL: ${url}`);
+    });
+    const { handler, getRequestCounters, getBudgetRemaining, DEFAULT_DAILY_BUDGET_USD } = loadModule();
+    const response = await handler(createEvent({ prompt: 'hello', provider: 'gpt-5.5' }));
+    const body = parseBody(response);
+    expect(body).toMatchObject({
+      text: 'gateway selected',
+      model_used: 'gpt-5.5',
+      fallback_used: false,
+    });
+    expect(fetchMock.mock.calls.map(([url]) => url)).toEqual([
+      'https://ai-gateway.vercel.sh/v1/responses',
+    ]);
+    expect(getRequestCounters()['gpt-5.5:gpt-5.5']).toBe(1);
+    expect(DEFAULT_DAILY_BUDGET_USD - getBudgetRemaining()).toBeCloseTo(body.cost_estimate, 12);
+    expect(logLines.join('\n')).not.toContain(FAKE_OPENAI_KEY);
+    expect(logLines.join('\n')).not.toContain(FAKE_GATEWAY_KEY);
+  });
+
+  it('selected Gateway failure never calls direct GPT and enters Gemini fallback', async () => {
+    process.env.AI_GATEWAY_API_KEY = FAKE_GATEWAY_KEY;
+    fetchMock.mockImplementation(async (url) => {
+      if (url === 'https://ai-gateway.vercel.sh/v1/responses') return jsonResponse({}, 429);
+      if (url === 'https://api.openai.com/v1/responses') throw new Error('direct GPT must not be called');
+      throw new Error(`unexpected URL: ${url}`);
+    });
+    const adapter = loadModule();
+    const before = adapter.getBudgetRemaining();
+    const response = await adapter.handler(createEvent({ prompt: 'hello', provider: 'gpt-5.6-luna' }));
+    const body = parseBody(response);
+    expect(body).toMatchObject({
+      text: 'gemini live text',
+      model_used: 'gemini-2.5-flash',
+      fallback_used: true,
+    });
+    expect(fetchMock.mock.calls.map(([url]) => url)).toEqual([
+      'https://ai-gateway.vercel.sh/v1/responses',
+    ]);
+    expect(adapter.getRequestCounters()['gpt-5.6-luna:gpt-5.6-luna']).toBe(1);
+    expect(adapter.isProviderOpen('gpt-5.6-luna')).toBe(false);
+    expect(before - adapter.getBudgetRemaining()).toBeCloseTo(body.cost_estimate, 12);
+  });
+
+  it('one failed GPT attempt is recorded once per request and opens the breaker at the threshold', async () => {
+    process.env.AI_GATEWAY_API_KEY = FAKE_GATEWAY_KEY;
+    fetchMock.mockResolvedValue(jsonResponse({}, 503));
+    const adapter = loadModule();
+    const { BREAKER_THRESHOLD } = adapter;
+
+    for (let request = 1; request <= BREAKER_THRESHOLD; request++) {
+      await adapter.handler(createEvent({ prompt: 'hello', provider: 'gpt-5.5' }));
+      expect(adapter.getRequestCounters()['gpt-5.5:gpt-5.5']).toBe(request);
+      expect(adapter.isProviderOpen('gpt-5.5')).toBe(request === BREAKER_THRESHOLD);
+    }
+    expect(fetchMock).toHaveBeenCalledTimes(BREAKER_THRESHOLD);
+
+    await adapter.handler(createEvent({ prompt: 'breaker open', provider: 'gpt-5.5' }));
+    expect(fetchMock).toHaveBeenCalledTimes(BREAKER_THRESHOLD);
+    expect(adapter.getRequestCounters()['gpt-5.5:gpt-5.5']).toBe(BREAKER_THRESHOLD);
+  });
+
+  it('the maximum bounded GPT-5.5 call fits its ceiling and an over-ceiling request is rejected', async () => {
+    fetchMock.mockResolvedValue(responsesResponse('bounded response'));
+    const adapter = loadModule();
+    const bounded = parseBody(
+      await adapter.handler(createEvent({ prompt: 'x'.repeat(8000), provider: 'gpt-5.5' }))
+    );
+    expect(bounded).toMatchObject({ model_used: 'gpt-5.5', fallback_used: false });
+    expect(bounded.cost_estimate).toBeCloseTo(0.015224, 12);
+    expect(bounded.cost_estimate).toBeLessThanOrEqual(adapter.getCostCeiling('gpt-5.5'));
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+
+    fetchMock.mockClear();
+    const rejected = parseBody(
+      await adapter.handler(createEvent({ prompt: 'x'.repeat(9000), provider: 'gpt-5.5' }))
+    );
+    expect(rejected).toMatchObject({ model_used: 'gemini-2.5-flash', fallback_used: true });
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(logLines.some((line) => line.includes('gpt-5.5 skipped: per-call cost ceiling'))).toBe(true);
+  });
+
   it('openai-responses accepts the top-level output_text representation', async () => {
     fetchMock.mockResolvedValue(jsonResponse({ output_text: 'top-level text' }));
     const { handler } = loadModule();
@@ -339,6 +474,23 @@ describe('provider-adapter', () => {
     expect(body).toMatchObject({ model_used: 'gemini-2.5-flash', fallback_used: true });
     expect(logLines.some((line) => line.includes(`(${kind})`))).toBe(true);
     expect(logLines.join('\n')).not.toContain(FAKE_OPENAI_KEY);
+  });
+
+  it.each([
+    ['auth', () => Promise.resolve(jsonResponse({}, 401))],
+    ['rate-limit', () => Promise.resolve(jsonResponse({}, 429))],
+    ['timeout', () => Promise.reject(Object.assign(new Error('aborted'), { name: 'AbortError' }))],
+  ])('Gateway generation %s is classified, redacted, and falls back to Gemini', async (kind, failure) => {
+    delete process.env.OPENAI_API_KEY;
+    process.env.AI_GATEWAY_API_KEY = FAKE_GATEWAY_KEY;
+    fetchMock.mockImplementation(failure);
+    const { handler } = loadModule();
+    const body = parseBody(
+      await handler(createEvent({ prompt: 'hello', provider: 'gpt-5.6-luna' }))
+    );
+    expect(body).toMatchObject({ model_used: 'gemini-2.5-flash', fallback_used: true });
+    expect(logLines.some((line) => line.includes(`(${kind})`))).toBe(true);
+    expect(logLines.join('\n')).not.toContain(FAKE_GATEWAY_KEY);
   });
 
   it('OpenAI timeout, malformed JSON, and empty output all fall back deterministically', async () => {
@@ -481,6 +633,112 @@ describe('provider-adapter', () => {
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
+  it('Gateway capability proof is atomic, selects Gateway, and avoids a known-bad direct key for generation', async () => {
+    process.env.AI_GATEWAY_API_KEY = FAKE_GATEWAY_KEY;
+    fetchMock.mockImplementation(async (url, init) => {
+      if (url === 'https://ai-gateway.vercel.sh/v1/models') {
+        expect(init.method).toBe('GET');
+        expect(init.headers.Authorization).toBe(`Bearer ${FAKE_GATEWAY_KEY}`);
+        expect(init).not.toHaveProperty('body');
+        return gatewayModelsResponse();
+      }
+      if (String(url).startsWith('https://api.openai.com/v1/models/')) return jsonResponse({}, 401);
+      if (url === 'https://ai-gateway.vercel.sh/v1/responses') {
+        return responsesResponse('gateway after capability proof');
+      }
+      if (url === 'https://api.openai.com/v1/responses') {
+        throw new Error('capability-selected Gateway must avoid direct generation');
+      }
+      throw new Error(`unexpected URL: ${url}`);
+    });
+    const adapter = loadModule();
+    const capability = await adapter.handler(createEvent({}, { httpMethod: 'GET', body: '' }));
+    expect(parseBody(capability).models.map(({ id }) => id)).toEqual([
+      'gemini-2.5-flash',
+      'gpt-5.5',
+      'gpt-5.6-luna',
+    ]);
+    expect(Array.from(adapter.getOpenAIUpstreamOrder())).toEqual(['gateway']);
+
+    const generation = await adapter.handler(
+      createEvent({ prompt: 'hello', provider: 'gpt-5.5' })
+    );
+    expect(parseBody(generation)).toMatchObject({
+      text: 'gateway after capability proof',
+      model_used: 'gpt-5.5',
+      fallback_used: false,
+    });
+    const generationCalls = fetchMock.mock.calls.filter(([, init]) => init.method === 'POST');
+    expect(generationCalls).toHaveLength(1);
+    expect(generationCalls[0][0]).toBe('https://ai-gateway.vercel.sh/v1/responses');
+    expect(JSON.parse(generationCalls[0][1].body).model).toBe('openai/gpt-5.5');
+  });
+
+  it('capability-selected direct failure never retries through Gateway in the same request', async () => {
+    process.env.AI_GATEWAY_API_KEY = FAKE_GATEWAY_KEY;
+    fetchMock.mockImplementation(async (url, init) => {
+      if (url === 'https://ai-gateway.vercel.sh/v1/models') return jsonResponse({}, 401);
+      if (String(url).startsWith('https://api.openai.com/v1/models/')) {
+        return jsonResponse({ id: decodeURIComponent(String(url).split('/').pop()) });
+      }
+      if (url === 'https://api.openai.com/v1/responses') return jsonResponse({}, 503);
+      if (url === 'https://ai-gateway.vercel.sh/v1/responses') {
+        throw new Error('second GPT upstream must not be called');
+      }
+      throw new Error(`unexpected URL: ${url} ${init.method}`);
+    });
+    const adapter = loadModule();
+    const capability = await adapter.handler(createEvent({}, { httpMethod: 'GET', body: '' }));
+    expect(parseBody(capability).models).toHaveLength(3);
+    expect(adapter.getSelectedOpenAIUpstream()).toBe('direct');
+
+    const generation = parseBody(
+      await adapter.handler(createEvent({ prompt: 'hello', provider: 'gpt-5.6-luna' }))
+    );
+    expect(generation).toMatchObject({
+      text: 'gemini live text',
+      model_used: 'gemini-2.5-flash',
+      fallback_used: true,
+    });
+    const postCalls = fetchMock.mock.calls.filter(([, init]) => init.method === 'POST');
+    expect(postCalls).toHaveLength(1);
+    expect(postCalls[0][0]).toBe('https://api.openai.com/v1/responses');
+  });
+
+  it.each([
+    ['missing slug', gatewayModelsResponse(['openai/gpt-5.5'])],
+    ['auth failure', jsonResponse({}, 401)],
+    ['rate limit', jsonResponse({}, 429)],
+    ['malformed list', jsonResponse({ data: 'not-an-array' })],
+  ])('Gateway capabilities remains Gemini-only on %s', async (_name, gatewayResponse) => {
+    delete process.env.OPENAI_API_KEY;
+    process.env.AI_GATEWAY_API_KEY = FAKE_GATEWAY_KEY;
+    fetchMock.mockResolvedValue(gatewayResponse);
+    const { handler } = loadModule();
+    const response = await handler(createEvent({}, { httpMethod: 'GET', body: '' }));
+    expect(parseBody(response).models).toEqual([
+      { id: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash' },
+    ]);
+    expect(response.headers['Cache-Control']).toBe('no-store');
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock.mock.calls[0][1].method).toBe('GET');
+    expect(fetchMock.mock.calls[0][1]).not.toHaveProperty('body');
+    expect(logLines.join('\n')).not.toContain(FAKE_GATEWAY_KEY);
+  });
+
+  it('Gateway capability timeout remains secret-safe and Gemini-only', async () => {
+    delete process.env.OPENAI_API_KEY;
+    process.env.AI_GATEWAY_API_KEY = FAKE_GATEWAY_KEY;
+    fetchMock.mockRejectedValue(Object.assign(new Error('aborted'), { name: 'AbortError' }));
+    const { handler } = loadModule();
+    const response = await handler(createEvent({}, { httpMethod: 'GET', body: '' }));
+    expect(parseBody(response).models).toEqual([
+      { id: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash' },
+    ]);
+    expect(logLines.some((line) => line.includes('gateway failed (timeout)'))).toBe(true);
+    expect(logLines.join('\n')).not.toContain(FAKE_GATEWAY_KEY);
+  });
+
   it.each([
     ['mismatched id', (model) => jsonResponse({ id: model === 'gpt-5.5' ? model : 'different-model' })],
     ['auth failure', () => jsonResponse({}, 401)],
@@ -593,10 +851,11 @@ describe('provider-adapter', () => {
   });
 
   it('never logs planted fake keys even when errors embed them', async () => {
+    process.env.AI_GATEWAY_API_KEY = FAKE_GATEWAY_KEY;
     genaiMock.generateContent.mockRejectedValue(new Error(`invalid key ${FAKE_GEMINI_KEY}`));
     fetchMock.mockRejectedValue(
       new Error(
-        `401 x-api-key: ${FAKE_AICODEMIRROR_KEY} Authorization: Bearer ${FAKE_DEEPSEEK_KEY} ${FAKE_OPENAI_KEY}`
+        `401 x-api-key: ${FAKE_AICODEMIRROR_KEY} Authorization: Bearer ${FAKE_DEEPSEEK_KEY} ${FAKE_OPENAI_KEY} ${FAKE_GATEWAY_KEY}`
       )
     );
     const { handler } = loadModule();
@@ -607,6 +866,7 @@ describe('provider-adapter', () => {
       expect(line).not.toContain(FAKE_AICODEMIRROR_KEY);
       expect(line).not.toContain(FAKE_DEEPSEEK_KEY);
       expect(line).not.toContain(FAKE_OPENAI_KEY);
+      expect(line).not.toContain(FAKE_GATEWAY_KEY);
     }
     expect(logLines.some((line) => line.includes('[REDACTED]'))).toBe(true);
   });

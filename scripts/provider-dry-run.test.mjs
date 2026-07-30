@@ -2,7 +2,11 @@
 // No live calls, no filesystem access, no network — formatter in, markdown out.
 import { describe, expect, it, vi } from 'vitest';
 import { formatReport, redactForReport } from './provider-dry-run.mjs';
-import { OPENAI_MODEL_IDS, probeOpenAIModels } from './openai-model-preflight.mjs';
+import {
+  OPENAI_GATEWAY_SLUGS,
+  OPENAI_MODEL_IDS,
+  probeAIModelUpstreams,
+} from './openai-model-preflight.mjs';
 
 const baseMeta = {
   date: '2026-07-16T00:00:00.000Z',
@@ -104,20 +108,22 @@ describe('redactForReport', () => {
 });
 
 describe('OpenAI model preflight', () => {
-  it('is GET-only and succeeds only when both exact IDs are returned', async () => {
+  it('direct OpenAI is GET-only and succeeds only when both exact IDs are returned', async () => {
     const calls = [];
     const fetchImpl = async (url, init) => {
       calls.push([url, init]);
       const model = decodeURIComponent(String(url).split('/').pop());
       return { ok: true, status: 200, json: async () => ({ id: model }) };
     };
-    const result = await probeOpenAIModels({
-      apiKey: 'fake-openai-key-for-tests-only',
+    const result = await probeAIModelUpstreams({
+      openAIKey: 'fake-openai-key-for-tests-only',
+      gatewayKey: '',
       fetchImpl,
       timeoutMs: 100,
     });
     expect(result.ok).toBe(true);
-    expect(result.results.map(({ model }) => model)).toEqual(Array.from(OPENAI_MODEL_IDS));
+    expect(result.selectedUpstream).toBe('direct');
+    expect(result.upstreams.direct.results.map(({ model }) => model)).toEqual(Array.from(OPENAI_MODEL_IDS));
     expect(calls).toHaveLength(2);
     for (const [url, init] of calls) {
       expect(url).toMatch(/^https:\/\/api\.openai\.com\/v1\/models\/gpt-5\./);
@@ -126,35 +132,87 @@ describe('OpenAI model preflight', () => {
     }
   });
 
-  it('fails atomically on partial access or an exact-ID mismatch', async () => {
-    const result = await probeOpenAIModels({
-      apiKey: 'fake-openai-key-for-tests-only',
-      fetchImpl: async (url) => {
-        const requested = decodeURIComponent(String(url).split('/').pop());
+  it('Gateway is GET-only, atomically proves both slugs, and is preferred', async () => {
+    const calls = [];
+    const result = await probeAIModelUpstreams({
+      openAIKey: '',
+      gatewayKey: 'fake-ai-gateway-key-for-tests-only',
+      fetchImpl: async (url, init) => {
+        calls.push([url, init]);
         return {
           ok: true,
           status: 200,
-          json: async () => ({ id: requested === 'gpt-5.5' ? requested : 'another-model' }),
+          json: async () => ({ data: Object.values(OPENAI_GATEWAY_SLUGS).map((id) => ({ id })) }),
         };
       },
       timeoutMs: 100,
     });
+    expect(result.ok).toBe(true);
+    expect(result.selectedUpstream).toBe('gateway');
+    expect(result.upstreams.gateway.results.every(({ status }) => status === 'ok')).toBe(true);
+    expect(calls).toHaveLength(1);
+    expect(calls[0][0]).toBe('https://ai-gateway.vercel.sh/v1/models');
+    expect(calls[0][1].method).toBe('GET');
+    expect(calls[0][1]).not.toHaveProperty('body');
+  });
+
+  it('selects Gateway when direct access fails but both Gateway slugs are proven', async () => {
+    const calls = [];
+    const result = await probeAIModelUpstreams({
+      openAIKey: 'fake-invalid-openai-key-for-tests-only',
+      gatewayKey: 'fake-ai-gateway-key-for-tests-only',
+      fetchImpl: async (url, init) => {
+        calls.push([url, init]);
+        if (url === 'https://ai-gateway.vercel.sh/v1/models') {
+          return {
+            ok: true,
+            status: 200,
+            json: async () => ({ data: Object.values(OPENAI_GATEWAY_SLUGS).map((id) => ({ id })) }),
+          };
+        }
+        return { ok: false, status: 401, json: async () => { throw new Error('body not read'); } };
+      },
+      timeoutMs: 100,
+    });
+    expect(result.ok).toBe(true);
+    expect(result.selectedUpstream).toBe('gateway');
+    expect(result.upstreams.direct.results.every(({ reason }) => reason === 'auth')).toBe(true);
+    expect(calls).toHaveLength(3);
+    expect(calls.every(([, init]) => init.method === 'GET' && !('body' in init))).toBe(true);
+    expect(JSON.stringify(result)).not.toContain('fake-invalid-openai-key-for-tests-only');
+    expect(JSON.stringify(result)).not.toContain('fake-ai-gateway-key-for-tests-only');
+  });
+
+  it('fails Gateway atomically when either exact slug is missing', async () => {
+    const result = await probeAIModelUpstreams({
+      openAIKey: '',
+      gatewayKey: 'fake-ai-gateway-key-for-tests-only',
+      fetchImpl: async () => ({
+        ok: true,
+        status: 200,
+        json: async () => ({ data: [{ id: OPENAI_GATEWAY_SLUGS['gpt-5.5'] }] }),
+      }),
+      timeoutMs: 100,
+    });
     expect(result.ok).toBe(false);
-    expect(result.results).toEqual([
-      { model: 'gpt-5.5', status: 'ok', reason: 'exact-model-id' },
-      { model: 'gpt-5.6-luna', status: 'failed', reason: 'model-id-mismatch' },
+    expect(result.selectedUpstream).toBeNull();
+    expect(result.upstreams.gateway.results).toEqual([
+      { upstream: 'gateway', model: 'gpt-5.5', status: 'ok', reason: 'exact-gateway-slug' },
+      { upstream: 'gateway', model: 'gpt-5.6-luna', status: 'failed', reason: 'model-id-mismatch' },
     ]);
   });
 
-  it('does no network work without a key and returns only safe status classes', async () => {
+  it('does no network work without either key and returns only safe status classes', async () => {
     const fetchImpl = vi.fn();
-    const missing = await probeOpenAIModels({ apiKey: '', fetchImpl });
+    const missing = await probeAIModelUpstreams({ openAIKey: '', gatewayKey: '', fetchImpl });
     expect(missing.ok).toBe(false);
     expect(fetchImpl).not.toHaveBeenCalled();
-    expect(missing.results.every(({ reason }) => reason === 'missing-key')).toBe(true);
+    expect(missing.upstreams.direct.results.every(({ reason }) => reason === 'missing-key')).toBe(true);
+    expect(missing.upstreams.gateway.results.every(({ reason }) => reason === 'missing-key')).toBe(true);
 
-    const denied = await probeOpenAIModels({
-      apiKey: 'fake-openai-key-for-tests-only',
+    const denied = await probeAIModelUpstreams({
+      openAIKey: 'fake-openai-key-for-tests-only',
+      gatewayKey: 'fake-ai-gateway-key-for-tests-only',
       fetchImpl: async () => ({
         ok: false,
         status: 401,
@@ -165,7 +223,9 @@ describe('OpenAI model preflight', () => {
       timeoutMs: 100,
     });
     expect(denied.ok).toBe(false);
-    expect(denied.results.every(({ reason }) => reason === 'auth')).toBe(true);
+    expect(denied.upstreams.direct.results.every(({ reason }) => reason === 'auth')).toBe(true);
+    expect(denied.upstreams.gateway.results.every(({ reason }) => reason === 'auth')).toBe(true);
     expect(JSON.stringify(denied)).not.toContain('fake-openai-key-for-tests-only');
+    expect(JSON.stringify(denied)).not.toContain('fake-ai-gateway-key-for-tests-only');
   });
 });

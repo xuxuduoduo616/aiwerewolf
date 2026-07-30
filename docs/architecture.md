@@ -17,7 +17,7 @@ Browser
   |
   |-- Supabase client --> Auth / Postgres / row-level security
   +-- Netlify Functions
-         |-- provider adapter (Gemini default; optional OpenAI expression routes)
+         |-- provider adapter (Gemini default; optional OpenAI/Gateway expression routes)
          |-- legacy Gemini proxy
          |-- payment fail-closed endpoint
          +-- protected Supabase administration endpoints
@@ -55,6 +55,21 @@ Browser
 - `netlify/functions/provider-adapter.cjs` keeps provider credentials on the
   server, validates requested routes, and reports a no-store capability catalog.
   `netlify/functions/genai-proxy.cjs` remains the legacy Gemini fallback.
+- GPT product IDs remain `gpt-5.5` and `gpt-5.6-luna`. Their server-side
+  Responses route may use direct OpenAI IDs or Vercel AI Gateway slugs
+  `openai/gpt-5.5` and `openai/gpt-5.6-luna`; upstream identity is never part
+  of the browser contract.
+- Capability discovery validates each upstream independently using GET only.
+  Gateway is preferred after it atomically proves both slugs. The verified
+  selection is cached briefly per warm instance; without cached proof, a
+  configured Gateway key takes priority over direct OpenAI.
+- Each user request issues at most one GPT generation POST. Failure of the
+  selected direct/Gateway upstream enters the existing Gemini/local chain; it
+  never tries the other GPT upstream in the same request. A later capability
+  refresh may change the selected upstream.
+- GPT cost admission uses conservative rates covering the most expensive
+  verified Gateway provider. Budget and circuit accounting therefore describe
+  exactly one GPT attempt, not an internal cross-upstream retry sequence.
 - Capability lookup fails closed to Gemini-only. Missing credentials, partial
   account access, malformed responses, timeouts, and offline clients do not
   prevent a local-fallback match from starting.
@@ -66,7 +81,7 @@ Browser
 
 ## Security Invariants
 
-1. `API_KEY`, `OPENAI_API_KEY`, and Supabase service-role credentials remain server-only.
+1. `API_KEY`, `OPENAI_API_KEY`, `AI_GATEWAY_API_KEY`, and Supabase service-role credentials remain server-only.
 2. The browser submits intent, not trusted final state, for any future multiplayer command.
 3. Hidden roles and private actions must be projected per player before multiplayer data is delivered.
 4. Database access requires ownership-aware row-level security and production verification.

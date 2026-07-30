@@ -25,6 +25,7 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join, resolve } from 'node:path';
 import vm from 'node:vm';
+import { OPENAI_GATEWAY_SLUGS } from './openai-model-preflight.mjs';
 
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(SCRIPT_DIR, '..');
@@ -166,7 +167,6 @@ const runDryRun = async (adapter) => {
 const MODELS_PATH_BY_PROTOCOL = {
   'anthropic-messages': '/v1/models',
   'openai-chat': '/models',
-  'openai-responses': (cfg) => `/models/${encodeURIComponent(cfg.model)}`,
 };
 
 const classifyStatus = (status) => {
@@ -179,6 +179,49 @@ const classifyStatus = (status) => {
 const probeEntry = async (provider, cfg) => {
   if (cfg.protocol === 'local') return { status: 'skipped', detail: 'local provider, no endpoint' };
   if (!cfg.baseUrl) return { status: 'skipped', detail: 'SDK-managed endpoint, no REST models URL' };
+  if (cfg.protocol === 'openai-responses') {
+    const gatewayKey = process.env.AI_GATEWAY_API_KEY || '';
+    const directKey = process.env.OPENAI_API_KEY || '';
+    // 与运行时无 capability 缓存时的选择一致：有 Gateway key 时只检查
+    // Gateway，否则只检查 direct。该只读检查绝不构造跨 GPT 上游重试链。
+    const useGateway = Boolean(gatewayKey);
+    const apiKey = useGateway ? gatewayKey : directKey;
+    if (!apiKey) {
+      return { status: 'skipped', detail: 'no key (AI_GATEWAY_API_KEY, OPENAI_API_KEY not set)' };
+    }
+    const baseUrl = useGateway ? 'https://ai-gateway.vercel.sh/v1' : cfg.baseUrl;
+    const modelsPath = useGateway ? '/models' : `/models/${encodeURIComponent(cfg.model)}`;
+    const envName = useGateway ? 'AI_GATEWAY_API_KEY' : 'OPENAI_API_KEY';
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), PROBE_TIMEOUT_MS);
+    try {
+      const res = await fetch(`${baseUrl}${modelsPath}`, {
+        method: 'GET',
+        headers: { Authorization: `Bearer ${apiKey}` },
+        signal: controller.signal,
+      });
+      if (!res.ok) {
+        return { status: 'failed', detail: `HTTP ${res.status} (${classifyStatus(res.status)}, key: ${envName})` };
+      }
+      let metadata;
+      try {
+        metadata = await res.json();
+      } catch {
+        return { status: 'failed', detail: 'HTTP 200 (malformed metadata)' };
+      }
+      const exact = useGateway
+        ? Array.isArray(metadata.data) && metadata.data.some((entry) => entry && entry.id === OPENAI_GATEWAY_SLUGS[cfg.model])
+        : metadata && metadata.id === cfg.model;
+      return exact
+        ? { status: 'ok', detail: `HTTP ${res.status} exact model id (key: ${envName})` }
+        : { status: 'failed', detail: 'HTTP 200 (model id mismatch)' };
+    } catch (err) {
+      const kind = err && err.name === 'AbortError' ? 'timeout' : 'network';
+      return { status: 'failed', detail: `error class: ${kind}` };
+    } finally {
+      clearTimeout(timer);
+    }
+  }
   const modelsPathConfig = MODELS_PATH_BY_PROTOCOL[cfg.protocol];
   if (!modelsPathConfig) return { status: 'skipped', detail: `no models endpoint mapping for protocol ${cfg.protocol}` };
   const modelsPath =
@@ -198,18 +241,6 @@ const probeEntry = async (provider, cfg) => {
   try {
     // GET models listing only — never a completion/messages endpoint.
     const res = await fetch(`${cfg.baseUrl}${modelsPath}`, { method: 'GET', headers, signal: controller.signal });
-    if (res.ok && cfg.protocol === 'openai-responses') {
-      let metadata;
-      try {
-        metadata = await res.json();
-      } catch {
-        return { status: 'failed', detail: 'HTTP 200 (malformed metadata)' };
-      }
-      if (!metadata || metadata.id !== cfg.model) {
-        return { status: 'failed', detail: 'HTTP 200 (model id mismatch)' };
-      }
-      return { status: 'ok', detail: `HTTP ${res.status} exact model id (key: ${setEnvName})` };
-    }
     if (res.ok) return { status: 'ok', detail: `HTTP ${res.status} (key: ${setEnvName})` };
     return { status: 'failed', detail: `HTTP ${res.status} (${classifyStatus(res.status)}, key: ${setEnvName})` };
   } catch (err) {

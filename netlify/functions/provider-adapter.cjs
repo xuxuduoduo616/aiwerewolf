@@ -17,10 +17,9 @@
 
 // Provider registry. Providers without a verified protocol contract are
 // intentionally not listed. Costs are conservative per-1k-token estimates
-// used only for the local cost guard, not billing truth. The OpenAI figures
-// below are converted from the official per-1M-token model-page prices:
-// https://developers.openai.com/api/docs/models/gpt-5.5
-// https://developers.openai.com/api/docs/models/gpt-5.6-luna
+// used only for the local cost guard, not billing truth. GPT routes use the
+// most expensive verified Gateway provider price so dynamic routing cannot
+// make the local estimate lower than the possible upstream charge.
 const PROVIDER_REGISTRY = {
   // Gemini via the official @google/genai SDK (same route as model-adapter.js).
   'gemini-2.5-flash': {
@@ -82,10 +81,10 @@ const PROVIDER_REGISTRY = {
     apiKeyEnv: ['OPENAI_API_KEY'],
     timeout: 15000,
     maxRetries: 0,
-    inputCostPer1kTokens: 0.005,
-    outputCostPer1kTokens: 0.03,
+    inputCostPer1kTokens: 0.0055,
+    outputCostPer1kTokens: 0.033,
     maxOutputTokens: 128,
-    costCeilingPerCall: 0.015,
+    costCeilingPerCall: 0.016,
     capabilities: ['text', 'reasoning-low'],
   },
   'gpt-5.6-luna': {
@@ -96,8 +95,8 @@ const PROVIDER_REGISTRY = {
     apiKeyEnv: ['OPENAI_API_KEY'],
     timeout: 15000,
     maxRetries: 0,
-    inputCostPer1kTokens: 0.001,
-    outputCostPer1kTokens: 0.006,
+    inputCostPer1kTokens: 0.0011,
+    outputCostPer1kTokens: 0.0066,
     maxOutputTokens: 128,
     costCeilingPerCall: 0.005,
     capabilities: ['text', 'reasoning-low'],
@@ -129,8 +128,42 @@ const COST_CEILING_PER_CALL = 0.005; // $0.005 max per call.
 const MAX_PROMPT_LEN = 8000;
 const ANTHROPIC_MAX_TOKENS = 1024;
 const OPENAI_MODEL_IDS = Object.freeze(['gpt-5.5', 'gpt-5.6-luna']);
+const OPENAI_GATEWAY_SLUGS = Object.freeze({
+  'gpt-5.5': 'openai/gpt-5.5',
+  'gpt-5.6-luna': 'openai/gpt-5.6-luna',
+});
+const OPENAI_UPSTREAMS = Object.freeze({
+  direct: Object.freeze({
+    baseUrl: 'https://api.openai.com/v1',
+    apiKeyEnv: 'OPENAI_API_KEY',
+  }),
+  gateway: Object.freeze({
+    baseUrl: 'https://ai-gateway.vercel.sh/v1',
+    apiKeyEnv: 'AI_GATEWAY_API_KEY',
+  }),
+});
 const CAPABILITIES_CACHE_TTL_MS = 60_000;
 const CAPABILITIES_TIMEOUT_MS = 5_000;
+const openAIUpstreamSelection = { name: '', verifiedUntil: 0 };
+
+const cachePreferredOpenAIUpstream = (name, now = Date.now()) => {
+  if (!OPENAI_UPSTREAMS[name]) return;
+  openAIUpstreamSelection.name = name;
+  openAIUpstreamSelection.verifiedUntil = now + CAPABILITIES_CACHE_TTL_MS;
+};
+
+const getSelectedOpenAIUpstream = (now = Date.now()) => {
+  const preferred =
+    openAIUpstreamSelection.verifiedUntil > now && OPENAI_UPSTREAMS[openAIUpstreamSelection.name]
+      ? openAIUpstreamSelection.name
+      : '';
+  if (preferred) return preferred;
+  return process.env.AI_GATEWAY_API_KEY ? 'gateway' : 'direct';
+};
+
+// Backwards-compatible test hook. The array intentionally contains exactly
+// one upstream: a user request may issue at most one GPT generation POST.
+const getOpenAIUpstreamOrder = (now = Date.now()) => [getSelectedOpenAIUpstream(now)];
 
 // Rough token estimate: ~4 chars per token (same heuristic as model-adapter.js).
 const estimateTokens = (text) => Math.ceil((text || '').length / 4);
@@ -173,6 +206,10 @@ const collectSecrets = () => {
       const value = process.env[envName];
       if (value && !secrets.includes(value)) secrets.push(value);
     }
+  }
+  for (const upstream of Object.values(OPENAI_UPSTREAMS)) {
+    const value = process.env[upstream.apiKeyEnv];
+    if (value && !secrets.includes(value)) secrets.push(value);
   }
   return secrets;
 };
@@ -409,30 +446,7 @@ const callOpenAIChat = async (cfg, apiKey, prompt, options) => {
   return typeof text === 'string' ? text : '';
 };
 
-// OpenAI Responses protocol: POST /v1/responses. Do not send temperature for
-// reasoning models. max_output_tokens is a hard combined visible/reasoning
-// output bound; reasoning effort stays low for this expression-only use case.
-const callOpenAIResponses = async (cfg, apiKey, prompt) => {
-  const data = await fetchJsonWithTimeout(
-    `${cfg.baseUrl}/responses`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...buildAuthHeaders(cfg, apiKey),
-      },
-      body: JSON.stringify({
-        model: cfg.model,
-        input: prompt,
-        reasoning: { effort: 'low' },
-        max_output_tokens: cfg.maxOutputTokens,
-      }),
-    },
-    cfg.timeout
-  );
-
-  // output_text is present in some Responses representations. Raw REST
-  // responses also carry output_text blocks inside output[].content[].
+const extractOpenAIResponsesText = (data) => {
   if (typeof data.output_text === 'string') return data.output_text;
   if (!Array.isArray(data.output)) return '';
   const texts = [];
@@ -447,15 +461,55 @@ const callOpenAIResponses = async (cfg, apiKey, prompt) => {
   return texts.join('');
 };
 
+// OpenAI-compatible Responses protocol: POST /v1/responses. The product model
+// ID remains gpt-5.x; only Vercel Gateway's upstream request uses creator/model.
+const callOpenAIResponsesUpstream = async (cfg, upstreamName, apiKey, prompt) => {
+  const upstream = OPENAI_UPSTREAMS[upstreamName];
+  const upstreamModel =
+    upstreamName === 'gateway' ? OPENAI_GATEWAY_SLUGS[cfg.model] : cfg.model;
+  const data = await fetchJsonWithTimeout(
+    `${upstream.baseUrl}/responses`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...buildAuthHeaders(cfg, apiKey),
+      },
+      body: JSON.stringify({
+        model: upstreamModel,
+        input: prompt,
+        reasoning: { effort: 'low' },
+        max_output_tokens: cfg.maxOutputTokens,
+      }),
+    },
+    cfg.timeout
+  );
+  return extractOpenAIResponsesText(data);
+};
+
+// A selected product model may use either direct OpenAI or Vercel AI Gateway.
+// Capability discovery selects one upstream for the warm instance. Without a
+// verified selection, the presence of AI_GATEWAY_API_KEY selects Gateway;
+// otherwise direct OpenAI is selected. We never try the other GPT upstream in
+// the same user request: failure proceeds to the existing Gemini/local chain.
+// A later read-only capability refresh may select a different upstream.
+const callOpenAIResponses = async (cfg, prompt) => {
+  const upstreamName = getSelectedOpenAIUpstream(Date.now());
+  const upstream = OPENAI_UPSTREAMS[upstreamName];
+  const apiKey = process.env[upstream.apiKeyEnv] || '';
+  if (!apiKey) throw new Error('missing-api-key');
+  return callOpenAIResponsesUpstream(cfg, upstreamName, apiKey, prompt);
+};
+
 // Attempt a single live provider call. Returns text or throws.
 const callProvider = async (provider, prompt, options) => {
   const cfg = PROVIDER_REGISTRY[provider];
+  if (cfg.protocol === 'openai-responses') return callOpenAIResponses(cfg, prompt);
   const apiKey = resolveApiKey(cfg);
   if (!apiKey) throw new Error('missing-api-key');
   if (cfg.protocol === 'gemini') return callGemini(cfg, apiKey, prompt, options);
   if (cfg.protocol === 'anthropic-messages') return callAnthropicMessages(cfg, apiKey, prompt, options);
   if (cfg.protocol === 'openai-chat') return callOpenAIChat(cfg, apiKey, prompt, options);
-  if (cfg.protocol === 'openai-responses') return callOpenAIResponses(cfg, apiKey, prompt);
   throw new Error(`unknown-protocol:${cfg.protocol}`);
 };
 
@@ -479,18 +533,21 @@ const tryProviderWithRetries = async (provider, prompt, options) => {
 };
 
 // --- Read-only capability discovery -----------------------------------------
-// GPT availability is atomic: both exact model metadata GETs must succeed and
-// return the exact requested IDs before either model is exposed. Only a
-// successful pair is cached, briefly, per warm Lambda instance. The browser
-// response never contains auth/account diagnostics or upstream bodies.
+// GPT availability is atomic per upstream: direct OpenAI must return both exact
+// product IDs, or Gateway's read-only model list must contain both exact
+// creator/model slugs, before either product model is exposed. A successful
+// upstream selection is cached briefly per warm Lambda instance. The browser
+// response never contains upstream identity, auth diagnostics, or bodies.
 
 const capabilitiesCache = { verifiedUntil: 0 };
 
 const resetCapabilitiesCache = () => {
   capabilitiesCache.verifiedUntil = 0;
+  openAIUpstreamSelection.name = '';
+  openAIUpstreamSelection.verifiedUntil = 0;
 };
 
-const probeExactOpenAIModel = async (model, apiKey) => {
+const probeExactDirectOpenAIModel = async (model, apiKey) => {
   const cfg = PROVIDER_REGISTRY[model];
   try {
     const data = await fetchJsonWithTimeout(
@@ -503,7 +560,38 @@ const probeExactOpenAIModel = async (model, apiKey) => {
     );
     return Boolean(data && data.id === model);
   } catch (err) {
-    logError(`provider-adapter capability check ${model} failed (${classifyError(err)})`);
+    logError(`provider-adapter capability check ${model} upstream direct failed (${classifyError(err)})`);
+    return false;
+  }
+};
+
+const probeDirectOpenAIModels = async (apiKey) => {
+  if (!apiKey) return false;
+  const access = await Promise.all(
+    OPENAI_MODEL_IDS.map((model) => probeExactDirectOpenAIModel(model, apiKey))
+  );
+  return access.every(Boolean);
+};
+
+const probeGatewayOpenAIModels = async (apiKey) => {
+  if (!apiKey) return false;
+  try {
+    const data = await fetchJsonWithTimeout(
+      `${OPENAI_UPSTREAMS.gateway.baseUrl}/models`,
+      {
+        method: 'GET',
+        headers: { Authorization: `Bearer ${apiKey}` },
+      },
+      CAPABILITIES_TIMEOUT_MS
+    );
+    const ids = new Set(
+      data && Array.isArray(data.data)
+        ? data.data.map((entry) => entry && entry.id).filter((id) => typeof id === 'string')
+        : []
+    );
+    return OPENAI_MODEL_IDS.every((model) => ids.has(OPENAI_GATEWAY_SLUGS[model]));
+  } catch (err) {
+    logError(`provider-adapter capability check upstream gateway failed (${classifyError(err)})`);
     return false;
   }
 };
@@ -524,11 +612,17 @@ const getProviderCapabilities = async (now = Date.now()) => {
     };
   }
 
-  const apiKey = process.env.OPENAI_API_KEY || '';
-  if (!apiKey) return base;
-  const access = await Promise.all(OPENAI_MODEL_IDS.map((model) => probeExactOpenAIModel(model, apiKey)));
-  if (!access.every(Boolean)) return base;
+  const directKey = process.env.OPENAI_API_KEY || '';
+  const gatewayKey = process.env.AI_GATEWAY_API_KEY || '';
+  if (!directKey && !gatewayKey) return base;
+  const [gatewayAccess, directAccess] = await Promise.all([
+    probeGatewayOpenAIModels(gatewayKey),
+    probeDirectOpenAIModels(directKey),
+  ]);
+  const selectedUpstream = gatewayAccess ? 'gateway' : directAccess ? 'direct' : '';
+  if (!selectedUpstream) return base;
   capabilitiesCache.verifiedUntil = now + CAPABILITIES_CACHE_TTL_MS;
+  cachePreferredOpenAIUpstream(selectedUpstream, now);
   return {
     ...base,
     models: [
@@ -675,6 +769,8 @@ exports.handler = async function (event) {
 exports.PROVIDER_REGISTRY = PROVIDER_REGISTRY;
 exports.DEFAULT_CHAIN = DEFAULT_CHAIN;
 exports.OPENAI_MODEL_IDS = OPENAI_MODEL_IDS;
+exports.OPENAI_GATEWAY_SLUGS = OPENAI_GATEWAY_SLUGS;
+exports.OPENAI_UPSTREAMS = OPENAI_UPSTREAMS;
 exports.COST_CEILING_PER_CALL = COST_CEILING_PER_CALL;
 exports.getCostCeiling = getCostCeiling;
 exports.CAPABILITIES_CACHE_TTL_MS = CAPABILITIES_CACHE_TTL_MS;
@@ -693,5 +789,7 @@ exports.getRequestCounters = getRequestCounters;
 exports.resetBudgetState = resetBudgetState;
 exports.getProviderCapabilities = getProviderCapabilities;
 exports.resetCapabilitiesCache = resetCapabilitiesCache;
+exports.getSelectedOpenAIUpstream = getSelectedOpenAIUpstream;
+exports.getOpenAIUpstreamOrder = getOpenAIUpstreamOrder;
 
 // --- END OF FILE netlify/functions/provider-adapter.js ---

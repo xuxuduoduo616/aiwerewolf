@@ -34,4 +34,8 @@ This is a binding operating policy:
 - A production build is authorized only by the exact `Netlify-Release: true` commit trailer after all release gates pass. Never add that trailer to intermediate commits.
 - If the release authorization cannot be verified, skip the Netlify build. Do not spend another deployment to diagnose an application or provider problem that can be investigated without publishing.
 
+## Agent Reporting Language
+
+All future task cards, worker reports, reviewer reports, coordinator handoffs, and final task reports must be written in Chinese. Source code, identifiers, commands, and externally defined protocol fields may remain in their required language.
+
 This project is currently source-available rather than permissively licensed. By submitting a contribution, you represent that you have the right to provide it and grant the project owner permission to use, modify, and distribute it as part of AI Werewolf. Opening an issue does not transfer ownership of its text or attachments.
