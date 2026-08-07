@@ -66,7 +66,7 @@ describe('guarded confirmation', () => {
       mode: 'single',
       boardId: 'twelve-player',
       difficulty: 'hard',
-      expressionModel: 'gpt-5.6-luna',
+      expressionModel: 'gemini-3.6-flash',
     };
 
     expect(confirm(setup)).toBe(true);
@@ -115,8 +115,7 @@ describe('StartGameFlow surfaces and navigation', () => {
     expect(html).toContain('Multi-Board Match · Unavailable');
     expect(html).toContain('Limited board unavailable');
     expect(html).toContain('Gemini 2.5 Flash');
-    expect(html).not.toContain('GPT-5.5');
-    expect(html).not.toContain('GPT-5.6 Luna');
+    expect(html).not.toContain('Optional OpenAI models');
     expect(html.match(/disabled=""/g)).toHaveLength(3);
   });
 
@@ -159,28 +158,26 @@ describe('StartGameFlow surfaces and navigation', () => {
 
 describe('expression model capability gating', () => {
   const fullCapabilities = {
-    default_model: 'gemini-2.5-flash',
+    default_model: 'gemini-3.6-flash',
     models: [
+      { id: 'gemini-3.6-flash', label: 'Gemini 3.6 Flash' },
       { id: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash' },
-      { id: 'gpt-5.5', label: 'GPT-5.5' },
-      { id: 'gpt-5.6-luna', label: 'GPT-5.6 Luna' },
     ],
   };
 
-  it('exposes both optional OpenAI choices only when both exact IDs are verified', () => {
+  it('exposes 3.6 only when both exact Gemini IDs are verified', () => {
     expect(getAvailableExpressionModels(fullCapabilities).map(model => model.id)).toEqual([
+      'gemini-3.6-flash',
       'gemini-2.5-flash',
-      'gpt-5.5',
-      'gpt-5.6-luna',
     ]);
 
     for (const capabilities of [
       null,
       {},
-      { ...fullCapabilities, models: fullCapabilities.models.slice(0, 2) },
+      { ...fullCapabilities, models: fullCapabilities.models.slice(0, 1) },
       { ...fullCapabilities, models: fullCapabilities.models.slice(1) },
-      { ...fullCapabilities, default_model: 'gpt-5.5' },
-      { ...fullCapabilities, models: [{ id: 'gpt-5.5', label: 42 }] },
+      { ...fullCapabilities, default_model: 'gemini-2.5-flash' },
+      { ...fullCapabilities, models: [{ id: 'gemini-3.6-flash', label: 42 }] },
     ]) {
       expect(getAvailableExpressionModels(capabilities).map(model => model.id)).toEqual([
         DEFAULT_EXPRESSION_MODEL,
@@ -188,17 +185,17 @@ describe('expression model capability gating', () => {
     }
   });
 
-  it('renders both GPT choices together and preserves an explicit selection', () => {
+  it('renders both Gemini choices together and preserves an explicit selection', () => {
     const html = renderToStaticMarkup(
       <ExpressionModelSelector
         models={AI_EXPRESSION_MODELS}
-        selectedModel="gpt-5.5"
+        selectedModel="gemini-3.6-flash"
         onSelect={() => undefined}
       />,
     );
 
-    expect(html).toContain('GPT-5.5');
-    expect(html).toContain('GPT-5.6 Luna');
-    expect(html).toMatch(/<input[^>]+checked=""[^>]+value="gpt-5\.5"/);
+    expect(html).toContain('Gemini 3.6 Flash');
+    expect(html).toContain('Gemini 2.5 Flash');
+    expect(html).toMatch(/<input[^>]+checked=""[^>]+value="gemini-3\.6-flash"/);
   });
 });

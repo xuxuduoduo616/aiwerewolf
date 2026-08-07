@@ -17,8 +17,8 @@ Browser
   |
   |-- Supabase client --> Auth / Postgres / row-level security
   +-- Netlify Functions
-         |-- provider adapter (Gemini default; optional OpenAI/Gateway expression routes)
-         |-- legacy Gemini proxy
+         |-- Gemini expression adapter (3.6 → 2.5 → local fallback)
+         |-- legacy Gemini-compatible proxy
          |-- payment fail-closed endpoint
          +-- protected Supabase administration endpoints
 ```
@@ -42,46 +42,32 @@ Browser
 - `src/ai/beliefTracker.ts` maintains explainable suspicions and observations.
 - `src/ai/actionSelector.ts` chooses legal actions from the current state.
 - `src/ai/aiOrchestrator.ts` is the public AI-expression entry point.
-- `src/ai/modelCatalog.ts` owns the typed expression-model catalog. Gemini is
-  always available; GPT-5.5 and GPT-5.6 Luna are exposed atomically only when
-  the provider capability response proves both exact IDs.
+- `src/ai/modelCatalog.ts` owns the typed expression-model catalog. Gemini 2.5
+  is always selectable; Gemini 3.6 is exposed only when the provider capability
+  response proves both exact Gemini IDs.
 - `src/services/speechLibrary.ts` provides offline role- and situation-aware fallback dialogue.
 - The per-match language-model choice shapes daytime dialogue and wolf chat.
-  It does not decide game rules, legal targets, or actions; those paths retain
-  their existing deterministic/Gemini-assisted behavior.
+  It does not decide game rules, legal targets, or actions; those paths remain
+  deterministic.
 
 ### External services
 
-- `netlify/functions/provider-adapter.cjs` keeps provider credentials on the
-  server, validates requested routes, and reports a no-store capability catalog.
-  `netlify/functions/genai-proxy.cjs` remains the legacy Gemini fallback.
-- GPT product IDs remain `gpt-5.5` and `gpt-5.6-luna`. Their server-side
-  Responses route may use direct OpenAI IDs or Vercel AI Gateway slugs
-  `openai/gpt-5.5` and `openai/gpt-5.6-luna`; upstream identity is never part
-  of the browser contract.
-- Capability discovery validates each upstream independently using GET only.
-  Gateway is preferred after it atomically proves both slugs. The verified
-  selection is cached briefly per warm instance; without cached proof, a
-  configured Gateway key takes priority over direct OpenAI.
-- Each user request issues at most one GPT generation POST. Failure of the
-  selected direct/Gateway upstream enters the existing Gemini/local chain; it
-  never tries the other GPT upstream in the same request. A later capability
-  refresh may change the selected upstream.
-- GPT cost admission uses conservative rates covering the most expensive
-  verified Gateway provider. Budget and circuit accounting therefore describe
-  exactly one GPT attempt, not an internal cross-upstream retry sequence.
-- Capability lookup fails closed to Gemini-only. Missing credentials, partial
-  account access, malformed responses, timeouts, and offline clients do not
-  prevent a local-fallback match from starting.
-- A selected GPT expression request may fall through the existing Gemini
-  provider chain and then the bundled speech library. GPT routes are never
-  inserted into automatic action or default fallback routing.
+- `netlify/functions/provider-adapter.cjs` keeps the Gemini key on the server,
+  validates requested model IDs, and reports a no-store capability catalog.
+  `netlify/functions/genai-proxy.cjs` remains a compatibility alias.
+- Capability discovery uses read-only SDK model lookups for both exact Gemini
+  IDs. Successful checks are briefly cached per warm instance; missing keys,
+  partial access, malformed metadata, timeouts, and offline clients fail closed
+  to Gemini 2.5 and never prevent a local-fallback match from starting.
+- Each live expression request is bounded by input/output limits, per-call and
+  daily cost guards, rate limiting, and per-model circuit breaking. It tries
+  Gemini 3.6, then Gemini 2.5, then returns the local-fallback signal.
 - Supabase provides email OTP authentication and Postgres-backed profiles and records.
 - Payment endpoints fail closed with `PAYMENTS_NOT_CONFIGURED`; no real payment service provider is connected.
 
 ## Security Invariants
 
-1. `API_KEY`, `OPENAI_API_KEY`, `AI_GATEWAY_API_KEY`, and Supabase service-role credentials remain server-only.
+1. `API_KEY`, `GEMINI_API_KEY`, and Supabase service-role credentials remain server-only.
 2. The browser submits intent, not trusted final state, for any future multiplayer command.
 3. Hidden roles and private actions must be projected per player before multiplayer data is delivered.
 4. Database access requires ownership-aware row-level security and production verification.

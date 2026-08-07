@@ -22,34 +22,23 @@ The regular Vite server does not execute Netlify Functions. Matches still work t
 ## Environment Variables
 
 Only variables prefixed with `VITE_` are exposed to browser code. `API_KEY`,
-`OPENAI_API_KEY`, `AI_GATEWAY_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, and any
-future payment secret must remain server-only. Never create
-`VITE_OPENAI_API_KEY` or `VITE_AI_GATEWAY_API_KEY`.
+`GEMINI_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, and any future payment secret
+must remain server-only. Never create a browser-exposed Gemini key variable.
+Production must set `ALLOWED_ORIGIN` to the exact browser origin(s) allowed to
+call the Netlify AI functions. Missing or mismatched origins fail closed with a
+generic response before capability lookup, generation, or cost accounting.
 
-`OPENAI_API_KEY` is optional for local/fallback play. When configured for the
-Netlify Function, the provider capability endpoint performs read-only access
-checks for the exact `gpt-5.5` and `gpt-5.6-luna` IDs. The setup screen exposes
-both choices together only after both checks pass; every failure mode remains
-Gemini-only and playable. Selection affects expression, not rules or actions.
+`GEMINI_API_KEY` (or the compatible `API_KEY`) is optional for local/fallback
+play. The provider capability endpoint performs bounded read-only SDK model
+checks for exact Gemini 3.6 and 2.5 IDs. Gemini 3.6 appears only after both
+checks pass; every failure mode remains Gemini 2.5-only and playable.
+Selection affects expression, not rules or actions.
 
-`AI_GATEWAY_API_KEY` is an optional alternative upstream for the same product
-models. Its capability check performs one bounded `GET /v1/models` and requires
-both exact slugs, `openai/gpt-5.5` and `openai/gpt-5.6-luna`. When Gateway is
-proven it becomes the warm instance's only GPT generation upstream. A user
-request makes at most one GPT POST: the selected upstream's failure proceeds to
-the existing Gemini/local chain and never retries through the other GPT
-upstream. After the short capability cache expires, a later read-only refresh
-may choose a different upstream. Without cached proof, a configured Gateway key
-takes priority; otherwise direct OpenAI is used. Check the current Vercel
-account plan and credit balance before relying on free credits.
-
-OpenAI routes can incur usage charges. Keep Gemini as the default, select a GPT
-route explicitly per match, retain hard server request/output budgets, and
-remove the server-side key to disable both routes in an emergency. Cost guards
-use conservative per-1,000-token rates that cover the most expensive verified
-Gateway provider: GPT-5.5 input `$0.0055` / output `$0.033`; GPT-5.6 Luna input
-`$0.0011` / output `$0.0066`. GPT-5.5's 8,000-character input bound plus 128
-output tokens estimates to `$0.015224`, below its `$0.016` per-call ceiling.
+Live requests use a bounded Gemini 3.6 → Gemini 2.5 → local fallback chain.
+Cost admission assumes paid rates even when a free tier is available: Gemini 3.6
+uses `$0.0015` input / `$0.0075` output per 1K tokens; Gemini 2.5 uses
+`$0.0003` input / `$0.0025` output per 1K text tokens. Per-call and daily
+budgets, rate limiting, timeout, and a circuit breaker remain enabled.
 
 The production build deliberately fails if `VITE_TURNSTILE_SITE_KEY` is missing or looks like a placeholder. Use a legitimate site key for production-like builds; do not commit it.
 
@@ -109,6 +98,6 @@ Before proposing a release:
 2. Run `npm run build` with the required public build variables.
 3. Review the staged diff and scan it for credentials and browser artifacts.
 4. Confirm that documentation does not claim planned features are available.
-5. Verify both GPT product models through at least one upstream with the
-   read-only preflight before authorizing the one consolidated release; without
+5. Verify both exact Gemini expression models with the server-only, read-only
+   capability preflight before authorizing the one consolidated release; without
    that evidence, do not deploy.

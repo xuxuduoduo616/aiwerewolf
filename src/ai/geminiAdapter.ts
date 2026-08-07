@@ -1,98 +1,52 @@
-/**
- * Layer 2 — LLM Adapter
- * Routes requests to the unified provider-adapter Netlify Function first
- * (requested route validated server-side against its whitelist), then falls
- * back to the legacy genai-proxy with the exact original request shape.
- * On failure, returns empty string → caller falls back to speech library.
- */
-
-import {
-  DEFAULT_EXPRESSION_MODEL,
-  type AIExpressionModelId,
-} from './modelCatalog';
+/** Browser adapter: exactly one server request; the server owns model fallback. */
+import { DEFAULT_EXPRESSION_MODEL, type AIExpressionModelId } from './modelCatalog';
 
 export { fetchAvailableExpressionModels } from './providerCapabilities';
 
 export interface SpeechRequest {
   systemPrompt: string;
   userPrompt: string;
-  temperature?: number;
 }
 
 const PROVIDER_ADAPTER_ENDPOINT = '/.netlify/functions/provider-adapter';
-const GENAI_PROXY_ENDPOINT = '/.netlify/functions/genai-proxy';
-const DEFAULT_ROUTE = DEFAULT_EXPRESSION_MODEL;
-
-const isLocalVite = () => {
-  if (typeof window === 'undefined') return false;
-  return new Set(['5173', '4173', '4174', '4175']).has(window.location.port);
-};
-
 const FETCH_TIMEOUT_MS = 12000;
 
-// Bounded timeout so a dead network path can never hang the AI pipeline.
-// AbortSignal.timeout is missing in some older browsers → no signal there.
+const isLocalVite = () => typeof window !== 'undefined'
+  && new Set(['5173', '4173', '4174', '4175']).has(window.location.port);
 const timeoutSignal = (): AbortSignal | undefined =>
   typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function'
-    ? AbortSignal.timeout(FETCH_TIMEOUT_MS)
-    : undefined;
+    ? AbortSignal.timeout(FETCH_TIMEOUT_MS) : undefined;
 
-// POST a JSON body and return response.text, or '' on any failure
-// (non-OK status, network error, timeout abort, invalid JSON, missing text).
-const postForText = async (endpoint: string, body: Record<string, unknown>): Promise<string> => {
+export const generateWithGemini = async (
+  req: SpeechRequest,
+  expressionModel: AIExpressionModelId = DEFAULT_EXPRESSION_MODEL,
+): Promise<string> => {
+  if (isLocalVite()) return '';
   try {
-    const res = await fetch(endpoint, {
+    const res = await fetch(PROVIDER_ADAPTER_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
+      body: JSON.stringify({
+        model: expressionModel,
+        prompt: `${req.systemPrompt}\n\n---\n${req.userPrompt}`,
+        responseMimeType: 'application/json',
+      }),
       signal: timeoutSignal(),
     });
     if (!res.ok) return '';
-    const json = await res.json();
-    return typeof json.text === 'string' ? json.text : '';
+    const body: unknown = await res.json();
+    return typeof body === 'object' && body !== null && typeof (body as { text?: unknown }).text === 'string'
+      ? (body as { text: string }).text : '';
   } catch {
     return '';
   }
 };
 
-export const generateWithGemini = async (req: SpeechRequest): Promise<string> => {
-  return generateWithExpressionModel(req, DEFAULT_ROUTE);
-};
-
-const generateWithExpressionModel = async (
-  req: SpeechRequest,
-  expressionModel: AIExpressionModelId,
-): Promise<string> => {
-  if (isLocalVite()) return ''; // proxies not available locally
-
-  const prompt = `${req.systemPrompt}\n\n---\n${req.userPrompt}`;
-  const temperature = req.temperature ?? 0.95;
-
-  // 1. Unified provider adapter with a requested route (whitelisted server-side).
-  const adapterText = await postForText(PROVIDER_ADAPTER_ENDPOINT, {
-    provider: expressionModel,
-    prompt,
-    responseMimeType: 'application/json',
-    temperature,
-  });
-  if (adapterText) return adapterText;
-
-  // 2. Legacy genai-proxy fallback — exact original request shape.
-  return postForText(GENAI_PROXY_ENDPOINT, {
-    model: DEFAULT_ROUTE,
-    prompt,
-    responseMimeType: 'application/json',
-    temperature,
-  });
-};
-
 const extractJson = <T,>(raw: string): T | null => {
-  if (!raw) return null;
   const cleaned = raw.replace(/```json|```/g, '').trim();
   const start = cleaned.indexOf('{');
   const end = cleaned.lastIndexOf('}');
-  const candidate = start >= 0 && end >= start ? cleaned.slice(start, end + 1) : cleaned;
-  try { return JSON.parse(candidate) as T; } catch { return null; }
+  try { return JSON.parse(start >= 0 && end >= start ? cleaned.slice(start, end + 1) : cleaned) as T; } catch { return null; }
 };
 
 export const generateSpeechWithLLM = async (
@@ -100,25 +54,6 @@ export const generateSpeechWithLLM = async (
   contextPrompt: string,
   expressionModel: AIExpressionModelId = DEFAULT_EXPRESSION_MODEL,
 ): Promise<{ zh: string; en: string } | null> => {
-  const raw = await generateWithExpressionModel(
-    { systemPrompt, userPrompt: contextPrompt },
-    expressionModel,
-  );
-  if (!raw) return null;
-  const parsed = extractJson<{ zh?: string; en?: string }>(raw);
-  if (parsed?.zh) return { zh: parsed.zh, en: parsed.en || 'Speaks.' };
-  return null;
-};
-
-export const generateActionWithLLM = async (
-  prompt: string,
-  validTargets: number[],
-): Promise<{ targetId: number | null; reason?: string }> => {
-  const raw = await generateWithGemini({ systemPrompt: '', userPrompt: prompt, temperature: 0.3 });
-  if (!raw) return { targetId: null };
-  const parsed = extractJson<{ targetId?: number; reason?: string }>(raw);
-  if (parsed?.targetId && validTargets.includes(parsed.targetId)) {
-    return { targetId: parsed.targetId, reason: parsed.reason };
-  }
-  return { targetId: null };
+  const parsed = extractJson<{ zh?: string; en?: string }>(await generateWithGemini({ systemPrompt, userPrompt: contextPrompt }, expressionModel));
+  return parsed?.zh ? { zh: parsed.zh, en: parsed.en || 'Speaks.' } : null;
 };

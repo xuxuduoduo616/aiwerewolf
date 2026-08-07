@@ -77,18 +77,6 @@ const generateSpeechWithLLM = async (
   }
 };
 
-const generateActionWithLLM = async (
-  prompt: string,
-  validTargets: number[],
-): Promise<{ targetId: number | null; reason?: string }> => {
-  try {
-    const { generateActionWithLLM: generate } = await import('./geminiAdapter');
-    return await generate(prompt, validTargets);
-  } catch {
-    return { targetId: null };
-  }
-};
-
 // ─── reset ─────────────────────────────────────────────────────────────────
 
 // Module-level difficulty config (set once per game via setAIDifficulty)
@@ -99,8 +87,7 @@ export const setAIDifficulty = (actionAccuracy: number) => {
   currentAccuracy = actionAccuracy;
 };
 
-/** Capture the dialogue model once when a match starts. Action selection stays
- * on its existing Gemini route and never reads this expression-only setting. */
+/** Capture the dialogue model once when a match starts; actions never read it. */
 export const setAIExpressionModel = (expressionModel: AIExpressionModelId) => {
   currentExpressionModel = expressionModel;
 };
@@ -300,32 +287,7 @@ export const generateAIAction = async (
   // Layer 1: BeliefTracker-based decision (always runs)
   const l1Decision = selectAction(player, players, globalBeliefTracker, type, 1, voteRecords, currentAccuracy);
 
-  // Layer 3: Try Gemini for better action selection
-  const round = Math.max(1, voteRecords.length > 0 ? voteRecords[voteRecords.length - 1].round : 1);
-  const prompt = `你是${player.id}号，身份：${ROLE_LABELS[player.role]}。
-行动：${type}，可选目标：${JSON.stringify(valid)}
-近期：${fmtLogs(logs)}
-票型：${fmtVotes(voteRecords)}
-按狼人杀最优策略选择目标。
-JSON：{"targetId":number,"reason":"简短中文原因"}`;
-
-  const llmResult = await generateActionWithLLM(prompt, valid);
-  if (llmResult.targetId && valid.includes(llmResult.targetId)) {
-    // Update beliefs: this actor suspects the chosen target
-    if (type === 'VOTE') {
-      globalBeliefTracker.updateFromVote(player.id, llmResult.targetId);
-    }
-    // The reason string can surface in the UI — guard it (H8). An
-    // unrepairable reason is dropped, never displayed.
-    const reasonGuard = guardSpeechText(llmResult.reason ?? '', players, 'zh');
-    emitSpeechDiagnostic({
-      context: 'vote-reason', source: 'remote-model', model: 'gemini-2.5-flash',
-      speakerId: player.id, repaired: reasonGuard.repaired,
-    });
-    return { targetId: llmResult.targetId, reason: reasonGuard.ok ? reasonGuard.text : undefined };
-  }
-
-  // Use Layer 1 fallback if LLM fails
+  // Deterministic action path: remote models may shape speech only.
   if (l1Decision.targetId && valid.includes(l1Decision.targetId)) {
     if (type === 'VOTE') {
       globalBeliefTracker.updateFromVote(player.id, l1Decision.targetId);

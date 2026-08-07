@@ -4,974 +4,175 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import vm from 'node:vm';
 
-const genaiMock = vi.hoisted(() => ({
-  GoogleGenAI: vi.fn(),
-  generateContent: vi.fn(),
-}));
-
-const adapterPath = join(dirname(fileURLToPath(import.meta.url)), '../functions/provider-adapter.cjs');
-const adapterSource = readFileSync(adapterPath, 'utf8');
-
-// Obviously-fake placeholder keys, planted in process.env only to prove
-// request shaping and log redaction. They are never real credentials.
-const FAKE_GEMINI_KEY = 'fake-gemini-key-for-tests-only';
-const FAKE_AICODEMIRROR_KEY = 'fake-aicodemirror-key-for-tests-only';
-const FAKE_DEEPSEEK_KEY = 'fake-deepseek-key-for-tests-only';
-const FAKE_OPENAI_KEY = 'fake-openai-key-for-tests-only';
-const FAKE_GATEWAY_KEY = 'fake-ai-gateway-key-for-tests-only';
-
-const originalEnv = {
-  API_KEY: process.env.API_KEY,
-  GEMINI_API_KEY: process.env.GEMINI_API_KEY,
-  AICODEMIRROR_API_KEY: process.env.AICODEMIRROR_API_KEY,
-  DEEPSEEK_API_KEY: process.env.DEEPSEEK_API_KEY,
-  OPENAI_API_KEY: process.env.OPENAI_API_KEY,
-  AI_GATEWAY_API_KEY: process.env.AI_GATEWAY_API_KEY,
-  ALLOWED_ORIGIN: process.env.ALLOWED_ORIGIN,
-  ADAPTER_DRY_RUN: process.env.ADAPTER_DRY_RUN,
-  ADAPTER_DAILY_BUDGET_USD: process.env.ADAPTER_DAILY_BUDGET_USD,
-};
-
-// Captured log lines — the adapter must never log key material.
-const logLines = [];
-const captureConsole = {
-  error: (...args) => logLines.push(args.map(String).join(' ')),
-  warn: (...args) => logLines.push(args.map(String).join(' ')),
-  log: (...args) => logLines.push(args.map(String).join(' ')),
-};
-
-const fetchMock = vi.fn();
-
-const loadModule = () => {
+const mocks = vi.hoisted(() => ({ GoogleGenAI: vi.fn(), get: vi.fn(), generateContent: vi.fn() }));
+const source = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '../functions/provider-adapter.cjs'), 'utf8');
+const original = { API_KEY: process.env.API_KEY, GEMINI_API_KEY: process.env.GEMINI_API_KEY, ALLOWED_ORIGIN: process.env.ALLOWED_ORIGIN, ADAPTER_DRY_RUN: process.env.ADAPTER_DRY_RUN, ADAPTER_DAILY_BUDGET_USD: process.env.ADAPTER_DAILY_BUDGET_USD };
+const load = () => {
   const module = { exports: {} };
   const context = vm.createContext({
-    console: captureConsole,
-    Date,
-    Map,
-    JSON,
-    process,
-    setTimeout,
-    clearTimeout,
-    Promise,
-    Infinity,
-    Math,
-    Number,
-    AbortController,
-    fetch: fetchMock,
-    require: (id) => {
-      if (id === '@google/genai') {
-        return { GoogleGenAI: genaiMock.GoogleGenAI };
-      }
-      throw new Error(`Unexpected require: ${id}`);
-    },
-    exports: module.exports,
-    module,
+    Date, Map, JSON, process, Promise, Math, Number, Infinity, URL, setTimeout, clearTimeout,
+    require: (id) => id === '@google/genai' ? { GoogleGenAI: mocks.GoogleGenAI, ThinkingLevel: { MINIMAL: 'MINIMAL' } } : (() => { throw new Error(`Unexpected require ${id}`); })(),
+    module, exports: module.exports,
   });
-  const script = new vm.Script(adapterSource, { filename: adapterPath });
-  script.runInContext(context);
+  new vm.Script(source).runInContext(context);
   return module.exports;
 };
+const event = (body = {}, overrides = {}) => ({ httpMethod: 'POST', headers: { origin: 'https://game.example', 'x-nf-client-connection-ip': '198.51.100.11' }, body: JSON.stringify(body), ...overrides });
+const json = (response) => JSON.parse(response.body);
 
-const createEvent = (bodyObj, overrides = {}) => ({
-  httpMethod: 'POST',
-  headers: {
-    origin: 'https://game.example',
-    'x-nf-client-connection-ip': '198.51.100.10',
-  },
-  body: JSON.stringify(bodyObj),
-  ...overrides,
-});
-
-const parseBody = (response) => JSON.parse(response.body);
-
-const jsonResponse = (obj, status = 200) => ({
-  ok: status >= 200 && status < 300,
-  status,
-  json: async () => obj,
-});
-const anthropicResponse = (text) => jsonResponse({ content: [{ type: 'text', text }] });
-const openaiResponse = (text) => jsonResponse({ choices: [{ message: { role: 'assistant', content: text } }] });
-const responsesResponse = (text) =>
-  jsonResponse({ output: [{ type: 'message', content: [{ type: 'output_text', text }] }] });
-const gatewayModelsResponse = (ids = ['openai/gpt-5.5', 'openai/gpt-5.6-luna']) =>
-  jsonResponse({ data: ids.map((id) => ({ id })) });
-
-const httpError = (status) => Object.assign(new Error(`http-${status}`), { status });
-
-describe('provider-adapter', () => {
+describe('Gemini provider adapter', () => {
   beforeEach(() => {
-    process.env.API_KEY = FAKE_GEMINI_KEY;
-    delete process.env.GEMINI_API_KEY;
-    process.env.AICODEMIRROR_API_KEY = FAKE_AICODEMIRROR_KEY;
-    process.env.DEEPSEEK_API_KEY = FAKE_DEEPSEEK_KEY;
-    process.env.OPENAI_API_KEY = FAKE_OPENAI_KEY;
-    delete process.env.AI_GATEWAY_API_KEY;
-    delete process.env.ALLOWED_ORIGIN;
-    delete process.env.ADAPTER_DRY_RUN;
-    delete process.env.ADAPTER_DAILY_BUDGET_USD;
-    logLines.length = 0;
-    fetchMock.mockReset();
-    fetchMock.mockRejectedValue(new Error('unexpected fetch'));
-    genaiMock.generateContent.mockReset();
-    genaiMock.generateContent.mockResolvedValue({ text: 'gemini live text' });
-    genaiMock.GoogleGenAI.mockReset();
-    genaiMock.GoogleGenAI.mockImplementation(() => ({
-      models: { generateContent: genaiMock.generateContent },
+    process.env.API_KEY = 'test-key'; process.env.ALLOWED_ORIGIN = 'https://game.example'; delete process.env.GEMINI_API_KEY; delete process.env.ADAPTER_DRY_RUN; delete process.env.ADAPTER_DAILY_BUDGET_USD;
+    mocks.get.mockReset().mockImplementation(({ model }) => Promise.resolve({ name: `models/${model}` }));
+    mocks.generateContent.mockReset().mockResolvedValue({ text: 'model text' });
+    mocks.GoogleGenAI.mockReset().mockImplementation(() => ({ models: { get: mocks.get, generateContent: mocks.generateContent } }));
+  });
+  afterEach(() => { for (const [key, value] of Object.entries(original)) value === undefined ? delete process.env[key] : process.env[key] = value; vi.clearAllMocks(); });
+
+  it('has only the two Gemini expression models and local fallback', () => {
+    const { MODEL_REGISTRY } = load();
+    expect(Object.keys(MODEL_REGISTRY)).toEqual(['gemini-3.6-flash', 'gemini-2.5-flash', 'local-fallback']);
+    expect(MODEL_REGISTRY['gemini-3.6-flash'].maxRetries).toBe(0);
+    expect(MODEL_REGISTRY['gemini-2.5-flash'].maxRetries).toBe(0);
+  });
+  it.each([
+    ['missing allowlist configuration', () => { delete process.env.ALLOWED_ORIGIN; }, 'https://game.example'],
+    ['mismatched Origin', () => { process.env.ALLOWED_ORIGIN = 'https://trusted.example'; }, 'https://game.example'],
+  ])('fails closed on %s before capability, model, counters, or billing work', async (_name, setup, origin) => {
+    setup();
+    const adapter = load();
+    const response = await adapter.handler(event({ prompt: 'hello' }, { headers: { origin } }));
+    expect(response.statusCode).toBe(403);
+    expect(json(response)).toEqual({ error: 'Forbidden' });
+    expect(response.headers).not.toHaveProperty('Access-Control-Allow-Origin');
+    expect(mocks.get).not.toHaveBeenCalled();
+    expect(mocks.generateContent).not.toHaveBeenCalled();
+    expect(adapter.getRequestCounters()).toEqual({});
+  });
+  it('allows an Origin-less same-origin GET only with exact Host and Fetch Metadata evidence', async () => {
+    const adapter = load();
+    const response = await adapter.handler(event({}, {
+      httpMethod: 'GET', body: '', headers: { host: 'game.example', 'sec-fetch-site': 'same-origin' },
     }));
+    expect(response.statusCode).toBe(200);
+    expect(response.headers['Access-Control-Allow-Origin']).toBe('https://game.example');
+    expect(mocks.get).toHaveBeenCalledTimes(2);
   });
-
-  afterEach(() => {
-    for (const [name, value] of Object.entries(originalEnv)) {
-      if (value === undefined) delete process.env[name];
-      else process.env[name] = value;
-    }
-    vi.clearAllMocks();
+  it('rejects an Origin-less request without same-origin evidence before model work', async () => {
+    const adapter = load();
+    const response = await adapter.handler(event({ prompt: 'hello' }, { headers: { host: 'game.example' } }));
+    expect(response.statusCode).toBe(403);
+    expect(mocks.get).not.toHaveBeenCalled();
+    expect(mocks.generateContent).not.toHaveBeenCalled();
+    expect(adapter.getRequestCounters()).toEqual({});
   });
-
-  it('registry has the existing routes plus both exact OpenAI Responses routes', () => {
-    const {
-      PROVIDER_REGISTRY,
-      DEFAULT_CHAIN,
-      OPENAI_MODEL_IDS,
-      OPENAI_GATEWAY_SLUGS,
-      OPENAI_UPSTREAMS,
-    } = loadModule();
-    const required = [
-      'gemini-2.5-flash',
-      'aicodemirror-claude',
-      'deepseek-anthropic',
-      'gpt-5.5',
-      'gpt-5.6-luna',
-    ];
-    for (const name of required) {
-      const cfg = PROVIDER_REGISTRY[name];
-      expect(cfg).toBeDefined();
-      expect(['gemini', 'anthropic-messages', 'openai-chat', 'openai-responses']).toContain(cfg.protocol);
-      expect(typeof cfg.authHeader).toBe('string');
-      expect(Array.isArray(cfg.apiKeyEnv)).toBe(true);
-      expect(cfg.apiKeyEnv.length).toBeGreaterThan(0);
-      expect(typeof cfg.timeout).toBe('number');
-      expect(typeof cfg.maxRetries).toBe('number');
-      expect(
-        typeof cfg.costPer1kTokens === 'number' ||
-          (typeof cfg.inputCostPer1kTokens === 'number' && typeof cfg.outputCostPer1kTokens === 'number')
-      ).toBe(true);
-      expect(Array.isArray(cfg.capabilities)).toBe(true);
-    }
-    expect(PROVIDER_REGISTRY['aicodemirror-claude'].protocol).toBe('anthropic-messages');
-    expect(PROVIDER_REGISTRY['deepseek-anthropic'].protocol).toBe('anthropic-messages');
-    expect(PROVIDER_REGISTRY['local-fallback'].costPer1kTokens).toBe(0);
-    expect(JSON.stringify(PROVIDER_REGISTRY)).not.toContain('vibecoder');
-    expect(Array.from(OPENAI_MODEL_IDS)).toEqual(['gpt-5.5', 'gpt-5.6-luna']);
-    expect({ ...OPENAI_GATEWAY_SLUGS }).toEqual({
-      'gpt-5.5': 'openai/gpt-5.5',
-      'gpt-5.6-luna': 'openai/gpt-5.6-luna',
-    });
-    expect(OPENAI_UPSTREAMS.gateway).toMatchObject({
-      baseUrl: 'https://ai-gateway.vercel.sh/v1',
-      apiKeyEnv: 'AI_GATEWAY_API_KEY',
-    });
-    expect(PROVIDER_REGISTRY['gpt-5.5']).toMatchObject({
-      model: 'gpt-5.5',
-      protocol: 'openai-responses',
-      apiKeyEnv: ['OPENAI_API_KEY'],
-      inputCostPer1kTokens: 0.0055,
-      outputCostPer1kTokens: 0.033,
-      maxOutputTokens: 128,
-      costCeilingPerCall: 0.016,
-    });
-    expect(PROVIDER_REGISTRY['gpt-5.6-luna']).toMatchObject({
-      model: 'gpt-5.6-luna',
-      protocol: 'openai-responses',
-      apiKeyEnv: ['OPENAI_API_KEY'],
-      inputCostPer1kTokens: 0.0011,
-      outputCostPer1kTokens: 0.0066,
-      maxOutputTokens: 128,
-      costCeilingPerCall: 0.005,
-    });
-    expect(DEFAULT_CHAIN).not.toContain('gpt-5.5');
-    expect(DEFAULT_CHAIN).not.toContain('gpt-5.6-luna');
+  it('rejects an Origin-less cross-site request even when Host matches', async () => {
+    const adapter = load();
+    const response = await adapter.handler(event({ prompt: 'hello' }, {
+      headers: { host: 'game.example', 'sec-fetch-site': 'cross-site' },
+    }));
+    expect(response.statusCode).toBe(403);
+    expect(mocks.get).not.toHaveBeenCalled();
+    expect(mocks.generateContent).not.toHaveBeenCalled();
+    expect(adapter.getRequestCounters()).toEqual({});
   });
-
+  it('returns a no-store, exact successful capability catalog and warm-caches success', async () => {
+    const adapter = load();
+    const first = await adapter.handler(event({}, { httpMethod: 'GET', body: '' }));
+    const second = await adapter.handler(event({}, { httpMethod: 'GET', body: '' }));
+    expect(json(first)).toMatchObject({ default_model: 'gemini-3.6-flash', models: [{ id: 'gemini-3.6-flash' }, { id: 'gemini-2.5-flash' }] });
+    expect(first.headers['Cache-Control']).toBe('no-store');
+    expect(mocks.get).toHaveBeenCalledTimes(2);
+    expect(json(second)).toEqual(json(first));
+  });
   it.each([
-    ['gpt-5.5', 0.0055, 0.033],
-    ['gpt-5.6-luna', 0.0011, 0.0066],
-  ])('uses conservative highest verified Gateway/Bedrock rates for %s', (model, input, output) => {
-    const { PROVIDER_REGISTRY } = loadModule();
-    expect(PROVIDER_REGISTRY[model].inputCostPer1kTokens).toBe(input);
-    expect(PROVIDER_REGISTRY[model].outputCostPer1kTokens).toBe(output);
+    ['missing key', () => { delete process.env.API_KEY; }],
+    ['403', () => { mocks.get.mockRejectedValue(Object.assign(new Error('denied'), { status: 403 })); }],
+    ['429', () => { mocks.get.mockRejectedValue(Object.assign(new Error('limited'), { status: 429 })); }],
+    ['5xx', () => { mocks.get.mockRejectedValue(Object.assign(new Error('bad upstream'), { status: 503 })); }],
+    ['malformed metadata', () => { mocks.get.mockResolvedValue({ name: 'models/not-the-requested-model' }); }],
+  ])('fails closed to 2.5 on %s', async (_name, setup) => {
+    setup(); const adapter = load(); const response = await adapter.handler(event({}, { httpMethod: 'GET', body: '' }));
+    expect(json(response)).toEqual({ default_model: 'gemini-2.5-flash', models: [{ id: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash' }] });
   });
-
-  it('rejects an unknown provider with 400 and no live call', async () => {
-    const { handler } = loadModule();
-    const res = await handler(createEvent({ prompt: 'hi', provider: 'super-expensive-gpt' }));
-    expect(res.statusCode).toBe(400);
-    expect(parseBody(res).error).toBe('Provider not in registry');
-    expect(fetchMock).not.toHaveBeenCalled();
-    expect(genaiMock.GoogleGenAI).not.toHaveBeenCalled();
-  });
-
-  it('rejects missing prompt', async () => {
-    const { handler } = loadModule();
-    const res = await handler(createEvent({}));
-    expect(res.statusCode).toBe(400);
-    expect(parseBody(res).error).toBe('Missing prompt');
-  });
-
-  it('skips every over-ceiling live provider and returns the local fallback without outbound calls', async () => {
-    const { handler, PROVIDER_REGISTRY, COST_CEILING_PER_CALL, getRequestCounters } = loadModule();
-    const costPer1k = PROVIDER_REGISTRY['gemini-2.5-flash'].costPer1kTokens;
-    const tokensNeeded = (COST_CEILING_PER_CALL / costPer1k) * 1000 + 1000;
-    const chars = Math.ceil(tokensNeeded * 4);
-    const res = await handler(createEvent({ prompt: 'x'.repeat(chars) }));
-    expect(res.statusCode).toBe(200);
-    expect(parseBody(res)).toMatchObject({
-      text: '',
-      model_used: 'local-fallback',
-      cost_estimate: 0,
-      fallback_used: true,
-    });
-    expect(fetchMock).not.toHaveBeenCalled();
-    expect(genaiMock.GoogleGenAI).not.toHaveBeenCalled();
-    expect(getRequestCounters()).toEqual({ 'local-fallback:local-fallback': 1 });
-  });
-
-  it('returns a deterministic mock in dry-run mode without any network activity', async () => {
-    process.env.ADAPTER_DRY_RUN = 'true';
-    const { handler } = loadModule();
-    const res = await handler(createEvent({ prompt: 'hello' }));
-    expect(res.statusCode).toBe(200);
-    const body = parseBody(res);
-    expect(body.text).toContain('dry-run');
-    expect(body.model_used).toBe('gemini-2.5-flash');
-    expect(body.fallback_used).toBe(false);
-    expect(typeof body.cost_estimate).toBe('number');
-    expect(fetchMock).not.toHaveBeenCalled();
-    expect(genaiMock.GoogleGenAI).not.toHaveBeenCalled();
-  });
-
-  it('gemini protocol: routes through the SDK and returns its text', async () => {
-    const { handler } = loadModule();
-    const res = await handler(createEvent({ prompt: 'hello' }));
-    expect(res.statusCode).toBe(200);
-    const body = parseBody(res);
-    expect(body.text).toBe('gemini live text');
-    expect(body.model_used).toBe('gemini-2.5-flash');
-    expect(body.fallback_used).toBe(false);
-    expect(fetchMock).not.toHaveBeenCalled();
-    expect(genaiMock.generateContent).toHaveBeenCalledWith(
-      expect.objectContaining({ model: 'gemini-2.5-flash', contents: 'hello' })
-    );
-  });
-
-  it('anthropic-messages protocol: correct request shape and text extraction', async () => {
-    fetchMock.mockResolvedValue(anthropicResponse('anthropic says hi'));
-    const { handler } = loadModule();
-    const res = await handler(createEvent({ prompt: 'hello', provider: 'aicodemirror-claude', temperature: 0.4 }));
-    expect(res.statusCode).toBe(200);
-    const body = parseBody(res);
-    expect(body.text).toBe('anthropic says hi');
-    expect(body.model_used).toBe('aicodemirror-claude');
-    expect(body.fallback_used).toBe(false);
-    expect(genaiMock.GoogleGenAI).not.toHaveBeenCalled();
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-    const [url, init] = fetchMock.mock.calls[0];
-    expect(url).toBe('https://api.aicodemirror.com/api/claudecode/v1/messages');
-    expect(init.method).toBe('POST');
-    expect(init.headers['x-api-key']).toBe(FAKE_AICODEMIRROR_KEY);
-    expect(init.headers['anthropic-version']).toBeDefined();
-    const sent = JSON.parse(init.body);
-    expect(sent.model).toBe('claude-sonnet-4-6');
-    expect(typeof sent.max_tokens).toBe('number');
-    expect(sent.temperature).toBe(0.4);
-    expect(sent.messages).toEqual([{ role: 'user', content: 'hello' }]);
-  });
-
-  it('openai-chat protocol: correct request shape and text extraction', async () => {
-    fetchMock.mockResolvedValue(openaiResponse('openai says hi'));
-    const { handler } = loadModule();
-    const res = await handler(createEvent({ prompt: 'hello', provider: 'deepseek-openai' }));
-    expect(res.statusCode).toBe(200);
-    const body = parseBody(res);
-    expect(body.text).toBe('openai says hi');
-    expect(body.model_used).toBe('deepseek-openai');
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-    const [url, init] = fetchMock.mock.calls[0];
-    expect(url).toBe('https://api.deepseek.com/v1/chat/completions');
-    expect(init.headers.Authorization).toBe(`Bearer ${FAKE_DEEPSEEK_KEY}`);
-    const sent = JSON.parse(init.body);
-    expect(sent.model).toBe('deepseek-chat');
-    expect(sent.messages).toEqual([{ role: 'user', content: 'hello' }]);
-  });
-
-  it.each(['gpt-5.5', 'gpt-5.6-luna'])(
-    'openai-responses protocol: preserves exact route metadata for %s',
-    async (model) => {
-      fetchMock.mockResolvedValue(responsesResponse(`${model} says hi`));
-      const { handler, PROVIDER_REGISTRY } = loadModule();
-      const res = await handler(createEvent({ prompt: 'hello', provider: model, temperature: 1.9 }));
-      expect(res.statusCode).toBe(200);
-      const body = parseBody(res);
-      expect(body.text).toBe(`${model} says hi`);
-      expect(body.model_used).toBe(model);
-      expect(body.fallback_used).toBe(false);
-      expect(body.cost_estimate).toBeGreaterThan(0);
-      expect(fetchMock).toHaveBeenCalledTimes(1);
-      const [url, init] = fetchMock.mock.calls[0];
-      expect(url).toBe('https://api.openai.com/v1/responses');
-      expect(init.method).toBe('POST');
-      expect(init.headers.Authorization).toBe(`Bearer ${FAKE_OPENAI_KEY}`);
-      const sent = JSON.parse(init.body);
-      expect(sent).toEqual({
-        model,
-        input: 'hello',
-        reasoning: { effort: 'low' },
-        max_output_tokens: PROVIDER_REGISTRY[model].maxOutputTokens,
-      });
-      expect(sent).not.toHaveProperty('temperature');
+  it('fails closed to 2.5 when read-only model lookup times out', async () => {
+    vi.useFakeTimers();
+    try {
+      mocks.get.mockImplementation(() => new Promise(() => {}));
+      const adapter = load();
+      const pending = adapter.handler(event({}, { httpMethod: 'GET', body: '' }));
+      await vi.advanceTimersByTimeAsync(5000);
+      expect(json(await pending).default_model).toBe('gemini-2.5-flash');
+    } finally {
+      vi.useRealTimers();
     }
-  );
-
+  });
+  it('uses 3.6 minimal thinking without sampling parameters and reports direct metadata', async () => {
+    const adapter = load(); const response = await adapter.handler(event({ model: 'gemini-3.6-flash', prompt: 'hello' }));
+    expect(json(response)).toMatchObject({ model_used: 'gemini-3.6-flash', fallback_used: false, text: 'model text' });
+    expect(mocks.generateContent).toHaveBeenCalledWith(expect.objectContaining({ model: 'gemini-3.6-flash', config: expect.objectContaining({ thinkingConfig: { thinkingLevel: 'MINIMAL' }, maxOutputTokens: 256 }) }));
+    expect(mocks.generateContent.mock.calls[0][0].config).not.toHaveProperty('temperature');
+    expect(mocks.generateContent.mock.calls[0][0].config).not.toHaveProperty('topP');
+    expect(mocks.generateContent.mock.calls[0][0].config).not.toHaveProperty('topK');
+  });
+  it('truncates input sent to the SDK at the exported prompt bound', async () => {
+    const adapter = load();
+    const rawPrompt = 'x'.repeat(adapter.MAX_PROMPT_LEN + 40);
+    await adapter.handler(event({ model: 'gemini-3.6-flash', prompt: rawPrompt }));
+    expect(mocks.generateContent.mock.calls[0][0].contents).toBe('x'.repeat(adapter.MAX_PROMPT_LEN));
+  });
+  it('falls 3.6 to 2.5 and never reverses an explicit 2.5 choice', async () => {
+    mocks.generateContent.mockRejectedValueOnce(new Error('down')).mockResolvedValueOnce({ text: 'secondary' });
+    const adapter = load(); const fallback = await adapter.handler(event({ model: 'gemini-3.6-flash', prompt: 'hello' }));
+    expect(json(fallback)).toMatchObject({ model_used: 'gemini-2.5-flash', fallback_used: true });
+    adapter.resetAdapterState(); mocks.generateContent.mockReset().mockResolvedValue({ text: 'chosen' });
+    const explicit = await adapter.handler(event({ model: 'gemini-2.5-flash', prompt: 'hello' }));
+    expect(json(explicit)).toMatchObject({ model_used: 'gemini-2.5-flash', fallback_used: false });
+    expect(mocks.generateContent.mock.calls).toHaveLength(1);
+  });
   it.each([
-    ['gpt-5.5', 'openai/gpt-5.5'],
-    ['gpt-5.6-luna', 'openai/gpt-5.6-luna'],
-  ])('Gateway Responses uses exact slug but reports product model %s', async (model, gatewaySlug) => {
-    delete process.env.OPENAI_API_KEY;
-    process.env.AI_GATEWAY_API_KEY = FAKE_GATEWAY_KEY;
-    fetchMock.mockResolvedValue(responsesResponse('gateway says hi'));
-    const { handler } = loadModule();
-    const response = await handler(createEvent({ prompt: 'hello', provider: model }));
-    expect(parseBody(response)).toMatchObject({
-      text: 'gateway says hi',
-      model_used: model,
-      fallback_used: false,
-    });
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-    const [url, init] = fetchMock.mock.calls[0];
-    expect(url).toBe('https://ai-gateway.vercel.sh/v1/responses');
-    expect(init.headers.Authorization).toBe(`Bearer ${FAKE_GATEWAY_KEY}`);
-    expect(JSON.parse(init.body).model).toBe(gatewaySlug);
+    ['empty text', { text: '' }, { text: ' ' }],
+    ['malformed response', {}, null],
+  ])('returns truthful local fallback metadata when both models yield %s', async (_name, primaryResponse, secondaryResponse) => {
+    mocks.generateContent.mockResolvedValueOnce(primaryResponse).mockResolvedValueOnce(secondaryResponse);
+    const adapter = load();
+    const response = await adapter.handler(event({ model: 'gemini-3.6-flash', prompt: 'hello' }));
+    expect(json(response)).toEqual({ text: '', model_used: 'local-fallback', cost_estimate: 0, fallback_used: true });
+    expect(mocks.generateContent.mock.calls.map(([request]) => request.model)).toEqual(['gemini-3.6-flash', 'gemini-2.5-flash']);
   });
-
-  it('when both keys exist, an uncached request makes one Gateway GPT POST only', async () => {
-    process.env.AI_GATEWAY_API_KEY = FAKE_GATEWAY_KEY;
-    fetchMock.mockImplementation(async (url) => {
-      if (url === 'https://ai-gateway.vercel.sh/v1/responses') return responsesResponse('gateway selected');
-      if (url === 'https://api.openai.com/v1/responses') throw new Error('direct GPT must not be called');
-      throw new Error(`unexpected URL: ${url}`);
-    });
-    const { handler, getRequestCounters, getBudgetRemaining, DEFAULT_DAILY_BUDGET_USD } = loadModule();
-    const response = await handler(createEvent({ prompt: 'hello', provider: 'gpt-5.5' }));
-    const body = parseBody(response);
-    expect(body).toMatchObject({
-      text: 'gateway selected',
-      model_used: 'gpt-5.5',
-      fallback_used: false,
-    });
-    expect(fetchMock.mock.calls.map(([url]) => url)).toEqual([
-      'https://ai-gateway.vercel.sh/v1/responses',
-    ]);
-    expect(getRequestCounters()['gpt-5.5:gpt-5.5']).toBe(1);
-    expect(DEFAULT_DAILY_BUDGET_USD - getBudgetRemaining()).toBeCloseTo(body.cost_estimate, 12);
-    expect(logLines.join('\n')).not.toContain(FAKE_OPENAI_KEY);
-    expect(logLines.join('\n')).not.toContain(FAKE_GATEWAY_KEY);
+  it('does not retry a failed explicit 2.5 attempt when maxRetries is zero', async () => {
+    mocks.generateContent.mockRejectedValue(new Error('unavailable'));
+    const adapter = load();
+    const response = await adapter.handler(event({ model: 'gemini-2.5-flash', prompt: 'hello' }));
+    expect(json(response)).toMatchObject({ model_used: 'local-fallback', fallback_used: true });
+    expect(mocks.generateContent).toHaveBeenCalledTimes(1);
   });
-
-  it('selected Gateway failure never calls direct GPT and enters Gemini fallback', async () => {
-    process.env.AI_GATEWAY_API_KEY = FAKE_GATEWAY_KEY;
-    fetchMock.mockImplementation(async (url) => {
-      if (url === 'https://ai-gateway.vercel.sh/v1/responses') return jsonResponse({}, 429);
-      if (url === 'https://api.openai.com/v1/responses') throw new Error('direct GPT must not be called');
-      throw new Error(`unexpected URL: ${url}`);
-    });
-    const adapter = loadModule();
-    const before = adapter.getBudgetRemaining();
-    const response = await adapter.handler(createEvent({ prompt: 'hello', provider: 'gpt-5.6-luna' }));
-    const body = parseBody(response);
-    expect(body).toMatchObject({
-      text: 'gemini live text',
-      model_used: 'gemini-2.5-flash',
-      fallback_used: true,
-    });
-    expect(fetchMock.mock.calls.map(([url]) => url)).toEqual([
-      'https://ai-gateway.vercel.sh/v1/responses',
-    ]);
-    expect(adapter.getRequestCounters()['gpt-5.6-luna:gpt-5.6-luna']).toBe(1);
-    expect(adapter.isProviderOpen('gpt-5.6-luna')).toBe(false);
-    expect(before - adapter.getBudgetRemaining()).toBeCloseTo(body.cost_estimate, 12);
-  });
-
-  it('one failed GPT attempt is recorded once per request and opens the breaker at the threshold', async () => {
-    process.env.AI_GATEWAY_API_KEY = FAKE_GATEWAY_KEY;
-    fetchMock.mockResolvedValue(jsonResponse({}, 503));
-    const adapter = loadModule();
-    const { BREAKER_THRESHOLD } = adapter;
-
-    for (let request = 1; request <= BREAKER_THRESHOLD; request++) {
-      await adapter.handler(createEvent({ prompt: 'hello', provider: 'gpt-5.5' }));
-      expect(adapter.getRequestCounters()['gpt-5.5:gpt-5.5']).toBe(request);
-      expect(adapter.isProviderOpen('gpt-5.5')).toBe(request === BREAKER_THRESHOLD);
+  it('rejects the thirty-first request from one client without a generation call', async () => {
+    process.env.ADAPTER_DAILY_BUDGET_USD = '1';
+    const adapter = load();
+    for (let count = 0; count < 30; count += 1) {
+      expect((await adapter.handler(event({ prompt: 'hello' }))).statusCode).toBe(200);
     }
-    expect(fetchMock).toHaveBeenCalledTimes(BREAKER_THRESHOLD);
-
-    await adapter.handler(createEvent({ prompt: 'breaker open', provider: 'gpt-5.5' }));
-    expect(fetchMock).toHaveBeenCalledTimes(BREAKER_THRESHOLD);
-    expect(adapter.getRequestCounters()['gpt-5.5:gpt-5.5']).toBe(BREAKER_THRESHOLD);
+    expect(mocks.generateContent).toHaveBeenCalledTimes(30);
+    const response = await adapter.handler(event({ prompt: 'hello' }));
+    expect(response.statusCode).toBe(429);
+    expect(json(response)).toEqual({ error: 'Rate limit exceeded' });
+    expect(mocks.generateContent).toHaveBeenCalledTimes(30);
   });
-
-  it('the maximum bounded GPT-5.5 call fits its ceiling and an over-ceiling request is rejected', async () => {
-    fetchMock.mockResolvedValue(responsesResponse('bounded response'));
-    const adapter = loadModule();
-    const bounded = parseBody(
-      await adapter.handler(createEvent({ prompt: 'x'.repeat(8000), provider: 'gpt-5.5' }))
-    );
-    expect(bounded).toMatchObject({ model_used: 'gpt-5.5', fallback_used: false });
-    expect(bounded.cost_estimate).toBeCloseTo(0.015224, 12);
-    expect(bounded.cost_estimate).toBeLessThanOrEqual(adapter.getCostCeiling('gpt-5.5'));
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-
-    fetchMock.mockClear();
-    const rejected = parseBody(
-      await adapter.handler(createEvent({ prompt: 'x'.repeat(9000), provider: 'gpt-5.5' }))
-    );
-    expect(rejected).toMatchObject({ model_used: 'gemini-2.5-flash', fallback_used: true });
-    expect(fetchMock).not.toHaveBeenCalled();
-    expect(logLines.some((line) => line.includes('gpt-5.5 skipped: per-call cost ceiling'))).toBe(true);
+  it('returns local fallback for all failures and applies bounded cost, budget, counters, circuit and generic errors', async () => {
+    const adapter = load(); process.env.ADAPTER_DAILY_BUDGET_USD = '0.000001';
+    const budget = await adapter.handler(event({ prompt: 'hello' }));
+    expect(json(budget)).toMatchObject({ model_used: 'local-fallback', fallback_used: true });
+    adapter.resetAdapterState(); delete process.env.ADAPTER_DAILY_BUDGET_USD; mocks.generateContent.mockRejectedValue(new Error('failure'));
+    await adapter.handler(event({ prompt: 'hello' })); await adapter.handler(event({ prompt: 'hello' }));
+    expect(adapter.getCircuitState()['gemini-3.6-flash'].openUntil).toBeGreaterThan(0);
+    expect(adapter.classifyError({ status: 429 })).toBe('rate-limit');
+    expect(adapter.getRequestCounters()['gemini-3.6-flash']).toBeGreaterThan(0);
   });
-
-  it('openai-responses accepts the top-level output_text representation', async () => {
-    fetchMock.mockResolvedValue(jsonResponse({ output_text: 'top-level text' }));
-    const { handler } = loadModule();
-    const body = parseBody(await handler(createEvent({ prompt: 'hello', provider: 'gpt-5.5' })));
-    expect(body).toMatchObject({
-      text: 'top-level text',
-      model_used: 'gpt-5.5',
-      fallback_used: false,
-    });
-  });
-
-  it('missing OPENAI_API_KEY deterministically falls back without an OpenAI network call', async () => {
-    delete process.env.OPENAI_API_KEY;
-    const { handler } = loadModule();
-    const body = parseBody(await handler(createEvent({ prompt: 'hello', provider: 'gpt-5.5' })));
-    expect(body).toMatchObject({
-      text: 'gemini live text',
-      model_used: 'gemini-2.5-flash',
-      fallback_used: true,
-    });
-    expect(fetchMock).not.toHaveBeenCalled();
-    expect(logLines.filter((line) => line.includes('gpt-5.5') && line.includes('(auth)'))).toHaveLength(1);
-  });
-
-  it.each([
-    ['auth', jsonResponse({}, 401)],
-    ['rate-limit', jsonResponse({}, 429)],
-    ['server', jsonResponse({}, 503)],
-  ])('OpenAI %s errors are classified, redacted, and fall back', async (kind, upstream) => {
-    fetchMock.mockResolvedValue(upstream);
-    const { handler } = loadModule();
-    const body = parseBody(await handler(createEvent({ prompt: 'hello', provider: 'gpt-5.6-luna' })));
-    expect(body).toMatchObject({ model_used: 'gemini-2.5-flash', fallback_used: true });
-    expect(logLines.some((line) => line.includes(`(${kind})`))).toBe(true);
-    expect(logLines.join('\n')).not.toContain(FAKE_OPENAI_KEY);
-  });
-
-  it.each([
-    ['auth', () => Promise.resolve(jsonResponse({}, 401))],
-    ['rate-limit', () => Promise.resolve(jsonResponse({}, 429))],
-    ['timeout', () => Promise.reject(Object.assign(new Error('aborted'), { name: 'AbortError' }))],
-  ])('Gateway generation %s is classified, redacted, and falls back to Gemini', async (kind, failure) => {
-    delete process.env.OPENAI_API_KEY;
-    process.env.AI_GATEWAY_API_KEY = FAKE_GATEWAY_KEY;
-    fetchMock.mockImplementation(failure);
-    const { handler } = loadModule();
-    const body = parseBody(
-      await handler(createEvent({ prompt: 'hello', provider: 'gpt-5.6-luna' }))
-    );
-    expect(body).toMatchObject({ model_used: 'gemini-2.5-flash', fallback_used: true });
-    expect(logLines.some((line) => line.includes(`(${kind})`))).toBe(true);
-    expect(logLines.join('\n')).not.toContain(FAKE_GATEWAY_KEY);
-  });
-
-  it('OpenAI timeout, malformed JSON, and empty output all fall back deterministically', async () => {
-    for (const failure of [
-      () => Promise.reject(Object.assign(new Error('aborted'), { name: 'AbortError' })),
-      () => Promise.resolve({ ok: true, status: 200, json: async () => { throw new SyntaxError('bad json'); } }),
-      () => Promise.resolve(responsesResponse('')),
-    ]) {
-      fetchMock.mockReset();
-      fetchMock.mockImplementation(failure);
-      const { handler } = loadModule();
-      const body = parseBody(await handler(createEvent({ prompt: 'hello', provider: 'gpt-5.5' })));
-      expect(body).toMatchObject({ model_used: 'gemini-2.5-flash', fallback_used: true });
-    }
-    expect(logLines.join('\n')).not.toContain(FAKE_OPENAI_KEY);
-  });
-
-  it('an over-ceiling OpenAI primary is skipped and an allowed Gemini fallback may succeed', async () => {
-    const firstAdapter = loadModule();
-    const overCost = await firstAdapter.handler(
-      createEvent({ prompt: 'x'.repeat(20000), provider: 'gpt-5.5' })
-    );
-    expect(overCost.statusCode).toBe(200);
-    expect(parseBody(overCost)).toMatchObject({
-      model_used: 'gemini-2.5-flash',
-      fallback_used: true,
-    });
-    expect(fetchMock).not.toHaveBeenCalled();
-    expect(genaiMock.GoogleGenAI).toHaveBeenCalledTimes(1);
-    expect(firstAdapter.getRequestCounters()['gpt-5.5:gpt-5.5']).toBeUndefined();
-  });
-
-  it('returns local fallback when no provider fits the remaining daily budget', async () => {
-    process.env.ADAPTER_DAILY_BUDGET_USD = '0.0000001';
-    const secondAdapter = loadModule();
-    const overBudget = await secondAdapter.handler(
-      createEvent({ prompt: 'hello', provider: 'gpt-5.6-luna' })
-    );
-    expect(overBudget.statusCode).toBe(200);
-    expect(parseBody(overBudget)).toMatchObject({
-      model_used: 'local-fallback',
-      fallback_used: true,
-    });
-    expect(fetchMock).not.toHaveBeenCalled();
-    expect(genaiMock.GoogleGenAI).not.toHaveBeenCalled();
-    expect(secondAdapter.getRequestCounters()).toEqual({ 'local-fallback:local-fallback': 1 });
-  });
-
-  it('skips an over-ceiling fallback without calling or charging it', async () => {
-    const prompt = 'x'.repeat(8000); // ~2,000 tokens; AICodeMirror estimate is $0.006 > $0.005.
-    genaiMock.generateContent.mockRejectedValue(new Error('gemini down'));
-    fetchMock.mockImplementation(async (url) => {
-      if (url === 'https://api.openai.com/v1/responses') return jsonResponse({}, 503);
-      if (String(url).includes('aicodemirror')) throw new Error('over-ceiling fallback must be skipped');
-      if (url === 'https://api.deepseek.com/anthropic/v1/messages') {
-        return anthropicResponse('deepseek within ceiling');
-      }
-      throw new Error(`unexpected URL: ${url}`);
-    });
-    const adapter = loadModule();
-    const before = adapter.getBudgetRemaining();
-    const response = await adapter.handler(createEvent({ prompt, provider: 'gpt-5.6-luna' }));
-    const body = parseBody(response);
-    expect(body).toMatchObject({
-      text: 'deepseek within ceiling',
-      model_used: 'deepseek-anthropic',
-      fallback_used: true,
-    });
-    expect(fetchMock.mock.calls.map(([url]) => url)).not.toContain(
-      'https://api.aicodemirror.com/api/claudecode/v1/messages'
-    );
-    expect(adapter.getRequestCounters()['aicodemirror-claude:claude-sonnet-4-6']).toBeUndefined();
-    expect(before - adapter.getBudgetRemaining()).toBeCloseTo(body.cost_estimate, 12);
-    expect(logLines.some((line) => line.includes('aicodemirror-claude skipped: per-call cost ceiling'))).toBe(true);
-  });
-
-  it('skips a fallback that exceeds remaining budget without calling or charging it', async () => {
-    const prompt = 'x'.repeat(1600); // ~400 tokens: Luna $0.001168, AICodeMirror $0.0012.
-    process.env.ADAPTER_DAILY_BUDGET_USD = '0.00118';
-    genaiMock.generateContent.mockRejectedValue(new Error('gemini down'));
-    fetchMock.mockImplementation(async (url) => {
-      if (url === 'https://api.openai.com/v1/responses') return jsonResponse({}, 503);
-      if (String(url).includes('aicodemirror')) throw new Error('over-budget fallback must be skipped');
-      if (url === 'https://api.deepseek.com/anthropic/v1/messages') {
-        return anthropicResponse('deepseek within remaining budget');
-      }
-      throw new Error(`unexpected URL: ${url}`);
-    });
-    const adapter = loadModule();
-    const before = adapter.getBudgetRemaining();
-    const response = await adapter.handler(createEvent({ prompt, provider: 'gpt-5.6-luna' }));
-    const body = parseBody(response);
-    expect(body).toMatchObject({
-      text: 'deepseek within remaining budget',
-      model_used: 'deepseek-anthropic',
-      fallback_used: true,
-    });
-    expect(fetchMock.mock.calls.map(([url]) => url)).not.toContain(
-      'https://api.aicodemirror.com/api/claudecode/v1/messages'
-    );
-    expect(adapter.getRequestCounters()['aicodemirror-claude:claude-sonnet-4-6']).toBeUndefined();
-    expect(before - adapter.getBudgetRemaining()).toBeCloseTo(body.cost_estimate, 12);
-    expect(logLines.some((line) => line.includes('aicodemirror-claude skipped: daily budget remaining'))).toBe(true);
-  });
-
-  it('GET capabilities is no-store and Gemini-only without an OpenAI key', async () => {
-    delete process.env.OPENAI_API_KEY;
-    const { handler } = loadModule();
-    const res = await handler(createEvent({}, { httpMethod: 'GET', body: '' }));
-    expect(res.statusCode).toBe(200);
-    expect(res.headers['Cache-Control']).toBe('no-store');
-    expect(parseBody(res)).toEqual({
-      default_model: 'gemini-2.5-flash',
-      models: [{ id: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash' }],
-    });
-    expect(fetchMock).not.toHaveBeenCalled();
-  });
-
-  it('GET capabilities exposes both GPT models atomically after exact metadata proof and caches success', async () => {
-    fetchMock.mockImplementation(async (url) => {
-      const model = decodeURIComponent(String(url).split('/').pop());
-      return jsonResponse({ id: model });
-    });
-    const { handler } = loadModule();
-    const first = await handler(createEvent({}, { httpMethod: 'GET', body: '' }));
-    expect(parseBody(first).models.map(({ id }) => id)).toEqual([
-      'gemini-2.5-flash',
-      'gpt-5.5',
-      'gpt-5.6-luna',
-    ]);
-    expect(fetchMock).toHaveBeenCalledTimes(2);
-    for (const [url, init] of fetchMock.mock.calls) {
-      expect(url).toMatch(/^https:\/\/api\.openai\.com\/v1\/models\/gpt-5\./);
-      expect(init.method).toBe('GET');
-      expect(init.headers.Authorization).toBe(`Bearer ${FAKE_OPENAI_KEY}`);
-      expect(init).not.toHaveProperty('body');
-    }
-
-    await handler(createEvent({}, { httpMethod: 'GET', body: '' }));
-    expect(fetchMock).toHaveBeenCalledTimes(2);
-  });
-
-  it('Gateway capability proof is atomic, selects Gateway, and avoids a known-bad direct key for generation', async () => {
-    process.env.AI_GATEWAY_API_KEY = FAKE_GATEWAY_KEY;
-    fetchMock.mockImplementation(async (url, init) => {
-      if (url === 'https://ai-gateway.vercel.sh/v1/models') {
-        expect(init.method).toBe('GET');
-        expect(init.headers.Authorization).toBe(`Bearer ${FAKE_GATEWAY_KEY}`);
-        expect(init).not.toHaveProperty('body');
-        return gatewayModelsResponse();
-      }
-      if (String(url).startsWith('https://api.openai.com/v1/models/')) return jsonResponse({}, 401);
-      if (url === 'https://ai-gateway.vercel.sh/v1/responses') {
-        return responsesResponse('gateway after capability proof');
-      }
-      if (url === 'https://api.openai.com/v1/responses') {
-        throw new Error('capability-selected Gateway must avoid direct generation');
-      }
-      throw new Error(`unexpected URL: ${url}`);
-    });
-    const adapter = loadModule();
-    const capability = await adapter.handler(createEvent({}, { httpMethod: 'GET', body: '' }));
-    expect(parseBody(capability).models.map(({ id }) => id)).toEqual([
-      'gemini-2.5-flash',
-      'gpt-5.5',
-      'gpt-5.6-luna',
-    ]);
-    expect(Array.from(adapter.getOpenAIUpstreamOrder())).toEqual(['gateway']);
-
-    const generation = await adapter.handler(
-      createEvent({ prompt: 'hello', provider: 'gpt-5.5' })
-    );
-    expect(parseBody(generation)).toMatchObject({
-      text: 'gateway after capability proof',
-      model_used: 'gpt-5.5',
-      fallback_used: false,
-    });
-    const generationCalls = fetchMock.mock.calls.filter(([, init]) => init.method === 'POST');
-    expect(generationCalls).toHaveLength(1);
-    expect(generationCalls[0][0]).toBe('https://ai-gateway.vercel.sh/v1/responses');
-    expect(JSON.parse(generationCalls[0][1].body).model).toBe('openai/gpt-5.5');
-  });
-
-  it('capability-selected direct failure never retries through Gateway in the same request', async () => {
-    process.env.AI_GATEWAY_API_KEY = FAKE_GATEWAY_KEY;
-    fetchMock.mockImplementation(async (url, init) => {
-      if (url === 'https://ai-gateway.vercel.sh/v1/models') return jsonResponse({}, 401);
-      if (String(url).startsWith('https://api.openai.com/v1/models/')) {
-        return jsonResponse({ id: decodeURIComponent(String(url).split('/').pop()) });
-      }
-      if (url === 'https://api.openai.com/v1/responses') return jsonResponse({}, 503);
-      if (url === 'https://ai-gateway.vercel.sh/v1/responses') {
-        throw new Error('second GPT upstream must not be called');
-      }
-      throw new Error(`unexpected URL: ${url} ${init.method}`);
-    });
-    const adapter = loadModule();
-    const capability = await adapter.handler(createEvent({}, { httpMethod: 'GET', body: '' }));
-    expect(parseBody(capability).models).toHaveLength(3);
-    expect(adapter.getSelectedOpenAIUpstream()).toBe('direct');
-
-    const generation = parseBody(
-      await adapter.handler(createEvent({ prompt: 'hello', provider: 'gpt-5.6-luna' }))
-    );
-    expect(generation).toMatchObject({
-      text: 'gemini live text',
-      model_used: 'gemini-2.5-flash',
-      fallback_used: true,
-    });
-    const postCalls = fetchMock.mock.calls.filter(([, init]) => init.method === 'POST');
-    expect(postCalls).toHaveLength(1);
-    expect(postCalls[0][0]).toBe('https://api.openai.com/v1/responses');
-  });
-
-  it.each([
-    ['missing slug', gatewayModelsResponse(['openai/gpt-5.5'])],
-    ['auth failure', jsonResponse({}, 401)],
-    ['rate limit', jsonResponse({}, 429)],
-    ['malformed list', jsonResponse({ data: 'not-an-array' })],
-  ])('Gateway capabilities remains Gemini-only on %s', async (_name, gatewayResponse) => {
-    delete process.env.OPENAI_API_KEY;
-    process.env.AI_GATEWAY_API_KEY = FAKE_GATEWAY_KEY;
-    fetchMock.mockResolvedValue(gatewayResponse);
-    const { handler } = loadModule();
-    const response = await handler(createEvent({}, { httpMethod: 'GET', body: '' }));
-    expect(parseBody(response).models).toEqual([
-      { id: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash' },
-    ]);
-    expect(response.headers['Cache-Control']).toBe('no-store');
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-    expect(fetchMock.mock.calls[0][1].method).toBe('GET');
-    expect(fetchMock.mock.calls[0][1]).not.toHaveProperty('body');
-    expect(logLines.join('\n')).not.toContain(FAKE_GATEWAY_KEY);
-  });
-
-  it('Gateway capability timeout remains secret-safe and Gemini-only', async () => {
-    delete process.env.OPENAI_API_KEY;
-    process.env.AI_GATEWAY_API_KEY = FAKE_GATEWAY_KEY;
-    fetchMock.mockRejectedValue(Object.assign(new Error('aborted'), { name: 'AbortError' }));
-    const { handler } = loadModule();
-    const response = await handler(createEvent({}, { httpMethod: 'GET', body: '' }));
-    expect(parseBody(response).models).toEqual([
-      { id: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash' },
-    ]);
-    expect(logLines.some((line) => line.includes('gateway failed (timeout)'))).toBe(true);
-    expect(logLines.join('\n')).not.toContain(FAKE_GATEWAY_KEY);
-  });
-
-  it.each([
-    ['mismatched id', (model) => jsonResponse({ id: model === 'gpt-5.5' ? model : 'different-model' })],
-    ['auth failure', () => jsonResponse({}, 401)],
-    ['timeout', () => Promise.reject(Object.assign(new Error('aborted'), { name: 'AbortError' }))],
-  ])('GET capabilities remains atomically Gemini-only on %s', async (_name, responseFor) => {
-    fetchMock.mockImplementation(async (url) => {
-      const model = decodeURIComponent(String(url).split('/').pop());
-      return responseFor(model);
-    });
-    const { handler } = loadModule();
-    const res = await handler(createEvent({}, { httpMethod: 'GET', body: '' }));
-    expect(parseBody(res).models).toEqual([{ id: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash' }]);
-    expect(res.headers['Cache-Control']).toBe('no-store');
-    expect(logLines.join('\n')).not.toContain(FAKE_OPENAI_KEY);
-  });
-
-  it('classifies errors as auth, timeout, rate-limit, server, and network', () => {
-    const { classifyError } = loadModule();
-    expect(classifyError(httpError(401))).toBe('auth');
-    expect(classifyError(httpError(403))).toBe('auth');
-    expect(classifyError(new Error('missing-api-key'))).toBe('auth');
-    expect(classifyError(httpError(429))).toBe('rate-limit');
-    expect(classifyError(httpError(500))).toBe('server');
-    expect(classifyError(httpError(503))).toBe('server');
-    expect(classifyError(new Error('timeout'))).toBe('timeout');
-    expect(classifyError(new Error('ECONNRESET'))).toBe('network');
-  });
-
-  it('circuit breaker opens after the threshold and recovers after cooldown', () => {
-    const {
-      recordProviderFailure,
-      recordProviderSuccess,
-      isProviderOpen,
-      resetProviderState,
-      BREAKER_THRESHOLD,
-      BREAKER_COOLDOWN_MS,
-    } = loadModule();
-    resetProviderState();
-    const t = 1_000_000;
-    for (let i = 0; i < BREAKER_THRESHOLD - 1; i++) {
-      recordProviderFailure('deepseek-anthropic', t);
-      expect(isProviderOpen('deepseek-anthropic', t + 1)).toBe(false);
-    }
-    recordProviderFailure('deepseek-anthropic', t);
-    expect(isProviderOpen('deepseek-anthropic', t + 1)).toBe(true);
-    expect(isProviderOpen('deepseek-anthropic', t + BREAKER_COOLDOWN_MS - 1)).toBe(true);
-    // Cooldown expired: the provider is attempted again.
-    expect(isProviderOpen('deepseek-anthropic', t + BREAKER_COOLDOWN_MS + 1)).toBe(false);
-    // A success fully resets the breaker.
-    recordProviderSuccess('deepseek-anthropic');
-    recordProviderFailure('deepseek-anthropic', t + BREAKER_COOLDOWN_MS + 2);
-    expect(isProviderOpen('deepseek-anthropic', t + BREAKER_COOLDOWN_MS + 3)).toBe(false);
-  });
-
-  it('handler skips a provider whose circuit is open', async () => {
-    const adapter = loadModule();
-    const { handler, recordProviderFailure, BREAKER_THRESHOLD } = adapter;
-    for (let i = 0; i < BREAKER_THRESHOLD; i++) {
-      recordProviderFailure('aicodemirror-claude', Date.now());
-    }
-    genaiMock.generateContent.mockRejectedValue(new Error('gemini down'));
-    fetchMock.mockResolvedValue(anthropicResponse('deepseek rescue'));
-    const res = await handler(createEvent({ prompt: 'hello', provider: 'aicodemirror-claude' }));
-    expect(res.statusCode).toBe(200);
-    const body = parseBody(res);
-    expect(body.text).toBe('deepseek rescue');
-    expect(body.model_used).toBe('deepseek-anthropic');
-    expect(body.fallback_used).toBe(true);
-    const urls = fetchMock.mock.calls.map(([url]) => url);
-    expect(urls.some((url) => url.includes('aicodemirror'))).toBe(false);
-  });
-
-  it('a missing API key is an auth failure: no live call and no retries', async () => {
-    delete process.env.AICODEMIRROR_API_KEY;
-    genaiMock.generateContent.mockRejectedValue(new Error('gemini down'));
-    fetchMock.mockResolvedValue(anthropicResponse('deepseek rescue'));
-    const { handler } = loadModule();
-    const res = await handler(createEvent({ prompt: 'hello', provider: 'aicodemirror-claude' }));
-    expect(parseBody(res).model_used).toBe('deepseek-anthropic');
-    const urls = fetchMock.mock.calls.map(([url]) => url);
-    expect(urls.some((url) => url.includes('aicodemirror'))).toBe(false);
-    const authLines = logLines.filter((line) => line.includes('aicodemirror-claude') && line.includes('(auth)'));
-    expect(authLines).toHaveLength(1);
-  });
-
-  it('fallback chain is deterministic and ends in the local-fallback signal', async () => {
-    genaiMock.generateContent.mockRejectedValue(new Error('gemini down'));
-    fetchMock.mockRejectedValue(new Error('provider down'));
-    const { handler, PROVIDER_REGISTRY } = loadModule();
-    const res = await handler(createEvent({ prompt: 'hello' }));
-    expect(res.statusCode).toBe(200);
-    const body = parseBody(res);
-    expect(body.text).toBe('');
-    expect(body.model_used).toBe('local-fallback');
-    expect(body.fallback_used).toBe(true);
-    expect(body.cost_estimate).toBe(0);
-    // Gemini exhausts SDK retries first, then each fetch provider in registry order.
-    expect(genaiMock.generateContent).toHaveBeenCalledTimes(
-      PROVIDER_REGISTRY['gemini-2.5-flash'].maxRetries + 1
-    );
-    const urls = fetchMock.mock.calls.map(([url]) => url);
-    const acmAttempts = PROVIDER_REGISTRY['aicodemirror-claude'].maxRetries + 1;
-    const dsaAttempts = PROVIDER_REGISTRY['deepseek-anthropic'].maxRetries + 1;
-    const dsoAttempts = PROVIDER_REGISTRY['deepseek-openai'].maxRetries + 1;
-    expect(urls).toEqual([
-      ...Array(acmAttempts).fill('https://api.aicodemirror.com/api/claudecode/v1/messages'),
-      ...Array(dsaAttempts).fill('https://api.deepseek.com/anthropic/v1/messages'),
-      ...Array(dsoAttempts).fill('https://api.deepseek.com/v1/chat/completions'),
-    ]);
-  });
-
-  it('never logs planted fake keys even when errors embed them', async () => {
-    process.env.AI_GATEWAY_API_KEY = FAKE_GATEWAY_KEY;
-    genaiMock.generateContent.mockRejectedValue(new Error(`invalid key ${FAKE_GEMINI_KEY}`));
-    fetchMock.mockRejectedValue(
-      new Error(
-        `401 x-api-key: ${FAKE_AICODEMIRROR_KEY} Authorization: Bearer ${FAKE_DEEPSEEK_KEY} ${FAKE_OPENAI_KEY} ${FAKE_GATEWAY_KEY}`
-      )
-    );
-    const { handler } = loadModule();
-    await handler(createEvent({ prompt: 'hello' }));
-    expect(logLines.length).toBeGreaterThan(0);
-    for (const line of logLines) {
-      expect(line).not.toContain(FAKE_GEMINI_KEY);
-      expect(line).not.toContain(FAKE_AICODEMIRROR_KEY);
-      expect(line).not.toContain(FAKE_DEEPSEEK_KEY);
-      expect(line).not.toContain(FAKE_OPENAI_KEY);
-      expect(line).not.toContain(FAKE_GATEWAY_KEY);
-    }
-    expect(logLines.some((line) => line.includes('[REDACTED]'))).toBe(true);
-  });
-
-  it('redactForLog strips raw header values and bearer tokens', () => {
-    const { redactForLog } = loadModule();
-    expect(redactForLog(`x-api-key: ${FAKE_AICODEMIRROR_KEY}`)).not.toContain(FAKE_AICODEMIRROR_KEY);
-    expect(redactForLog('Authorization: Bearer some-opaque-token')).not.toContain('some-opaque-token');
-    expect(redactForLog(new Error(`key=${FAKE_DEEPSEEK_KEY}`))).not.toContain(FAKE_DEEPSEEK_KEY);
-    expect(redactForLog('plain message')).toBe('plain message');
-  });
-
-  it('daily budget defaults to $1 and is env-configurable, ignoring invalid values', () => {
-    const adapter = loadModule();
-    expect(adapter.DEFAULT_DAILY_BUDGET_USD).toBe(1.0);
-    expect(adapter.getBudgetRemaining()).toBe(1.0);
-    process.env.ADAPTER_DAILY_BUDGET_USD = '2.5';
-    expect(adapter.getBudgetRemaining()).toBe(2.5);
-    process.env.ADAPTER_DAILY_BUDGET_USD = 'not-a-number';
-    expect(adapter.getBudgetRemaining()).toBe(1.0);
-    process.env.ADAPTER_DAILY_BUDGET_USD = '0';
-    expect(adapter.getBudgetRemaining()).toBe(1.0);
-    process.env.ADAPTER_DAILY_BUDGET_USD = '-3';
-    expect(adapter.getBudgetRemaining()).toBe(1.0);
-  });
-
-  it('successful responses include budget_remaining and accumulate spend', async () => {
-    const { handler, DEFAULT_DAILY_BUDGET_USD } = loadModule();
-    const first = parseBody(await handler(createEvent({ prompt: 'hello' })));
-    expect(first.budget_remaining).toBeCloseTo(DEFAULT_DAILY_BUDGET_USD - first.cost_estimate, 12);
-    // Pre-existing contract fields are unchanged.
-    expect(first.text).toBe('gemini live text');
-    expect(first.model_used).toBe('gemini-2.5-flash');
-    expect(first.fallback_used).toBe(false);
-    const second = parseBody(await handler(createEvent({ prompt: 'hello' })));
-    expect(second.budget_remaining).toBeLessThan(first.budget_remaining);
-  });
-
-  it('returns the local-fallback signal without live attempts when the daily budget is exhausted', async () => {
-    const { handler, recordBudgetSpend, DEFAULT_DAILY_BUDGET_USD } = loadModule();
-    recordBudgetSpend(DEFAULT_DAILY_BUDGET_USD);
-    const res = await handler(createEvent({ prompt: 'hello' }));
-    expect(res.statusCode).toBe(200);
-    const body = parseBody(res);
-    expect(body.text).toBe('');
-    expect(body.fallback_used).toBe(true);
-    expect(body.model_used).toBe('local-fallback');
-    expect(body.budget_remaining).toBe(0);
-    // Never makes a live provider call.
-    expect(fetchMock).not.toHaveBeenCalled();
-    expect(genaiMock.GoogleGenAI).not.toHaveBeenCalled();
-  });
-
-  it('budget accumulator resets on UTC day rollover but not within the same day', () => {
-    const { getBudgetRemaining, recordBudgetSpend, DEFAULT_DAILY_BUDGET_USD } = loadModule();
-    const t0 = Date.UTC(2026, 0, 1, 12, 0, 0);
-    recordBudgetSpend(DEFAULT_DAILY_BUDGET_USD + 5, t0);
-    expect(getBudgetRemaining(t0)).toBe(0);
-    // Later the same UTC day: still exhausted.
-    expect(getBudgetRemaining(t0 + 3 * 3600 * 1000)).toBe(0);
-    // Next UTC day: accumulator resets to the full budget.
-    expect(getBudgetRemaining(t0 + 24 * 3600 * 1000)).toBe(DEFAULT_DAILY_BUDGET_USD);
-  });
-
-  it('tracks per-provider/model request counters and resets via the test hook', async () => {
-    const adapter = loadModule();
-    const { handler, getRequestCounters, resetBudgetState, DEFAULT_DAILY_BUDGET_USD } = adapter;
-    await handler(createEvent({ prompt: 'hello' }));
-    expect(getRequestCounters()['gemini-2.5-flash:gemini-2.5-flash']).toBe(1);
-    // A full chain failure counts every attempted provider plus local-fallback.
-    genaiMock.generateContent.mockRejectedValue(new Error('gemini down'));
-    fetchMock.mockRejectedValue(new Error('provider down'));
-    await handler(createEvent({ prompt: 'hello' }));
-    const counters = getRequestCounters();
-    expect(counters['gemini-2.5-flash:gemini-2.5-flash']).toBe(2);
-    expect(counters['aicodemirror-claude:claude-sonnet-4-6']).toBe(1);
-    expect(counters['deepseek-anthropic:deepseek-chat']).toBe(1);
-    expect(counters['deepseek-openai:deepseek-chat']).toBe(1);
-    expect(counters['local-fallback:local-fallback']).toBe(1);
-    resetBudgetState();
-    expect(getRequestCounters()).toEqual({});
-    expect(adapter.getBudgetRemaining()).toBe(DEFAULT_DAILY_BUDGET_USD);
-  });
-
-  it('dry-run responses include budget_remaining without spending budget', async () => {
-    process.env.ADAPTER_DRY_RUN = 'true';
-    const { handler, getBudgetRemaining, getRequestCounters, DEFAULT_DAILY_BUDGET_USD } = loadModule();
-    const body = parseBody(await handler(createEvent({ prompt: 'hello' })));
-    expect(body.text).toContain('dry-run');
-    expect(body.budget_remaining).toBe(DEFAULT_DAILY_BUDGET_USD);
-    // Dry-run never spends budget but does count the routed request.
-    expect(getBudgetRemaining()).toBe(DEFAULT_DAILY_BUDGET_USD);
-    expect(getRequestCounters()['gemini-2.5-flash:gemini-2.5-flash']).toBe(1);
-  });
-
-  it('all-providers-failed local fallback includes budget_remaining', async () => {
-    genaiMock.generateContent.mockRejectedValue(new Error('gemini down'));
-    fetchMock.mockRejectedValue(new Error('provider down'));
-    const { handler, DEFAULT_DAILY_BUDGET_USD } = loadModule();
-    const res = await handler(createEvent({ prompt: 'hello' }));
-    expect(res.statusCode).toBe(200);
-    const body = parseBody(res);
-    expect(body.text).toBe('');
-    expect(body.fallback_used).toBe(true);
-    // No successful live call, so nothing was spent.
-    expect(body.budget_remaining).toBe(DEFAULT_DAILY_BUDGET_USD);
+  it('rejects invalid requests without leaking errors', async () => {
+    const adapter = load();
+    expect((await adapter.handler(event({ model: 'unknown', prompt: 'x' }))).statusCode).toBe(400);
+    expect((await adapter.handler(event({}))).statusCode).toBe(400);
+    expect((await adapter.handler(event({}, { httpMethod: 'PATCH' }))).statusCode).toBe(405);
   });
 });

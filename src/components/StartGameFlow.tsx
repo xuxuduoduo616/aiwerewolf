@@ -13,6 +13,7 @@ import { DIFFICULTY_CONFIGS, type Difficulty } from '../types';
 import {
   AI_EXPRESSION_MODELS,
   DEFAULT_EXPRESSION_MODEL,
+  getAvailableExpressionModels,
   getExpressionModel,
   type AIExpressionModel,
   type AIExpressionModelId,
@@ -147,7 +148,7 @@ const StartGameFlow: React.FC<StartGameFlowProps> = ({
       : { ...initialSetup, expressionModel: DEFAULT_EXPRESSION_MODEL }
   ));
   const [availableExpressionModels, setAvailableExpressionModels] = useState<readonly AIExpressionModel[]>(
-    AI_EXPRESSION_MODELS.slice(0, 1),
+    getAvailableExpressionModels(null),
   );
   const onConfirmRef = useRef(onConfirm);
   onConfirmRef.current = onConfirm;
@@ -162,8 +163,8 @@ const StartGameFlow: React.FC<StartGameFlowProps> = ({
       if (!active) return;
       setAvailableExpressionModels(models);
       setSetup(current => (
-        models.some(model => model.id === current.expressionModel)
-          ? current
+        models.some(model => model.id === 'gemini-3.6-flash')
+          ? { ...current, expressionModel: 'gemini-3.6-flash' }
           : { ...current, expressionModel: DEFAULT_EXPRESSION_MODEL }
       ));
     });
@@ -315,8 +316,8 @@ const StartGameFlow: React.FC<StartGameFlowProps> = ({
           />
           <p className="start-model-status" role="status">
             {availableExpressionModels.length === AI_EXPRESSION_MODELS.length
-              ? 'OpenAI access verified for both optional models. Your choice affects dialogue only.'
-              : 'Gemini remains the default. Optional OpenAI models appear together only after server access is verified.'}
+              ? 'Gemini 3.6 access verified. Your choice affects dialogue only.'
+              : 'Gemini 2.5 remains the safe default until server access is verified.'}
           </p>
 
           <section className="start-unavailable-routes" aria-label="Other matchmaking options">
