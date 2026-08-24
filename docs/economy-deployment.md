@@ -4,6 +4,13 @@
 
 `docs/economy-schema.sql`、`netlify/functions/economy.cjs` 及本地测试只定义候选契约。**截至本文件编写时，生产 SQL、RLS、RPC、环境变量、余额、inventory 和 ledger 状态均为未验证；本地测试通过不等于生产部署成功。** 本卡不执行在线 SQL，不修改 Supabase/Netlify Dashboard，也不发布 Function。
 
+成功 GET 的 `data.checkIn` 精确包含 `streak`、`lastClaimDate`、`serverDate` 与
+`claimedMilestoneDays`。其中 `claimedMilestoneDays` 始终是升序、去重、只含
+`7/14/30/60/90` 的 JSON 整数数组；无历史领取时为精确 `[]`，不得省略或返回 `null`。
+唯一事实来源是当前 `auth.uid()` 在 `public.economy_check_in_claims.streak_day` 中的历史
+记录。当前 streak、last claim date、wallet、inventory、receipt、catalog 和分页 ledger
+均不得反推或补齐该数组。
+
 当前没有配置可信的 completed-game writer。浏览器可写的 `public.game_records` 仅是历史展示数据，其 `result` 不具奖励权威；只有无浏览器权限的 `economy_gameplay_eligibility` 才能记录服务器确认的完成事实与 outcome。在另一个经批准、服务端权威且可审计的 writer 上线前，普通登录用户的 gameplay reward 必须保持不可用并返回 fail-closed 错误；不得用客户端 boolean/status/result、trigger 复制或手工信任现有 `game_records.result` 绕过该边界。
 
 该经济系统只有 `coins` 与 `crystals`，均为站内非现金资产。不得启用或修改现有 payment Function，不得接入真钱购买、PSP、webhook、退款、清算或 reconciliation；`PAYMENTS_NOT_CONFIGURED` 边界必须保持不变。
@@ -42,6 +49,7 @@ Function 只需要下列服务端配置名称；本文件不记录任何值：
 - RPC 在缺少 `auth.uid()` 时拒绝；其签名没有 `user_id`、日期、价格、reward、余额、catalog、result 或完成状态参数。
 - 同一用户、action、canonical payload 与幂等键的串行和并发重试返回保存结果，仅有一次 wallet/ledger/state 变化；同一键改 action 或 payload 返回冲突且不产生第二次变化。
 - 同一 UTC 日并发签到只成功一次；断档重置、相邻日递增，7 日循环和第 7/14/30/60/90 日里程碑逐项核对，90 日以后不重放里程碑。
+- `economy_get_state` 的 `checkIn.claimedMilestoneDays` 必须执行以下非生产 smoke checks：新用户及无 milestone claim 的用户返回精确 `[]`；A/B 各自只看到自己的 claims；当前 streak 断档重置为 `1` 后仍保留过去 milestone；把当前 streak 设为 `90/91` 但不写 claims 时不得反推任何 day；普通 streak day 被过滤；重复 milestone day 去重并固定升序；分别用不同 `ledgerLimit` 和有效 `ledgerCursor` 读取至少两页 ledger 时结果完全一致。
 - 浏览器以 A 身份插入一条归属 A、`result = 'WIN'` 的 `game_records` 后，未存在 trusted eligibility 时必须得到 `GAMEPLAY_REWARD_UNAVAILABLE`，且 receipt/wallet/ledger/claim 均无变化。修改该 client result 也不得改变结论。
 - 仅由测试中的数据库 owner 模拟未来可信 writer，写入同一 `(user_id, game_record_id)` 的 eligibility 与服务器 outcome 后，RPC 才可发奖；必须以 eligibility outcome 而不是 `game_records.result` 计算胜负奖励。跨用户、重复 record、未来完成时间均拒绝，并满足 UTC 日 5 局与 200 Coins 双上限。
 - skin 解锁只使用 active purchase catalog 的服务器价格；余额不足、重复拥有和并发解锁均不部分扣款。equip 只能选择当前用户 inventory 中的 skin。
@@ -68,7 +76,14 @@ Function 只需要下列服务端配置名称；本文件不记录任何值：
 | 资源不属于用户或商品不存在 | `404 NOT_FOUND` |
 | 未识别的数据库/网络错误 | `502 ECONOMY_UPSTREAM_ERROR`，不含 SQL/堆栈/内部细节 |
 
-还必须确认 GET 的分页范围为 1–100，响应只含 `coins`/`crystals`；POST 到 RPC 的参数不含用户 ID、日期、价格、reward、余额、catalog、胜负或完成状态。现有 payment 模块不得被导入或调用。
+还必须确认 GET 的分页范围为 1–100，响应只含 `coins`/`crystals`，且
+`checkIn.claimedMilestoneDays` 符合上述精确 shape 与 claims-only 来源；GET body、未知 query
+字段或 POST body 均不能提交 claimed state。Function 对 `economy_get_state` 的参数仍只有
+`p_ledger_limit` / `p_ledger_cursor`；POST 到 RPC 的参数不含用户 ID、日期、价格、reward、
+余额、catalog、milestone、claimed days、胜负或完成状态。现有 payment 模块不得被导入或调用。
+
+上述 PGlite/HTTP 自动化与非生产 smoke 只验证候选契约，不证明生产 SQL/RLS/RPC/data、
+Function 或真实账户状态已经部署或正确；没有直接线上证据时一律保持“未验证”。
 
 ## 禁用与回滚
 
