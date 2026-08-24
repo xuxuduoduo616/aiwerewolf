@@ -64,7 +64,12 @@ const defaultState = {
   wallet: { coins: 0, crystals: 0 },
   inventory: [],
   equippedSkinId: null,
-  checkIn: { streak: 0, lastClaimDate: null, serverDate: '2026-08-23' },
+  checkIn: {
+    streak: 0,
+    lastClaimDate: null,
+    serverDate: '2026-08-23',
+    claimedMilestoneDays: [],
+  },
   onboarding: { completed: false, completedAt: null },
   ledger: [],
   nextCursor: null,
@@ -207,6 +212,22 @@ const walletBalance = async (userId, currency = 'coins') => {
   return result.rows[0].balance;
 };
 
+const insertHistoricalCheckInClaim = async ({
+  userId, identity, offset, streakDay, serverDate,
+}) => {
+  const receiptId = sqlUuid(20 + offset, identity);
+  await sqlDb.query(`
+    insert into public.economy_mutation_receipts
+      (id, user_id, idempotency_key, action, canonical_payload, status, result, completed_at)
+    values ($1, $2, $3, 'claim_check_in', '{}'::jsonb, 'completed', '{}'::jsonb, now())
+  `, [receiptId, userId, sqlKey('history-claim', identity, offset)]);
+  await sqlDb.query(`
+    insert into public.economy_check_in_claims
+      (user_id, server_date, streak_day, coins_awarded, crystals_awarded, receipt_id)
+    values ($1, $2, $3, 30, 0, $4)
+  `, [userId, serverDate, streakDay, receiptId]);
+};
+
 describe('economy HTTP fail-closed boundary', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -281,6 +302,31 @@ describe('economy HTTP fail-closed boundary', () => {
     expect(JSON.stringify(rpc.mock.calls)).not.toMatch(/user_?id|11111111/i);
   });
 
+  it('returns claimed milestone days unchanged in the existing GET success envelope', async () => {
+    const state = {
+      ...defaultState,
+      checkIn: { ...defaultState.checkIn, streak: 1, claimedMilestoneDays: [7, 30, 90] },
+    };
+    const handler = loadHandler({
+      rpcImplementation: async () => ({ data: state, error: null }),
+    });
+
+    const result = await handler(createEvent());
+
+    expect(result.statusCode).toBe(200);
+    expect(parse(result)).toEqual({ data: state });
+    expect(parse(result).data.checkIn).toEqual({
+      streak: 1,
+      lastClaimDate: null,
+      serverDate: '2026-08-23',
+      claimedMilestoneDays: [7, 30, 90],
+    });
+    expect(rpc).toHaveBeenCalledWith('economy_get_state', {
+      p_ledger_limit: 25,
+      p_ledger_cursor: null,
+    });
+  });
+
   it('rejects body user spoofing and every unknown field after auth', async () => {
     const handler = loadHandler();
     const result = await handler(postEvent({
@@ -293,6 +339,26 @@ describe('economy HTTP fail-closed boundary', () => {
     expect(parse(result)).toEqual({ code: 'INVALID_REQUEST' });
     expect(getUser).toHaveBeenCalledOnce();
     expect(rpc).not.toHaveBeenCalled();
+  });
+
+  it('rejects every attempted claimed-milestone input on GET query/body and POST body', async () => {
+    const attemptedRequests = [
+      createEvent({ queryStringParameters: { claimedMilestoneDays: '7,14' } }),
+      createEvent({ body: JSON.stringify({ claimedMilestoneDays: [7, 14] }) }),
+      postEvent({
+        action: 'claim_check_in',
+        idempotencyKey: IDEMPOTENCY_KEY,
+        claimedMilestoneDays: [7, 14],
+      }),
+    ];
+
+    for (const event of attemptedRequests) {
+      const handler = loadHandler();
+      const result = await handler(event);
+      expect(result.statusCode).toBe(400);
+      expect(parse(result).code).toMatch(/^INVALID_(PAGINATION|REQUEST)$/);
+      expect(rpc).not.toHaveBeenCalled();
+    }
   });
 
   it('strictly gates origin, method and content type before authentication', async () => {
@@ -511,6 +577,112 @@ describe('economy SQL behavior in PGlite', () => {
 
   afterAll(async () => {
     if (sqlDb) await sqlDb.close();
+  });
+
+  it('returns an exact empty milestone history and never infers claims from a high streak', async () => {
+    const { userId } = await addSqlUser();
+    await sqlDb.query(`
+      insert into public.economy_player_state
+        (user_id, check_in_streak, last_check_in_date)
+      values ($1, 90, (current_timestamp at time zone 'UTC')::date - 1)
+    `, [userId]);
+
+    const state = await callSqlJson(userId, 'public.economy_get_state(25, null)');
+
+    expect(state.checkIn).toMatchObject({ streak: 90, claimedMilestoneDays: [] });
+  });
+
+  it('uses only filtered claims history when streak resets, including dedupe and fixed ordering', async () => {
+    const { identity, userId } = await addSqlUser();
+    await sqlDb.query(`
+      insert into public.economy_player_state
+        (user_id, check_in_streak, last_check_in_date)
+      values ($1, 1, (current_timestamp at time zone 'UTC')::date - 10)
+    `, [userId]);
+    const historicalDays = [90, 7, 30, 7, 8];
+    for (const [offset, streakDay] of historicalDays.entries()) {
+      await insertHistoricalCheckInClaim({
+        userId,
+        identity,
+        offset,
+        streakDay,
+        serverDate: `2026-01-${String(offset + 1).padStart(2, '0')}`,
+      });
+    }
+
+    const state = await callSqlJson(userId, 'public.economy_get_state(25, null)');
+
+    expect(state.checkIn).toMatchObject({
+      streak: 1,
+      claimedMilestoneDays: [7, 30, 90],
+    });
+  });
+
+  it('isolates arbitrary milestone subsets by auth.uid()', async () => {
+    const firstUser = await addSqlUser();
+    const secondUser = await addSqlUser();
+    for (const [offset, streakDay] of [60, 14].entries()) {
+      await insertHistoricalCheckInClaim({
+        ...firstUser,
+        offset,
+        streakDay,
+        serverDate: `2026-02-${String(offset + 1).padStart(2, '0')}`,
+      });
+    }
+    for (const [offset, streakDay] of [90, 7, 30].entries()) {
+      await insertHistoricalCheckInClaim({
+        ...secondUser,
+        offset: offset + 5,
+        streakDay,
+        serverDate: `2026-03-${String(offset + 1).padStart(2, '0')}`,
+      });
+    }
+
+    const firstState = await callSqlJson(
+      firstUser.userId,
+      'public.economy_get_state(25, null)',
+    );
+    const secondState = await callSqlJson(
+      secondUser.userId,
+      'public.economy_get_state(25, null)',
+    );
+
+    expect(firstState.checkIn.claimedMilestoneDays).toEqual([14, 60]);
+    expect(secondState.checkIn.claimedMilestoneDays).toEqual([7, 30, 90]);
+  });
+
+  it('keeps claimed milestone history identical across ledger pages', async () => {
+    const { identity, userId } = await addSqlUser();
+    await insertHistoricalCheckInClaim({
+      userId,
+      identity,
+      offset: 10,
+      streakDay: 14,
+      serverDate: '2025-12-14',
+    });
+    await callSqlJson(
+      userId,
+      'public.economy_finish_onboarding($1)',
+      [sqlKey('milestone-page-onboarding', identity)],
+    );
+    await callSqlJson(
+      userId,
+      'public.economy_claim_check_in($1)',
+      [sqlKey('milestone-page-check-in', identity)],
+    );
+
+    const firstPage = await callSqlJson(userId, 'public.economy_get_state(1, null)');
+    expect(firstPage.ledger).toHaveLength(1);
+    expect(firstPage.nextCursor).toMatch(/^[0-9a-f-]{36}$/i);
+    const secondPage = await callSqlJson(
+      userId,
+      'public.economy_get_state(1, $1)',
+      [firstPage.nextCursor],
+    );
+
+    expect(secondPage.ledger).toHaveLength(1);
+    expect(firstPage.checkIn.claimedMilestoneDays).toEqual([14]);
+    expect(secondPage.checkIn.claimedMilestoneDays).toEqual([14]);
   });
 
   it('executes the schema and exposes the exact accepted wuxia catalog', async () => {
@@ -895,6 +1067,17 @@ describe('economy SQL atomic, reward, ownership and RLS contract', () => {
     expect(sqlSource).toMatch(/v_streak = 60[\s\S]*mist-wanderer/);
     expect(sqlSource).toMatch(/v_streak = 90[\s\S]*v_crystals := 8[\s\S]*avatar-frame:crimson-moon/);
     expect(sqlSource).not.toMatch(/v_streak\s*>=\s*(7|14|30|60|90)/);
+  });
+
+  it('derives claimed milestone state only from auth-scoped check-in claims', () => {
+    const claimedExpression = /'claimedMilestoneDays',([\s\S]*?)\n\s*\),\n\s*'onboarding'/.exec(sqlSource)?.[1] || '';
+    expect(claimedExpression).toMatch(/select distinct claim\.streak_day/);
+    expect(claimedExpression).toMatch(/from public\.economy_check_in_claims claim/);
+    expect(claimedExpression).toMatch(/claim\.user_id = v_user_id/);
+    expect(claimedExpression).toMatch(/claim\.streak_day in \(7, 14, 30, 60, 90\)/);
+    expect(claimedExpression).toMatch(/jsonb_agg\(milestone\.streak_day order by milestone\.streak_day\)/);
+    expect(claimedExpression).toMatch(/'\[\]'::jsonb/);
+    expect(claimedExpression).not.toMatch(/economy_player_state|economy_ledger|wallet|inventory|receipt|catalog/i);
   });
 
   it('makes onboarding fixed and once-only under a row lock', () => {

@@ -804,7 +804,16 @@ begin
     'checkIn', jsonb_build_object(
       'streak', coalesce((select check_in_streak from public.economy_player_state where user_id = v_user_id), 0),
       'lastClaimDate', (select last_check_in_date from public.economy_player_state where user_id = v_user_id),
-      'serverDate', v_server_date
+      'serverDate', v_server_date,
+      'claimedMilestoneDays', coalesce((
+        select jsonb_agg(milestone.streak_day order by milestone.streak_day)
+        from (
+          select distinct claim.streak_day
+          from public.economy_check_in_claims claim
+          where claim.user_id = v_user_id
+            and claim.streak_day in (7, 14, 30, 60, 90)
+        ) milestone
+      ), '[]'::jsonb)
     ),
     'onboarding', jsonb_build_object(
       'completed', coalesce((select onboarding_completed_at is not null from public.economy_player_state where user_id = v_user_id), false),
