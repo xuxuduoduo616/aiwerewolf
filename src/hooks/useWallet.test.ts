@@ -3,6 +3,7 @@ import {
   DEFAULT_WALLET,
   PAYMENTS_UNAVAILABLE_ERROR,
   WALLET_STORAGE_KEY,
+  createUnavailableAccountWallet,
   loadLocalWallet,
   purchaseUnavailable,
 } from './useWallet';
@@ -42,6 +43,12 @@ const writeExistingWallet = (data: Partial<LocalWallet>) => {
 };
 
 describe('wallet reads', () => {
+  it('fails an unavailable account balance closed without reusing the guest cache', () => {
+    writeExistingWallet({ coins: 99_999, coupons: 999, crystals: 99 });
+    expect(createUnavailableAccountWallet()).toEqual(DEFAULT_WALLET);
+    expect(createUnavailableAccountWallet()).not.toEqual(loadLocalWallet());
+  });
+
   it('returns zero balances when no local wallet exists', () => {
     expect(loadLocalWallet()).toEqual(DEFAULT_WALLET);
     expect(setItem).not.toHaveBeenCalled();

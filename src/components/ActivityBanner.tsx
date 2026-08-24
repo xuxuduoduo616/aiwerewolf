@@ -1,12 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-const BANNERS = [
-  { id: 1, title: 'Tidal Season Exclusive', subtitle: 'Summer beach skins available for a limited time', color: '#3b82f6' },
-  { id: 2, title: 'Online Qualifier', subtitle: 'Registration is open for the monthly Werewolf tournament', color: '#f59e0b' },
-  { id: 3, title: 'Daily Check-In', subtitle: 'Check in for 7 days to earn an exclusive avatar frame', color: '#8b5cf6' },
-];
+export const ACTIVITY_BANNERS = [
+  { id: 'tidal', title: 'Tidal Season Exclusive', subtitle: 'Preview the season-filtered ink-wash skin collection', color: '#3b82f6' },
+  { id: 'qualifier', title: 'Online Qualifier', subtitle: 'Information only · Registration and live services unavailable', color: '#f59e0b' },
+  { id: 'check-in', title: 'Daily Check-In', subtitle: 'Record one local guest check-in per calendar day', color: '#8b5cf6' },
+] as const;
 
-const ActivityBanner: React.FC = () => {
+interface Props {
+  onOpenTidalStore: () => void;
+  onOpenQualifier: () => void;
+  onOpenDailyCheckIn: () => void;
+}
+
+export const activateActivityBanner = (
+  id: (typeof ACTIVITY_BANNERS)[number]['id'],
+  handlers: Props,
+): void => {
+  if (id === 'tidal') handlers.onOpenTidalStore();
+  else if (id === 'qualifier') handlers.onOpenQualifier();
+  else handlers.onOpenDailyCheckIn();
+};
+
+const ActivityBanner: React.FC<Props> = ({ onOpenTidalStore, onOpenQualifier, onOpenDailyCheckIn }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -23,7 +38,7 @@ const ActivityBanner: React.FC = () => {
   }, []);
 
   return (
-    <div className="wol-activity-banner">
+    <div className="wol-activity-banner" data-tour-target="promotions">
       <div
         ref={scrollRef}
         className="wol-scrollbar-hide wol-activity-track"
@@ -34,10 +49,12 @@ const ActivityBanner: React.FC = () => {
           WebkitOverflowScrolling: 'touch',
         }}
       >
-        {BANNERS.map(banner => (
-          <div
+        {ACTIVITY_BANNERS.map(banner => (
+          <button
             key={banner.id}
+            type="button"
             className="wol-activity-card"
+            onClick={() => activateActivityBanner(banner.id, { onOpenTidalStore, onOpenQualifier, onOpenDailyCheckIn })}
             style={{
               flexShrink: 0,
               width: '75%',
@@ -72,7 +89,7 @@ const ActivityBanner: React.FC = () => {
             }}>
               {banner.subtitle}
             </div>
-          </div>
+          </button>
         ))}
       </div>
 
@@ -81,16 +98,16 @@ const ActivityBanner: React.FC = () => {
         display: 'flex', justifyContent: 'center', gap: 4,
         padding: '6px 0 2px',
       }}>
-        {BANNERS.map((banner, i) => (
+        {ACTIVITY_BANNERS.map((banner, i) => (
           <div
             key={banner.id}
+            className={`wol-activity-dot${activeIndex === i ? ' is-active' : ''}`}
             aria-hidden="true"
             style={{
               width: activeIndex === i ? 14 : 4,
               height: 4,
               borderRadius: 2,
               background: activeIndex === i ? banner.color : 'rgba(255,255,255,0.15)',
-              transition: 'all 200ms ease',
             }}
           />
         ))}

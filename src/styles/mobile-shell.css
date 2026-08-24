@@ -132,7 +132,7 @@
 
 .wol-currency-row {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr)) 44px;
   align-items: center;
   gap: 8px;
   min-height: calc(var(--wol-top-bar-h) + env(safe-area-inset-top, 0px));
@@ -812,7 +812,7 @@
 /* Store is owned elsewhere; these rules only make its existing markup fit. */
 .wol-store-wallet {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .wol-store-wallet-item,
@@ -871,7 +871,7 @@
 
 @media (max-width: 320px) {
   .wol-currency-row {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr)) 44px;
   }
 
   .wol-bottom-nav {
@@ -897,7 +897,7 @@
   }
 
   .wol-store-wallet {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -935,7 +935,7 @@
   }
 
   .wol-currency-row {
-    grid-template-columns: repeat(3, minmax(0, 180px));
+    grid-template-columns: repeat(2, minmax(0, 180px)) 44px;
     justify-content: end;
   }
 
@@ -1001,7 +1001,7 @@
   }
 
   .wol-currency-row {
-    grid-template-columns: repeat(3, minmax(0, 200px));
+    grid-template-columns: repeat(2, minmax(0, 200px)) 44px;
     justify-content: end;
     padding-inline: max(24px, env(safe-area-inset-right, 0px)) max(24px, env(safe-area-inset-left, 0px));
   }
@@ -1373,12 +1373,27 @@
 
 .wol-shell .wol-store-wallet {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 @media (max-width: 320px) {
   .wol-shell .wol-store-wallet {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wol-marquee-track {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .wol-card-interactive,
+  .wol-nav-tab,
+  .wol-activity-card,
+  .wol-activity-dot {
+    animation: none !important;
+    transition: none !important;
   }
 }
 

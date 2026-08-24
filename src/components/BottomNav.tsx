@@ -38,6 +38,7 @@ const BottomNav: React.FC<Props> = ({ activeView, onNavigate }) => {
             onClick={() => onNavigate(tab.view)}
             aria-current={isActive ? 'page' : undefined}
             aria-label={tab.label}
+            data-tour-target={tab.view === 'shop' ? 'navigation' : undefined}
           >
             <tab.Icon aria-hidden="true" strokeWidth={isActive ? 2.2 : 1.8} />
             <span>{tab.label}</span>

@@ -26,20 +26,13 @@ const coinIcon = (
   </svg>
 );
 
-const couponIcon = (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <rect x="3" y="5" width="18" height="14" rx="2" strokeLinecap="round"/>
-    <path d="M3 10h18M9 14l.01.01M15 14l.01.01" strokeLinecap="round"/>
-  </svg>
-);
-
 const crystalIcon = (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <path d="M12 2l3 5 5 2-3 5 1 8-6-2-6 2 1-8-3-5 5-2z" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
 
-const CoinStore: React.FC<Props> = ({ coins, coupons, crystals }) => {
+const CoinStore: React.FC<Props> = ({ coins, coupons: _coupons, crystals }) => {
   return (
     <div className="wol-store">
       {/* Hero Banner */}
@@ -63,11 +56,6 @@ const CoinStore: React.FC<Props> = ({ coins, coupons, crystals }) => {
           {coinIcon}
           <span className="wol-store-wallet-value">{coins.toLocaleString()}</span>
           <span className="wol-store-wallet-label">Coins</span>
-        </div>
-        <div className="wol-store-wallet-item wol-store-wallet-item--coupon">
-          {couponIcon}
-          <span className="wol-store-wallet-value">{coupons.toLocaleString()}</span>
-          <span className="wol-store-wallet-label">Coupons</span>
         </div>
         <div className="wol-store-wallet-item wol-store-wallet-item--crystal">
           {crystalIcon}

@@ -36,6 +36,9 @@ describe('lobby feature contracts', () => {
       'activity',
       'faction-support',
       'battle-pass',
+      'online-qualifier',
+      'daily-check-in',
+      'economy-history',
     ]);
   });
 

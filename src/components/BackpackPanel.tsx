@@ -11,7 +11,7 @@ interface BackpackItem {
   icon: string; // emoji or label for placeholder icon
 }
 
-const ITEMS_BY_CATEGORY: Record<string, BackpackItem[]> = {
+export const BACKPACK_ITEMS: Record<BackpackCategory, BackpackItem[]> = {
   gift: [
     { id: 'g1', name: 'Rose', effect: 'Affinity +1', count: 9, icon: '🌹' },
     { id: 'g2', name: 'Village Horn', effect: 'Send 1 village announcement', count: 3, icon: '📢' },
@@ -26,24 +26,14 @@ const ITEMS_BY_CATEGORY: Record<string, BackpackItem[]> = {
     { id: 'i2', name: 'Experience Potion', effect: 'Experience +100', count: 12, icon: '🧪' },
     { id: 'i3', name: 'Energy Tonic', effect: 'Restore 50 energy', count: 6, icon: '💊' },
   ],
-  shard: [
-    { id: 's1', name: 'Wolf Soul Shard', effect: 'Collect 50 to redeem a skin', count: 14, icon: '💎' },
-    { id: 's2', name: 'Starlight Shard', effect: 'Collect 30 to redeem an avatar frame', count: 8, icon: '⭐' },
-  ],
-  coupon: [
-    { id: 'co1', name: 'First Purchase Voucher', effect: 'Double the first purchase amount', count: 1, icon: '🎫' },
-    { id: 'co2', name: '20% Off Coupon', effect: 'Save 20% in the shop', count: 2, icon: '🏷️' },
-  ],
 };
 
-type Category = 'gift' | 'chest' | 'item' | 'shard' | 'coupon';
+export type BackpackCategory = 'gift' | 'chest' | 'item';
 
-const CATEGORIES: { key: Category; label: string }[] = [
+export const BACKPACK_CATEGORIES: { key: BackpackCategory; label: string }[] = [
   { key: 'gift', label: 'Gifts' },
   { key: 'chest', label: 'Chests' },
   { key: 'item', label: 'Items' },
-  { key: 'shard', label: 'Shards' },
-  { key: 'coupon', label: 'Coupons' },
 ];
 
 /* ─── Gift icon ───────────────────────────────────────────────────────── */
@@ -58,13 +48,13 @@ const GiftIcon = () => (
 /* ─── Component ───────────────────────────────────────────────────────── */
 
 const BackpackPanel: React.FC = () => {
-  const [category, setCategory] = useState<Category>('gift');
-  const items = ITEMS_BY_CATEGORY[category] || [];
+  const [category, setCategory] = useState<BackpackCategory>('gift');
+  const items = BACKPACK_ITEMS[category];
 
   return (
     <section className="wol-backpack" aria-label="Backpack">
       {/* Filter bar */}
-      <FilterChipBar chips={CATEGORIES} active={category} onSelect={setCategory} />
+      <FilterChipBar chips={BACKPACK_CATEGORIES} active={category} onSelect={setCategory} />
 
       {/* Items grid */}
       <div style={{ padding: '0 12px' }}>
