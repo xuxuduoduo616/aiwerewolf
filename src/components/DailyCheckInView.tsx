@@ -6,19 +6,23 @@ import {
   CHECK_IN_REWARDS,
   getNextCheckInStreak,
   localDayFromDate,
-  type EconomyMutationResult,
-  type GuestEconomyState,
 } from '../economy/ledger';
-import { ACCOUNT_ECONOMY_UNAVAILABLE } from '../hooks/useGuestEconomy';
+import type { AccountEconomyPhase, AccountMutationAction } from '../economy/accountEconomy';
+import type { EconomyActionReturn, EconomyViewState } from '../hooks/useEconomy';
 
 interface Props {
-  state: GuestEconomyState;
+  state: EconomyViewState;
   coins: number;
   crystals: number;
   isGuest: boolean;
   ledgerCorrupt: boolean;
+  phase: AccountEconomyPhase | 'ready';
+  pendingAction: AccountMutationAction | null;
+  mutationsDisabled: boolean;
+  statusMessage: string;
   feedback: string;
-  onCheckIn: () => EconomyMutationResult;
+  onCheckIn: () => EconomyActionReturn;
+  onRefresh: () => void | Promise<boolean>;
   onOpenHistory: () => void;
   onBack: () => void;
 }
@@ -29,8 +33,13 @@ const DailyCheckInView: React.FC<Props> = ({
   crystals,
   isGuest,
   ledgerCorrupt,
+  phase,
+  pendingAction,
+  mutationsDisabled,
+  statusMessage,
   feedback,
   onCheckIn,
+  onRefresh,
   onOpenHistory,
   onBack,
 }) => {
@@ -39,14 +48,19 @@ const DailyCheckInView: React.FC<Props> = ({
     const timer = window.setInterval(() => setLocalToday(localDayFromDate(new Date())), 60_000);
     return () => window.clearInterval(timer);
   }, []);
-  const checkedToday = state.lastCheckInDay === localToday;
-  const nextStreak = getNextCheckInStreak(state.lastCheckInDay, state.checkInStreak, localToday);
+  const effectiveToday = isGuest ? localToday : state.serverDate ?? '';
+  const checkedToday = effectiveToday !== '' && state.lastCheckInDay === effectiveToday;
+  const nextStreak = effectiveToday
+    ? getNextCheckInStreak(state.lastCheckInDay, state.checkInStreak, effectiveToday)
+    : Math.max(1, state.checkInStreak + 1);
   const nextTrackDay = ((nextStreak - 1) % CHECK_IN_REWARDS.length) + 1;
-  const disabledReason = !isGuest
-    ? ACCOUNT_ECONOMY_UNAVAILABLE
-    : ledgerCorrupt
-      ? 'Local economy data could not be verified. Check-in is disabled without changing the stored ledger.'
-      : '';
+  const disabledReason = ledgerCorrupt
+      ? isGuest
+        ? 'Local economy data could not be verified. Check-in is disabled without changing the stored ledger.'
+        : 'Account economy data could not be verified. Check-in is disabled.'
+      : !isGuest && mutationsDisabled
+        ? statusMessage || 'Account economy must be verified before check-in.'
+        : '';
 
   return (
     <section className="economy-page check-in-page" aria-labelledby="daily-check-in-title">
@@ -55,7 +69,7 @@ const DailyCheckInView: React.FC<Props> = ({
           <ArrowLeft aria-hidden="true" />
         </button>
         <div>
-          <p className="economy-eyebrow">Local guest rewards</p>
+          <p className="economy-eyebrow">{isGuest ? 'Local guest rewards' : 'Verified account rewards'}</p>
           <h1 id="daily-check-in-title">Daily Check-In</h1>
         </div>
         <button type="button" className="economy-icon-button" onClick={onOpenHistory} aria-label="Open economy history">
@@ -76,14 +90,21 @@ const DailyCheckInView: React.FC<Props> = ({
           type="button"
           className="economy-primary-action"
           onClick={onCheckIn}
-          disabled={!isGuest || ledgerCorrupt || checkedToday}
+          disabled={mutationsDisabled || ledgerCorrupt || checkedToday}
           aria-describedby={disabledReason ? 'check-in-disabled-reason' : undefined}
         >
-          {checkedToday ? <><Check aria-hidden="true" /> Checked In Today</> : 'Check In'}
+          {checkedToday
+            ? <><Check aria-hidden="true" /> Checked In Today</>
+            : pendingAction === 'claim_check_in' ? 'Verifying Check-In...' : 'Check In'}
         </button>
       </div>
 
       {disabledReason && <p id="check-in-disabled-reason" className="economy-unavailable" role="status">{disabledReason}</p>}
+      {!isGuest && phase !== 'ready' && (
+        <button type="button" className="economy-secondary-action" onClick={() => { void onRefresh(); }}>
+          Refresh Account State
+        </button>
+      )}
       <p className="economy-live-feedback" role="status" aria-live="polite">{feedback}</p>
 
       <section aria-labelledby="seven-day-track-title">

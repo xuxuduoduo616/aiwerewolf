@@ -4,7 +4,7 @@ import { getPhaseLabel } from './constants';
 import useAuth from './hooks/useAuth';
 import { useRecords } from './hooks/useRecords';
 import { useGameState } from './hooks/useGameState';
-import { useWallet } from './hooks/useWallet';
+import { purchaseUnavailable } from './hooks/useWallet';
 import { PlayerCard } from './components/PlayerCard';
 import ActionBar from './components/ActionBar';
 import RecordsPanel from './components/RecordsPanel';
@@ -33,7 +33,7 @@ import TurnstileWidget from './components/TurnstileWidget';
 import { useDisplayLanguage } from './i18n';
 import { mapGameSetupToConfig, type GameSetup, type LobbySubview } from './lobbyFeatures';
 import { useLobbyFeatures } from './hooks/useLobbyFeatures';
-import { useGuestEconomy } from './hooks/useGuestEconomy';
+import { useEconomy, type EconomyViewState } from './hooks/useEconomy';
 import { SKIN_CATALOG_BY_ID } from './economy/catalog';
 import { navigateEconomyRoute, readEconomyRoute, type EconomyRoute } from './economy/routes';
 import { getTerminalRewardRequest } from './economy/gameRewards';
@@ -61,6 +61,16 @@ export const nextTurnstileToken = (event: TurnstileGuestGateEvent): string | nul
 export const isTurnstileGuestGateOpen = (token: string | null): boolean => Boolean(token);
 
 const MY_PLAYER_ID = 1;
+
+export const resolveEquippedSkinName = (
+  state: Pick<EconomyViewState, 'equippedSkinId' | 'accountCatalog'>,
+  isGuest: boolean,
+): string | null => {
+  if (!state.equippedSkinId) return null;
+  if (isGuest) return SKIN_CATALOG_BY_ID.get(state.equippedSkinId)?.name ?? null;
+  return state.accountCatalog.find(item => item.id === state.equippedSkinId)?.name
+    ?? 'Equipped cosmetic unavailable';
+};
 
 const ROLE_LABELS_EN: Record<Role, string> = {
   [Role.WEREWOLF]: 'Werewolf',
@@ -99,8 +109,7 @@ const App: React.FC = () => {
   const gameInfoTriggerRef = React.useRef<HTMLButtonElement>(null);
   const utilityTriggerRef = React.useRef<HTMLButtonElement>(null);
   const rec = useRecords(auth.session);
-  const wallet = useWallet(auth.session, auth.isGuest);
-  const economy = useGuestEconomy(auth.isGuest);
+  const economy = useEconomy(auth.session, auth.isGuest);
   const lobbyFeatures = useLobbyFeatures(auth.session?.user.id ?? null);
   const game = useGameState({
     session: auth.session,
@@ -165,12 +174,12 @@ const App: React.FC = () => {
       || autoTutorialAttemptedRef.current
       || activeView !== 'home'
       || lobbySubview !== 'home'
-      || economy.ledgerStatus === 'account'
+      || economy.mode !== 'guest'
       || economy.state.tutorialSeen
     ) return;
     autoTutorialAttemptedRef.current = true;
     setIsTutorialOpen(true);
-  }, [activeView, auth.isGuest, economy.ledgerStatus, economy.state.tutorialSeen, isRouteReady, lobbySubview]);
+  }, [activeView, auth.isGuest, economy.mode, economy.state.tutorialSeen, isRouteReady, lobbySubview]);
 
   React.useEffect(() => {
     const request = getTerminalRewardRequest({
@@ -185,11 +194,9 @@ const App: React.FC = () => {
     economy.rewardGame(request.gameId, request.won);
   }, [economy.rewardGame, game.config, game.me?.role, game.phase, game.savedRecordId, game.winner]);
 
-  const displayedCoins = auth.isGuest ? economy.state.coins : wallet.coins;
-  const displayedCrystals = auth.isGuest ? economy.state.crystals : wallet.crystals;
-  const equippedSkinName = economy.state.equippedSkinId
-    ? SKIN_CATALOG_BY_ID.get(economy.state.equippedSkinId)?.name ?? null
-    : null;
+  const displayedCoins = economy.state.coins;
+  const displayedCrystals = economy.state.crystals;
+  const equippedSkinName = resolveEquippedSkinName(economy.state, auth.isGuest);
 
   const finishStartRequest = React.useCallback((setup: GameSetup) => {
     const config = mapGameSetupToConfig(setup);
@@ -654,9 +661,14 @@ const App: React.FC = () => {
             coins={displayedCoins}
             crystals={displayedCrystals}
             isGuest={auth.isGuest}
-            ledgerCorrupt={economy.ledgerStatus === 'corrupt'}
+            ledgerCorrupt={economy.ledgerCorrupt}
+            phase={economy.phase}
+            pendingAction={economy.pendingAction}
+            mutationsDisabled={economy.mutationsDisabled}
+            statusMessage={economy.statusMessage}
             feedback={economy.feedback}
             onCheckIn={economy.checkIn}
+            onRefresh={economy.refresh}
             onOpenHistory={() => {
               historyReturnRef.current = { page: 'daily-check-in' };
               navigateEconomy({ page: 'economy-history' });
@@ -667,8 +679,16 @@ const App: React.FC = () => {
       case 'economy-history':
         return (
           <EconomyHistoryView
-            events={economy.state.events}
+            events={economy.state.guestEvents}
+            accountLedger={economy.state.accountLedger}
             isGuest={auth.isGuest}
+            phase={economy.phase}
+            statusMessage={economy.statusMessage}
+            feedback={economy.feedback}
+            nextCursor={economy.state.nextCursor}
+            loadingMore={economy.loadingMore}
+            onLoadMore={economy.loadMore}
+            onRefresh={economy.refresh}
             onBack={() => navigateEconomy(historyReturnRef.current)}
           />
         );
@@ -729,12 +749,17 @@ const App: React.FC = () => {
             economyState={economy.state}
             coins={displayedCoins}
             crystals={displayedCrystals}
-            legacyCoupons={wallet.coupons}
+            legacyCoupons={0}
             isGuest={auth.isGuest}
-            ledgerCorrupt={economy.ledgerStatus === 'corrupt'}
+            ledgerCorrupt={economy.ledgerCorrupt}
+            phase={economy.phase}
+            statusMessage={economy.statusMessage}
+            pendingAction={economy.pendingAction}
+            mutationsDisabled={economy.mutationsDisabled}
             feedback={economy.feedback}
             onUnlock={economy.unlockSkin}
             onEquip={economy.equipSkin}
+            onRefresh={economy.refresh}
             onOpenHistory={() => {
               historyReturnRef.current = {
                 page: 'skin-store',
@@ -744,7 +769,7 @@ const App: React.FC = () => {
               navigateEconomy({ page: 'economy-history' });
             }}
             onPurchase={async (packId) => {
-              const result = await wallet.purchase(packId);
+              const result = await purchaseUnavailable(packId);
               return { success: result.success, error: result.error };
             }}
           />
@@ -764,7 +789,7 @@ const App: React.FC = () => {
       utilityTriggerRef={utilityTriggerRef}
       fullscreen={false}
       coins={displayedCoins}
-      coupons={wallet.coupons}
+      coupons={0}
       crystals={displayedCrystals}
     >
       {renderShellContent()}
