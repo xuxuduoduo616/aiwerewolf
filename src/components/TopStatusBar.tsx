@@ -1,5 +1,5 @@
 import React from 'react';
-import { CircleDollarSign, Gem, Plus, Settings as Gear, Ticket } from 'lucide-react';
+import { CircleDollarSign, Gem, Plus, Settings as Gear } from 'lucide-react';
 
 interface Props {
   coins: number;
@@ -12,7 +12,7 @@ interface Props {
 
 const TopStatusBar: React.FC<Props> = ({
   coins,
-  coupons,
+  coupons: _coupons,
   crystals,
   onNavigateToShop,
   onOpenUtilityMenu,
@@ -27,20 +27,17 @@ const TopStatusBar: React.FC<Props> = ({
   return (
     <div className="wol-top-bar">
       {/* Currency row */}
-      <div className="wol-currency-row">
-        <div className="wol-currency-item wol-currency-item--coin">
+      <div className="wol-currency-row" data-tour-target="wallet" aria-label="Currency balances">
+        <div className="wol-currency-item wol-currency-item--coin" aria-label={`${coins.toLocaleString()} Coins, Basic currency`}>
           <CircleDollarSign aria-hidden="true" />
           <span className="wol-currency-value" title={coins.toLocaleString()}>{coins.toLocaleString()}</span>
+          <span className="sr-only">Coins, Basic currency</span>
           {plusBtn}
         </div>
-        <div className="wol-currency-item wol-currency-item--coupon">
-          <Ticket aria-hidden="true" />
-          <span className="wol-currency-value" title={coupons.toLocaleString()}>{coupons.toLocaleString()}</span>
-          {plusBtn}
-        </div>
-        <div className="wol-currency-item wol-currency-item--crystal">
+        <div className="wol-currency-item wol-currency-item--crystal" aria-label={`${crystals.toLocaleString()} Crystals, Premium currency`}>
           <Gem aria-hidden="true" />
           <span className="wol-currency-value" title={crystals.toLocaleString()}>{crystals.toLocaleString()}</span>
+          <span className="sr-only">Crystals, Premium currency</span>
           {plusBtn}
         </div>
         <button

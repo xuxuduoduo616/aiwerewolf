@@ -1,6 +1,6 @@
 /* TC-006 application integration surfaces. Keep layout independent from game rules. */
 .wol-currency-row {
-  grid-template-columns: repeat(3, minmax(0, 1fr)) 44px;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) 44px;
 }
 
 .wol-utility-trigger {
@@ -751,13 +751,7 @@
 
 @media (max-width: 320px) {
   .wol-currency-row {
-    grid-template-columns: minmax(0, 1fr) 44px;
-  }
-
-  .wol-utility-trigger {
-    grid-column: 2;
-    grid-row: 1 / span 3;
-    align-self: start;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) 44px;
   }
 
   .utility-redeem-preview {
@@ -767,7 +761,7 @@
 
 @media (min-width: 641px) and (max-width: 1023px) {
   .wol-currency-row {
-    grid-template-columns: repeat(3, minmax(0, 180px)) 44px;
+    grid-template-columns: repeat(2, minmax(0, 180px)) 44px;
     justify-content: end;
   }
 
@@ -783,7 +777,7 @@
 
 @media (min-width: 1024px) {
   .wol-currency-row {
-    grid-template-columns: repeat(3, minmax(0, 200px)) 44px;
+    grid-template-columns: repeat(2, minmax(0, 200px)) 44px;
     justify-content: end;
   }
 

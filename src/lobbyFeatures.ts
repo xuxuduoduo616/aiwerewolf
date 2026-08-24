@@ -8,6 +8,9 @@ export const LOBBY_SUBVIEWS = [
   'activity',
   'faction-support',
   'battle-pass',
+  'online-qualifier',
+  'daily-check-in',
+  'economy-history',
 ] as const;
 
 export type LobbySubview = (typeof LOBBY_SUBVIEWS)[number];

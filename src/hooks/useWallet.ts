@@ -68,6 +68,11 @@ export const DEFAULT_WALLET: LocalWallet = {
   orders: [],
 };
 
+export const createUnavailableAccountWallet = (): LocalWallet => ({
+  ...DEFAULT_WALLET,
+  orders: [],
+});
+
 /** Stable user-facing result for every purchase attempt while payments close. */
 export const PAYMENTS_UNAVAILABLE_ERROR = 'Purchases are currently unavailable.';
 
@@ -101,17 +106,22 @@ export function useWallet(
   session: SupabaseSession | null,
   isGuest: boolean,
 ): WalletState {
-  const [wallet, setWallet] = useState<LocalWallet>(loadLocalWallet);
+  const [wallet, setWallet] = useState<LocalWallet>(() =>
+    session && !isGuest ? createUnavailableAccountWallet() : loadLocalWallet());
+  const [loadedAccountUserId, setLoadedAccountUserId] = useState<string | null>(null);
   // ── Bootstrap: load from the correct source ──────────────────────────
   useEffect(() => {
     if (isGuest || !session) {
       setWallet(loadLocalWallet());
+      setLoadedAccountUserId(null);
       return;
     }
 
-    // Auth user: attempt Supabase, fall back to local cache
+    // Auth user: account balances never fall back to the guest/local cache.
+    // Until a verified server response exists, fail closed to zero balances.
     if (!isSupabaseConfigured()) {
-      setWallet(loadLocalWallet());
+      setWallet(createUnavailableAccountWallet());
+      setLoadedAccountUserId(null);
       return;
     }
 
@@ -126,10 +136,12 @@ export function useWallet(
           crystals: coins.crystals,
           totalPurchasedCoins: coins.totalPurchasedCoins,
         }));
+        setLoadedAccountUserId(session.user.id);
       })
       .catch(() => {
         if (cancelled) return;
-        setWallet(loadLocalWallet());
+        setWallet(createUnavailableAccountWallet());
+        setLoadedAccountUserId(null);
       });
 
     return () => { cancelled = true; };
@@ -139,11 +151,13 @@ export function useWallet(
   const refresh = useCallback(async () => {
     if (isGuest || !session) {
       setWallet(loadLocalWallet());
+      setLoadedAccountUserId(null);
       return;
     }
 
     if (!isSupabaseConfigured()) {
-      setWallet(loadLocalWallet());
+      setWallet(createUnavailableAccountWallet());
+      setLoadedAccountUserId(null);
       return;
     }
 
@@ -156,18 +170,24 @@ export function useWallet(
         crystals: coins.crystals,
         totalPurchasedCoins: coins.totalPurchasedCoins,
       }));
+      setLoadedAccountUserId(session.user.id);
     } catch {
-      setWallet(loadLocalWallet());
+      setWallet(createUnavailableAccountWallet());
+      setLoadedAccountUserId(null);
     }
   }, [session, isGuest]);
 
+  const visibleWallet = session && !isGuest && loadedAccountUserId !== session.user.id
+    ? createUnavailableAccountWallet()
+    : wallet;
+
   return {
-    coins: wallet.coins,
-    coupons: wallet.coupons,
-    crystals: wallet.crystals,
-    totalPurchasedCoins: wallet.totalPurchasedCoins,
+    coins: visibleWallet.coins,
+    coupons: visibleWallet.coupons,
+    crystals: visibleWallet.crystals,
+    totalPurchasedCoins: visibleWallet.totalPurchasedCoins,
     purchase: purchaseUnavailable,
     refresh,
-    orders: wallet.orders,
+    orders: visibleWallet.orders,
   };
 }

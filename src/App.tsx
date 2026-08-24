@@ -16,7 +16,11 @@ import GlobalShell from './components/GlobalShell';
 import type { ShellView } from './components/GlobalShell';
 import LobbyHome from './components/LobbyHome';
 import ProfileView from './components/ProfileView';
-import CoinStore from './components/CoinStore';
+import ShopView, { type ShopSection } from './components/ShopView';
+import DailyCheckInView from './components/DailyCheckInView';
+import EconomyHistoryView from './components/EconomyHistoryView';
+import OnlineQualifierView from './components/OnlineQualifierView';
+import OnboardingSpotlight from './components/OnboardingSpotlight';
 import StartGameFlow from './components/StartGameFlow';
 import UtilityMenu, { type UtilityDestination } from './components/UtilityMenu';
 import UtilityView from './components/UtilityView';
@@ -29,9 +33,15 @@ import TurnstileWidget from './components/TurnstileWidget';
 import { useDisplayLanguage } from './i18n';
 import { mapGameSetupToConfig, type GameSetup, type LobbySubview } from './lobbyFeatures';
 import { useLobbyFeatures } from './hooks/useLobbyFeatures';
+import { useGuestEconomy } from './hooks/useGuestEconomy';
+import { SKIN_CATALOG_BY_ID } from './economy/catalog';
+import { navigateEconomyRoute, readEconomyRoute, type EconomyRoute } from './economy/routes';
+import { getTerminalRewardRequest } from './economy/gameRewards';
+import type { SkinStoreFilter } from './components/SkinStore';
 import { resolveVoteResult } from './gameEngine';
 import { playTick } from './services/speechAudio';
 import './styles/game-responsive.css';
+import './styles/economy.css';
 import {
   Clock3, History, KeyRound, Languages, Loader2,
   LogOut, Mail, Moon, Power, RefreshCw, ScrollText, Shield,
@@ -79,10 +89,18 @@ const App: React.FC = () => {
   const [startRequestRevision, setStartRequestRevision] = useState(0);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [isGameInfoOpen, setIsGameInfoOpen] = useState(false);
+  const [shopSection, setShopSection] = useState<ShopSection>('skins');
+  const [skinStoreFilter, setSkinStoreFilter] = useState<SkinStoreFilter>('all');
+  const [isTutorialOpen, setIsTutorialOpen] = useState(false);
+  const [isRouteReady, setIsRouteReady] = useState(false);
+  const historyReturnRef = React.useRef<EconomyRoute>({ page: 'lobby' });
+  const autoTutorialAttemptedRef = React.useRef(false);
+  const rewardedTerminalIdRef = React.useRef<string | null>(null);
   const gameInfoTriggerRef = React.useRef<HTMLButtonElement>(null);
   const utilityTriggerRef = React.useRef<HTMLButtonElement>(null);
   const rec = useRecords(auth.session);
   const wallet = useWallet(auth.session, auth.isGuest);
+  const economy = useGuestEconomy(auth.isGuest);
   const lobbyFeatures = useLobbyFeatures(auth.session?.user.id ?? null);
   const game = useGameState({
     session: auth.session,
@@ -96,6 +114,82 @@ const App: React.FC = () => {
   });
   const startRequestLockedRef = React.useRef(false);
   const pendingStartRef = React.useRef<{ setup: GameSetup; config: NonNullable<ReturnType<typeof mapGameSetupToConfig>> } | null>(null);
+
+  const applyEconomyRoute = React.useCallback((route: EconomyRoute) => {
+    setUtilityView(null);
+    switch (route.page) {
+      case 'lobby':
+        setActiveView('home');
+        setLobbySubview('home');
+        break;
+      case 'skin-store':
+        setActiveView('shop');
+        setShopSection(route.section);
+        setSkinStoreFilter(route.season === 'tidal' ? 'tidal' : 'all');
+        break;
+      case 'online-qualifier':
+        setActiveView('home');
+        setLobbySubview('online-qualifier');
+        break;
+      case 'daily-check-in':
+        setActiveView('home');
+        setLobbySubview('daily-check-in');
+        break;
+      case 'economy-history':
+        setActiveView('home');
+        setLobbySubview('economy-history');
+        break;
+    }
+  }, []);
+
+  const navigateEconomy = React.useCallback((route: EconomyRoute) => {
+    applyEconomyRoute(route);
+    navigateEconomyRoute(route);
+  }, [applyEconomyRoute]);
+
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    const syncRoute = () => {
+      applyEconomyRoute(readEconomyRoute());
+      setIsRouteReady(true);
+    };
+    syncRoute();
+    window.addEventListener('hashchange', syncRoute);
+    return () => window.removeEventListener('hashchange', syncRoute);
+  }, [applyEconomyRoute]);
+
+  React.useEffect(() => {
+    if (
+      !auth.isGuest
+      || !isRouteReady
+      || autoTutorialAttemptedRef.current
+      || activeView !== 'home'
+      || lobbySubview !== 'home'
+      || economy.ledgerStatus === 'account'
+      || economy.state.tutorialSeen
+    ) return;
+    autoTutorialAttemptedRef.current = true;
+    setIsTutorialOpen(true);
+  }, [activeView, auth.isGuest, economy.ledgerStatus, economy.state.tutorialSeen, isRouteReady, lobbySubview]);
+
+  React.useEffect(() => {
+    const request = getTerminalRewardRequest({
+      phase: game.phase,
+      winner: game.winner,
+      savedRecordId: game.savedRecordId,
+      role: game.me?.role ?? null,
+      hasConfig: Boolean(game.config),
+    });
+    if (!request || rewardedTerminalIdRef.current === request.gameId) return;
+    rewardedTerminalIdRef.current = request.gameId;
+    economy.rewardGame(request.gameId, request.won);
+  }, [economy.rewardGame, game.config, game.me?.role, game.phase, game.savedRecordId, game.winner]);
+
+  const displayedCoins = auth.isGuest ? economy.state.coins : wallet.coins;
+  const displayedCrystals = auth.isGuest ? economy.state.crystals : wallet.crystals;
+  const equippedSkinName = economy.state.equippedSkinId
+    ? SKIN_CATALOG_BY_ID.get(economy.state.equippedSkinId)?.name ?? null
+    : null;
 
   const finishStartRequest = React.useCallback((setup: GameSetup) => {
     const config = mapGameSetupToConfig(setup);
@@ -259,6 +353,7 @@ const App: React.FC = () => {
       setLobbySubview('home');
       game.setPhase(GamePhase.LOBBY);
       rec.setShowRecords(true);
+      navigateEconomy({ page: 'lobby' });
     };
 
     const logFeedProps = {
@@ -468,6 +563,11 @@ const App: React.FC = () => {
           recordError={rec.recordError}
           {...logFeedProps}
         />
+        {economy.feedback && (
+          <p className="economy-global-feedback economy-global-feedback--game" role="status" aria-live="polite">
+            {economy.feedback}
+          </p>
+        )}
       </>
     );
   }
@@ -475,8 +575,18 @@ const App: React.FC = () => {
   // Determine which content view to show inside the shell
   const navigateShell = (view: ShellView) => {
     setUtilityView(null);
+    if (view === 'home') {
+      navigateEconomy({ page: 'lobby' });
+      return;
+    }
+    if (view === 'shop') {
+      navigateEconomy({ page: 'skin-store', season: 'all', section: 'skins' });
+      return;
+    }
+    if (typeof window !== 'undefined' && window.location.hash) {
+      window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+    }
     setActiveView(view);
-    if (view === 'home') setLobbySubview('home');
   };
 
   const closeUtilityMenu = () => {
@@ -493,6 +603,11 @@ const App: React.FC = () => {
             onOpenSubview={setLobbySubview}
             onOpenUtilityMenu={() => setUtilityView('menu')}
             onNavigate={navigateShell}
+            onOpenTidalStore={() => navigateEconomy({ page: 'skin-store', season: 'tidal', section: 'skins' })}
+            onOpenQualifier={() => navigateEconomy({ page: 'online-qualifier' })}
+            onOpenDailyCheckIn={() => navigateEconomy({ page: 'daily-check-in' })}
+            onOpenTutorial={() => setIsTutorialOpen(true)}
+            equippedSkinName={equippedSkinName}
           />
         );
       case 'mode-choice':
@@ -528,6 +643,33 @@ const App: React.FC = () => {
             onClaimTier={lobbyFeatures.claimBattlePassTier}
             onClaimEligibleTiers={lobbyFeatures.claimEligibleBattlePassTiers}
             onBack={() => setLobbySubview('home')}
+          />
+        );
+      case 'online-qualifier':
+        return <OnlineQualifierView onBack={() => navigateEconomy({ page: 'lobby' })} />;
+      case 'daily-check-in':
+        return (
+          <DailyCheckInView
+            state={economy.state}
+            coins={displayedCoins}
+            crystals={displayedCrystals}
+            isGuest={auth.isGuest}
+            ledgerCorrupt={economy.ledgerStatus === 'corrupt'}
+            feedback={economy.feedback}
+            onCheckIn={economy.checkIn}
+            onOpenHistory={() => {
+              historyReturnRef.current = { page: 'daily-check-in' };
+              navigateEconomy({ page: 'economy-history' });
+            }}
+            onBack={() => navigateEconomy({ page: 'lobby' })}
+          />
+        );
+      case 'economy-history':
+        return (
+          <EconomyHistoryView
+            events={economy.state.events}
+            isGuest={auth.isGuest}
+            onBack={() => navigateEconomy(historyReturnRef.current)}
           />
         );
       default:
@@ -568,10 +710,39 @@ const App: React.FC = () => {
         return <WolfVillagePreview onBack={() => navigateShell('home')} />;
       case 'shop':
         return (
-          <CoinStore
-            coins={wallet.coins}
-            coupons={wallet.coupons}
-            crystals={wallet.crystals}
+          <ShopView
+            section={shopSection}
+            onSectionChange={section => navigateEconomy({
+              page: 'skin-store',
+              season: section === 'skins' && skinStoreFilter === 'tidal' ? 'tidal' : 'all',
+              section,
+            })}
+            skinFilter={skinStoreFilter}
+            onSkinFilterChange={filter => {
+              setSkinStoreFilter(filter);
+              navigateEconomyRoute({
+                page: 'skin-store',
+                season: filter === 'tidal' ? 'tidal' : 'all',
+                section: 'skins',
+              });
+            }}
+            economyState={economy.state}
+            coins={displayedCoins}
+            crystals={displayedCrystals}
+            legacyCoupons={wallet.coupons}
+            isGuest={auth.isGuest}
+            ledgerCorrupt={economy.ledgerStatus === 'corrupt'}
+            feedback={economy.feedback}
+            onUnlock={economy.unlockSkin}
+            onEquip={economy.equipSkin}
+            onOpenHistory={() => {
+              historyReturnRef.current = {
+                page: 'skin-store',
+                season: skinStoreFilter === 'tidal' ? 'tidal' : 'all',
+                section: shopSection,
+              };
+              navigateEconomy({ page: 'economy-history' });
+            }}
             onPurchase={async (packId) => {
               const result = await wallet.purchase(packId);
               return { success: result.success, error: result.error };
@@ -592,11 +763,27 @@ const App: React.FC = () => {
       onOpenUtilityMenu={() => setUtilityView('menu')}
       utilityTriggerRef={utilityTriggerRef}
       fullscreen={false}
-      coins={wallet.coins}
+      coins={displayedCoins}
       coupons={wallet.coupons}
-      crystals={wallet.crystals}
+      crystals={displayedCrystals}
     >
       {renderShellContent()}
+      <OnboardingSpotlight
+        open={isTutorialOpen}
+        onSkip={() => {
+          economy.skipTutorial();
+          setIsTutorialOpen(false);
+        }}
+        onFinish={() => {
+          economy.finishTutorial();
+          setIsTutorialOpen(false);
+        }}
+      />
+      {economy.feedback && activeView === 'home' && lobbySubview === 'home' && (
+        <p className="economy-global-feedback" role="status" aria-live="polite">
+          {economy.feedback}
+        </p>
+      )}
     </GlobalShell>
   );
 };

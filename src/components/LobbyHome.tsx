@@ -4,13 +4,18 @@ import LobbyActionButtons from './LobbyActionButtons';
 import ActivityBanner from './ActivityBanner';
 import type { ShellView } from './GlobalShell';
 import type { LobbySubview } from '../lobbyFeatures';
-import { CalendarDays, Heart, Play, Ticket } from 'lucide-react';
+import { CalendarDays, GraduationCap, Heart, Play, Ticket } from 'lucide-react';
 
 interface Props {
   onStartGame: () => void;
   onOpenSubview: (subview: Extract<LobbySubview, 'activity' | 'faction-support' | 'battle-pass'>) => void;
   onOpenUtilityMenu: () => void;
   onNavigate: (view: ShellView) => void;
+  onOpenTidalStore: () => void;
+  onOpenQualifier: () => void;
+  onOpenDailyCheckIn: () => void;
+  onOpenTutorial: () => void;
+  equippedSkinName?: string | null;
 }
 
 const LOBBY_CHAT_PREVIEW = [
@@ -49,6 +54,11 @@ const LobbyHome: React.FC<Props> = ({
   onOpenSubview,
   onOpenUtilityMenu,
   onNavigate,
+  onOpenTidalStore,
+  onOpenQualifier,
+  onOpenDailyCheckIn,
+  onOpenTutorial,
+  equippedSkinName,
 }) => {
   return (
     <section className="wol-lobby" aria-label="Lobby">
@@ -131,7 +141,7 @@ const LobbyHome: React.FC<Props> = ({
           position: 'relative',
         }}>
           {/* Character silhouette placeholder */}
-          <div className="wol-lobby-character" style={{
+          <div className="wol-lobby-character" data-equipped-skin={equippedSkinName ?? 'default'} style={{
             width: '70%', maxWidth: 220, aspectRatio: '3/4',
             background: 'linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))',
             border: '1px solid rgba(255,255,255,0.05)',
@@ -151,7 +161,7 @@ const LobbyHome: React.FC<Props> = ({
               fontSize: 10, fontWeight: 600,
               color: 'rgba(255,255,255,0.35)',
             }}>
-              Default Outfit
+              {equippedSkinName ?? 'Default Outfit'}
             </div>
           </div>
         </div>
@@ -167,13 +177,17 @@ const LobbyHome: React.FC<Props> = ({
 
       {/* ── Activity Banner Carousel ─────────────────────────────────── */}
       <div className="wol-lobby-activity">
-        <ActivityBanner />
+        <ActivityBanner
+          onOpenTidalStore={onOpenTidalStore}
+          onOpenQualifier={onOpenQualifier}
+          onOpenDailyCheckIn={onOpenDailyCheckIn}
+        />
       </div>
 
       <div className="wol-lobby-lower">
         {/* ── Primary single-player launch and local feature surfaces ── */}
         <section className="wol-lobby-launchpad" aria-label="Primary lobby actions">
-          <button className="wol-start-game" type="button" onClick={onStartGame}>
+          <button className="wol-start-game" type="button" onClick={onStartGame} data-tour-target="start-game">
             <Play aria-hidden="true" />
             <span><strong>Start Game</strong><small>Single-Player AI Match</small></span>
           </button>
@@ -186,6 +200,9 @@ const LobbyHome: React.FC<Props> = ({
             </button>
             <button type="button" onClick={() => onOpenSubview('battle-pass')}>
               <Ticket aria-hidden="true" /><span>Battle Pass</span>
+            </button>
+            <button type="button" onClick={onOpenTutorial}>
+              <GraduationCap aria-hidden="true" /><span>New-Player Guide</span>
             </button>
           </div>
         </section>
