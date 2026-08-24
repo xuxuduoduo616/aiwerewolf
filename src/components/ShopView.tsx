@@ -1,7 +1,8 @@
 import React from 'react';
 import CoinStore from './CoinStore';
 import SkinStore, { type SkinStoreFilter } from './SkinStore';
-import type { EconomyMutationResult, GuestEconomyState } from '../economy/ledger';
+import type { AccountEconomyPhase, AccountMutationAction } from '../economy/accountEconomy';
+import type { EconomyActionReturn, EconomyViewState } from '../hooks/useEconomy';
 
 export type ShopSection = 'skins' | 'coin-packs';
 
@@ -10,15 +11,20 @@ interface Props {
   onSectionChange: (section: ShopSection) => void;
   skinFilter: SkinStoreFilter;
   onSkinFilterChange: (filter: SkinStoreFilter) => void;
-  economyState: GuestEconomyState;
+  economyState: EconomyViewState;
   coins: number;
   crystals: number;
   legacyCoupons: number;
   isGuest: boolean;
   ledgerCorrupt: boolean;
+  phase: AccountEconomyPhase | 'ready';
+  statusMessage: string;
+  pendingAction: AccountMutationAction | null;
+  mutationsDisabled: boolean;
   feedback: string;
-  onUnlock: (skinId: string) => EconomyMutationResult;
-  onEquip: (skinId: string) => EconomyMutationResult;
+  onUnlock: (skinId: string) => EconomyActionReturn;
+  onEquip: (skinId: string) => EconomyActionReturn;
+  onRefresh: () => void | Promise<boolean>;
   onOpenHistory: () => void;
   onPurchase: (packId: string) => Promise<{ success: boolean; error?: string }>;
 }
@@ -34,9 +40,14 @@ const ShopView: React.FC<Props> = ({
   legacyCoupons,
   isGuest,
   ledgerCorrupt,
+  phase,
+  statusMessage,
+  pendingAction,
+  mutationsDisabled,
   feedback,
   onUnlock,
   onEquip,
+  onRefresh,
   onOpenHistory,
   onPurchase,
 }) => (
@@ -52,11 +63,16 @@ const ShopView: React.FC<Props> = ({
         crystals={crystals}
         isGuest={isGuest}
         ledgerCorrupt={ledgerCorrupt}
+        phase={phase}
+        statusMessage={statusMessage}
+        pendingAction={pendingAction}
+        mutationsDisabled={mutationsDisabled}
         filter={skinFilter}
         feedback={feedback}
         onFilterChange={onSkinFilterChange}
         onUnlock={onUnlock}
         onEquip={onEquip}
+        onRefresh={onRefresh}
         onOpenHistory={onOpenHistory}
       />
     ) : (

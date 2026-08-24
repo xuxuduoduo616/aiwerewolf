@@ -9,7 +9,7 @@ import CoinStore from './CoinStore';
 import DailyCheckInView from './DailyCheckInView';
 import EconomyBalances from './EconomyBalances';
 import OnlineQualifierView from './OnlineQualifierView';
-import SkinStore from './SkinStore';
+import SkinStore, { SkinPreviewContent, resolveSkinPresentation } from './SkinStore';
 import {
   ONBOARDING_STEPS,
   OnboardingSpotlightLayer,
@@ -23,8 +23,27 @@ import {
   type OnboardingModalDocument,
 } from './OnboardingSpotlight';
 import { CHECK_IN_MILESTONES, createEmptyGuestEconomyState } from '../economy/ledger';
+import { SKIN_CATALOG_BY_ID } from '../economy/catalog';
+import type { EconomyViewState } from '../hooks/useEconomy';
+import { resolveEquippedSkinName } from '../App';
 
 const state = createEmptyGuestEconomyState();
+const viewState: EconomyViewState = {
+  coins: state.coins,
+  crystals: state.crystals,
+  inventory: state.inventory,
+  equippedSkinId: state.equippedSkinId,
+  checkInStreak: state.checkInStreak,
+  lastCheckInDay: state.lastCheckInDay,
+  serverDate: null,
+  claimedMilestoneDays: state.claimedMilestoneDays,
+  tutorialSeen: state.tutorialSeen,
+  tutorialFinished: state.tutorialFinished,
+  guestEvents: state.events,
+  accountLedger: [],
+  accountCatalog: [],
+  nextCursor: null,
+};
 const noopMutation = () => ({ ok: false, code: 'invalid-request' as const, state });
 
 const textContent = (node: React.ReactNode): string => {
@@ -122,13 +141,18 @@ describe('economy entry surfaces', () => {
   it('renders the 7-day track and all five milestone reward descriptions', () => {
     const html = renderToStaticMarkup(
       <DailyCheckInView
-        state={state}
+        state={viewState}
         coins={0}
         crystals={0}
         isGuest
         ledgerCorrupt={false}
+        phase="ready"
+        pendingAction={null}
+        mutationsDisabled={false}
+        statusMessage=""
         feedback=""
         onCheckIn={noopMutation}
+        onRefresh={vi.fn()}
         onOpenHistory={vi.fn()}
         onBack={vi.fn()}
       />,
@@ -160,16 +184,21 @@ describe('cosmetic and tutorial contracts', () => {
   it('renders both cosmetic tiers, every price tier, preview/prompt metadata, and no remote image URL', () => {
     const html = renderToStaticMarkup(
       <SkinStore
-        state={state}
+        state={viewState}
         coins={0}
         crystals={0}
         isGuest
         ledgerCorrupt={false}
+        phase="ready"
+        statusMessage=""
+        pendingAction={null}
+        mutationsDisabled={false}
         filter="all"
         feedback=""
         onFilterChange={vi.fn()}
         onUnlock={noopMutation}
         onEquip={noopMutation}
+        onRefresh={vi.fn()}
         onOpenHistory={vi.fn()}
       />,
     );
@@ -184,21 +213,143 @@ describe('cosmetic and tutorial contracts', () => {
   it('keeps authenticated unlock and equip mutations visibly unavailable', () => {
     const html = renderToStaticMarkup(
       <SkinStore
-        state={state}
+        state={viewState}
         coins={999999}
         crystals={999}
         isGuest={false}
         ledgerCorrupt={false}
+        phase="unavailable"
+        statusMessage="Account economy is currently unavailable. No account assets were changed."
+        pendingAction={null}
+        mutationsDisabled
         filter="all"
         feedback=""
         onFilterChange={vi.fn()}
         onUnlock={noopMutation}
         onEquip={noopMutation}
+        onRefresh={vi.fn()}
         onOpenHistory={vi.fn()}
       />,
     );
-    expect(html).toContain('Account rewards and cosmetic changes are unavailable');
+    expect(html).toContain('Account economy is currently unavailable');
     expect(html.match(/disabled=""/g)?.length).toBeGreaterThanOrEqual(7);
+  });
+
+  it('renders account name, tier, currency and price from the verified server catalog', () => {
+    const serverItem = {
+      id: 'mist-wanderer',
+      name: 'Server Mist Edition',
+      itemKind: 'skin' as const,
+      tier: 'premium' as const,
+      currency: 'crystals' as const,
+      price: 37,
+      assetKey: 'server/mist-v2',
+      purchaseEnabled: true,
+    };
+    const html = renderToStaticMarkup(
+      <SkinStore
+        state={{
+          ...viewState,
+          accountCatalog: [serverItem],
+        }}
+        coins={999999}
+        crystals={37}
+        isGuest={false}
+        ledgerCorrupt={false}
+        phase="ready"
+        statusMessage=""
+        pendingAction={null}
+        mutationsDisabled={false}
+        filter="all"
+        feedback=""
+        onFilterChange={vi.fn()}
+        onUnlock={noopMutation}
+        onEquip={noopMutation}
+        onRefresh={vi.fn()}
+        onOpenHistory={vi.fn()}
+      />,
+    );
+    expect(html).toContain('Server Mist Edition');
+    expect(html).toContain('Premium · Core Collection');
+    expect(html).toContain('37 Crystals');
+    expect(html).toContain('Unlock Server Mist Edition for 37 crystals');
+
+    const product = SKIN_CATALOG_BY_ID.get('mist-wanderer');
+    expect(product).toBeDefined();
+    const preview = renderToStaticMarkup(
+      <SkinPreviewContent
+        product={product!}
+        presentation={resolveSkinPresentation(product!, false, serverItem)}
+      />,
+    );
+    expect(preview).toContain('Server Mist Edition');
+    expect(preview).toContain('Premium cosmetic');
+    expect(preview).not.toContain('Mist Wanderer');
+  });
+
+  it('never falls back to guest economic or naming fields when an account catalog item is missing', () => {
+    const html = renderToStaticMarkup(
+      <SkinStore
+        state={{ ...viewState, accountCatalog: [] }}
+        coins={999999}
+        crystals={999}
+        isGuest={false}
+        ledgerCorrupt={false}
+        phase="ready"
+        statusMessage=""
+        pendingAction={null}
+        mutationsDisabled={false}
+        filter="all"
+        feedback=""
+        onFilterChange={vi.fn()}
+        onUnlock={noopMutation}
+        onEquip={noopMutation}
+        onRefresh={vi.fn()}
+        onOpenHistory={vi.fn()}
+      />,
+    );
+    expect(html).toContain('Verified item unavailable');
+    expect(html).toContain('Verified tier unavailable');
+    expect(html).toContain('Verified price unavailable');
+    expect(html).toContain('Price unavailable');
+    expect(html).toContain('This cosmetic is unavailable in the verified server catalog.');
+    expect(html).not.toContain('Mist Wanderer');
+    expect(html).not.toContain('800 Coins');
+    expect(html).not.toContain('20 Crystals');
+
+    const product = SKIN_CATALOG_BY_ID.get('mist-wanderer');
+    expect(product).toBeDefined();
+    const preview = renderToStaticMarkup(
+      <SkinPreviewContent
+        product={product!}
+        presentation={resolveSkinPresentation(product!, false)}
+      />,
+    );
+    expect(preview).toContain('Verified item unavailable');
+    expect(preview).toContain('Verified tier unavailable');
+    expect(preview).toContain('Verified catalog details and price are unavailable');
+    expect(preview).not.toContain('Mist Wanderer');
+    expect(preview).not.toContain('Basic cosmetic');
+  });
+
+  it('uses the verified server name for account lobby equipment while guests keep local presentation', () => {
+    const equippedState = {
+      equippedSkinId: 'mist-wanderer',
+      accountCatalog: [{
+        id: 'mist-wanderer',
+        name: 'Server Mist Edition',
+        itemKind: 'skin' as const,
+        tier: 'premium' as const,
+        currency: 'crystals' as const,
+        price: 37,
+        assetKey: 'server/mist-v2',
+        purchaseEnabled: true,
+      }],
+    };
+    expect(resolveEquippedSkinName(equippedState, false)).toBe('Server Mist Edition');
+    expect(resolveEquippedSkinName(equippedState, true)).toBe('Mist Wanderer');
+    expect(resolveEquippedSkinName({ ...equippedState, accountCatalog: [] }, false))
+      .toBe('Equipped cosmetic unavailable');
   });
 
   it('renders a target-bound arrow and preserves Back/Next/Skip/Finish behavior', () => {
