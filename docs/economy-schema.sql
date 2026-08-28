@@ -197,6 +197,14 @@ create index if not exists economy_gameplay_daily_idx
   on public.economy_gameplay_claims (user_id, server_date, created_at);
 create index if not exists economy_eligibility_completed_idx
   on public.economy_gameplay_eligibility (user_id, completed_at desc);
+create index if not exists economy_inventory_item_idx
+  on public.economy_inventory (item_id);
+create index if not exists economy_inventory_receipt_idx
+  on public.economy_inventory (receipt_id);
+create index if not exists economy_ledger_receipt_idx
+  on public.economy_ledger (receipt_id);
+create index if not exists economy_player_state_equipped_idx
+  on public.economy_player_state (user_id, equipped_skin_id);
 
 -- Append-only means even privileged accidental UPDATE/DELETE statements fail.
 create or replace function public.economy_forbid_ledger_mutation()
