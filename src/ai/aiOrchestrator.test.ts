@@ -1,12 +1,17 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { generateAIAction, generateAIDialogue, generateWolfChat } from './aiOrchestrator';
+import {
+  generateAIAction,
+  generateAIDialogue,
+  generateWolfChat,
+  setAIExpressionModel,
+} from './aiOrchestrator';
 import { resolveGameLanguage } from '../hooks/useGameState';
 import { isCannedEnglishStub } from '../i18n';
 import { getRoleCamp } from '../gameEngine';
 import { GamePhase, GameLog, Player, Role } from '../types';
 import { pickSpeech, pickWolfNightSpeech } from '../services/speechLibrary';
 import { detectNameViolations } from '../diagnostics/nameDetector';
-import { generateActionWithLLM, generateSpeechWithLLM } from './geminiAdapter';
+import { generateSpeechWithLLM } from './geminiAdapter';
 
 /**
  * Tests for lobby-language-authority: the game language captured at startGame
@@ -17,7 +22,6 @@ import { generateActionWithLLM, generateSpeechWithLLM } from './geminiAdapter';
 
 vi.mock('./geminiAdapter', () => ({
   generateSpeechWithLLM: vi.fn(async () => null),
-  generateActionWithLLM: vi.fn(async () => ({ targetId: null })),
 }));
 
 vi.mock('../services/speechLibrary', () => ({
@@ -26,7 +30,6 @@ vi.mock('../services/speechLibrary', () => ({
 }));
 
 const mockLLM = vi.mocked(generateSpeechWithLLM);
-const mockActionLLM = vi.mocked(generateActionWithLLM);
 const mockPickSpeech = vi.mocked(pickSpeech);
 const mockPickWolfNightSpeech = vi.mocked(pickWolfNightSpeech);
 
@@ -59,10 +62,33 @@ const dialogue = (
   );
 
 beforeEach(() => {
+  setAIExpressionModel('gemini-2.5-flash');
   mockLLM.mockReset().mockResolvedValue(null);
-  mockActionLLM.mockReset().mockResolvedValue({ targetId: null });
   mockPickSpeech.mockReset().mockResolvedValue('');
   mockPickWolfNightSpeech.mockReset().mockResolvedValue('');
+});
+
+describe('per-match expression model routing', () => {
+  it('threads the selected model into dialogue while actions make zero remote calls', async () => {
+    const players = makeBoard();
+    setAIExpressionModel('gemini-3.6-flash');
+
+    await dialogue(players[7], players);
+    await generateAIAction(players[7], players, [], 'VOTE', []);
+
+    expect(mockLLM.mock.calls[0][2]).toBe('gemini-3.6-flash');
+    expect(mockLLM).toHaveBeenCalledTimes(1);
+  });
+
+  it('threads the selected model into wolf-chat expression', async () => {
+    const players = makeBoard();
+    const wolves = players.filter(player => player.role === Role.WEREWOLF);
+    setAIExpressionModel('gemini-3.6-flash');
+
+    await generateWolfChat(wolves, players, [], 1, []);
+
+    expect(mockLLM.mock.calls[0][2]).toBe('gemini-3.6-flash');
+  });
 });
 
 describe('resolveGameLanguage — capture at startGame', () => {
@@ -359,28 +385,20 @@ describe('generateWolfChat — roster guard on model messages (H8, invariant 6)'
   });
 });
 
-describe('generateAIAction — guarded reason, LLM never decides legality (invariants 6, 7)', () => {
-  it('keeps a valid LLM target but repairs its polluted reason', async () => {
+describe('generateAIAction — deterministic action selection (invariants 6, 7)', () => {
+  it('does not make a remote action call when expression model changes', async () => {
     const players = makeBoard();
-    mockActionLLM.mockResolvedValue({ targetId: 5, reason: 'サクラ和Agent[02]的发言都指向5号' });
-
+    setAIExpressionModel('gemini-3.6-flash');
     const action = await generateAIAction(players[7], players, [], 'VOTE', []);
-
-    expect(action.targetId).toBe(5);
-    expect(action.reason).toBeDefined();
-    expect(action.reason).not.toContain('サクラ');
-    expect(action.reason).not.toContain('Agent');
-    expect(detectNameViolations(action.reason!, players)).toHaveLength(0);
+    expect(action.targetId).not.toBeNull();
+    expect(mockLLM).not.toHaveBeenCalled();
   });
 
-  it('rejects an out-of-roster LLM target and falls back to a valid seat', async () => {
+  it('returns a legal deterministic target', async () => {
     const players = makeBoard();
-    mockActionLLM.mockResolvedValue({ targetId: 99, reason: '乱选' });
-
     const action = await generateAIAction(players[7], players, [], 'VOTE', []);
 
     const valid = players.filter(p => p.isAlive && p.id !== players[7].id).map(p => p.id);
-    expect(action.targetId).not.toBe(99);
     expect(valid).toContain(action.targetId);
   });
 });

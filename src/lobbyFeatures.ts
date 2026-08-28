@@ -1,4 +1,5 @@
 import { GAME_MODES } from './constants';
+import { isAIExpressionModelId, type AIExpressionModelId } from './ai/modelCatalog';
 import type { Difficulty, GameConfig } from './types';
 
 export const LOBBY_SUBVIEWS = [
@@ -19,6 +20,7 @@ export interface GameSetup {
   mode: 'single';
   boardId: 'nine-player' | 'twelve-player';
   difficulty: Difficulty;
+  expressionModel: AIExpressionModelId;
 }
 
 const GAME_SETUP_BOARD_CONFIG_IDS: Record<GameSetup['boardId'], GameConfig['id']> = {
@@ -33,7 +35,8 @@ export const isGameSetup = (value: unknown): value is GameSetup => {
   const candidate = value as Partial<GameSetup>;
   return candidate.mode === 'single'
     && (candidate.boardId === 'nine-player' || candidate.boardId === 'twelve-player')
-    && GAME_SETUP_DIFFICULTIES.includes(candidate.difficulty as Difficulty);
+    && GAME_SETUP_DIFFICULTIES.includes(candidate.difficulty as Difficulty)
+    && isAIExpressionModelId(candidate.expressionModel);
 };
 
 export const mapGameSetupToConfig = (value: unknown): GameConfig | null => {

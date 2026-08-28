@@ -40,6 +40,7 @@ import { getTerminalRewardRequest } from './economy/gameRewards';
 import type { SkinStoreFilter } from './components/SkinStore';
 import { resolveVoteResult } from './gameEngine';
 import { playTick } from './services/speechAudio';
+import { setAIExpressionModel } from './ai/aiOrchestrator';
 import './styles/game-responsive.css';
 import './styles/economy.css';
 import {
@@ -216,6 +217,7 @@ const App: React.FC = () => {
     if (!pending || game.difficulty !== pending.setup.difficulty) return;
 
     pendingStartRef.current = null;
+    setAIExpressionModel(pending.setup.expressionModel);
     game.startGame(pending.config, displayLanguage);
     rec.setShowRecords(false);
   }, [displayLanguage, game.difficulty, game.startGame, rec.setShowRecords, startRequestRevision]);
