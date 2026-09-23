@@ -99,9 +99,10 @@ describe('StartGameFlow surfaces and navigation', () => {
     onConfirm: () => undefined,
   };
 
-  it('renders the visible four-step sequence and mode choice', () => {
+  it('renders only the two real setup steps and mode choice', () => {
     const html = renderToStaticMarkup(<StartGameFlow {...callbacks} />);
     for (const label of START_GAME_STEPS) expect(html).toContain(label);
+    expect(START_GAME_STEPS).toHaveLength(2);
     expect(html).toContain('Single-Player');
     expect(html).toContain('Live Multiplayer');
     expect(html).toContain('Roadmap preview · Unavailable');
@@ -119,11 +120,11 @@ describe('StartGameFlow surfaces and navigation', () => {
     expect(html.match(/disabled=""/g)).toHaveLength(3);
   });
 
-  it('renders final confirmation only with the selected setup', () => {
+  it('offers direct start beside the selected setup without a review step', () => {
     const html = renderToStaticMarkup(
       <StartGameFlow
         {...callbacks}
-        initialStep="confirmation"
+        initialStep="match-setup"
         initialSetup={{
           mode: 'single',
           boardId: 'twelve-player',
@@ -132,11 +133,13 @@ describe('StartGameFlow surfaces and navigation', () => {
         }}
       />,
     );
-    expect(html).toContain('Final Confirmation');
+    expect(html).not.toContain('Final Confirmation');
     expect(html).toContain('12-Player Standard');
     expect(html).toContain('Expert');
     expect(html).toContain('Gemini 2.5 Flash');
-    expect(html).toContain('Confirm and Start');
+    expect(html).toMatch(/class="app-primary-button" type="button"[^>]*>.*Start Game<\/button>/);
+    expect(html).not.toContain('Review Setup');
+    expect(html).not.toContain('<dl>');
   });
 
   it('renders multiplayer as an unavailable preview without a start control', () => {
@@ -151,7 +154,6 @@ describe('StartGameFlow surfaces and navigation', () => {
   it('defines deterministic back navigation at every flow step', () => {
     expect(getPreviousStartGameStep('mode-choice')).toBe('home');
     expect(getPreviousStartGameStep('match-setup')).toBe('mode-choice');
-    expect(getPreviousStartGameStep('confirmation')).toBe('match-setup');
     expect(getPreviousStartGameStep('multiplayer-unavailable')).toBe('mode-choice');
   });
 });

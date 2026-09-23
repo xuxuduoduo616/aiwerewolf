@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { GUEST_ECONOMY_STORAGE_KEY } from '../economy/ledger';
+import { GUEST_ECONOMY_STORAGE_KEY, getGuestEconomyStorageKey } from '../economy/ledger';
 import { ACCOUNT_ECONOMY_UNAVAILABLE, useGuestEconomy } from './useGuestEconomy';
 
 const installMemoryStorage = () => {
@@ -24,6 +24,7 @@ afterEach(() => {
 });
 
 describe('useGuestEconomy identity runtime', () => {
+  const guestId = 'guest:11111111-1111-4111-8111-111111111111';
   it('never invokes or persists a guest ledger mutation for an account render', () => {
     const storage = installMemoryStorage();
     const AccountProbe = () => {
@@ -50,7 +51,7 @@ describe('useGuestEconomy identity runtime', () => {
 
     const IdentityTransitionProbe = () => {
       const [isGuest, setIsGuest] = useState(true);
-      const economy = useGuestEconomy(isGuest);
+      const economy = useGuestEconomy(isGuest, guestId);
       const phase = useRef(0);
       if (phase.current === 0) {
         phase.current = 1;
@@ -71,5 +72,6 @@ describe('useGuestEconomy identity runtime', () => {
     expect(markup).not.toContain('Guide complete');
     expect(writesBeforeAccountAction).toBe(1);
     expect(writesAfterAccountAction).toBe(1);
+    expect(storage.values.has(getGuestEconomyStorageKey(guestId))).toBe(true);
   });
 });

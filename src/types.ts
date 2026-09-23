@@ -198,6 +198,9 @@ export interface GameState {
 export interface UserProfile {
   id: string;
   email: string;
+  username: string;
+  nickname: string;
+  /** Compatibility alias for presentation callers; always equals nickname. */
   displayName: string;
   createdAt: string;
 }

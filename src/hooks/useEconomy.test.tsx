@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { SupabaseSession } from '../types';
-import { GUEST_ECONOMY_STORAGE_KEY } from '../economy/ledger';
+import { GUEST_ECONOMY_STORAGE_KEY, getGuestEconomyStorageKey } from '../economy/ledger';
 import { useEconomy } from './useEconomy';
 
 const installStorage = () => {
@@ -27,11 +27,12 @@ afterEach(() => {
 });
 
 describe('useEconomy guest/account isolation', () => {
+  const guestId = 'guest:11111111-1111-4111-8111-111111111111';
   it('keeps guest operations local and sends zero economy requests', () => {
     const local = installStorage();
     const fetchImpl = vi.fn();
     const Probe = () => {
-      const economy = useEconomy(null, true, { fetchImpl, storage: local.storage });
+      const economy = useEconomy(null, true, { fetchImpl, storage: local.storage }, guestId);
       const result = useRef('');
       if (!result.current) result.current = String(economy.finishTutorial() && 'guest-finished');
       return <output>{economy.mode}|{result.current}</output>;
@@ -39,7 +40,7 @@ describe('useEconomy guest/account isolation', () => {
     const html = renderToStaticMarkup(<Probe />);
     expect(html).toContain('guest|guest-finished');
     expect(fetchImpl).not.toHaveBeenCalled();
-    expect(local.setItem).toHaveBeenCalledWith(GUEST_ECONOMY_STORAGE_KEY, expect.any(String));
+    expect(local.setItem).toHaveBeenCalledWith(getGuestEconomyStorageKey(guestId), expect.any(String));
   });
 
   it('never reads guest ledger or old wallet data for an account render', () => {

@@ -32,11 +32,10 @@ import {
 import { isSupabaseConfigured, saveGameRecord } from '../services/supabaseClient';
 import { DEFAULT_DISPLAY_LANGUAGE, pickTranslationSource, type DisplayLanguage } from '../i18n';
 import * as speechAudio from '../services/speechAudio';
+import { saveGuestRecords } from './useRecords';
 
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 const AI_STYLE_KEYS = Object.keys(CUSTOM_AI_STYLES);
 const MY_PLAYER_ID = 1;
-const LOCAL_RECORD_KEY = 'werewolf_guest_records';
 const ROLE_LABELS_EN: Record<Role, string> = {
   [Role.WEREWOLF]: 'Werewolf',
   [Role.VILLAGER]: 'Villager',
@@ -208,6 +207,11 @@ export const computeSpeakingStatus = (
   return 'pending';
 };
 
+export const resolvePublicPlayerName = (publicName: string): string | null => {
+  const normalized = publicName.trim();
+  return normalized || null;
+};
+
 export interface AuthContext {
   session: SupabaseSession | null;
   isGuest: boolean;
@@ -217,10 +221,12 @@ export interface AuthContext {
   recordError: string;
   setRecordError: React.Dispatch<React.SetStateAction<string>>;
   authEmail: string;
+  guestPrincipalId: string | null;
+  publicName: string;
 }
 
 export function useGameState(authContext: AuthContext) {
-  const { session, isGuest, profile, setRecords, setRecordError, authEmail } = authContext;
+  const { session, isGuest, records, setRecords, setRecordError, guestPrincipalId, publicName } = authContext;
 
   const [config, setConfig] = useState<GameConfig | null>(null);
   const [difficulty, setDifficulty] = useState<Difficulty>('normal');
@@ -266,6 +272,59 @@ export function useGameState(authContext: AuthContext) {
   const SPEECH_DURATION = 60; // seconds per player
 
   const logsEndRef = useRef<HTMLDivElement>(null);
+  const matchGenerationRef = useRef(0);
+  const matchActiveRef = useRef(false);
+  const saveStartedGenerationRef = useRef<number | null>(null);
+  const timerCleanupsRef = useRef(new Set<() => void>());
+  const generation = matchGenerationRef.current;
+  const isCurrentMatch = () => matchActiveRef.current && generation === matchGenerationRef.current;
+
+  const trackTimer = (cleanup: () => void) => {
+    const release = () => {
+      cleanup();
+      timerCleanupsRef.current.delete(release);
+    };
+    timerCleanupsRef.current.add(release);
+    return release;
+  };
+
+  const invalidateMatch = () => {
+    matchGenerationRef.current += 1;
+    matchActiveRef.current = false;
+    for (const cleanup of timerCleanupsRef.current) cleanup();
+    timerCleanupsRef.current.clear();
+    speechAudio.cancel();
+  };
+
+  // Resolving a cancelled delay lets its caller exit through the generation
+  // check without leaving a pending promise or running another AI request.
+  const waitForMatch = (ms: number) => new Promise<void>(resolve => {
+    const timer = window.setTimeout(() => release(), ms);
+    const release = trackTimer(() => { window.clearTimeout(timer); resolve(); });
+  });
+
+  const runCurrentAIPhase = (task: () => Promise<void>, onError: (error: unknown) => void) =>
+    runAIPhaseSafely(
+      value => { if (isCurrentMatch()) setIsProcessingAI(value); },
+      task,
+      error => { if (isCurrentMatch()) onError(error); },
+    );
+
+  const leaveGame = () => {
+    if (!matchActiveRef.current) return;
+    invalidateMatch();
+    setIsProcessingAI(false);
+    setCurrentSpeaker(null);
+    setSpeechTimer(null);
+    setWolfCountdown(null);
+    setVoteDeadline(null);
+    setVoteTimer(null);
+    setSelectedPlayerId(null);
+    setUserInput('');
+    setPhase(GamePhase.LOBBY);
+  };
+
+  useEffect(() => () => invalidateMatch(), []);
 
   const me = players.find(player => player.id === MY_PLAYER_ID);
 
@@ -303,13 +362,14 @@ export function useGameState(authContext: AuthContext) {
 
     setWolfCountdown(20);
     const interval = window.setInterval(() => {
+      if (!isCurrentMatch()) return;
       setWolfCountdown(value => {
         if (value === null) return null;
         return Math.max(0, value - 1);
       });
     }, 1000);
 
-    return () => window.clearInterval(interval);
+    return trackTimer(() => window.clearInterval(interval));
   }, [phase, roundCount]);
 
   // Wolf countdown auto-select fallback
@@ -334,9 +394,10 @@ export function useGameState(authContext: AuthContext) {
     setVoteDeadline(deadline);
     setVoteTimer(computeVoteRemaining(deadline, nowFn()));
     const interval = window.setInterval(() => {
+      if (!isCurrentMatch()) return;
       setVoteTimer(computeVoteRemaining(deadline, nowFn()));
     }, 1000);
-    return () => window.clearInterval(interval);
+    return trackTimer(() => window.clearInterval(interval));
   }, [phase, roundCount, me?.isAlive, me?.canVote]);
 
   // Vote countdown timeout — auto-abstain when the deadline expires
@@ -360,9 +421,10 @@ export function useGameState(authContext: AuthContext) {
     }
     setSpeechTimer(SPEECH_DURATION);
     const interval = window.setInterval(() => {
+      if (!isCurrentMatch()) return;
       setSpeechTimer(tickSpeechTimer);
     }, 1000);
-    return () => window.clearInterval(interval);
+    return trackTimer(() => window.clearInterval(interval));
   }, [currentSpeaker, phase]);
 
   // Auto-skip human speech when timer reaches 0
@@ -375,8 +437,9 @@ export function useGameState(authContext: AuthContext) {
 
   // Phase transition driver
   useEffect(() => {
-    if (winner || !players.length || isProcessingAI) return;
+    if (!isCurrentMatch() || winner || !players.length || isProcessingAI) return;
     const timer = window.setTimeout(() => {
+      if (!isCurrentMatch()) return;
       if (phase === GamePhase.NIGHT_START) beginNight();
       else if (phase === GamePhase.NIGHT_WEREWOLVES) handleWerewolfPhase();
       else if (phase === GamePhase.NIGHT_SEER) handleSeerPhase();
@@ -387,17 +450,18 @@ export function useGameState(authContext: AuthContext) {
       else if (shouldAutoResolveVote(phase, me)) finishVote(null);
     }, 700);
 
-    return () => window.clearTimeout(timer);
+    return trackTimer(() => window.clearTimeout(timer));
   }, [phase, players, isProcessingAI, winner, currentSpeaker, speakingQueue, deadThisRound, nightState]);
 
   // Game record saving
   useEffect(() => {
-    if (!winner || !config || !me || savedRecordId) return;
+    if (!isCurrentMatch() || !winner || !config || !me || savedRecordId || saveStartedGenerationRef.current === generation) return;
+    saveStartedGenerationRef.current = generation;
 
     const userWon = (winner === 'WEREWOLVES' && me.role === Role.WEREWOLF) || (winner === 'VILLAGERS' && me.role !== Role.WEREWOLF);
     const summary = buildGameRecordSummary(config, me.role, winner, roundCount, logs);
     const baseRecord = {
-      userId: session?.user.id || 'guest',
+      userId: session?.user.id ?? guestPrincipalId ?? '',
       boardId: config.id,
       role: me.role,
       result: userWon ? 'WIN' as const : 'LOSE' as const,
@@ -408,27 +472,34 @@ export function useGameState(authContext: AuthContext) {
     if (session && !isGuest && isSupabaseConfigured()) {
       saveGameRecord(session, baseRecord)
         .then(record => {
+          if (!isCurrentMatch()) return;
           setRecords(prev => [record, ...prev]);
           setSavedRecordId(record.id);
         })
         .catch(error => {
+          if (!isCurrentMatch()) return;
           setRecordError(error.message || 'Could not save the game record.');
           setSavedRecordId('failed');
         });
-    } else {
+    } else if (isGuest && guestPrincipalId) {
       const record: GameRecord = {
         ...baseRecord,
         id: `local-${Date.now()}`,
         createdAt: new Date().toISOString(),
       };
-      setRecords(prev => {
-        const next = [record, ...prev].slice(0, 20);
-        localStorage.setItem(LOCAL_RECORD_KEY, JSON.stringify(next));
-        return next;
-      });
+      const next = [record, ...records].slice(0, 20);
+      let storage: Storage | null = null;
+      try { storage = globalThis.localStorage ?? null; } catch {}
+      if (!saveGuestRecords(guestPrincipalId, next, storage)) {
+        setRecordError('Local game records could not be saved.');
+      }
+      setRecords(next);
       setSavedRecordId(record.id);
+    } else {
+      setRecordError('A public identity is required before saving a game record.');
+      setSavedRecordId('failed');
     }
-  }, [winner, config, me, savedRecordId, roundCount, logs, session, isGuest]);
+  }, [winner, config, me, savedRecordId, roundCount, logs, session, isGuest, guestPrincipalId, records]);
 
   const addLog = (
     message: string,
@@ -454,6 +525,18 @@ export function useGameState(authContext: AuthContext) {
   };
 
   const startGame = (nextConfig: GameConfig, language?: DisplayLanguage) => {
+    const playerName = resolvePublicPlayerName(publicName);
+    if (!playerName) {
+      setRecordError('A public identity is required before starting a game.');
+      return;
+    }
+    invalidateMatch();
+    matchActiveRef.current = true;
+    setIsProcessingAI(false);
+    setSpeechTimer(null);
+    setWolfCountdown(null);
+    setVoteDeadline(null);
+    setVoteTimer(null);
     resetAIMemory();
     speechAudio.reset(); // new game: cancel audio, clear play-once dedupe
     setGameLanguage(resolveGameLanguage(language));
@@ -468,7 +551,7 @@ export function useGameState(authContext: AuthContext) {
 
       return {
         id: index + 1,
-        name: isHuman ? (isGuest ? 'Guest' : profile?.displayName || authEmail.split('@')[0] || 'Player') : AI_NAMES[index % AI_NAMES.length],
+        name: isHuman ? playerName : AI_NAMES[index % AI_NAMES.length],
         role,
         camp: getRoleCamp(role),
         isAlive: true,
@@ -567,21 +650,25 @@ export function useGameState(authContext: AuthContext) {
   };
 
   const handleWerewolfPhase = async () => {
+    if (!isCurrentMatch()) return;
     const humanWolf = me?.role === Role.WEREWOLF && me.isAlive;
     const wolves = players.filter(player => player.role === Role.WEREWOLF && player.isAlive);
     if (wolfChat.length === 0 && wolves.length > 0) {
       try {
         const chat = await generateWolfChat(wolves, players, logs, Math.max(1, roundCount), voteRecords, gameLanguage);
+        if (!isCurrentMatch()) return;
         setWolfChat(chat);
       } catch {
         // Wolf chat is cosmetic — a failed AI call must never block the night.
       }
     }
+    if (!isCurrentMatch()) return;
     if (humanWolf) return;
 
-    await runAIPhaseSafely(setIsProcessingAI, async () => {
+    await runCurrentAIPhase(async () => {
       const leader = wolves[0];
       const action = leader ? await generateAIAction(leader, players, logs, 'KILL', voteRecords) : { targetId: null };
+      if (!isCurrentMatch()) return;
       const fallback = players.find(player => player.isAlive && player.role !== Role.WEREWOLF);
       const targetId = action.targetId || fallback?.id || null;
       if (targetId) setNightState(prev => ({ ...prev, wolfKillId: targetId }));
@@ -590,27 +677,32 @@ export function useGameState(authContext: AuthContext) {
       const fallback = players.find(player => player.isAlive && player.role !== Role.WEREWOLF);
       if (fallback) setNightState(prev => ({ ...prev, wolfKillId: fallback.id }));
     });
+    if (!isCurrentMatch()) return;
     setPhase(GamePhase.NIGHT_SEER);
   };
 
   const handleSeerPhase = async () => {
+    if (!isCurrentMatch()) return;
     if (me?.role === Role.SEER && me.isAlive) return;
-    await runAIPhaseSafely(setIsProcessingAI, async () => {
+    await runCurrentAIPhase(async () => {
       const seer = players.find(player => player.role === Role.SEER && player.isAlive);
       if (seer) {
         const action = await generateAIAction(seer, players, logs, 'CHECK', voteRecords);
+        if (!isCurrentMatch()) return;
         const target = players.find(player => player.id === action.targetId);
         if (target) setAiSeerLastCheck({ targetId: target.id, isGood: target.role !== Role.WEREWOLF });
       }
     }, () => {
       addLog('AI error. Seer check skipped.', true, undefined, 'AI error. Seer check skipped.', 'system');
     });
+    if (!isCurrentMatch()) return;
     setPhase(GamePhase.NIGHT_WITCH);
   };
 
   const handleWitchPhase = async () => {
+    if (!isCurrentMatch()) return;
     if (me?.role === Role.WITCH && me.isAlive) return;
-    await runAIPhaseSafely(setIsProcessingAI, async () => {
+    await runCurrentAIPhase(async () => {
       const witch = players.find(player => player.role === Role.WITCH && player.isAlive);
       if (witch) {
         let nextNight = { ...nightState };
@@ -621,6 +713,7 @@ export function useGameState(authContext: AuthContext) {
           nextWitch = { ...nextWitch, hasSave: false };
         } else if (witchStatus.hasPoison && Math.random() > 0.72) {
           const action = await generateAIAction(witch, players, logs, 'POISON', voteRecords);
+          if (!isCurrentMatch()) return;
           if (action.targetId && action.targetId !== nightState.wolfKillId) {
             nextNight = { ...nextNight, witchPoisonId: action.targetId };
             nextWitch = { ...nextWitch, hasPoison: false };
@@ -632,6 +725,7 @@ export function useGameState(authContext: AuthContext) {
     }, () => {
       addLog('AI error. Witch action skipped.', true, undefined, 'AI error. Witch action skipped.', 'system');
     });
+    if (!isCurrentMatch()) return;
     setPhase(GamePhase.DAY_ANNOUNCE);
   };
 
@@ -714,6 +808,7 @@ export function useGameState(authContext: AuthContext) {
   };
 
   const handleDiscussion = async () => {
+    if (!isCurrentMatch()) return;
     if (currentSpeaker || isProcessingAI) return;
     if (speakingQueue.length === 0) {
       addLog('Discussion ended. Voting starts.', true, undefined, 'Discussion ended. Exile voting starts.', 'system');
@@ -736,7 +831,7 @@ export function useGameState(authContext: AuthContext) {
 
     let ttsText = '';
     let ttsLogId = '';
-    await runAIPhaseSafely(setIsProcessingAI, async () => {
+    await runCurrentAIPhase(async () => {
       const seerInfo = nextSpeaker.role === Role.SEER ? aiSeerLastCheck : null;
       const response = await generateAIDialogue(
         nextSpeaker,
@@ -750,6 +845,7 @@ export function useGameState(authContext: AuthContext) {
         nightState,
         gameLanguage
       );
+      if (!isCurrentMatch()) return;
       ttsLogId = addLog(response.en, false, nextSpeaker.id, response.zh, 'speech');
       // TTS reads the FINAL displayed text (post roster-guard, post
       // translation): the same field pick the log renderer makes for the
@@ -763,26 +859,33 @@ export function useGameState(authContext: AuthContext) {
       addLog(`Player ${nextSpeaker.id} speech skipped (AI error).`, true, undefined, `AI error. Player ${nextSpeaker.id}'s speech was skipped.`, 'system');
       setSpokenPlayerIds(prev => new Set(prev).add(nextSpeaker.id));
     });
+    if (!isCurrentMatch()) return;
     // Presentation-only TTS: awaited so audio and pacing stay in sync, but
     // enqueue always resolves (end / error / hard max duration / disabled),
     // so this can never stall the turn or alter vote deadlines.
     if (ttsText && ttsLogId) {
-      await speechAudio.enqueue(
-        ttsText,
-        speechAudio.speechLangTag(ttsText, gameLanguage),
-        nextSpeaker.id,
-        ttsLogId,
-      );
+      try {
+        await speechAudio.enqueue(
+          ttsText,
+          speechAudio.speechLangTag(ttsText, gameLanguage),
+          nextSpeaker.id,
+          ttsLogId,
+        );
+      } catch {
+        // Audio is presentation-only; cancellation/failure never stalls play.
+      }
     }
+    if (!isCurrentMatch()) return;
     setCurrentSpeaker(null);
   };
 
   const finishVote = async (humanTargetId: number | null) => {
+    if (!isCurrentMatch()) return;
     // Synchronously clear the vote deadline to prevent a timeout/click race
     // from resolving the same vote round twice.
     setVoteDeadline(null);
     setVoteTimer(null);
-    await runAIPhaseSafely(setIsProcessingAI, async () => {
+    await runCurrentAIPhase(async () => {
       const votes: Record<number, number> = {};
       const votesByVoter: Record<number, number | null> = {};
       const humanCanVote = Boolean(me?.isAlive && me.canVote);
@@ -798,13 +901,15 @@ export function useGameState(authContext: AuthContext) {
 
       const aiVoters = players.filter(player => player.isAlive && !player.isHuman && player.canVote);
       for (const voter of aiVoters) {
-        await delay(180);
+        await waitForMatch(180);
+        if (!isCurrentMatch()) return;
         let targetId: number | null = null;
         try {
           targetId = (await generateAIAction(voter, players, logs, 'VOTE', voteRecords)).targetId;
         } catch {
           // Failed AI vote counts as abstain — keep the tally moving.
         }
+        if (!isCurrentMatch()) return;
         votesByVoter[voter.id] = targetId;
         if (targetId) votes[targetId] = (votes[targetId] || 0) + 1;
       }
@@ -871,6 +976,7 @@ export function useGameState(authContext: AuthContext) {
   };
 
   const handleHumanSpeechSubmit = () => {
+    if (!isCurrentMatch()) return;
     if (currentSpeaker?.id !== MY_PLAYER_ID) return;
     const nextSpeech = normalizeHumanSpeech(userInput);
     if (!nextSpeech) return;
@@ -896,6 +1002,7 @@ export function useGameState(authContext: AuthContext) {
   };
 
   const handlePlayerAction = (targetId: number) => {
+    if (!isCurrentMatch()) return;
     if (isProcessingAI) return;
     // Hunter shot: a dead Hunter can still act (the only dead-human action path)
     if (phase === GamePhase.DAY_HUNTER_SHOT && pendingHunterId === MY_PLAYER_ID) {
@@ -931,6 +1038,7 @@ export function useGameState(authContext: AuthContext) {
   };
 
   const handleWitchSave = () => {
+    if (!isCurrentMatch()) return;
     if (!witchStatus.hasSave || !nightState.wolfKillId) return;
     setNightState(prev => ({ ...prev, witchSaved: true }));
     setWitchStatus(prev => ({ ...prev, hasSave: false }));
@@ -939,6 +1047,7 @@ export function useGameState(authContext: AuthContext) {
   };
 
   const skipWitch = () => {
+    if (!isCurrentMatch()) return;
     addLog('Witch passed.', true, undefined, 'The Witch chose not to use a potion.', 'action');
     setPhase(GamePhase.DAY_ANNOUNCE);
   };
@@ -979,7 +1088,7 @@ export function useGameState(authContext: AuthContext) {
     me, selectedPlayer, phaseHint,
     logsEndRef,
     // actions
-    startGame, handlePlayerAction,
+    startGame, leaveGame, handlePlayerAction,
     handleWitchSave, skipWitch,
     finishVote, handleHumanSpeechSubmit,
   };

@@ -70,6 +70,17 @@ scripts/           build guards and focused data audits
 
 ## Change Guidelines
 
+### Logic-First Product Design
+
+> 一切设计的根基都是逻辑学，可视化的每一个事物都必须合逻辑。
+
+Treat this as an executable review rule for every user-visible element:
+
+- A control must correspond to a real, currently available capability; planned or unavailable actions remain clearly labeled and effect-free.
+- A displayed state and each allowed next state must have a clear cause, transition, and observable outcome.
+- Identity and data surfaces must make the acting principal, data owner, and storage namespace unambiguous.
+- A failure state must provide an honest retry, fallback, cancellation, or recovery path without implying success.
+
 - Keep deterministic rules separate from language generation.
 - Add tests for rule, state-transition, authentication, or security-boundary changes.
 - Do not enable multiplayer controls without server-authoritative state and secret-data projection.

@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   ArrowLeft,
   Bot,
-  Check,
   ChevronRight,
   Lock,
   Monitor,
@@ -14,7 +13,6 @@ import {
   AI_EXPRESSION_MODELS,
   DEFAULT_EXPRESSION_MODEL,
   getAvailableExpressionModels,
-  getExpressionModel,
   type AIExpressionModel,
   type AIExpressionModelId,
 } from '../ai/modelCatalog';
@@ -31,20 +29,16 @@ export type { GameSetup } from '../lobbyFeatures';
 export type StartGameFlowStep =
   | 'mode-choice'
   | 'match-setup'
-  | 'confirmation'
   | 'multiplayer-unavailable';
 
 export const START_GAME_STEPS = [
-  'Start',
   'Choose Mode',
   'Board, Difficulty, and Model',
-  'Confirm',
 ] as const;
 
 export const getPreviousStartGameStep = (
   step: StartGameFlowStep,
 ): StartGameFlowStep | 'home' => {
-  if (step === 'confirmation') return 'match-setup';
   if (step === 'match-setup' || step === 'multiplayer-unavailable') return 'mode-choice';
   return 'home';
 };
@@ -120,8 +114,7 @@ export const ExpressionModelSelector: React.FC<ExpressionModelSelectorProps> = (
 
 const StartGameProgress: React.FC<{ step: StartGameFlowStep }> = ({ step }) => {
   const activeIndex = step === 'mode-choice' || step === 'multiplayer-unavailable'
-    ? 1
-    : step === 'match-setup' ? 2 : 3;
+    ? 0 : 1;
   return (
     <ol className="start-game-progress" aria-label="Start game progress">
       {START_GAME_STEPS.map((label, index) => (
@@ -142,6 +135,7 @@ const StartGameFlow: React.FC<StartGameFlowProps> = ({
   onConfirm,
 }) => {
   const [step, setStep] = useState<StartGameFlowStep>(initialStep);
+  const [isStarting, setIsStarting] = useState(false);
   const [setup, setSetup] = useState<GameSetup>(() => (
     initialSetup.expressionModel === DEFAULT_EXPRESSION_MODEL
       ? initialSetup
@@ -176,7 +170,7 @@ const StartGameFlow: React.FC<StartGameFlowProps> = ({
   const moveTo = (nextStep: StartGameFlowStep) => {
     setStep(nextStep);
     if (nextStep === 'mode-choice') onSubviewChange?.('mode-choice');
-    if (nextStep === 'match-setup' || nextStep === 'confirmation') {
+    if (nextStep === 'match-setup') {
       onSubviewChange?.('match-setup');
     }
   };
@@ -223,7 +217,7 @@ const StartGameFlow: React.FC<StartGameFlowProps> = ({
         <section className="start-game-panel" aria-labelledby="start-mode-title">
           <div className="app-section-heading">
             <div>
-              <p className="app-page-kicker">Step 2</p>
+              <p className="app-page-kicker">Step 1</p>
               <h2 id="start-mode-title">Choose Mode</h2>
             </div>
             <span>Only single-player can start</span>
@@ -264,7 +258,7 @@ const StartGameFlow: React.FC<StartGameFlowProps> = ({
         <section className="start-game-panel" aria-labelledby="match-setup-title">
           <div className="app-section-heading">
             <div>
-              <p className="app-page-kicker">Step 3</p>
+              <p className="app-page-kicker">Step 2</p>
               <h2 id="match-setup-title">Choose Board, Difficulty, and Dialogue Model</h2>
             </div>
             <span>Standard single-player match</span>
@@ -326,39 +320,20 @@ const StartGameFlow: React.FC<StartGameFlowProps> = ({
             <button type="button" disabled><Lock aria-hidden="true" />9-Player Blood Moon Demon Hunter · Limited board unavailable</button>
           </section>
 
-          <button className="app-primary-button" type="button" onClick={() => moveTo('confirmation')}>
-            Review Setup
-            <ChevronRight aria-hidden="true" />
-          </button>
-        </section>
-      )}
-
-      {step === 'confirmation' && (
-        <section className="start-game-panel start-confirmation" aria-labelledby="start-confirm-title">
-          <div className="app-section-heading">
-            <div>
-              <p className="app-page-kicker">Step 4</p>
-              <h2 id="start-confirm-title">Final Confirmation</h2>
-            </div>
-            <Check aria-hidden="true" />
-          </div>
-          <dl>
-            <div><dt>Mode</dt><dd>Single-Player AI Match</dd></div>
-            <div><dt>Board</dt><dd>{BOARD_OPTIONS.find(board => board.id === setup.boardId)?.title}</dd></div>
-            <div><dt>Difficulty</dt><dd>{DIFFICULTY_CONFIGS[setup.difficulty].labelEn}</dd></div>
-            <div><dt>Dialogue Model</dt><dd>{getExpressionModel(setup.expressionModel).label}</dd></div>
-          </dl>
-          <p role="status">The local match is created only after confirmation. Repeated clicks still start it once.</p>
           <button
             className="app-primary-button"
             type="button"
+            disabled={isStarting}
             onClick={event => {
               const accepted = confirmOnceRef.current?.(setup) ?? false;
-              if (accepted) event.currentTarget.disabled = true;
+              if (accepted) {
+                event.currentTarget.disabled = true;
+                setIsStarting(true);
+              }
             }}
           >
             <Play aria-hidden="true" />
-            Confirm and Start
+            {isStarting ? 'Starting game…' : 'Start Game'}
           </button>
         </section>
       )}

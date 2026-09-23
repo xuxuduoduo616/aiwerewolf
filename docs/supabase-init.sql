@@ -7,7 +7,10 @@
 create table if not exists profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   email text not null,
-  display_name text not null,
+  username text not null unique constraint profiles_username_format_check
+    check (username = lower(btrim(username)) and username ~ '^[a-z0-9_]{3,40}$'),
+  display_name text not null constraint profiles_display_name_check
+    check (btrim(display_name) <> '' and char_length(display_name) <= 80),
   created_at timestamptz default now()
 );
 
@@ -34,15 +37,22 @@ alter table game_records enable row level security;
 -- 5. profiles RLS 策略
 create policy "用户读取自己的档案"
   on profiles for select
-  using (auth.uid() = id);
+  to authenticated
+  using ((select auth.uid()) = id);
 
 create policy "用户创建自己的档案"
   on profiles for insert
-  with check (auth.uid() = id);
+  to authenticated
+  with check ((select auth.uid()) = id);
 
 create policy "用户更新自己的档案"
   on profiles for update
-  using (auth.uid() = id);
+  to authenticated
+  using ((select auth.uid()) = id)
+  with check ((select auth.uid()) = id);
+
+revoke all on table profiles from anon, authenticated;
+grant select, insert, update on table profiles to authenticated;
 
 -- 6. game_records RLS 策略
 create policy "用户读取自己的战绩"

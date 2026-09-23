@@ -62,7 +62,8 @@ Browser
 - Each live expression request is bounded by input/output limits, per-call and
   daily cost guards, rate limiting, and per-model circuit breaking. It tries
   Gemini 3.6, then Gemini 2.5, then returns the local-fallback signal.
-- Supabase provides email OTP authentication and Postgres-backed profiles and records.
+- Supabase provides email OTP authentication and Postgres-backed profiles and records. Account public identity uses a normalized unique `@username` plus Nickname (`display_name`); the internal auth UUID remains the ownership key and is not presented as a public handle.
+- Guest identity is a browser-profile-local `guest:<UUIDv4>` principal. Guest records, economy, and lobby presentation state are namespaced by that principal and are never merged into authenticated data automatically.
 - Payment endpoints fail closed with `PAYMENTS_NOT_CONFIGURED`; no real payment service provider is connected.
 
 ## Security Invariants

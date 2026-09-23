@@ -1,4 +1,6 @@
 import { describe, it, expect } from 'vitest';
+import React from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
 import {
   computeWinner,
   applyElimination,
@@ -9,6 +11,7 @@ import {
 import { selectAction } from './ai/actionSelector';
 import { BeliefTracker } from './ai/beliefTracker';
 import { Player, Role } from './types';
+import { authFieldDescribedBy } from './App';
 
 const mkPlayer = (id: number, role: Role): Player => ({
   id, name: `P${id}`, role, camp: getRoleCamp(role),
@@ -18,6 +21,37 @@ const mkPlayer = (id: number, role: Role): Player => ({
 });
 
 describe('Integration: full game flow simulation', () => {
+  it.each(['email', 'username', 'nickname', 'code'] as const)(
+    'associates an auth error only with the %s field while retaining field help',
+    errorField => {
+      const fields = ['email', 'username', 'nickname', 'code'] as const;
+      const helpIds = {
+        email: undefined,
+        username: 'auth-username-help',
+        nickname: 'auth-nickname-help',
+        code: undefined,
+      };
+      const html = renderToStaticMarkup(React.createElement(
+        'form',
+        null,
+        ...fields.map(field => React.createElement('input', {
+          key: field,
+          id: `auth-${field}`,
+          'aria-describedby': authFieldDescribedBy(field, errorField, helpIds[field]),
+        })),
+      ));
+
+      for (const field of fields) {
+        const tag = html.match(new RegExp(`<input[^>]*id="auth-${field}"[^>]*>`))?.[0] ?? '';
+        const expectedIds = [helpIds[field], field === errorField ? 'auth-error' : undefined]
+          .filter(Boolean)
+          .join(' ');
+        if (expectedIds) expect(tag).toContain(`aria-describedby="${expectedIds}"`);
+        else expect(tag).not.toContain('aria-describedby');
+      }
+    },
+  );
+
   it('a 9-player game reaches a winner within reasonable rounds', () => {
     let players: Player[] = [
       mkPlayer(1, Role.WEREWOLF), mkPlayer(2, Role.WEREWOLF), mkPlayer(3, Role.WEREWOLF),

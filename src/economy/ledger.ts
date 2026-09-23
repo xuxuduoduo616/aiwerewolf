@@ -3,11 +3,14 @@ import {
   SKIN_CATALOG_BY_ID,
   type EconomyCurrency,
 } from './catalog';
+import { isGuestPrincipalId } from '../identity/publicIdentity';
 
 export const GUEST_ECONOMY_SCHEMA = 'aiwerewolf.guest-economy-ledger';
 export const GUEST_ECONOMY_VERSION = 1;
 export const GUEST_ECONOMY_NAMESPACE = 'guest';
 export const GUEST_ECONOMY_STORAGE_KEY = 'aiwerewolf:economy:guest:v1:ledger';
+export const GUEST_ECONOMY_STORAGE_PREFIX = 'aiwerewolf:economy:v1:';
+export const GUEST_ECONOMY_MIGRATION_KEY = 'aiwerewolf:economy:v1:migrated-to';
 export const MAX_ECONOMY_BALANCE = 1_000_000_000;
 export const MAX_LEDGER_EVENTS = 20_000;
 
@@ -92,7 +95,7 @@ export type GuestEconomyEvent =
 export interface GuestEconomyLedgerV1 {
   schema: typeof GUEST_ECONOMY_SCHEMA;
   version: typeof GUEST_ECONOMY_VERSION;
-  namespace: typeof GUEST_ECONOMY_NAMESPACE;
+  namespace: string;
   events: GuestEconomyEvent[];
 }
 
@@ -148,10 +151,10 @@ const EMPTY_STATE = (): GuestEconomyState => ({
   events: [],
 });
 
-export const createEmptyGuestEconomyLedger = (): GuestEconomyLedgerV1 => ({
+export const createEmptyGuestEconomyLedger = (namespace = GUEST_ECONOMY_NAMESPACE): GuestEconomyLedgerV1 => ({
   schema: GUEST_ECONOMY_SCHEMA,
   version: GUEST_ECONOMY_VERSION,
-  namespace: GUEST_ECONOMY_NAMESPACE,
+  namespace,
   events: [],
 });
 
@@ -359,13 +362,16 @@ export const reduceGuestEconomyLedger = (events: readonly unknown[]): GuestEcono
   return state;
 };
 
-export const parseGuestEconomyLedger = (raw: string): { ledger: GuestEconomyLedgerV1; state: GuestEconomyState } | null => {
+export const parseGuestEconomyLedger = (
+  raw: string,
+  expectedNamespace = GUEST_ECONOMY_NAMESPACE,
+): { ledger: GuestEconomyLedgerV1; state: GuestEconomyState } | null => {
   try {
     const candidate: unknown = JSON.parse(raw);
     if (!isRecord(candidate)) return null;
     if (candidate.schema !== GUEST_ECONOMY_SCHEMA) return null;
     if (candidate.version !== GUEST_ECONOMY_VERSION) return null;
-    if (candidate.namespace !== GUEST_ECONOMY_NAMESPACE) return null;
+    if (candidate.namespace !== expectedNamespace) return null;
     if (!Array.isArray(candidate.events)) return null;
     const state = reduceGuestEconomyLedger(candidate.events);
     if (!state) return null;
@@ -373,7 +379,7 @@ export const parseGuestEconomyLedger = (raw: string): { ledger: GuestEconomyLedg
       ledger: {
         schema: GUEST_ECONOMY_SCHEMA,
         version: GUEST_ECONOMY_VERSION,
-        namespace: GUEST_ECONOMY_NAMESPACE,
+        namespace: expectedNamespace,
         events: state.events.map(cloneEvent),
       },
       state,
@@ -406,6 +412,61 @@ export const readGuestEconomyLedger = (storage?: Storage | null): LedgerReadResu
   }
 };
 
+export const getGuestEconomyStorageKey = (principalId: string): string =>
+  `${GUEST_ECONOMY_STORAGE_PREFIX}${principalId}:ledger`;
+
+export const readGuestEconomyLedgerForPrincipal = (
+  principalId: string,
+  storage?: Storage | null,
+): LedgerReadResult => {
+  if (!isGuestPrincipalId(principalId)) {
+    return { status: 'corrupt', ledger: null, state: EMPTY_STATE() };
+  }
+  const activeStorage = storage === undefined ? getBrowserStorage() : storage;
+  if (!activeStorage) {
+    return { status: 'missing', ledger: createEmptyGuestEconomyLedger(principalId), state: EMPTY_STATE() };
+  }
+  const targetKey = getGuestEconomyStorageKey(principalId);
+  try {
+    const raw = activeStorage.getItem(targetKey);
+    if (raw !== null) {
+      if (
+        activeStorage.getItem(GUEST_ECONOMY_MIGRATION_KEY) === null
+        && activeStorage.getItem(GUEST_ECONOMY_STORAGE_KEY) !== null
+      ) {
+        try { activeStorage.setItem(GUEST_ECONOMY_MIGRATION_KEY, principalId); } catch {}
+      }
+      const parsed = parseGuestEconomyLedger(raw, principalId);
+      return parsed
+        ? { status: 'valid', ledger: parsed.ledger, state: parsed.state }
+        : { status: 'corrupt', ledger: null, state: EMPTY_STATE() };
+    }
+
+    if (activeStorage.getItem(GUEST_ECONOMY_MIGRATION_KEY) !== null) {
+      return { status: 'missing', ledger: createEmptyGuestEconomyLedger(principalId), state: EMPTY_STATE() };
+    }
+    const legacyRaw = activeStorage.getItem(GUEST_ECONOMY_STORAGE_KEY);
+    if (legacyRaw === null) {
+      return { status: 'missing', ledger: createEmptyGuestEconomyLedger(principalId), state: EMPTY_STATE() };
+    }
+    const legacy = parseGuestEconomyLedger(legacyRaw);
+    if (!legacy) return { status: 'corrupt', ledger: null, state: EMPTY_STATE() };
+    const migrated: GuestEconomyLedgerV1 = { ...legacy.ledger, namespace: principalId };
+    activeStorage.setItem(targetKey, JSON.stringify(migrated));
+    activeStorage.setItem(GUEST_ECONOMY_MIGRATION_KEY, principalId);
+    return { status: 'valid', ledger: migrated, state: legacy.state };
+  } catch {
+    return { status: 'corrupt', ledger: null, state: EMPTY_STATE() };
+  }
+};
+
+const readActiveGuestLedger = (
+  storage: Storage | null | undefined,
+  principalId?: string,
+): LedgerReadResult => principalId
+  ? readGuestEconomyLedgerForPrincipal(principalId, storage)
+  : readGuestEconomyLedger(storage);
+
 const mutationFailure = (code: EconomyMutationCode, state = EMPTY_STATE()): EconomyMutationResult => ({
   ok: false,
   code,
@@ -415,11 +476,12 @@ const mutationFailure = (code: EconomyMutationCode, state = EMPTY_STATE()): Econ
 const appendEvent = (
   event: GuestEconomyEvent,
   storage?: Storage | null,
+  principalId?: string,
 ): EconomyMutationResult => {
   const activeStorage = storage === undefined ? getBrowserStorage() : storage;
   if (!activeStorage) return mutationFailure('storage-unavailable');
 
-  const current = readGuestEconomyLedger(activeStorage);
+  const current = readActiveGuestLedger(activeStorage, principalId);
   if (current.status === 'corrupt') return mutationFailure('ledger-corrupt');
   const existing = current.ledger.events.find(entry => entry.idempotencyKey === event.idempotencyKey);
   if (existing) return { ok: true, code: 'already-applied', state: current.state, event: existing };
@@ -433,8 +495,9 @@ const appendEvent = (
   if (!nextState) return mutationFailure('invalid-request', current.state);
 
   try {
-    activeStorage.setItem(GUEST_ECONOMY_STORAGE_KEY, JSON.stringify(nextLedger));
-    const verified = readGuestEconomyLedger(activeStorage);
+    const storageKey = principalId ? getGuestEconomyStorageKey(principalId) : GUEST_ECONOMY_STORAGE_KEY;
+    activeStorage.setItem(storageKey, JSON.stringify(nextLedger));
+    const verified = readActiveGuestLedger(activeStorage, principalId);
     if (verified.status === 'corrupt' || !verified.ledger.events.some(entry => entry.idempotencyKey === event.idempotencyKey)) {
       return mutationFailure('write-failed', current.state);
     }
@@ -461,8 +524,9 @@ const makeBaseEvent = (
 export const claimGuestDailyCheckIn = (
   storage?: Storage | null,
   now = new Date(),
+  principalId?: string,
 ): EconomyMutationResult => {
-  const current = readGuestEconomyLedger(storage);
+  const current = readActiveGuestLedger(storage, principalId);
   if (current.status === 'corrupt') return mutationFailure('ledger-corrupt');
   const localDay = localDayFromDate(now);
   const key = `check-in:${localDay}`;
@@ -481,33 +545,36 @@ export const claimGuestDailyCheckIn = (
     streak,
     milestoneDays: milestones.map(milestone => milestone.day),
   };
-  return appendEvent(event, storage);
+  return appendEvent(event, storage, principalId);
 };
 
 export const recordGuestTutorialSkip = (
   storage?: Storage | null,
   now = new Date(),
+  principalId?: string,
 ): EconomyMutationResult => appendEvent({
   ...makeBaseEvent('TUTORIAL_SKIPPED', 'tutorial:skip:v1', { coins: 0, crystals: 0 }, now),
   type: 'TUTORIAL_SKIPPED',
-}, storage);
+}, storage, principalId);
 
 export const finishGuestTutorial = (
   storage?: Storage | null,
   now = new Date(),
+  principalId?: string,
 ): EconomyMutationResult => appendEvent({
   ...makeBaseEvent('TUTORIAL_FINISHED', 'tutorial:finish:v1', { coins: 200, crystals: 0 }, now),
   type: 'TUTORIAL_FINISHED',
-}, storage);
+}, storage, principalId);
 
 export const rewardGuestGame = (
   gameId: string,
   won: boolean,
   storage?: Storage | null,
   now = new Date(),
+  principalId?: string,
 ): EconomyMutationResult => {
   if (!isValidId(gameId)) return mutationFailure('invalid-request');
-  const current = readGuestEconomyLedger(storage);
+  const current = readActiveGuestLedger(storage, principalId);
   if (current.status === 'corrupt') return mutationFailure('ledger-corrupt');
   const key = `game:${gameId}`;
   const existing = current.ledger.events.find(event => event.idempotencyKey === key);
@@ -524,17 +591,18 @@ export const rewardGuestGame = (
     gameId,
     won,
   };
-  return appendEvent(event, storage);
+  return appendEvent(event, storage, principalId);
 };
 
 export const unlockGuestSkin = (
   skinId: string,
   storage?: Storage | null,
   now = new Date(),
+  principalId?: string,
 ): EconomyMutationResult => {
   const product = SKIN_CATALOG_BY_ID.get(skinId);
   if (!product) return mutationFailure('invalid-request');
-  const current = readGuestEconomyLedger(storage);
+  const current = readActiveGuestLedger(storage, principalId);
   if (current.status === 'corrupt') return mutationFailure('ledger-corrupt');
   if (current.state.inventory.includes(`skin:${skinId}`)) {
     return mutationFailure('already-owned', current.state);
@@ -552,16 +620,17 @@ export const unlockGuestSkin = (
     currency: product.currency,
     price: product.price,
   };
-  return appendEvent(event, storage);
+  return appendEvent(event, storage, principalId);
 };
 
 export const equipGuestSkin = (
   skinId: string,
   storage?: Storage | null,
   now = new Date(),
+  principalId?: string,
 ): EconomyMutationResult => {
   if (!SKIN_CATALOG_BY_ID.has(skinId)) return mutationFailure('invalid-request');
-  const current = readGuestEconomyLedger(storage);
+  const current = readActiveGuestLedger(storage, principalId);
   if (current.status === 'corrupt') return mutationFailure('ledger-corrupt');
   if (!current.state.inventory.includes(`skin:${skinId}`)) return mutationFailure('not-owned', current.state);
   if (current.state.equippedSkinId === skinId) {
@@ -574,7 +643,7 @@ export const equipGuestSkin = (
     type: 'SKIN_EQUIPPED',
     skinId,
   };
-  return appendEvent(event, storage);
+  return appendEvent(event, storage, principalId);
 };
 
 export const describeEconomyEvent = (event: GuestEconomyEvent): string => {
