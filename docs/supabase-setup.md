@@ -9,7 +9,10 @@
 create table if not exists profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   email text not null,
-  display_name text not null,
+  username text not null unique
+    check (username = lower(btrim(username)) and username ~ '^[a-z0-9_]{3,40}$'),
+  display_name text not null
+    check (btrim(display_name) <> '' and char_length(display_name) <= 80),
   created_at timestamptz default now()
 );
 
@@ -41,15 +44,22 @@ alter table game_records enable row level security;
 -- profiles: 用户只能读写自己的档案
 create policy "用户读取自己的档案"
   on profiles for select
-  using (auth.uid() = id);
+  to authenticated
+  using ((select auth.uid()) = id);
 
 create policy "用户创建自己的档案"
   on profiles for insert
-  with check (auth.uid() = id);
+  to authenticated
+  with check ((select auth.uid()) = id);
 
 create policy "用户更新自己的档案"
   on profiles for update
-  using (auth.uid() = id);
+  to authenticated
+  using ((select auth.uid()) = id)
+  with check ((select auth.uid()) = id);
+
+revoke all on table profiles from anon, authenticated;
+grant select, insert, update on table profiles to authenticated;
 
 -- game_records: 用户只能读写自己的战绩
 create policy "用户读取自己的战绩"
@@ -69,7 +79,22 @@ Dashboard → Authentication → Providers → Email：
 - Dashboard → Authentication → Email Templates → Magic Link：
   - 确保模板包含 `{{ .Token }}`（6位验证码）而非仅 magic link
 
-## 4. 验证 RLS 生效
+## 4. Existing project identity migration
+
+For an existing `profiles` table, use `docs/profile-identity-migration.sql`
+instead of recreating the table. The artifact normalizes or deterministically
+backfills Username without using email, preserves every already-valid unique
+Username (including values shaped like `player_<32 hex>`), avoids collisions
+with preserved handles, keeps Nickname in `display_name`, adds unique/check
+constraints, and replaces owner policies with explicit `TO authenticated`,
+`USING`, and `WITH CHECK` clauses.
+
+Release order is schema first: apply the approved SQL, independently verify
+owner allow/deny behavior and case-equivalent Username collisions, then release
+the matching frontend. This repository file is declarative source and is not
+evidence that any Supabase project has been changed.
+
+## 5. 验证 RLS 生效
 
 ```sql
 -- 以匿名身份测试（应返回空，因为 auth.uid() 为 null）

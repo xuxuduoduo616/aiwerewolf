@@ -22,6 +22,7 @@ import EconomyHistoryView from './components/EconomyHistoryView';
 import OnlineQualifierView from './components/OnlineQualifierView';
 import OnboardingSpotlight from './components/OnboardingSpotlight';
 import StartGameFlow from './components/StartGameFlow';
+import LeaveGameDialog from './components/LeaveGameDialog';
 import UtilityMenu, { type UtilityDestination } from './components/UtilityMenu';
 import UtilityView from './components/UtilityView';
 import UnavailableNotice from './components/UnavailableNotice';
@@ -40,6 +41,7 @@ import { getTerminalRewardRequest } from './economy/gameRewards';
 import type { SkinStoreFilter } from './components/SkinStore';
 import { resolveVoteResult } from './gameEngine';
 import { playTick } from './services/speechAudio';
+import { setAIExpressionModel } from './ai/aiOrchestrator';
 import './styles/game-responsive.css';
 import './styles/economy.css';
 import {
@@ -59,6 +61,18 @@ export const nextTurnstileToken = (event: TurnstileGuestGateEvent): string | nul
   event.type === 'verified' ? event.token : null;
 
 export const isTurnstileGuestGateOpen = (token: string | null): boolean => Boolean(token);
+
+type AuthInputField = 'email' | 'username' | 'nickname' | 'code';
+
+export const authFieldDescribedBy = (
+  field: AuthInputField,
+  errorField: AuthInputField | null,
+  helpId?: string,
+): string | undefined => {
+  const descriptionIds = [helpId, errorField === field ? 'auth-error' : undefined]
+    .filter((value): value is string => Boolean(value));
+  return descriptionIds.length > 0 ? descriptionIds.join(' ') : undefined;
+};
 
 const MY_PLAYER_ID = 1;
 
@@ -99,6 +113,7 @@ const App: React.FC = () => {
   const [startRequestRevision, setStartRequestRevision] = useState(0);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [isGameInfoOpen, setIsGameInfoOpen] = useState(false);
+  const [isLeaveGameOpen, setIsLeaveGameOpen] = useState(false);
   const [shopSection, setShopSection] = useState<ShopSection>('skins');
   const [skinStoreFilter, setSkinStoreFilter] = useState<SkinStoreFilter>('all');
   const [isTutorialOpen, setIsTutorialOpen] = useState(false);
@@ -107,15 +122,33 @@ const App: React.FC = () => {
   const autoTutorialAttemptedRef = React.useRef(false);
   const rewardedTerminalIdRef = React.useRef<string | null>(null);
   const gameInfoTriggerRef = React.useRef<HTMLButtonElement>(null);
+  const leaveGameTriggerRef = React.useRef<HTMLButtonElement>(null);
+  const leaveRequestLockedRef = React.useRef(false);
   const utilityTriggerRef = React.useRef<HTMLButtonElement>(null);
-  const rec = useRecords(auth.session);
-  const economy = useEconomy(auth.session, auth.isGuest);
-  const lobbyFeatures = useLobbyFeatures(auth.session?.user.id ?? null);
+  const authEmailRef = React.useRef<HTMLInputElement>(null);
+  const authUsernameRef = React.useRef<HTMLInputElement>(null);
+  const authNicknameRef = React.useRef<HTMLInputElement>(null);
+  const authCodeRef = React.useRef<HTMLInputElement>(null);
+  const guestPrincipalId = auth.guestIdentity?.id ?? null;
+  const principalId = auth.isGuest ? guestPrincipalId : auth.session?.user.id ?? null;
+  const publicName = auth.isGuest
+    ? auth.guestIdentity?.label ?? ''
+    : auth.profile?.nickname ?? auth.profile?.username ?? '';
+  const publicHandle = auth.isGuest
+    ? auth.guestIdentity
+      ? `${auth.guestIdentity.id}${auth.guestIdentity.persistent ? '' : ' · This tab only'}`
+      : ''
+    : auth.profile ? `@${auth.profile.username}` : '';
+  const rec = useRecords(auth.session, guestPrincipalId);
+  const economy = useEconomy(auth.session, auth.isGuest, {}, guestPrincipalId);
+  const lobbyFeatures = useLobbyFeatures(principalId);
   const game = useGameState({
     session: auth.session,
     isGuest: auth.isGuest,
     profile: auth.profile,
     authEmail: auth.authEmail,
+    guestPrincipalId,
+    publicName,
     records: rec.records,
     setRecords: rec.setRecords,
     recordError: rec.recordError,
@@ -123,6 +156,17 @@ const App: React.FC = () => {
   });
   const startRequestLockedRef = React.useRef(false);
   const pendingStartRef = React.useRef<{ setup: GameSetup; config: NonNullable<ReturnType<typeof mapGameSetupToConfig>> } | null>(null);
+
+  React.useEffect(() => {
+    if (!auth.authError || !auth.authErrorField) return;
+    const fields = {
+      email: authEmailRef,
+      username: authUsernameRef,
+      nickname: authNicknameRef,
+      code: authCodeRef,
+    };
+    fields[auth.authErrorField].current?.focus();
+  }, [auth.authError, auth.authErrorField]);
 
   const applyEconomyRoute = React.useCallback((route: EconomyRoute) => {
     setUtilityView(null);
@@ -203,6 +247,7 @@ const App: React.FC = () => {
     if (!config || startRequestLockedRef.current) return;
 
     startRequestLockedRef.current = true;
+    leaveRequestLockedRef.current = false;
     pendingStartRef.current = { setup, config };
     if (game.difficulty === setup.difficulty) {
       setStartRequestRevision(revision => revision + 1);
@@ -216,9 +261,16 @@ const App: React.FC = () => {
     if (!pending || game.difficulty !== pending.setup.difficulty) return;
 
     pendingStartRef.current = null;
+    setAIExpressionModel(pending.setup.expressionModel);
     game.startGame(pending.config, displayLanguage);
     rec.setShowRecords(false);
   }, [displayLanguage, game.difficulty, game.startGame, rec.setShowRecords, startRequestRevision]);
+
+  React.useEffect(() => {
+    if (game.phase === GamePhase.GAME_OVER || game.phase === GamePhase.LOBBY || game.phase === GamePhase.LOGIN) {
+      setIsLeaveGameOpen(false);
+    }
+  }, [game.phase]);
 
   // Vote-countdown tick: one short beep per second during the final 3s of the
   // human vote countdown (browser-tts-mvp). The audio service enforces mute
@@ -287,21 +339,28 @@ const App: React.FC = () => {
             <label className="block text-xs text-zinc-400" htmlFor="auth-email">Email</label>
             <div className="relative">
               <Mail className="absolute left-3 top-3.5 w-4 h-4 text-zinc-500" />
-              <input id="auth-email" className="w-full bg-black/70 border border-zinc-700 rounded px-10 py-3 text-white outline-none focus:border-zinc-300" placeholder="you@example.com" value={auth.authEmail} onChange={e => auth.setAuthEmail(e.target.value)} />
+              <input ref={authEmailRef} id="auth-email" type="email" autoComplete="email" required disabled={auth.authStep === 'VERIFY'} aria-describedby={authFieldDescribedBy('email', auth.authErrorField)} className="w-full bg-black/70 border border-zinc-700 rounded px-10 py-3 text-white outline-none focus:border-zinc-300 disabled:opacity-60" placeholder="you@example.com" value={auth.authEmail} onChange={e => auth.setAuthEmail(e.target.value)} />
             </div>
-            <label className="block text-xs text-zinc-400" htmlFor="auth-name">Display Name</label>
-            <input id="auth-name" className="w-full bg-black/70 border border-zinc-700 rounded px-4 py-3 text-white outline-none focus:border-zinc-300" placeholder="optional" value={auth.authName} onChange={e => auth.setAuthName(e.target.value)} />
+            <label className="block text-xs text-zinc-400" htmlFor="auth-username">Username <span aria-hidden="true">*</span></label>
+            <input ref={authUsernameRef} id="auth-username" autoComplete="username" required minLength={3} maxLength={40} pattern="[A-Za-z0-9_]+" aria-describedby={authFieldDescribedBy('username', auth.authErrorField, 'auth-username-help')} className="w-full bg-black/70 border border-zinc-700 rounded px-4 py-3 text-white outline-none focus:border-zinc-300" placeholder="required_username" value={auth.authUsername} onChange={e => auth.setAuthUsername(e.target.value)} />
+            <p id="auth-username-help" className="text-[10px] leading-relaxed text-zinc-500">3–40 letters, numbers, or underscores. Stored in lowercase.</p>
+            <label className="block text-xs text-zinc-400" htmlFor="auth-nickname">Nickname <span className="text-zinc-600">(optional)</span></label>
+            <input ref={authNicknameRef} id="auth-nickname" autoComplete="nickname" maxLength={80} aria-describedby={authFieldDescribedBy('nickname', auth.authErrorField, 'auth-nickname-help')} className="w-full bg-black/70 border border-zinc-700 rounded px-4 py-3 text-white outline-none focus:border-zinc-300" placeholder="Defaults to Username" value={auth.authNickname} onChange={e => auth.setAuthNickname(e.target.value)} />
+            <p id="auth-nickname-help" className="text-[10px] leading-relaxed text-zinc-500">Your public name. If blank, your Username is used.</p>
             {auth.authStep === 'VERIFY' && (
               <>
                 <label className="block text-xs text-zinc-400" htmlFor="auth-code">Verification Code</label>
                 <div className="relative">
                   <KeyRound className="absolute left-3 top-3.5 w-4 h-4 text-zinc-500" />
-                  <input id="auth-code" className="w-full bg-black/70 border border-zinc-700 rounded px-10 py-3 text-white outline-none focus:border-zinc-300" placeholder="6-digit email code" value={auth.authCode} onChange={e => auth.setAuthCode(e.target.value)} />
+                  <input ref={authCodeRef} id="auth-code" inputMode="numeric" autoComplete="one-time-code" disabled={auth.isIdentityCompletionPending} aria-describedby={authFieldDescribedBy('code', auth.authErrorField)} className="w-full bg-black/70 border border-zinc-700 rounded px-10 py-3 text-white outline-none focus:border-zinc-300 disabled:opacity-60" placeholder="6-digit email code" value={auth.authCode} onChange={e => auth.setAuthCode(e.target.value)} />
                 </div>
+                {auth.isIdentityCompletionPending && (
+                  <p className="text-xs leading-relaxed text-emerald-200">Email verified. Complete your public identity; the code will not be verified again.</p>
+                )}
               </>
             )}
           </div>
-          {auth.authError && <p className="mt-4 text-xs leading-relaxed text-amber-200 bg-amber-950/35 border border-amber-900 rounded p-3">{auth.authError}</p>}
+          {auth.authError && <p id="auth-error" role="alert" className="mt-4 text-xs leading-relaxed text-amber-200 bg-amber-950/35 border border-amber-900 rounded p-3">{auth.authError}</p>}
 
           {/* Cloudflare Turnstile — human verification before login */}
           <div className="turnstile-container mt-4 flex justify-center">
@@ -321,12 +380,16 @@ const App: React.FC = () => {
             className="mt-4 w-full bg-zinc-100 text-black py-3 font-bold rounded hover:bg-white transition flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed"
           >
             {auth.isAuthLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Shield className="w-4 h-4" />}
-            {auth.authStep === 'EMAIL' ? 'SEND EMAIL CODE' : 'VERIFY AND ENTER'}
+            {auth.authStep === 'EMAIL'
+              ? 'SEND EMAIL CODE'
+              : auth.isIdentityCompletionPending ? 'SAVE IDENTITY AND ENTER' : 'VERIFY AND ENTER'}
           </button>
           <div className="flex justify-between mt-4 text-xs text-zinc-400">
-            <button onClick={() => auth.setAuthStep(auth.authStep === 'EMAIL' ? 'VERIFY' : 'EMAIL')} className="hover:text-white">Switch Step</button>
+            {auth.authStep === 'VERIFY'
+              ? <button type="button" onClick={auth.handleChangeEmail} className="hover:text-white">Change email</button>
+              : <span />}
             <button
-              onClick={() => auth.handleGuest(() => { rec.loadLocalRecords(); rec.setShowRecords(true); game.setPhase(GamePhase.LOBBY); })}
+              onClick={() => auth.handleGuest(identity => { rec.loadLocalRecords(identity.id); rec.setShowRecords(true); game.setPhase(GamePhase.LOBBY); })}
               disabled={!isTurnstileGuestGateOpen(turnstileToken)}
               className="hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
             >Guest Trial</button>
@@ -353,14 +416,26 @@ const App: React.FC = () => {
 
   if (isInGame) {
     const returnToLobby = () => {
+      if (leaveRequestLockedRef.current) return;
+      leaveRequestLockedRef.current = true;
       startRequestLockedRef.current = false;
       pendingStartRef.current = null;
+      setIsLeaveGameOpen(false);
       setIsGameInfoOpen(false);
       setActiveView('home');
       setLobbySubview('home');
-      game.setPhase(GamePhase.LOBBY);
+      game.leaveGame();
       rec.setShowRecords(true);
       navigateEconomy({ page: 'lobby' });
+    };
+
+    const requestReturnToLobby = () => {
+      if (game.phase === GamePhase.GAME_OVER) {
+        returnToLobby();
+        return;
+      }
+      setIsGameInfoOpen(false);
+      setIsLeaveGameOpen(true);
     };
 
     const logFeedProps = {
@@ -417,7 +492,7 @@ const App: React.FC = () => {
           <button
             ref={gameInfoTriggerRef}
             type="button"
-            onClick={() => setIsGameInfoOpen(true)}
+            onClick={() => { if (!isLeaveGameOpen) setIsGameInfoOpen(true); }}
             className="game-log-trigger icon-button"
             title="Game log and records"
             aria-label="Open game log and records"
@@ -425,7 +500,7 @@ const App: React.FC = () => {
           >
             <ScrollText className="w-4 h-4" />
           </button>
-          <button onClick={returnToLobby} className="icon-button" title="Return to lobby" aria-label="Return to lobby">
+          <button ref={leaveGameTriggerRef} type="button" onClick={requestReturnToLobby} className="icon-button" title="Return to lobby" aria-label="Return to lobby" aria-haspopup={game.phase === GamePhase.GAME_OVER ? undefined : 'dialog'}>
             <RefreshCw className="w-3.5 h-3.5 md:w-4 md:h-4" />
           </button>
         </div>
@@ -563,13 +638,20 @@ const App: React.FC = () => {
         </GameRoom>
 
         <GameLogDialog
-          open={isGameInfoOpen}
+          open={isGameInfoOpen && !isLeaveGameOpen}
           onClose={() => setIsGameInfoOpen(false)}
           returnFocusRef={gameInfoTriggerRef}
           records={rec.records}
           recordError={rec.recordError}
           {...logFeedProps}
         />
+        {isLeaveGameOpen && (
+          <LeaveGameDialog
+            onCancel={() => setIsLeaveGameOpen(false)}
+            onConfirm={returnToLobby}
+            returnFocusRef={leaveGameTriggerRef}
+          />
+        )}
         {economy.feedback && (
           <p className="economy-global-feedback economy-global-feedback--game" role="status" aria-live="polite">
             {economy.feedback}
@@ -615,6 +697,13 @@ const App: React.FC = () => {
             onOpenDailyCheckIn={() => navigateEconomy({ page: 'daily-check-in' })}
             onOpenTutorial={() => setIsTutorialOpen(true)}
             equippedSkinName={equippedSkinName}
+            identityName={publicName}
+            identityHandle={publicHandle}
+            isGuest={auth.isGuest}
+            onSignIn={() => {
+              auth.leaveGuestForAuth();
+              game.setPhase(GamePhase.LOGIN);
+            }}
           />
         );
       case 'mode-choice':
@@ -775,7 +864,26 @@ const App: React.FC = () => {
           />
         );
       case 'profile':
-        return <ProfileView />;
+        return (
+          <ProfileView
+            identityName={publicName}
+            identityHandle={publicHandle}
+            isGuest={auth.isGuest}
+            onSignIn={() => {
+              auth.leaveGuestForAuth();
+              game.setPhase(GamePhase.LOGIN);
+              setActiveView('home');
+              setLobbySubview('home');
+            }}
+            onSignOut={() => {
+              auth.logoutAuth();
+              rec.setRecords([]);
+              game.setPhase(GamePhase.LOGIN);
+              setActiveView('home');
+              setLobbySubview('home');
+            }}
+          />
+        );
       default:
         return null;
     }

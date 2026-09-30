@@ -16,6 +16,10 @@ interface Props {
   onOpenDailyCheckIn: () => void;
   onOpenTutorial: () => void;
   equippedSkinName?: string | null;
+  identityName: string;
+  identityHandle: string;
+  isGuest: boolean;
+  onSignIn: () => void;
 }
 
 const LOBBY_CHAT_PREVIEW = [
@@ -59,6 +63,10 @@ const LobbyHome: React.FC<Props> = ({
   onOpenDailyCheckIn,
   onOpenTutorial,
   equippedSkinName,
+  identityName,
+  identityHandle,
+  isGuest,
+  onSignIn,
 }) => {
   return (
     <section className="wol-lobby" aria-label="Lobby">
@@ -87,8 +95,11 @@ const LobbyHome: React.FC<Props> = ({
         {/* Name, title, rank */}
         <div className="wol-lobby-profile-copy" style={{ minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 3 }}>
-            <span className="wol-break-text" style={{ fontSize: 15, fontWeight: 700, color: '#fff' }}>Village Traveler</span>
+            <span className="wol-break-text" style={{ fontSize: 15, fontWeight: 700, color: '#fff' }}>{identityName}</span>
             <GenderFemale />
+          </div>
+          <div className="wol-break-text" style={{ fontSize: 10, color: 'rgba(255,255,255,0.45)', marginBottom: 4 }}>
+            {identityHandle}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
             {/* Honor title */}
@@ -116,6 +127,16 @@ const LobbyHome: React.FC<Props> = ({
               Tier 2 · 5 Stars
             </span>
           </div>
+          {isGuest && (
+            <button
+              type="button"
+              onClick={onSignIn}
+              className="wol-guest-auth-cta"
+              style={{ minHeight: 44, marginTop: 6, color: '#d4d4d8', fontSize: 11, textDecoration: 'underline' }}
+            >
+              Sign in or create account
+            </button>
+          )}
         </div>
       </div>
 

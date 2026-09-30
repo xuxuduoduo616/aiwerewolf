@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:run": "vitest run",
+    "preflight:gemini-models": "node scripts/gemini-model-preflight.mjs",
     "audit:speech-names": "SPEECH_NAME_AUDIT=1 vitest run src/diagnostics/",
     "audit:speech-corpus": "node scripts/speech-corpus-name-audit.mjs"
   },

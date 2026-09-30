@@ -10,9 +10,14 @@ const PROFILE_TABS: readonly SubTab[] = ['outfits', 'decorations', 'runwolf', 's
 
 interface Props {
   onBack?: () => void;
+  identityName: string;
+  identityHandle: string;
+  isGuest: boolean;
+  onSignIn: () => void;
+  onSignOut?: () => void;
 }
 
-const ProfileView: React.FC<Props> = () => {
+const ProfileView: React.FC<Props> = ({ identityName, identityHandle, isGuest, onSignIn, onSignOut }) => {
   const [subTab, setSubTab] = useState<SubTab>('outfits');
 
   const renderPanel = () => {
@@ -69,10 +74,28 @@ const ProfileView: React.FC<Props> = () => {
           </div>
         </div>
         <div style={{ minWidth: 0 }}>
-          <div className="wol-break-text" style={{ fontSize: 16, fontWeight: 700, color: '#fff' }}>Village Traveler</div>
+          <div className="wol-break-text" style={{ fontSize: 16, fontWeight: 700, color: '#fff' }}>{identityName}</div>
           <div className="wol-break-text" style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginTop: 2 }}>
-            ID: 1000242 · Lv.10
+            {identityHandle} · Lv.10
           </div>
+          {isGuest && (
+            <button
+              type="button"
+              onClick={onSignIn}
+              style={{ minHeight: 44, marginTop: 4, color: '#d4d4d8', fontSize: 11, textDecoration: 'underline' }}
+            >
+              Sign in or create account
+            </button>
+          )}
+          {!isGuest && onSignOut && (
+            <button
+              type="button"
+              onClick={onSignOut}
+              style={{ minHeight: 44, marginTop: 4, color: '#d4d4d8', fontSize: 11, textDecoration: 'underline' }}
+            >
+              Sign out
+            </button>
+          )}
         </div>
       </div>
 

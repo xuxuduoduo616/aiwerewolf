@@ -67,8 +67,9 @@ export const useEconomy = (
   session: SupabaseSession | null,
   isGuest: boolean,
   accountOptions: UseAccountEconomyOptions = {},
+  guestPrincipalId: string | null = null,
 ): UseEconomyResult => {
-  const guest = useGuestEconomy(isGuest);
+  const guest = useGuestEconomy(isGuest, guestPrincipalId);
   const account = useAccountEconomy(isGuest ? null : session, accountOptions);
 
   return useMemo(() => {

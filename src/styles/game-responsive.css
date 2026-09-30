@@ -373,3 +373,16 @@
     transition-duration: 0.01ms !important;
   }
 }
+.leave-game-dialog {
+  width: min(100%, 28rem);
+}
+
+.leave-game-dialog__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.leave-game-dialog__actions .wol-btn {
+  flex: 1 1 120px;
+}

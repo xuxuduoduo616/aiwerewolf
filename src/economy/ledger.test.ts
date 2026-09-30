@@ -11,6 +11,8 @@ import {
   finishGuestTutorial,
   parseGuestEconomyLedger,
   readGuestEconomyLedger,
+  readGuestEconomyLedgerForPrincipal,
+  getGuestEconomyStorageKey,
   recordGuestTutorialSkip,
   rewardGuestGame,
   unlockGuestSkin,
@@ -151,6 +153,31 @@ describe('tutorial, gameplay, and cosmetic idempotency', () => {
 });
 
 describe('fail-closed recovery and account boundary', () => {
+  const guestA = 'guest:11111111-1111-4111-8111-111111111111';
+  const guestB = 'guest:22222222-2222-4222-8222-222222222222';
+
+  it('migrates the legacy ledger once to the first guest principal and then isolates guests', () => {
+    const { storage } = createMemoryStorage();
+    finishGuestTutorial(storage, localNoon(0));
+    const migrated = readGuestEconomyLedgerForPrincipal(guestA, storage);
+    expect(migrated.status).toBe('valid');
+    expect(migrated.state.coins).toBe(200);
+    expect(storage.getItem(getGuestEconomyStorageKey(guestA))).toContain(guestA);
+    expect(readGuestEconomyLedgerForPrincipal(guestB, storage).state.coins).toBe(0);
+  });
+
+  it('does not overwrite an existing principal ledger and fails corrupt target data closed', () => {
+    const { storage } = createMemoryStorage();
+    finishGuestTutorial(storage, localNoon(0), guestA);
+    finishGuestTutorial(storage, localNoon(1));
+    expect(readGuestEconomyLedgerForPrincipal(guestA, storage).state.events).toHaveLength(1);
+    expect(readGuestEconomyLedgerForPrincipal(guestB, storage).state.events).toHaveLength(0);
+
+    const corrupt = '{future-version';
+    storage.setItem(getGuestEconomyStorageKey(guestB), corrupt);
+    expect(readGuestEconomyLedgerForPrincipal(guestB, storage).status).toBe('corrupt');
+    expect(storage.getItem(getGuestEconomyStorageKey(guestB))).toBe(corrupt);
+  });
   it.each([
     ['invalid JSON', '{bad-json'],
     ['unknown version', JSON.stringify({ schema: GUEST_ECONOMY_SCHEMA, version: 999, namespace: GUEST_ECONOMY_NAMESPACE, events: [] })],

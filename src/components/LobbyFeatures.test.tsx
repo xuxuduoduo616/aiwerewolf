@@ -10,6 +10,7 @@ import LobbyFeatureMenu from './LobbyFeatureMenu';
 import WolfVillagePreview from './WolfVillagePreview';
 import LobbyActionButtons from './LobbyActionButtons';
 import MatchSelection from './MatchSelection';
+import LobbyHome from './LobbyHome';
 
 const lobbyFeaturesCss = readFileSync(new URL('../styles/lobby-features.css', import.meta.url), 'utf8');
 
@@ -25,6 +26,52 @@ const effectiveDeclarationsFor = (selector: string): Record<string, string> => {
 };
 
 describe('standalone lobby feature surfaces', () => {
+  it('shows the real guest identity and an ignorable lobby sign-in CTA', () => {
+    const noop = () => undefined;
+    const html = renderToStaticMarkup(
+      <LobbyHome
+        onStartGame={noop}
+        onOpenSubview={noop}
+        onOpenUtilityMenu={noop}
+        onNavigate={noop}
+        onOpenTidalStore={noop}
+        onOpenQualifier={noop}
+        onOpenDailyCheckIn={noop}
+        onOpenTutorial={noop}
+        identityName="Guest 11111111"
+        identityHandle="guest:11111111-1111-4111-8111-111111111111"
+        isGuest
+        onSignIn={noop}
+      />,
+    );
+    expect(html).toContain('Guest 11111111');
+    expect(html).toContain('guest:11111111-1111-4111-8111-111111111111');
+    expect(html).toContain('Sign in or create account');
+    expect(html).toContain('Start Game');
+  });
+  it('shows account public identity without the guest CTA or internal UUID', () => {
+    const noop = () => undefined;
+    const html = renderToStaticMarkup(
+      <LobbyHome
+        onStartGame={noop}
+        onOpenSubview={noop}
+        onOpenUtilityMenu={noop}
+        onNavigate={noop}
+        onOpenTidalStore={noop}
+        onOpenQualifier={noop}
+        onOpenDailyCheckIn={noop}
+        onOpenTutorial={noop}
+        identityName="Account B"
+        identityHandle="@account_b"
+        isGuest={false}
+        onSignIn={noop}
+      />,
+    );
+    expect(html).toContain('Account B');
+    expect(html).toContain('@account_b');
+    expect(html).not.toContain('Sign in or create account');
+    expect(html).not.toContain('account-b-internal-uuid');
+  });
   it('renders explicit current and limited activity categories with login rewards', () => {
     const html = renderToStaticMarkup(
       <LobbyActivityView claimedActivityIds={['daily-roll-call']} onClaimActivity={() => undefined} />,

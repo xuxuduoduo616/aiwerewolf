@@ -65,6 +65,24 @@ describe('lobby feature contracts', () => {
 });
 
 describe('versioned storage', () => {
+  const guestA = 'guest:11111111-1111-4111-8111-111111111111';
+  const guestB = 'guest:22222222-2222-4222-8222-222222222222';
+
+  it('migrates the legacy guest key once and isolates later guest principals', () => {
+    const { storage } = createMemoryStorage();
+    const legacy = claimLobbyActivity(createDefaultLobbyFeatureState(), 'legacy-claim');
+    saveLobbyFeatureState(null, legacy, storage);
+    expect(loadLobbyFeatureState(guestA, storage).claimedActivityIds).toEqual(['legacy-claim']);
+    expect(loadLobbyFeatureState(guestB, storage).claimedActivityIds).toEqual([]);
+  });
+
+  it('does not replace existing principal state with the legacy key', () => {
+    const { storage } = createMemoryStorage();
+    saveLobbyFeatureState(guestA, claimLobbyActivity(createDefaultLobbyFeatureState(), 'owned'), storage);
+    saveLobbyFeatureState(null, claimLobbyActivity(createDefaultLobbyFeatureState(), 'legacy'), storage);
+    expect(loadLobbyFeatureState(guestA, storage).claimedActivityIds).toEqual(['owned']);
+    expect(loadLobbyFeatureState(guestB, storage).claimedActivityIds).toEqual([]);
+  });
   it('isolates guest and authenticated users', () => {
     const { storage } = createMemoryStorage();
     const userOneState = claimLobbyActivity(createDefaultLobbyFeatureState(), 'daily-roll-call');

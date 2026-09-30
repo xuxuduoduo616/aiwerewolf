@@ -4,8 +4,8 @@ import {
   createEmptyGuestEconomyState,
   equipGuestSkin,
   finishGuestTutorial,
-  GUEST_ECONOMY_STORAGE_KEY,
-  readGuestEconomyLedger,
+  getGuestEconomyStorageKey,
+  readGuestEconomyLedgerForPrincipal,
   recordGuestTutorialSkip,
   rewardGuestGame,
   unlockGuestSkin,
@@ -42,6 +42,12 @@ export interface UseGuestEconomyResult {
 const accountUnavailableResult = (): EconomyMutationResult => ({
   ok: false,
   code: 'account-unavailable',
+  state: createEmptyGuestEconomyState(),
+});
+
+const missingGuestIdentityResult = (): EconomyMutationResult => ({
+  ok: false,
+  code: 'invalid-request',
   state: createEmptyGuestEconomyState(),
 });
 
@@ -82,13 +88,13 @@ const feedbackForResult = (action: EconomyAction, result: EconomyMutationResult)
   }
 };
 
-export const useGuestEconomy = (isGuest: boolean): UseGuestEconomyResult => {
+export const useGuestEconomy = (isGuest: boolean, guestPrincipalId: string | null = null): UseGuestEconomyResult => {
   const identity: EconomyIdentity = isGuest ? 'guest' : 'account';
   const initial = useMemo(
-    () => isGuest ? readGuestEconomyLedger() : null,
+    () => isGuest && guestPrincipalId ? readGuestEconomyLedgerForPrincipal(guestPrincipalId) : null,
     // The hook must re-bootstrap only when the auth boundary changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isGuest],
+    [isGuest, guestPrincipalId],
   );
   const [state, setState] = useState<GuestEconomyState>(initial?.state ?? createEmptyGuestEconomyState());
   const [ledgerStatus, setLedgerStatus] = useState<LedgerReadResult['status'] | 'account'>(initial?.status ?? 'account');
@@ -100,10 +106,15 @@ export const useGuestEconomy = (isGuest: boolean): UseGuestEconomyResult => {
       setLedgerStatus('account');
       return;
     }
-    const result = readGuestEconomyLedger();
+    if (!guestPrincipalId) {
+      setState(createEmptyGuestEconomyState());
+      setLedgerStatus('corrupt');
+      return;
+    }
+    const result = readGuestEconomyLedgerForPrincipal(guestPrincipalId);
     setState(result.state);
     setLedgerStatus(result.status);
-  }, [isGuest]);
+  }, [guestPrincipalId, isGuest]);
 
   useEffect(() => {
     refresh();
@@ -116,34 +127,36 @@ export const useGuestEconomy = (isGuest: boolean): UseGuestEconomyResult => {
   useEffect(() => {
     if (!isGuest || typeof window === 'undefined') return;
     const handleStorage = (event: StorageEvent) => {
-      if (event.key === GUEST_ECONOMY_STORAGE_KEY) refresh();
+      if (guestPrincipalId && event.key === getGuestEconomyStorageKey(guestPrincipalId)) refresh();
     };
     window.addEventListener('storage', handleStorage);
     return () => window.removeEventListener('storage', handleStorage);
-  }, [isGuest, refresh]);
+  }, [guestPrincipalId, isGuest, refresh]);
 
   const run = useCallback((
     action: EconomyAction,
     operation: () => EconomyMutationResult,
   ): EconomyMutationResult => {
-    const result = runEconomyMutationForIdentity(isGuest, operation);
+    const result = isGuest && !guestPrincipalId
+      ? missingGuestIdentityResult()
+      : runEconomyMutationForIdentity(isGuest, operation);
     if (isGuest) {
       setState(result.state);
       setLedgerStatus(result.code === 'ledger-corrupt' ? 'corrupt' : 'valid');
     }
     setFeedback({ identity, message: feedbackForResult(action, result) });
     return result;
-  }, [identity, isGuest]);
+  }, [guestPrincipalId, identity, isGuest]);
 
-  const checkIn = useCallback(() => run('check-in', () => claimGuestDailyCheckIn()), [run]);
-  const skipTutorial = useCallback(() => run('tutorial-skip', () => recordGuestTutorialSkip()), [run]);
-  const finishTutorial = useCallback(() => run('tutorial-finish', () => finishGuestTutorial()), [run]);
+  const checkIn = useCallback(() => run('check-in', () => claimGuestDailyCheckIn(undefined, new Date(), guestPrincipalId ?? undefined)), [guestPrincipalId, run]);
+  const skipTutorial = useCallback(() => run('tutorial-skip', () => recordGuestTutorialSkip(undefined, new Date(), guestPrincipalId ?? undefined)), [guestPrincipalId, run]);
+  const finishTutorial = useCallback(() => run('tutorial-finish', () => finishGuestTutorial(undefined, new Date(), guestPrincipalId ?? undefined)), [guestPrincipalId, run]);
   const rewardGame = useCallback(
-    (gameId: string, won: boolean) => run('game-reward', () => rewardGuestGame(gameId, won)),
-    [run],
+    (gameId: string, won: boolean) => run('game-reward', () => rewardGuestGame(gameId, won, undefined, new Date(), guestPrincipalId ?? undefined)),
+    [guestPrincipalId, run],
   );
-  const unlockSkin = useCallback((skinId: string) => run('skin-unlock', () => unlockGuestSkin(skinId)), [run]);
-  const equipSkin = useCallback((skinId: string) => run('skin-equip', () => equipGuestSkin(skinId)), [run]);
+  const unlockSkin = useCallback((skinId: string) => run('skin-unlock', () => unlockGuestSkin(skinId, undefined, new Date(), guestPrincipalId ?? undefined)), [guestPrincipalId, run]);
+  const equipSkin = useCallback((skinId: string) => run('skin-equip', () => equipGuestSkin(skinId, undefined, new Date(), guestPrincipalId ?? undefined)), [guestPrincipalId, run]);
 
   return {
     state: isGuest ? state : createEmptyGuestEconomyState(),

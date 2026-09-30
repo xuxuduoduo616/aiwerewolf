@@ -8,6 +8,7 @@
  */
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import type { GameRecord, SupabaseSession, UserProfile } from '../types';
+import { normalizeNickname, validateUsername } from '../identity/publicIdentity';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
@@ -34,11 +35,7 @@ export const requestEmailOtp = async (email: string): Promise<void> => {
 export const verifyEmailOtp = async (
   email: string,
   token: string,
-): Promise<{
-  session: SupabaseSession;
-  profile: UserProfile;
-  records: GameRecord[];
-}> => {
+): Promise<SupabaseSession> => {
   const client = getClient();
 
   // Step 1: Verify the OTP code — returns a valid session
@@ -55,56 +52,63 @@ export const verifyEmailOtp = async (
   const refreshToken = data.session.refresh_token || '';
   const userId = data.user.id;
   const userEmail = data.user.email || email;
-  const displayName = userEmail.split('@')[0] || 'Player';
-
-  // Step 2: Upsert profile using the freshly verified token
-  const { data: profileData, error: profileErr } = await client
-    .from('profiles')
-    .upsert(
-      {
-        id: userId,
-        email: userEmail,
-        display_name: displayName,
-      },
-      { onConflict: 'id' },
-    )
-    .select()
-    .single();
-
-  if (profileErr) throw new Error(profileErr.message || 'Could not save the profile.');
-
-  // Step 3: Fetch records using the same token
-  const { data: recordData, error: recordErr } = await client
-    .from('game_records')
-    .select('*')
-    .eq('user_id', userId)
-    .order('created_at', { ascending: false })
-    .limit(20);
-
-  if (recordErr) throw new Error(recordErr.message || 'Could not load game records.');
-
   return {
-    session: {
-      accessToken,
-      refreshToken,
-      user: { id: userId, email: userEmail },
-    },
-    profile: toProfile(profileData),
-    records: (recordData || []).map(toGameRecord),
+    accessToken,
+    refreshToken,
+    user: { id: userId, email: userEmail },
   };
 };
 
 // ─── Profiles ────────────────────────────────────────────────────────────────
 
-export const upsertProfile = async (
-  session: SupabaseSession,
-  displayName: string,
-): Promise<UserProfile> => {
-  const client = getClient();
-  await client.auth.setSession({
+export class UsernameUnavailableError extends Error {
+  constructor() {
+    super('That Username is unavailable. Choose another Username.');
+    this.name = 'UsernameUnavailableError';
+  }
+}
+
+const activateSession = async (client: SupabaseClient, session: SupabaseSession): Promise<void> => {
+  const { error } = await client.auth.setSession({
     access_token: session.accessToken,
     refresh_token: session.refreshToken || '',
   });
+  if (error) throw new Error(error.message || 'Could not restore the authenticated session.');
+};
+
+export const fetchProfile = async (session: SupabaseSession): Promise<UserProfile> => {
+  const client = getClient();
+  await activateSession(client, session);
+  const { data, error } = await client
+    .from('profiles')
+    .select('id, email, username, display_name, created_at')
+    .eq('id', session.user.id)
+    .maybeSingle();
+  if (error) throw new Error(error.message || 'Could not load the profile.');
+  if (!data) throw new Error('Complete your Username before entering the lobby.');
+  return toProfile(data);
+};
+
+export const claimProfile = async (
+  session: SupabaseSession,
+  usernameInput: string,
+  nicknameInput: string,
+): Promise<UserProfile> => {
+  const username = validateUsername(usernameInput);
+  if (!username.valid) throw new Error(username.error);
+  const nickname = normalizeNickname(nicknameInput, username.value);
+  if (!nickname.valid) throw new Error(nickname.error);
+
+  const client = getClient();
+  await activateSession(client, session);
+
+  const { data: existing, error: existingError } = await client
+    .from('profiles')
+    .select('id, email, username, display_name, created_at')
+    .eq('id', session.user.id)
+    .maybeSingle();
+  if (existingError) throw new Error(existingError.message || 'Could not load the profile.');
+  if (existing) return toProfile(existing);
 
   const { data, error } = await client
     .from('profiles')
@@ -112,16 +116,21 @@ export const upsertProfile = async (
       {
         id: session.user.id,
         email: session.user.email || '',
-        display_name: displayName,
+        username: username.value,
+        display_name: nickname.value,
       },
       { onConflict: 'id' },
     )
     .select()
     .single();
 
+  if (error?.code === '23505') throw new UsernameUnavailableError();
   if (error) throw new Error(error.message || 'Could not save the profile.');
   return toProfile(data);
 };
+
+/** @deprecated Use claimProfile so Username and Nickname are persisted atomically. */
+export const upsertProfile = claimProfile;
 
 // ─── Game records ─────────────────────────────────────────────────────────────
 
@@ -235,11 +244,19 @@ export const upsertUserCoins = async (
 // ─── Mappers ──────────────────────────────────────────────────────────────────
 
 const toProfile = (row: Record<string, unknown>): UserProfile => ({
+  ...mapProfileIdentity(row),
   id: row.id as string,
   email: row.email as string,
-  displayName: (row.display_name as string) || (row.email as string)?.split('@')[0] || 'Player',
   createdAt: (row.created_at as string) || new Date().toISOString(),
 });
+
+const mapProfileIdentity = (row: Record<string, unknown>): Pick<UserProfile, 'username' | 'nickname' | 'displayName'> => {
+  const username = validateUsername(typeof row.username === 'string' ? row.username : '');
+  if (!username.valid) throw new Error('Profile identity is incomplete. Complete your Username before entering the lobby.');
+  const nickname = normalizeNickname(typeof row.display_name === 'string' ? row.display_name : '', username.value);
+  if (!nickname.valid) throw new Error('Profile identity is incomplete. Complete your Nickname before entering the lobby.');
+  return { username: username.value, nickname: nickname.value, displayName: nickname.value };
+};
 
 const toGameRecord = (row: Record<string, unknown>): GameRecord => ({
   id: row.id as string,

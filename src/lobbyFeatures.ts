@@ -1,5 +1,7 @@
 import { GAME_MODES } from './constants';
+import { isAIExpressionModelId, type AIExpressionModelId } from './ai/modelCatalog';
 import type { Difficulty, GameConfig } from './types';
+import { isGuestPrincipalId } from './identity/publicIdentity';
 
 export const LOBBY_SUBVIEWS = [
   'home',
@@ -19,6 +21,7 @@ export interface GameSetup {
   mode: 'single';
   boardId: 'nine-player' | 'twelve-player';
   difficulty: Difficulty;
+  expressionModel: AIExpressionModelId;
 }
 
 const GAME_SETUP_BOARD_CONFIG_IDS: Record<GameSetup['boardId'], GameConfig['id']> = {
@@ -33,7 +36,8 @@ export const isGameSetup = (value: unknown): value is GameSetup => {
   const candidate = value as Partial<GameSetup>;
   return candidate.mode === 'single'
     && (candidate.boardId === 'nine-player' || candidate.boardId === 'twelve-player')
-    && GAME_SETUP_DIFFICULTIES.includes(candidate.difficulty as Difficulty);
+    && GAME_SETUP_DIFFICULTIES.includes(candidate.difficulty as Difficulty)
+    && isAIExpressionModelId(candidate.expressionModel);
 };
 
 export const mapGameSetupToConfig = (value: unknown): GameConfig | null => {
@@ -44,6 +48,7 @@ export const mapGameSetupToConfig = (value: unknown): GameConfig | null => {
 
 export const LOBBY_FEATURES_VERSION = 1 as const;
 export const LOBBY_FEATURES_STORAGE_PREFIX = 'aiwerewolf:lobby-features:v1:';
+export const LOBBY_FEATURES_GUEST_MIGRATION_KEY = 'aiwerewolf:lobby-features:v1:migrated-to';
 export const MAX_LOCAL_FACTION_CONTRIBUTION = 999_999_999;
 
 export const LOBBY_FACTIONS = ['gpt', 'gemini', 'claude', 'deepseek'] as const;
@@ -142,7 +147,28 @@ export const loadLobbyFeatureState = (
   if (!activeStorage) return createDefaultLobbyFeatureState();
 
   try {
-    const raw = activeStorage.getItem(getLobbyFeatureStorageKey(userId));
+    const targetKey = getLobbyFeatureStorageKey(userId);
+    const raw = activeStorage.getItem(targetKey);
+    if (
+      raw !== null
+      && isGuestPrincipalId(userId)
+      && activeStorage.getItem(LOBBY_FEATURES_GUEST_MIGRATION_KEY) === null
+      && activeStorage.getItem(getLobbyFeatureStorageKey(null)) !== null
+    ) {
+      try { activeStorage.setItem(LOBBY_FEATURES_GUEST_MIGRATION_KEY, userId); } catch {}
+    }
+    if (raw === null && isGuestPrincipalId(userId)) {
+      if (activeStorage.getItem(LOBBY_FEATURES_GUEST_MIGRATION_KEY) !== null) {
+        return createDefaultLobbyFeatureState();
+      }
+      const legacyRaw = activeStorage.getItem(getLobbyFeatureStorageKey(null));
+      if (legacyRaw === null) return createDefaultLobbyFeatureState();
+      const legacyState = parseLobbyFeatureState(legacyRaw);
+      if (!legacyState) return createDefaultLobbyFeatureState();
+      activeStorage.setItem(targetKey, JSON.stringify(legacyState));
+      activeStorage.setItem(LOBBY_FEATURES_GUEST_MIGRATION_KEY, userId);
+      return legacyState;
+    }
     if (raw === null) return createDefaultLobbyFeatureState();
     return parseLobbyFeatureState(raw) ?? createDefaultLobbyFeatureState();
   } catch {

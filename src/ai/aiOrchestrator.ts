@@ -4,9 +4,9 @@
  * Architecture:
  *   Layer 1: BeliefTracker (pure TS) → decides target
  *   Layer 2: SpeechLibrary (distilled corpus) → real-sounding templates
- *   Layer 3: Gemini (optional LLM polish) → contextual variation
+ *   Layer 3: selected expression model (optional LLM polish) → contextual variation
  *
- * Falls back gracefully: Gemini → Library → hardcoded template.
+ * Falls back gracefully: remote model → Library → hardcoded template.
  */
 
 import type { GameLog, GamePhase, NightState, Player, Role, VoteRecord, WolfChatMessage } from '../types';
@@ -23,6 +23,7 @@ import { pickSpeech, pickWolfNightSpeech } from '../services/speechLibrary';
 import { globalBeliefTracker } from './beliefTracker';
 import { selectAction } from './actionSelector';
 import type { ActionType } from './actionSelector';
+import { DEFAULT_EXPRESSION_MODEL, type AIExpressionModelId } from './modelCatalog';
 
 // ─── helpers ───────────────────────────────────────────────────────────────
 
@@ -70,21 +71,9 @@ const generateSpeechWithLLM = async (
 ): Promise<{ zh: string; en: string } | null> => {
   try {
     const { generateSpeechWithLLM: generate } = await import('./geminiAdapter');
-    return await generate(systemPrompt, userPrompt);
+    return await generate(systemPrompt, userPrompt, currentExpressionModel);
   } catch {
     return null;
-  }
-};
-
-const generateActionWithLLM = async (
-  prompt: string,
-  validTargets: number[],
-): Promise<{ targetId: number | null; reason?: string }> => {
-  try {
-    const { generateActionWithLLM: generate } = await import('./geminiAdapter');
-    return await generate(prompt, validTargets);
-  } catch {
-    return { targetId: null };
   }
 };
 
@@ -92,9 +81,15 @@ const generateActionWithLLM = async (
 
 // Module-level difficulty config (set once per game via setAIDifficulty)
 let currentAccuracy = 0.85;
+let currentExpressionModel: AIExpressionModelId = DEFAULT_EXPRESSION_MODEL;
 
 export const setAIDifficulty = (actionAccuracy: number) => {
   currentAccuracy = actionAccuracy;
+};
+
+/** Capture the dialogue model once when a match starts; actions never read it. */
+export const setAIExpressionModel = (expressionModel: AIExpressionModelId) => {
+  currentExpressionModel = expressionModel;
 };
 
 export const resetAIMemory = () => {
@@ -180,7 +175,7 @@ ${fmtLogs(logs, language)}
 请输出一段白天发言（80-180中文字符，必须提到具体玩家编号）。
 返回JSON：{"en":"short English summary","zh":"Chinese speech"}`;
 
-  // Layer 3: Try Gemini LLM first. Accepted text passes the roster guard
+  // Layer 3: Try the selected expression model first. Accepted text passes the roster guard
   // (H8): out-of-roster references are structurally repaired when
   // unambiguous, otherwise the response is discarded and the library layer
   // takes over — detected-bad text never reaches the display path.
@@ -191,7 +186,7 @@ ${fmtLogs(logs, language)}
       if (guard.ok && isSubstantiveEnglish(guard.text)) {
         const zhGuard = guardSpeechText(llmResult.zh || '', players, 'zh');
         emitSpeechDiagnostic({
-          context: 'day-speech', source: 'remote-model', model: 'gemini-2.5-flash',
+          context: 'day-speech', source: 'remote-model', model: currentExpressionModel,
           speakerId: player.id, repaired: guard.repaired,
         });
         globalBeliefTracker.updateFromSpeech(player.id, guard.text, players);
@@ -203,7 +198,7 @@ ${fmtLogs(logs, language)}
     if (guard.ok && isChinese(guard.text)) {
       const enGuard = guardSpeechText(llmResult.en || '', players, 'en');
       emitSpeechDiagnostic({
-        context: 'day-speech', source: 'remote-model', model: 'gemini-2.5-flash',
+        context: 'day-speech', source: 'remote-model', model: currentExpressionModel,
         speakerId: player.id, repaired: guard.repaired,
       });
       // Update beliefs from this speech
@@ -292,32 +287,7 @@ export const generateAIAction = async (
   // Layer 1: BeliefTracker-based decision (always runs)
   const l1Decision = selectAction(player, players, globalBeliefTracker, type, 1, voteRecords, currentAccuracy);
 
-  // Layer 3: Try Gemini for better action selection
-  const round = Math.max(1, voteRecords.length > 0 ? voteRecords[voteRecords.length - 1].round : 1);
-  const prompt = `你是${player.id}号，身份：${ROLE_LABELS[player.role]}。
-行动：${type}，可选目标：${JSON.stringify(valid)}
-近期：${fmtLogs(logs)}
-票型：${fmtVotes(voteRecords)}
-按狼人杀最优策略选择目标。
-JSON：{"targetId":number,"reason":"简短中文原因"}`;
-
-  const llmResult = await generateActionWithLLM(prompt, valid);
-  if (llmResult.targetId && valid.includes(llmResult.targetId)) {
-    // Update beliefs: this actor suspects the chosen target
-    if (type === 'VOTE') {
-      globalBeliefTracker.updateFromVote(player.id, llmResult.targetId);
-    }
-    // The reason string can surface in the UI — guard it (H8). An
-    // unrepairable reason is dropped, never displayed.
-    const reasonGuard = guardSpeechText(llmResult.reason ?? '', players, 'zh');
-    emitSpeechDiagnostic({
-      context: 'vote-reason', source: 'remote-model', model: 'gemini-2.5-flash',
-      speakerId: player.id, repaired: reasonGuard.repaired,
-    });
-    return { targetId: llmResult.targetId, reason: reasonGuard.ok ? reasonGuard.text : undefined };
-  }
-
-  // Use Layer 1 fallback if LLM fails
+  // Deterministic action path: remote models may shape speech only.
   if (l1Decision.targetId && valid.includes(l1Decision.targetId)) {
     if (type === 'VOTE') {
       globalBeliefTracker.updateFromVote(player.id, l1Decision.targetId);
@@ -343,7 +313,7 @@ export const generateWolfChat = async (
   const aliveGood = players.filter(p => p.isAlive && p.role !== 'Werewolf');
   const strategyTags: WolfChatMessage['strategyTag'][] = ['刀口', '悍跳', '冲锋', '倒钩', '补位'];
 
-  // Try Gemini for wolf chat
+  // Try the selected expression model for wolf chat
   const systemPrompt = language === 'en'
     ? 'You are the werewolf night team. Discuss strategy concisely in English.'
     : '你们是狼人夜间团队，用中文简洁商量策略。';
@@ -380,7 +350,7 @@ JSON：{"messages":[{"speakerId":number,"message":"中文","strategyTag":"刀口
           const guard = guardSpeechText(item.message!, players, language);
           if (!guard.ok) return null;
           emitSpeechDiagnostic({
-            context: 'wolf-chat', source: 'remote-model', model: 'gemini-2.5-flash',
+            context: 'wolf-chat', source: 'remote-model', model: currentExpressionModel,
             speakerId: item.speakerId, repaired: guard.repaired,
           });
           return {

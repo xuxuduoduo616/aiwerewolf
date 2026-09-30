@@ -273,6 +273,7 @@
   height: 18px;
 }
 
+.app-primary-button:disabled,
 .app-secondary-button:disabled {
   cursor: not-allowed;
   opacity: 0.55;
@@ -316,7 +317,7 @@
 
 .start-game-progress {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
   margin: 18px 0;
   padding: 0;
@@ -429,7 +430,8 @@
 }
 
 .start-board-grid label,
-.start-difficulty-grid label {
+.start-difficulty-grid label,
+.start-model-grid label {
   min-width: 0;
   min-height: 76px;
   display: grid;
@@ -448,14 +450,16 @@
 }
 
 .start-board-grid label.is-selected,
-.start-difficulty-grid label.is-selected {
+.start-difficulty-grid label.is-selected,
+.start-model-grid label.is-selected {
   border-color: rgba(255, 255, 255, 0.45);
   background: rgba(255, 255, 255, 0.07);
   color: #fff;
 }
 
 .start-board-grid input,
-.start-difficulty-grid input {
+.start-difficulty-grid input,
+.start-model-grid input {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -469,12 +473,14 @@
 }
 
 .start-board-grid strong,
-.start-difficulty-grid strong {
+.start-difficulty-grid strong,
+.start-model-grid strong {
   font-size: 13px;
 }
 
 .start-board-grid span,
-.start-difficulty-grid span {
+.start-difficulty-grid span,
+.start-model-grid span {
   color: rgba(255, 255, 255, 0.47);
   font-size: 10px;
   line-height: 1.4;
@@ -485,6 +491,19 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
+}
+
+.start-model-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.start-model-status {
+  margin: -10px 0 18px;
+  color: rgba(255, 255, 255, 0.48);
+  font-size: 10px;
+  line-height: 1.45;
 }
 
 .start-unavailable-routes {
@@ -513,40 +532,6 @@
   width: 14px;
   height: 14px;
   flex: 0 0 auto;
-}
-
-.start-confirmation dl {
-  margin: 0 0 14px;
-}
-
-.start-confirmation dl > div {
-  min-height: 48px;
-  display: grid;
-  grid-template-columns: minmax(88px, 0.6fr) minmax(0, 1fr);
-  align-items: center;
-  gap: 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.start-confirmation dt {
-  color: rgba(255, 255, 255, 0.45);
-  font-size: 11px;
-}
-
-.start-confirmation dd {
-  margin: 0;
-  font-size: 13px;
-  font-weight: 800;
-  overflow-wrap: anywhere;
-}
-
-.start-confirmation > p {
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  margin: 0 0 12px;
-  color: rgba(255, 255, 255, 0.52);
-  font-size: 10px;
 }
 
 .app-unavailable {
@@ -715,6 +700,7 @@
   }
 
   .start-difficulty-grid,
+  .start-model-grid,
   .start-unavailable-routes {
     grid-template-columns: minmax(0, 1fr);
   }
