@@ -23,8 +23,8 @@ interface Props {
 }
 
 const LOBBY_CHAT_PREVIEW = [
-  '夜行者：有人一起开黑吗？',
-  '魔法少女：求带新手场~',
+  'NightOwl: Ready for another round of Werewolf?',
+  'MagicStar: Any tips for a new player?',
 ] as const;
 
 /* ─── SVG sub-components ──────────────────────────────────────────────── */

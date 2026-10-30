@@ -25,10 +25,10 @@ afterEach(() => {
 });
 
 describe('display language persistence', () => {
-  it('defaults to zh when nothing is stored', () => {
+  it('defaults to English when nothing is stored', () => {
     stubLocalStorage();
     expect(loadDisplayLanguage()).toBe(DEFAULT_DISPLAY_LANGUAGE);
-    expect(DEFAULT_DISPLAY_LANGUAGE).toBe('zh');
+    expect(DEFAULT_DISPLAY_LANGUAGE).toBe('en');
   });
 
   it('persists the choice and restores it (survives reload)', () => {

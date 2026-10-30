@@ -92,10 +92,13 @@ const UtilityView: React.FC<UtilityViewProps> = ({
         <p>{content.description}</p>
         <strong>{content.detail}</strong>
         {destination === 'settings' && (
-          <button className="app-secondary-button" type="button" onClick={onToggleLanguage}>
-            <Languages aria-hidden="true" />
-            Speech display: {displayLanguage === 'zh' ? 'Chinese' : 'English'}
-          </button>
+          <div>
+            <button className="app-secondary-button" type="button" onClick={onToggleLanguage}>
+              <Languages aria-hidden="true" />
+              AI speech language: {displayLanguage === 'zh' ? 'Chinese' : 'English'}
+            </button>
+            <p>English is the default. Switch between English and Chinese for AI speech in your next game. Your choice is saved on this browser.</p>
+          </div>
         )}
         {destination === 'redeem-code' && (
           <div className="utility-redeem-preview">

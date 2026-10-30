@@ -92,7 +92,7 @@ describe('pickSpeechFromEntries — leakage filter', () => {
   const pool = [entry(leakText), ...safeTexts.map(t => entry(t))];
 
   it('never picks a wolf self-reveal for a werewolf speaker in day picks', () => {
-    const picked = pickMany(pool, Role.WEREWOLF);
+    const picked = pickMany(pool, Role.WEREWOLF, { language: 'zh' });
     expect(picked.has(leakText)).toBe(false);
     expect(picked.size).toBeGreaterThan(0);
     for (const text of picked) expect(safeTexts).toContain(text);
@@ -101,13 +101,13 @@ describe('pickSpeechFromEntries — leakage filter', () => {
   it('keeps seer claims pickable for a werewolf speaker (fake-claim strategy)', () => {
     const seerClaim = '我是预言家，昨晚验了三号是查杀。';
     const claimPool = [entry(seerClaim), entry(seerClaim), entry(seerClaim)];
-    const picked = pickMany(claimPool, Role.WEREWOLF);
+    const picked = pickMany(claimPool, Role.WEREWOLF, { language: 'zh' });
     expect(picked.has(seerClaim)).toBe(true);
   });
 
   it('allows wolf self-reveals when the filter is off (wolf night chat scope)', () => {
     const nightPool = [entry(leakText)];
-    const picked = pickMany(nightPool, Role.WEREWOLF, { filterSelfReveal: false });
+    const picked = pickMany(nightPool, Role.WEREWOLF, { language: 'zh', filterSelfReveal: false });
     expect(picked.has(leakText)).toBe(true);
   });
 
@@ -131,9 +131,9 @@ describe('pickSpeechFromEntries — language preference', () => {
   const jaText = '3番の発言はおかしい、怪しいと思う。';
   const mixedPool = [...zhTexts, ...enTexts, jaText].map(t => entry(t, { role: 'VILLAGER' }));
 
-  it('prefers Chinese entries by default', () => {
+  it('prefers English entries by default', () => {
     const picked = pickMany(mixedPool, Role.VILLAGER);
-    for (const text of picked) expect(zhTexts).toContain(text);
+    for (const text of picked) expect(enTexts).toContain(text);
   });
 
   it('prefers English entries when language is "en"', () => {
@@ -141,21 +141,20 @@ describe('pickSpeechFromEntries — language preference', () => {
     for (const text of picked) expect(enTexts).toContain(text);
   });
 
-  it('falls back to the mixed pool when fewer than 3 entries match the language', () => {
-    const thinPool = [entry(zhTexts[0]), entry(jaText), entry(jaText + '本当に。')];
-    const picked = pickMany(thinPool, Role.VILLAGER); // zh requested, only 1 zh entry
-    expect(picked.has('')).toBe(false);
-    for (const text of picked) {
-      expect(thinPool.map(e => e.text)).toContain(text);
-    }
-    // Fallback means non-Chinese entries stay reachable.
-    expect([...picked].some(t => t !== zhTexts[0])).toBe(true);
+  it('keeps even a single matching entry instead of returning another language', () => {
+    const thinPool = [entry(enTexts[0]), entry(jaText), entry(zhTexts[0])];
+    expect([...pickMany(thinPool, Role.VILLAGER)]).toEqual([enTexts[0]]);
   });
 
-  it('never returns "" just because no entry matches the language', () => {
-    const noMatch = [entry(jaText), entry(jaText + 'ね。')];
-    const picked = pickMany(noMatch, Role.VILLAGER, { language: 'en' });
-    expect(picked.has('')).toBe(false);
+  it('returns empty when no entry matches so callers use a same-language fallback', () => {
+    const noMatch = [entry(jaText), entry(zhTexts[0])];
+    expect(pickSpeechFromEntries(noMatch, Role.VILLAGER)).toBe('');
+  });
+
+  it('does not discard English entries just because nearby days use another language', () => {
+    const near = Array.from({ length: 6 }, () => entry(zhTexts[0]));
+    const far = entry(enTexts[0], { day: 8 });
+    expect(pickSpeechFromEntries([...near, far], Role.VILLAGER)).toBe(enTexts[0]);
   });
 
   it('combines EN preference with the self-reveal filter off (wolf night chat)', () => {
@@ -176,7 +175,7 @@ describe('pickSpeechFromEntries — existing behavior retained', () => {
     );
     const pool = [tagged, ...untagged];
     for (let i = 0; i < 50; i++) {
-      expect(pickSpeechFromEntries(pool, Role.VILLAGER, ['voting'], 1)).toBe(tagged.text);
+      expect(pickSpeechFromEntries(pool, Role.VILLAGER, ['voting'], 1, { language: 'zh' })).toBe(tagged.text);
     }
   });
 
@@ -185,7 +184,7 @@ describe('pickSpeechFromEntries — existing behavior retained', () => {
       t => entry(t, { day: 1 }),
     );
     const farDay = entry('决赛轮了，狼人就在我们中间。', { day: 5 });
-    const picked = pickMany([...nearDay, farDay], Role.VILLAGER);
+    const picked = pickMany([...nearDay, farDay], Role.VILLAGER, { language: 'zh' });
     expect(picked.has(farDay.text)).toBe(false);
   });
 });

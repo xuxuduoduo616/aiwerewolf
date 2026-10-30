@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { generateSpeechWithLLM, generateWithGemini } from './geminiAdapter';
+import { generateSpeechWithLLM, generateWithGemini, generateWolfChatWithLLM } from './geminiAdapter';
 
 const endpoint = '/.netlify/functions/provider-adapter';
 const response = (body: unknown, ok = true) => ({ ok, json: async () => body });
@@ -27,6 +27,6 @@ describe('browser expression adapter', () => {
     fetchMock.mockResolvedValueOnce(response({ text: '{"zh":"你好","en":"hello"}' }));
     await expect(generateSpeechWithLLM('S', 'U')).resolves.toEqual({ zh: '你好', en: 'hello' });
     fetchMock.mockResolvedValueOnce(response({ text: '{"en":"only"}' }));
-    await expect(generateSpeechWithLLM('S', 'U')).resolves.toBeNull();
+    await expect(generateSpeechWithLLM('S', 'U')).resolves.toEqual({ en: 'only', zh: '' });
   });
 });

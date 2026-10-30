@@ -6,7 +6,7 @@
  */
 
 import { Role } from '../types';
-import type { DisplayLanguage } from '../i18n';
+import { DEFAULT_DISPLAY_LANGUAGE, type DisplayLanguage } from '../i18n';
 
 const isChineseText = (text: string): boolean => {
   const cjk = (text.match(/[一-鿿㐀-䶿]/g) || []).length;
@@ -14,8 +14,7 @@ const isChineseText = (text: string): boolean => {
 };
 
 const isEnglishText = (text: string): boolean => {
-  const cjkOrKana = (text.match(/[一-鿿㐀-䶿ぁ-ゟ゠-ヿ]/g) || []).length;
-  return cjkOrKana === 0 && /[a-zA-Z]/.test(text);
+  return !/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u.test(text) && /[a-zA-Z]/.test(text);
 };
 
 const matchesDisplayLanguage = (text: string, language: DisplayLanguage): boolean =>
@@ -80,7 +79,7 @@ async function loadPool(role: string): Promise<SpeechEntry[]> {
 }
 
 export interface PickSpeechOptions {
-  /** Preferred display language for the pick. Defaults to 'zh'. */
+  /** Preferred display language for the pick. Defaults to English. */
   language?: DisplayLanguage;
   /**
    * Exclude entries that self-reveal the speaker's hidden role.
@@ -92,8 +91,8 @@ export interface PickSpeechOptions {
 
 /**
  * Pure pick over a given entry pool (exported for unit tests with crafted
- * pools). Same selection pipeline as pickSpeech: leakage filter → day
- * proximity → language preference → preferred tags → random.
+ * pools). Same selection pipeline as pickSpeech: leakage filter → language filter → day
+ * proximity → preferred tags → random.
  */
 export function pickSpeechFromEntries(
   entries: SpeechEntry[],
@@ -102,7 +101,7 @@ export function pickSpeechFromEntries(
   round = 1,
   options: PickSpeechOptions = {},
 ): string {
-  const { language = 'zh', filterSelfReveal = true } = options;
+  const { language = DEFAULT_DISPLAY_LANGUAGE, filterSelfReveal = true } = options;
   if (entries.length === 0) return '';
 
   // Leakage filter is absolute: a self-revealing entry must never be picked,
@@ -111,17 +110,17 @@ export function pickSpeechFromEntries(
   const safeEntries = filterSelfReveal
     ? entries.filter(e => !revealsHiddenRole(e.text, role))
     : entries;
-  if (safeEntries.length === 0) return '';
+  const matchingEntries = safeEntries.filter(e => matchesDisplayLanguage(e.text, language));
+  if (matchingEntries.length === 0) return '';
 
   // Filter by day proximity (round maps to aiwolf day)
   const dayRange = [Math.max(0, round - 1), round + 1];
-  const dayMatched = safeEntries.filter(e => e.day >= dayRange[0] && e.day <= dayRange[1]);
-  const pool = dayMatched.length >= 5 ? dayMatched : safeEntries;
+  const dayMatched = matchingEntries.filter(e => e.day >= dayRange[0] && e.day <= dayRange[1]);
+  const pool = dayMatched.length >= 5 ? dayMatched : matchingEntries;
 
-  // Prefer display-language entries (aiwolf corpus is mixed EN/JA/CN),
-  // falling back to the mixed pool when too few match.
-  const languageMatched = pool.filter(e => matchesDisplayLanguage(e.text, language));
-  const finalPool = languageMatched.length >= 3 ? languageMatched : pool;
+  // Language is a hard boundary, even when only one matching entry exists.
+  // Empty matches let the caller use its contextual same-language fallback.
+  const finalPool = pool;
 
   // Try to find an entry with preferred tags
   if (preferTags.length > 0) {
@@ -137,7 +136,7 @@ export function pickSpeechFromEntries(
 /**
  * Pick a random speech from the library.
  * Returns '' only when the pool is empty (or fully excluded by the
- * self-reveal filter) — callers already fall back on empty picks.
+ * self-reveal/language filters) — callers already fall back on empty picks.
  */
 export async function pickSpeech(
   role: Role,
@@ -153,7 +152,7 @@ export async function pickSpeech(
  * Pick a speech for wolf night chat (from whisper logs if available).
  * Night chat is wolf-team-internal, so the self-reveal filter is off.
  */
-export async function pickWolfNightSpeech(language: DisplayLanguage = 'zh'): Promise<string> {
+export async function pickWolfNightSpeech(language: DisplayLanguage = DEFAULT_DISPLAY_LANGUAGE): Promise<string> {
   return pickSpeech(Role.WEREWOLF, ['wolf_night_chat', 'wolf_day_speech'], 0, {
     filterSelfReveal: false,
     language,

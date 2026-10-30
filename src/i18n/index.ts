@@ -10,7 +10,7 @@ import type { GameLog } from '../types';
 
 export type DisplayLanguage = 'zh' | 'en';
 
-export const DEFAULT_DISPLAY_LANGUAGE: DisplayLanguage = 'zh';
+export const DEFAULT_DISPLAY_LANGUAGE: DisplayLanguage = 'en';
 export const LANGUAGE_STORAGE_KEY = 'werewolf_display_language';
 
 export const isDisplayLanguage = (value: unknown): value is DisplayLanguage =>

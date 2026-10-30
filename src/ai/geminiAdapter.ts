@@ -54,6 +54,18 @@ export const generateSpeechWithLLM = async (
   contextPrompt: string,
   expressionModel: AIExpressionModelId = DEFAULT_EXPRESSION_MODEL,
 ): Promise<{ zh: string; en: string } | null> => {
-  const parsed = extractJson<{ zh?: string; en?: string }>(await generateWithGemini({ systemPrompt, userPrompt: contextPrompt }, expressionModel));
-  return parsed?.zh ? { zh: parsed.zh, en: parsed.en || 'Speaks.' } : null;
+  const parsed = extractJson<{ zh?: unknown; en?: unknown }>(await generateWithGemini({ systemPrompt, userPrompt: contextPrompt }, expressionModel));
+  const zh = typeof parsed?.zh === 'string' ? parsed.zh.trim() : '';
+  const en = typeof parsed?.en === 'string' ? parsed.en.trim() : '';
+  return zh || en ? { zh, en } : null;
+};
+
+/** Night chat has its own schema; it is not a bilingual daytime speech. */
+export const generateWolfChatWithLLM = async (
+  systemPrompt: string,
+  contextPrompt: string,
+  expressionModel: AIExpressionModelId = DEFAULT_EXPRESSION_MODEL,
+): Promise<unknown[]> => {
+  const parsed = extractJson<{ messages?: unknown }>(await generateWithGemini({ systemPrompt, userPrompt: contextPrompt }, expressionModel));
+  return Array.isArray(parsed?.messages) ? parsed.messages : [];
 };

@@ -138,7 +138,8 @@ describe('aiOrchestrator survives a rejecting geminiAdapter import', () => {
       speaker, players, [], GamePhase.DAY_DISCUSSION, [], 1, null, [], emptyNight,
     );
 
-    expect(result.zh.length).toBeGreaterThan(0);
+    expect(result.en.length).toBeGreaterThan(0);
+    expect(result.en).not.toMatch(/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u);
     expect(typeof result.en).toBe('string');
   });
 

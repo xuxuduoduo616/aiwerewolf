@@ -2,6 +2,14 @@ import React from 'react';
 import { Skull } from 'lucide-react';
 import { WolfChatMessage } from '../types';
 
+const STRATEGY_LABELS: Record<WolfChatMessage['strategyTag'], string> = {
+  '刀口': 'Night target',
+  '悍跳': 'Fake claim',
+  '冲锋': 'Team push',
+  '倒钩': 'Blend in',
+  '补位': 'Support',
+};
+
 const WolfChannel = ({ wolfChat, isVisible }: { wolfChat: WolfChatMessage[]; isVisible: boolean }) => {
   if (!isVisible) return null;
   return (
@@ -10,7 +18,7 @@ const WolfChannel = ({ wolfChat, isVisible }: { wolfChat: WolfChatMessage[]; isV
       <div className="space-y-2">
         {wolfChat.map(item => (
           <div key={item.id} className="text-xs border border-red-950 bg-red-950/25 rounded p-2">
-            <span className="text-red-200 font-bold">Player {item.speakerId} [<span data-ui-copy-category="AI_OR_PLAYER_SPEECH_OR_CHAT" data-ui-copy-allow="AI_WOLF_CHANNEL">{item.strategyTag}</span>]</span>
+            <span className="text-red-200 font-bold">Player {item.speakerId} [<span data-ui-copy-category="AI_OR_PLAYER_SPEECH_OR_CHAT" data-ui-copy-allow="AI_WOLF_CHANNEL">{STRATEGY_LABELS[item.strategyTag] || 'Support'}</span>]</span>
             <span className="text-zinc-200 ml-2" data-ui-copy-category="AI_OR_PLAYER_SPEECH_OR_CHAT" data-ui-copy-allow="AI_WOLF_CHANNEL">{item.message}</span>
           </div>
         ))}

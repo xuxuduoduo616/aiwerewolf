@@ -154,7 +154,7 @@ export const runAIPhaseSafely = async (
 /**
  * lobby-language-authority: the lobby selection is snapshotted once at
  * startGame as the fixed game language for all AI generation; a missing value
- * keeps today's zh behavior.
+ * uses the English default.
  */
 export const resolveGameLanguage = (language?: DisplayLanguage): DisplayLanguage =>
   language ?? DEFAULT_DISPLAY_LANGUAGE;

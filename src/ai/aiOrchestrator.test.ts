@@ -11,7 +11,7 @@ import { getRoleCamp } from '../gameEngine';
 import { GamePhase, GameLog, Player, Role } from '../types';
 import { pickSpeech, pickWolfNightSpeech } from '../services/speechLibrary';
 import { detectNameViolations } from '../diagnostics/nameDetector';
-import { generateSpeechWithLLM } from './geminiAdapter';
+import { generateSpeechWithLLM, generateWolfChatWithLLM } from './geminiAdapter';
 
 /**
  * Tests for lobby-language-authority: the game language captured at startGame
@@ -22,6 +22,7 @@ import { generateSpeechWithLLM } from './geminiAdapter';
 
 vi.mock('./geminiAdapter', () => ({
   generateSpeechWithLLM: vi.fn(async () => null),
+  generateWolfChatWithLLM: vi.fn(async () => []),
 }));
 
 vi.mock('../services/speechLibrary', () => ({
@@ -29,6 +30,7 @@ vi.mock('../services/speechLibrary', () => ({
   pickWolfNightSpeech: vi.fn(async () => ''),
 }));
 
+const mockWolfLLM = vi.mocked(generateWolfChatWithLLM);
 const mockLLM = vi.mocked(generateSpeechWithLLM);
 const mockPickSpeech = vi.mocked(pickSpeech);
 const mockPickWolfNightSpeech = vi.mocked(pickWolfNightSpeech);
@@ -64,6 +66,7 @@ const dialogue = (
 beforeEach(() => {
   setAIExpressionModel('gemini-2.5-flash');
   mockLLM.mockReset().mockResolvedValue(null);
+  mockWolfLLM.mockReset().mockResolvedValue([]);
   mockPickSpeech.mockReset().mockResolvedValue('');
   mockPickWolfNightSpeech.mockReset().mockResolvedValue('');
 });
@@ -73,7 +76,7 @@ describe('per-match expression model routing', () => {
     const players = makeBoard();
     setAIExpressionModel('gemini-3.6-flash');
 
-    await dialogue(players[7], players);
+    await dialogue(players[7], players, 'zh');
     await generateAIAction(players[7], players, [], 'VOTE', []);
 
     expect(mockLLM.mock.calls[0][2]).toBe('gemini-3.6-flash');
@@ -87,14 +90,14 @@ describe('per-match expression model routing', () => {
 
     await generateWolfChat(wolves, players, [], 1, []);
 
-    expect(mockLLM.mock.calls[0][2]).toBe('gemini-3.6-flash');
+    expect(mockWolfLLM.mock.calls[0][2]).toBe('gemini-3.6-flash');
   });
 });
 
 describe('resolveGameLanguage — capture at startGame', () => {
-  it('defaults to zh when the lobby language is not provided', () => {
-    expect(resolveGameLanguage()).toBe('zh');
-    expect(resolveGameLanguage(undefined)).toBe('zh');
+  it('defaults to English when the lobby language is not provided', () => {
+    expect(resolveGameLanguage()).toBe('en');
+    expect(resolveGameLanguage(undefined)).toBe('en');
   });
 
   it('passes the lobby selection through unchanged', () => {
@@ -128,12 +131,12 @@ describe('generateAIDialogue — LLM layer language threading', () => {
     expect(hasCJK(result.en)).toBe(false);
   });
 
-  it('zh default keeps today\'s Chinese prompt and isChinese acceptance', async () => {
+  it('explicit zh keeps today\'s Chinese prompt and isChinese acceptance', async () => {
     const players = makeBoard();
     const zh = '我站好人视角，三号的发言前后矛盾，今天建议大家重点盘三号的逻辑，票型也要跟上。';
     mockLLM.mockResolvedValue({ zh, en: 'short summary' });
 
-    const result = await dialogue(players[7], players);
+    const result = await dialogue(players[7], players, 'zh');
 
     expect(result.zh).toBe(zh);
     const [systemPrompt, userPrompt] = mockLLM.mock.calls[0];
@@ -168,12 +171,12 @@ describe('generateAIDialogue — library layer', () => {
     expect(result.en).toMatch(/Player \d+/);
   });
 
-  it('zh default keeps the existing pick, mention, and canned en stub', async () => {
+  it('explicit zh keeps the existing pick, mention, and canned en stub', async () => {
     const players = makeBoard();
     const libText = '我觉得今天信息还不够，大家先把发言听完再决定票型，不要乱推人。';
     mockPickSpeech.mockResolvedValue(libText);
 
-    const result = await dialogue(players[7], players);
+    const result = await dialogue(players[7], players, 'zh');
 
     expect(mockPickSpeech).toHaveBeenCalledWith(Role.VILLAGER, [], 1, { language: 'zh' });
     expect(result.zh).toContain(libText);
@@ -183,17 +186,17 @@ describe('generateAIDialogue — library layer', () => {
 });
 
 describe('generateAIDialogue — hardcoded fallback layer (buildFallback)', () => {
-  it('zh default returns canned en stubs with full Chinese speech (unchanged)', async () => {
+  it('explicit zh returns canned en stubs with full Chinese speech (unchanged)', async () => {
     const players = makeBoard();
 
-    const villager = await dialogue(players[7], players);
+    const villager = await dialogue(players[7], players, 'zh');
     expect(isCannedEnglishStub(villager.en)).toBe(true);
     expect(hasCJK(villager.zh)).toBe(true);
 
-    const wolf = await dialogue(players[1], players);
+    const wolf = await dialogue(players[1], players, 'zh');
     expect(wolf.en).toMatch(/^Frames Player (\d+|\?)\.$/);
 
-    const seer = await dialogue(players[4], players, undefined, { targetId: 3, isGood: false });
+    const seer = await dialogue(players[4], players, 'zh', { targetId: 3, isGood: false });
     expect(seer.en).toBe('Seer reports: Player 3 is WOLF.');
     expect(seer.zh).toContain('我是预言家，昨晚验了3号');
   });
@@ -228,7 +231,7 @@ describe('generateWolfChat — language threading', () => {
 
     const chat = await generateWolfChat(wolves, players, [], 1, [], 'en');
 
-    const [systemPrompt] = mockLLM.mock.calls[0];
+    const [systemPrompt] = mockWolfLLM.mock.calls[0];
     expect(systemPrompt).toContain('Discuss strategy concisely in English');
     expect(mockPickWolfNightSpeech).toHaveBeenCalledWith('en');
     expect(chat).toHaveLength(3);
@@ -264,13 +267,13 @@ describe('generateWolfChat — language threading', () => {
     }
   });
 
-  it('zh default keeps the existing Chinese prompt and hardcoded lines', async () => {
+  it('explicit zh keeps the existing Chinese prompt and hardcoded lines', async () => {
     const players = makeBoard();
     const wolves = players.filter(p => p.role === Role.WEREWOLF);
 
-    const chat = await generateWolfChat(wolves, players, [], 1, []);
+    const chat = await generateWolfChat(wolves, players, [], 1, [], 'zh');
 
-    const [systemPrompt] = mockLLM.mock.calls[0];
+    const [systemPrompt] = mockWolfLLM.mock.calls[0];
     expect(systemPrompt).toBe('你们是狼人夜间团队，用中文简洁商量策略。');
     expect(mockPickWolfNightSpeech).toHaveBeenCalledWith('zh');
     expect(chat[0].message).toBe('我建议刀1号。');
@@ -291,7 +294,7 @@ describe('generateAIDialogue — roster guard on the LLM layer (H8, invariant 6)
       en: 'summary',
     });
 
-    const result = await dialogue(players[7], players);
+    const result = await dialogue(players[7], players, 'zh');
 
     expect(result.zh).not.toContain('Agent');
     expect(result.zh).not.toContain('サクラ');
@@ -316,7 +319,7 @@ describe('generateAIDialogue — roster guard on the LLM layer (H8, invariant 6)
 
   it('keeps the player-visible speech shape free of diagnostic metadata (invariant 8)', async () => {
     const players = makeBoard();
-    const result = await dialogue(players[7], players);
+    const result = await dialogue(players[7], players, 'zh');
     expect(Object.keys(result).sort()).toEqual(['en', 'zh']);
   });
 });
@@ -351,7 +354,7 @@ describe('generateAIDialogue — fallback layer stays roster-clean (invariant 1)
   it('produces only roster-derived references in both languages', async () => {
     const players = makeBoard();
     for (const speaker of [players[7], players[1], players[4]]) {
-      const zh = await dialogue(speaker, players);
+      const zh = await dialogue(speaker, players, 'zh');
       expect(detectNameViolations(zh.zh, players)).toHaveLength(0);
       const en = await dialogue(speaker, players, 'en');
       expect(detectNameViolations(en.en, players)).toHaveLength(0);
@@ -363,17 +366,12 @@ describe('generateWolfChat — roster guard on model messages (H8, invariant 6)'
   it('repairs polluted wolf-chat messages before display', async () => {
     const players = makeBoard();
     const wolves = players.filter(p => p.role === Role.WEREWOLF);
-    mockLLM.mockResolvedValue({
-      zh: JSON.stringify({
-        messages: [
+    mockWolfLLM.mockResolvedValue([
           { speakerId: 2, message: '今晚刀サクラ，明天我悍跳预言家。', strategyTag: '刀口' },
           { speakerId: 3, message: '把嫌疑推给Agent[03]那个位置。', strategyTag: '倒钩' },
-        ],
-      }),
-      en: 'ok',
-    });
+    ]);
 
-    const chat = await generateWolfChat(wolves, players, [], 1, []);
+    const chat = await generateWolfChat(wolves, players, [], 1, [], 'zh');
 
     expect(chat.length).toBeGreaterThan(0);
     for (const message of chat) {

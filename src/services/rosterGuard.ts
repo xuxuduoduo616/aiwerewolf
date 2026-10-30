@@ -17,7 +17,7 @@
  */
 
 import type { Player } from '../types';
-import type { DisplayLanguage } from '../i18n';
+import { DEFAULT_DISPLAY_LANGUAGE, type DisplayLanguage } from '../i18n';
 import { AI_NAMES } from '../constants';
 import {
   AGENT_REF_RE,
@@ -72,7 +72,7 @@ export const namelessFallbackLine = (language: DisplayLanguage): string =>
  */
 export const sanitizeForeignEntities = (
   text: string,
-  language: DisplayLanguage = 'zh',
+  language: DisplayLanguage = DEFAULT_DISPLAY_LANGUAGE,
 ): string => {
   if (!text) return text;
   const placeholder = PROMPT_PLACEHOLDER[language];
@@ -163,7 +163,7 @@ const repairText = (text: string, roster: Player[], language: DisplayLanguage): 
 export const guardSpeechText = (
   text: string,
   roster: Player[],
-  language: DisplayLanguage = 'zh',
+  language: DisplayLanguage = DEFAULT_DISPLAY_LANGUAGE,
 ): GuardResult => {
   const violations = detectNameViolations(text, roster);
   if (violations.length === 0) return { ok: true, text, repaired: false, violations };

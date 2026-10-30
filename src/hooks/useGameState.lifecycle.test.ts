@@ -251,3 +251,29 @@ describe('current and stale terminal records', () => {
     await settle();expect(snapshot()).toBe(expected);expect(auth.setRecords).not.toHaveBeenCalled();expect(auth.setRecordError).toHaveBeenCalledTimes(errors);
   });
 });
+
+
+describe('new-match language selection', () => {
+  it.each([true, false])('uses English for a fresh player (guest=%s) in both generation paths', async isGuest => {
+    leave();
+    auth.isGuest = isGuest;
+    if (!isGuest) auth.session = { user: { id: 'new-account' } } as AuthContext['session'];
+    game.startGame(fixture); flush();
+    expect(game.gameLanguage).toBe('en');
+    game.setPhase(GamePhase.NIGHT_WEREWOLVES); flush(); await advance(700);
+    expect(ai.generateWolfChat.mock.calls[0][5]).toBe('en');
+    await enterAIStatement();
+    expect(ai.generateAIDialogue.mock.calls[0][9]).toBe('en');
+  });
+
+  it('captures explicit Chinese for both generation paths until the next game', async () => {
+    leave(); game.startGame(fixture, 'zh'); flush();
+    expect(game.gameLanguage).toBe('zh');
+    game.setPhase(GamePhase.NIGHT_WEREWOLVES); flush(); await advance(700);
+    expect(ai.generateWolfChat.mock.calls[0][5]).toBe('zh');
+    await enterAIStatement();
+    expect(ai.generateAIDialogue.mock.calls[0][9]).toBe('zh');
+    leave(); game.startGame(fixture, 'en'); flush();
+    expect(game.gameLanguage).toBe('en');
+  });
+});

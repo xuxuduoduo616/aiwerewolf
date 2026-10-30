@@ -22,7 +22,7 @@ describe('utility destinations', () => {
     const html = renderToStaticMarkup(
       <UtilityView destination="settings" displayLanguage="en" onToggleLanguage={() => undefined} onBack={() => undefined} />,
     );
-    expect(html).toContain('Speech display: English');
+    expect(html).toContain('AI speech language: English');
     expect(html).not.toContain('disabled=""');
   });
 
