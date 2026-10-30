@@ -71,13 +71,20 @@ create policy "用户创建自己的战绩"
   with check (auth.uid() = user_id);
 ```
 
-## 3. 邮箱 OTP 配置
+## 3. 邮箱验证码与密码配置
 
 Dashboard → Authentication → Providers → Email：
-- ✅ 启用 Email provider
-- ✅ 启用 "Confirm email" 关闭（OTP 模式不需要确认链接）
-- Dashboard → Authentication → Email Templates → Magic Link：
-  - 确保模板包含 `{{ .Token }}`（6位验证码）而非仅 magic link
+- 启用 Email provider；新账号走邮箱 + 密码注册，现有账号可选择密码或验证码登录。
+- 建议保留 **Confirm email**，新用户通过邮箱验证码证明邮箱所有权后完成档案。不要为解决邮件问题而关闭邮箱验证。
+- Authentication → Email Templates：**Confirm signup** 和 **Magic Link** 两个模板都必须包含 `{{ .Token }}`。前端使用输入验证码流程，不依赖确认链接回调。
+- 前端支持 6–10 位数字验证码，验证码长度与项目设置保持一致。
+- 若启用了 Supabase CAPTCHA，确认 provider 为 Turnstile 且与当前站点配置匹配。前端会把一次性 `captchaToken` 交给注册、密码登录和验证码发送接口，每次请求后重新获取。
+- 公开用户邮件应使用已配置的自定义 SMTP（如 Resend），检查发信域名验证、发信配额和投递状态。不要把 SMTP 凭据放入前端或源码。
+- 密码仅通过 Supabase Auth 注册／登录接口发送，不写入 `profiles`、用户 metadata 或浏览器持久存储。
+- 旧的仅验证码账号继续选择 Verification code 登录；本次未新增密码重置／为旧账号设置密码的界面。
+- Guest Trial 不读取、不写入、不迁移游客战绩；旧浏览器战绩数据不删除，游客身份和本地装扮状态保持原机制。
+
+上述内容是配置要求，不代表当前线上邮件模板或 SMTP 已验证。发布前使用受控测试邮箱确认注册验证码、验证码登录、密码登录、刷新恢复和账户战绩写入。
 
 ## 4. Existing project identity migration
 

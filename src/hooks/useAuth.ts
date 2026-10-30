@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { GameRecord, SupabaseSession, UserProfile } from '../types';
 import {
   claimProfile,
@@ -6,6 +6,13 @@ import {
   fetchProfile,
   isSupabaseConfigured,
   requestEmailOtp,
+  signUpWithPassword,
+  signInWithPassword,
+  resendSignupCode,
+  restoreAuthSession,
+  ProfileIncompleteError,
+  subscribeToAuthRefresh,
+  clearClientSession,
   verifyEmailOtp,
 } from '../services/supabaseClient';
 import {
@@ -80,36 +87,48 @@ const getBrowserStorage = (): Storage | null => {
   try { return globalThis.localStorage ?? null; } catch { return null; }
 };
 
-const getErrorMessage = (error: unknown, fallback: string): string =>
-  error instanceof Error ? error.message || fallback : fallback;
+export const getAuthErrorMessage = (error: unknown, fallback: string): string => {
+  const message = error instanceof Error ? error.message : fallback;
+  if (/failed to fetch|fetch failed|networkerror|network request failed|load failed|timed? ?out/i.test(message)) {
+    return 'Unable to reach the account service. Check your connection and try again. You can still use Guest Trial.';
+  }
+  if (/invalid login credentials/i.test(message)) return 'Email or password is incorrect. You can also log in with a verification code.';
+  if (/email not confirmed/i.test(message)) return 'Please verify your email first. Select Verification code to request a new code.';
+  if (/rate limit|too many requests|security purposes/i.test(message)) return 'Too many attempts. Please wait a minute before trying again.';
+  return message || fallback;
+};
 
 class IdentityInputError extends Error {
-  constructor(public readonly field: 'username' | 'nickname', message: string) {
-    super(message);
-  }
+  constructor(public readonly field: 'username' | 'nickname', message: string) { super(message); }
 }
 
+type AuthMode = 'LOGIN' | 'SIGNUP';
+type LoginMethod = 'PASSWORD' | 'CODE';
+type AuthField = 'email' | 'username' | 'nickname' | 'code' | 'password';
+
 export interface AuthState {
-  authEmail: string;
-  setAuthEmail: (v: string) => void;
-  authUsername: string;
-  setAuthUsername: (v: string) => void;
-  authNickname: string;
-  setAuthNickname: (v: string) => void;
-  authCode: string;
-  setAuthCode: (v: string) => void;
+  authEmail: string; setAuthEmail: (v: string) => void;
+  authUsername: string; setAuthUsername: (v: string) => void;
+  authNickname: string; setAuthNickname: (v: string) => void;
+  authCode: string; setAuthCode: (v: string) => void;
+  authPassword: string; setAuthPassword: (v: string) => void;
+  authMode: AuthMode; setAuthMode: (v: AuthMode) => void;
+  loginMethod: LoginMethod; setLoginMethod: (v: LoginMethod) => void;
   authStep: 'EMAIL' | 'VERIFY';
   authError: string;
-  authErrorField: 'email' | 'username' | 'nickname' | 'code' | null;
+  authErrorField: AuthField | null;
   isAuthLoading: boolean;
   isIdentityCompletionPending: boolean;
+  needsIdentity: boolean;
   session: SupabaseSession | null;
   profile: UserProfile | null;
   guestIdentity: GuestIdentity | null;
   isGuest: boolean;
   isAuthenticated: boolean;
   isRestoringSession: boolean;
-  handleSendOtp: () => Promise<void>;
+  handleSendOtp: (captchaToken?: string) => Promise<void>;
+  handleSignUp: (onRecords: (records: GameRecord[]) => void, captchaToken?: string) => Promise<void>;
+  handlePasswordLogin: (onRecords: (records: GameRecord[]) => void, captchaToken?: string) => Promise<void>;
   handleVerifyOtp: (onRecords: (records: GameRecord[]) => void) => Promise<void>;
   handleChangeEmail: () => void;
   handleGuest: (onReady: (identity: GuestIdentity) => void) => void;
@@ -122,39 +141,65 @@ const useAuth = (): AuthState => {
   const [authUsername, setAuthUsername] = useState('');
   const [authNickname, setAuthNickname] = useState('');
   const [authCode, setAuthCode] = useState('');
+  const [authPassword, setAuthPassword] = useState('');
+  const [authMode, setMode] = useState<AuthMode>('LOGIN');
+  const [loginMethod, setMethod] = useState<LoginMethod>('PASSWORD');
   const [authStep, setAuthStep] = useState<'EMAIL' | 'VERIFY'>('EMAIL');
   const [authError, setAuthError] = useState('');
-  const [authErrorField, setAuthErrorField] = useState<AuthState['authErrorField']>(null);
+  const [authErrorField, setAuthErrorField] = useState<AuthField | null>(null);
   const [isAuthLoading, setIsAuthLoading] = useState(false);
   const [pendingVerifiedSession, setPendingVerifiedSession] = useState<SupabaseSession | null>(null);
+  const [needsIdentity, setNeedsIdentity] = useState(false);
   const [session, setSession] = useState<SupabaseSession | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [guestIdentity, setGuestIdentity] = useState<GuestIdentity | null>(null);
   const [isGuest, setIsGuest] = useState(false);
   const [isRestoringSession, setIsRestoringSession] = useState(isSupabaseConfigured());
+  const revision = useRef(0);
+  const busy = useRef(false);
 
   useEffect(() => {
+    let active = true;
     const stored = loadAuthFromStorage();
     if (!stored) { setIsRestoringSession(false); return; }
     const restoredSession: SupabaseSession = {
-      accessToken: stored.accessToken,
-      refreshToken: stored.refreshToken,
+      accessToken: stored.accessToken, refreshToken: stored.refreshToken,
       user: { id: stored.userId, email: stored.email },
     };
-    Promise.all([fetchProfile(restoredSession), fetchGameRecords(restoredSession)])
-      .then(([freshProfile]) => {
-        setSession(restoredSession);
-        setProfile(freshProfile);
-        saveAuthToStorage(restoredSession, freshProfile);
-        setIsRestoringSession(false);
-      })
-      .catch(() => {
-        clearAuthStorage();
-        setIsRestoringSession(false);
-      });
+    restoreAuthSession(restoredSession).then(async freshSession => {
+      const freshProfile = await fetchProfile(freshSession);
+      if (!active) return;
+      setSession(freshSession);
+      setProfile(freshProfile);
+      saveAuthToStorage(freshSession, freshProfile);
+    }).catch(() => { if (active) clearAuthStorage(); })
+      .finally(() => { if (active) setIsRestoringSession(false); });
+    return () => { active = false; revision.current++; };
   }, []);
 
-  const isAuthenticated = Boolean((session && profile) || (isGuest && guestIdentity));
+  useEffect(() => {
+    if (!session || !profile) return;
+    const authRevision = revision.current;
+    return subscribeToAuthRefresh(freshSession => {
+      if (revision.current !== authRevision || freshSession.user.id !== profile.id) return;
+      setSession(freshSession);
+      saveAuthToStorage(freshSession, profile);
+    });
+  }, [session?.user.id, profile]);
+
+  const resetFlow = () => {
+    revision.current++;
+    busy.current = false;
+    setIsAuthLoading(false);
+    setPendingVerifiedSession(null); setNeedsIdentity(false);
+    setAuthPassword('');
+    setAuthCode('');
+    setAuthError('');
+    setAuthErrorField(null);
+    setAuthStep('EMAIL');
+  };
+  const setAuthMode = (mode: AuthMode) => { resetFlow(); setMode(mode); };
+  const setLoginMethod = (method: LoginMethod) => { resetFlow(); setMethod(method); };
 
   const validatedIdentity = () => {
     const username = validateUsername(authUsername);
@@ -164,147 +209,130 @@ const useAuth = (): AuthState => {
     return { username: username.value, nickname: nickname.value };
   };
 
-  const handleSendOtp = async () => {
-    const email = authEmail.trim();
-    if (!email) { setAuthError('Enter your email address.'); setAuthErrorField('email'); return; }
-    try {
-      const identity = validatedIdentity();
-      setAuthUsername(identity.username);
-      setAuthNickname(authNickname.trim());
-    } catch (error) {
-      setAuthError(getErrorMessage(error, 'Enter a valid Username.'));
-      setAuthErrorField(error instanceof IdentityInputError ? error.field : 'username');
-      return;
+  const validateEmail = () => {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(authEmail.trim())) {
+      setAuthError('Enter a valid email address.'); setAuthErrorField('email'); return false;
     }
     if (!isSupabaseConfigured()) {
-      setAuthError('Supabase environment variables are not configured.');
-      setAuthErrorField('email');
-      return;
+      setAuthError('Account access is temporarily unavailable. Please use Guest Trial.'); setAuthErrorField('email'); return false;
     }
-    setIsAuthLoading(true);
-    setAuthError('');
-    setAuthErrorField(null);
-    try {
-      await requestEmailOtp(email);
-      setAuthStep('VERIFY');
-    } catch (error: unknown) {
-      setAuthError(getErrorMessage(error, 'Could not send the verification code.'));
-      setAuthErrorField('email');
+    return true;
+  };
+
+  const run = async (field: AuthField, operation: (current: () => boolean) => Promise<void>) => {
+    if (busy.current) return;
+    busy.current = true;
+    const requestRevision = ++revision.current;
+    const current = () => revision.current === requestRevision;
+    setIsAuthLoading(true); setAuthError(''); setAuthErrorField(null);
+    try { await operation(current); }
+    catch (error) {
+      if (current()) {
+        setAuthError(getAuthErrorMessage(error, 'Unable to log in. Please try again.'));
+        setAuthErrorField(error instanceof IdentityInputError ? error.field : /Username/.test(getAuthErrorMessage(error, '')) ? 'username' : field);
+      }
     } finally {
-      setIsAuthLoading(false);
+      if (current()) { busy.current = false; setIsAuthLoading(false); }
     }
+  };
+
+  const finish = async (
+    verified: SupabaseSession, onRecords: (records: GameRecord[]) => void,
+    current: () => boolean, identity?: ReturnType<typeof validatedIdentity>,
+  ) => {
+    let nextProfile: UserProfile;
+    // A successful login must not require or overwrite an existing public identity.
+    try { nextProfile = identity ? await claimProfile(verified, identity.username, identity.nickname) : await fetchProfile(verified); }
+    catch (error) {
+      if (!current()) return;
+      if (error instanceof ProfileIncompleteError) {
+        setPendingVerifiedSession(verified); setNeedsIdentity(true); setAuthStep('VERIFY');
+        throw new IdentityInputError('username', 'Email verified. Choose a Username to finish setting up your account.');
+      }
+      throw error;
+    }
+    if (!current()) return;
+    const records = await fetchGameRecords(verified);
+    if (!current()) return;
+    setSession(verified); setProfile(nextProfile); setIsGuest(false); setGuestIdentity(null);
+    setPendingVerifiedSession(null); setAuthPassword(''); setAuthCode('');
+    saveAuthToStorage(verified, nextProfile);
+    onRecords(records);
+  };
+
+  const handleSendOtp = async (captchaToken?: string) => {
+    if (!validateEmail()) return;
+    await run('email', async current => {
+      if (authMode === 'SIGNUP') await resendSignupCode(authEmail.trim(), captchaToken);
+      else await requestEmailOtp(authEmail.trim(), captchaToken);
+      if (current()) { setAuthStep('VERIFY'); setAuthCode(''); }
+    });
+  };
+
+  const handleSignUp = async (onRecords: (records: GameRecord[]) => void, captchaToken?: string) => {
+    if (!validateEmail()) return;
+    await run('password', async current => {
+      const identity = validatedIdentity();
+      if (authPassword.length < 8) { setAuthErrorField('password'); throw new Error('Use at least 8 characters for your password.'); }
+      const verified = await signUpWithPassword(authEmail.trim(), authPassword, captchaToken);
+      if (!current()) return;
+      setAuthPassword(''); setAuthStep('VERIFY');
+      if (verified) {
+        setPendingVerifiedSession(verified);
+        await finish(verified, onRecords, current, identity);
+      }
+    });
+  };
+
+  const handlePasswordLogin = async (onRecords: (records: GameRecord[]) => void, captchaToken?: string) => {
+    if (!validateEmail()) return;
+    if (!authPassword) { setAuthError('Enter your password.'); setAuthErrorField('password'); return; }
+    await run('password', async current => {
+      const verified = await signInWithPassword(authEmail.trim(), authPassword, captchaToken);
+      if (!current()) return;
+      setAuthPassword(''); setPendingVerifiedSession(verified); setAuthStep('VERIFY');
+      await finish(verified, onRecords, current);
+    });
   };
 
   const handleVerifyOtp = async (onRecords: (records: GameRecord[]) => void) => {
-    if (!pendingVerifiedSession && !authCode.trim()) {
-      setAuthError('Enter the email verification code.');
-      setAuthErrorField('code');
-      return;
+    if (!pendingVerifiedSession && !/^\d{6,10}$/.test(authCode.trim())) {
+      setAuthError('Enter the verification code from your email.'); setAuthErrorField('code'); return;
     }
-    let identity: ReturnType<typeof validatedIdentity>;
-    try {
-      identity = validatedIdentity();
-    } catch (error) {
-      setAuthError(getErrorMessage(error, 'Enter a valid public identity.'));
-      setAuthErrorField(error instanceof IdentityInputError ? error.field : 'username');
-      return;
-    }
-
-    setIsAuthLoading(true);
-    setAuthError('');
-    setAuthErrorField(null);
-    let verifiedForRetry = pendingVerifiedSession;
-    try {
-      const verified = pendingVerifiedSession
-        ?? await verifyEmailOtp(authEmail.trim(), authCode.trim());
-      verifiedForRetry = verified;
-      if (!pendingVerifiedSession) setPendingVerifiedSession(verified);
-      const nextProfile = await claimProfile(verified, identity.username, identity.nickname);
-      const records = await fetchGameRecords(verified);
-      setSession(verified);
-      setProfile(nextProfile);
-      setIsGuest(false);
-      setGuestIdentity(null);
-      setPendingVerifiedSession(null);
-      saveAuthToStorage(verified, nextProfile);
-      onRecords(records);
-    } catch (error: unknown) {
-      const message = getErrorMessage(error, 'Login failed.');
-      setAuthError(message);
-      setAuthErrorField(verifiedForRetry ? 'username' : 'code');
-    } finally {
-      setIsAuthLoading(false);
-    }
-  };
-
-  const handleChangeEmail = () => {
-    setPendingVerifiedSession(null);
-    setAuthCode('');
-    setAuthError('');
-    setAuthErrorField(null);
-    setAuthStep('EMAIL');
+    await run(pendingVerifiedSession ? 'username' : 'code', async current => {
+      const identity = authMode === 'SIGNUP' || needsIdentity ? validatedIdentity() : undefined;
+      const verified = pendingVerifiedSession ?? await verifyEmailOtp(authEmail.trim(), authCode.trim());
+      if (!current()) return;
+      setPendingVerifiedSession(verified);
+      try { await finish(verified, onRecords, current, identity); }
+      catch (error) {
+        if (identity && current()) throw new IdentityInputError('username', getAuthErrorMessage(error, 'Could not complete your profile.'));
+        throw error;
+      }
+    });
   };
 
   const handleGuest = (onReady: (identity: GuestIdentity) => void) => {
     const identity = loadOrCreateGuestIdentity(getBrowserStorage());
-    if (!identity) {
-      setAuthError('A Guest ID could not be created in this browser.');
-      setAuthErrorField(null);
-      return;
-    }
-    setGuestIdentity(identity);
-    setIsGuest(true);
-    setSession(null);
-    setProfile(null);
-    setPendingVerifiedSession(null);
-    setAuthError(identity.persistent ? '' : 'Guest ID is available for this tab only because local storage is unavailable.');
-    setAuthErrorField(null);
+    if (!identity) { setAuthError('A Guest ID could not be created in this browser.'); setAuthErrorField(null); return; }
+    resetFlow(); clearAuthStorage(); clearClientSession();
+    setGuestIdentity(identity); setIsGuest(true); setSession(null); setProfile(null);
     onReady(identity);
   };
-
   const leaveGuestForAuth = () => {
-    setIsGuest(false);
-    setGuestIdentity(null);
-    setSession(null);
-    setProfile(null);
-    setAuthError('');
-    setAuthErrorField(null);
-    setAuthCode('');
-    setAuthStep('EMAIL');
+    resetFlow(); setMode('LOGIN'); setIsGuest(false); setGuestIdentity(null); setSession(null); setProfile(null);
   };
-
-  const logoutAuth = () => {
-    setSession(null);
-    setProfile(null);
-    setIsGuest(false);
-    setGuestIdentity(null);
-    setPendingVerifiedSession(null);
-    setAuthCode('');
-    setAuthError('');
-    setAuthErrorField(null);
-    setAuthStep('EMAIL');
-    clearAuthStorage();
-  };
+  const logoutAuth = () => { leaveGuestForAuth(); clearAuthStorage(); clearClientSession(); };
 
   return {
-    authEmail, setAuthEmail,
-    authUsername, setAuthUsername,
-    authNickname, setAuthNickname,
-    authCode, setAuthCode,
-    authStep,
-    authError,
-    authErrorField,
-    isAuthLoading,
-    isIdentityCompletionPending: Boolean(pendingVerifiedSession),
+    authEmail, setAuthEmail, authUsername, setAuthUsername, authNickname, setAuthNickname,
+    authCode, setAuthCode, authPassword, setAuthPassword, authMode, setAuthMode, loginMethod, setLoginMethod,
+    authStep, authError, authErrorField, isAuthLoading,
+    isIdentityCompletionPending: Boolean(pendingVerifiedSession), needsIdentity,
     session, profile, guestIdentity, isGuest,
-    isAuthenticated,
-    isRestoringSession,
-    handleSendOtp,
-    handleVerifyOtp,
-    handleChangeEmail,
-    handleGuest,
-    leaveGuestForAuth,
-    logoutAuth,
+    isAuthenticated: Boolean((session && profile) || (isGuest && guestIdentity)), isRestoringSession,
+    handleSendOtp, handleSignUp, handlePasswordLogin, handleVerifyOtp,
+    handleChangeEmail: resetFlow, handleGuest, leaveGuestForAuth, logoutAuth,
   };
 };
 

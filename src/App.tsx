@@ -30,7 +30,7 @@ import LobbyActivityView from './components/LobbyActivityView';
 import FactionSupportView from './components/FactionSupportView';
 import BattlePassView from './components/BattlePassView';
 import WolfVillagePreview from './components/WolfVillagePreview';
-import TurnstileWidget from './components/TurnstileWidget';
+import LoginView from './components/LoginView';
 import { useDisplayLanguage } from './i18n';
 import { mapGameSetupToConfig, type GameSetup, type LobbySubview } from './lobbyFeatures';
 import { useLobbyFeatures } from './hooks/useLobbyFeatures';
@@ -50,9 +50,6 @@ import {
   Skull, Trophy, User as UserIcon, Volume2, VolumeX,
 } from 'lucide-react';
 
-/** Cloudflare Turnstile site key, required by the guarded production build. */
-const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY;
-
 export type TurnstileGuestGateEvent =
   | { type: 'verified'; token: string }
   | { type: 'error' | 'expired' };
@@ -62,7 +59,7 @@ export const nextTurnstileToken = (event: TurnstileGuestGateEvent): string | nul
 
 export const isTurnstileGuestGateOpen = (token: string | null): boolean => Boolean(token);
 
-type AuthInputField = 'email' | 'username' | 'nickname' | 'code';
+type AuthInputField = 'email' | 'username' | 'nickname' | 'code' | 'password';
 
 export const authFieldDescribedBy = (
   field: AuthInputField,
@@ -111,7 +108,6 @@ const App: React.FC = () => {
   const [lobbySubview, setLobbySubview] = useState<LobbySubview>('home');
   const [utilityView, setUtilityView] = useState<'menu' | UtilityDestination | null>(null);
   const [startRequestRevision, setStartRequestRevision] = useState(0);
-  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [isGameInfoOpen, setIsGameInfoOpen] = useState(false);
   const [isLeaveGameOpen, setIsLeaveGameOpen] = useState(false);
   const [shopSection, setShopSection] = useState<ShopSection>('skins');
@@ -125,10 +121,6 @@ const App: React.FC = () => {
   const leaveGameTriggerRef = React.useRef<HTMLButtonElement>(null);
   const leaveRequestLockedRef = React.useRef(false);
   const utilityTriggerRef = React.useRef<HTMLButtonElement>(null);
-  const authEmailRef = React.useRef<HTMLInputElement>(null);
-  const authUsernameRef = React.useRef<HTMLInputElement>(null);
-  const authNicknameRef = React.useRef<HTMLInputElement>(null);
-  const authCodeRef = React.useRef<HTMLInputElement>(null);
   const guestPrincipalId = auth.guestIdentity?.id ?? null;
   const principalId = auth.isGuest ? guestPrincipalId : auth.session?.user.id ?? null;
   const publicName = auth.isGuest
@@ -156,17 +148,6 @@ const App: React.FC = () => {
   });
   const startRequestLockedRef = React.useRef(false);
   const pendingStartRef = React.useRef<{ setup: GameSetup; config: NonNullable<ReturnType<typeof mapGameSetupToConfig>> } | null>(null);
-
-  React.useEffect(() => {
-    if (!auth.authError || !auth.authErrorField) return;
-    const fields = {
-      email: authEmailRef,
-      username: authUsernameRef,
-      nickname: authNicknameRef,
-      code: authCodeRef,
-    };
-    fields[auth.authErrorField].current?.focus();
-  }, [auth.authError, auth.authErrorField]);
 
   const applyEconomyRoute = React.useCallback((route: EconomyRoute) => {
     setUtilityView(null);
@@ -327,85 +308,10 @@ const App: React.FC = () => {
   }
 
   if (!auth.isAuthenticated) {
-    return (
-      <main className="login-page sketch-scene flex font-sans text-zinc-200">
-        <div className="auth-panel parchment-border p-8 border border-zinc-600 bg-zinc-950/86 rounded-lg shadow-[0_0_45px_rgba(0,0,0,0.6)]">
-          <div className="text-center mb-7">
-            <Moon className="w-10 h-10 mx-auto mb-3 opacity-40" />
-            <h1 className="login-title text-4xl text-zinc-100 font-bold tracking-wide cinzel">AI WEREWOLF</h1>
-            <p className="text-xs text-zinc-400 mt-2">Shadows of the Village</p>
-          </div>
-          <div className="space-y-3">
-            <label className="block text-xs text-zinc-400" htmlFor="auth-email">Email</label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-3.5 w-4 h-4 text-zinc-500" />
-              <input ref={authEmailRef} id="auth-email" type="email" autoComplete="email" required disabled={auth.authStep === 'VERIFY'} aria-describedby={authFieldDescribedBy('email', auth.authErrorField)} className="w-full bg-black/70 border border-zinc-700 rounded px-10 py-3 text-white outline-none focus:border-zinc-300 disabled:opacity-60" placeholder="you@example.com" value={auth.authEmail} onChange={e => auth.setAuthEmail(e.target.value)} />
-            </div>
-            <label className="block text-xs text-zinc-400" htmlFor="auth-username">Username <span aria-hidden="true">*</span></label>
-            <input ref={authUsernameRef} id="auth-username" autoComplete="username" required minLength={3} maxLength={40} pattern="[A-Za-z0-9_]+" aria-describedby={authFieldDescribedBy('username', auth.authErrorField, 'auth-username-help')} className="w-full bg-black/70 border border-zinc-700 rounded px-4 py-3 text-white outline-none focus:border-zinc-300" placeholder="required_username" value={auth.authUsername} onChange={e => auth.setAuthUsername(e.target.value)} />
-            <p id="auth-username-help" className="text-[10px] leading-relaxed text-zinc-500">3–40 letters, numbers, or underscores. Stored in lowercase.</p>
-            <label className="block text-xs text-zinc-400" htmlFor="auth-nickname">Nickname <span className="text-zinc-600">(optional)</span></label>
-            <input ref={authNicknameRef} id="auth-nickname" autoComplete="nickname" maxLength={80} aria-describedby={authFieldDescribedBy('nickname', auth.authErrorField, 'auth-nickname-help')} className="w-full bg-black/70 border border-zinc-700 rounded px-4 py-3 text-white outline-none focus:border-zinc-300" placeholder="Defaults to Username" value={auth.authNickname} onChange={e => auth.setAuthNickname(e.target.value)} />
-            <p id="auth-nickname-help" className="text-[10px] leading-relaxed text-zinc-500">Your public name. If blank, your Username is used.</p>
-            {auth.authStep === 'VERIFY' && (
-              <>
-                <label className="block text-xs text-zinc-400" htmlFor="auth-code">Verification Code</label>
-                <div className="relative">
-                  <KeyRound className="absolute left-3 top-3.5 w-4 h-4 text-zinc-500" />
-                  <input ref={authCodeRef} id="auth-code" inputMode="numeric" autoComplete="one-time-code" disabled={auth.isIdentityCompletionPending} aria-describedby={authFieldDescribedBy('code', auth.authErrorField)} className="w-full bg-black/70 border border-zinc-700 rounded px-10 py-3 text-white outline-none focus:border-zinc-300 disabled:opacity-60" placeholder="6-digit email code" value={auth.authCode} onChange={e => auth.setAuthCode(e.target.value)} />
-                </div>
-                {auth.isIdentityCompletionPending && (
-                  <p className="text-xs leading-relaxed text-emerald-200">Email verified. Complete your public identity; the code will not be verified again.</p>
-                )}
-              </>
-            )}
-          </div>
-          {auth.authError && <p id="auth-error" role="alert" className="mt-4 text-xs leading-relaxed text-amber-200 bg-amber-950/35 border border-amber-900 rounded p-3">{auth.authError}</p>}
-
-          {/* Cloudflare Turnstile — human verification before login */}
-          <div className="turnstile-container mt-4 flex justify-center">
-            <TurnstileWidget
-              siteKey={TURNSTILE_SITE_KEY}
-              onVerify={token => setTurnstileToken(nextTurnstileToken({ type: 'verified', token }))}
-              onError={() => setTurnstileToken(nextTurnstileToken({ type: 'error' }))}
-              onExpired={() => setTurnstileToken(nextTurnstileToken({ type: 'expired' }))}
-            />
-          </div>
-
-          <button
-            onClick={() => auth.authStep === 'EMAIL'
-              ? auth.handleSendOtp()
-              : auth.handleVerifyOtp(records => { rec.setRecords(records); rec.setShowRecords(true); game.setPhase(GamePhase.LOBBY); })}
-            disabled={auth.isAuthLoading || !isTurnstileGuestGateOpen(turnstileToken)}
-            className="mt-4 w-full bg-zinc-100 text-black py-3 font-bold rounded hover:bg-white transition flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed"
-          >
-            {auth.isAuthLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Shield className="w-4 h-4" />}
-            {auth.authStep === 'EMAIL'
-              ? 'SEND EMAIL CODE'
-              : auth.isIdentityCompletionPending ? 'SAVE IDENTITY AND ENTER' : 'VERIFY AND ENTER'}
-          </button>
-          <div className="flex justify-between mt-4 text-xs text-zinc-400">
-            {auth.authStep === 'VERIFY'
-              ? <button type="button" onClick={auth.handleChangeEmail} className="hover:text-white">Change email</button>
-              : <span />}
-            <button
-              onClick={() => auth.handleGuest(identity => { rec.loadLocalRecords(identity.id); rec.setShowRecords(true); game.setPhase(GamePhase.LOBBY); })}
-              disabled={!isTurnstileGuestGateOpen(turnstileToken)}
-              className="hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
-            >Guest Trial</button>
-          </div>
-          <p className="mt-5 text-[11px] leading-relaxed text-zinc-500 text-center border-t border-zinc-800 pt-4">
-            New players can choose <span className="text-zinc-300">Guest Trial</span> and select Beginner difficulty.
-            The AI will guide you through Seer checks, Witch potions, and werewolf night actions.
-          </p>
-          {!turnstileToken && (
-            <p className="mt-2 text-[10px] text-zinc-600 text-center">
-              Complete the verification above to start playing.
-            </p>
-          )}
-        </div>
-      </main>
-    );
+    return <LoginView auth={auth}
+      onReady={records => { rec.setRecords(records); rec.setShowRecords(true); game.setPhase(GamePhase.LOBBY); }}
+      onGuest={() => auth.handleGuest(identity => { rec.loadLocalRecords(identity.id); rec.setShowRecords(true); game.setPhase(GamePhase.LOBBY); })}
+    />;
   }
 
   // ── After login, everything renders inside the mobile shell ──────────
@@ -523,7 +429,7 @@ const App: React.FC = () => {
           </button>
         </div>
         {rec.showRecords ? (
-          <RecordsPanel records={rec.records} show error={rec.recordError} compact />
+          <RecordsPanel records={rec.records} show error={rec.recordError} compact isGuest={auth.isGuest} />
         ) : (
           <div className="flex-1 min-h-0 overflow-y-auto p-3 md:p-4">
             <GameLogFeed {...logFeedProps} endRef={game.logsEndRef} />
@@ -573,7 +479,7 @@ const App: React.FC = () => {
                   <Trophy className="w-10 h-10 mx-auto mb-3 text-zinc-100" />
                   <h1 className="text-3xl font-black">{game.winner === 'WEREWOLVES' ? 'Werewolves Win' : 'Village Wins'}</h1>
                   <p className="text-sm text-zinc-300 mt-2">Round {Math.max(1, game.roundCount)} complete{game.me ? ` · ${ROLE_LABELS_EN[game.me.role]}` : ''}</p>
-                  <p className="text-xs text-zinc-400 mt-2">{game.savedRecordId ? 'Record saved.' : 'Saving record...'}</p>
+                  <p className="text-xs text-zinc-400 mt-2">{auth.isGuest ? 'Guest match complete. Log in to save future matches.' : game.savedRecordId === 'failed' ? 'Record could not be saved.' : game.savedRecordId ? 'Record saved.' : 'Saving record...'}</p>
                   <button onClick={returnToLobby} className="mt-5 action-button game-return-button">Return to Lobby</button>
                 </div>
               ) : (

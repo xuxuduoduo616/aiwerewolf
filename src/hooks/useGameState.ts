@@ -32,7 +32,6 @@ import {
 import { isSupabaseConfigured, saveGameRecord } from '../services/supabaseClient';
 import { DEFAULT_DISPLAY_LANGUAGE, pickTranslationSource, type DisplayLanguage } from '../i18n';
 import * as speechAudio from '../services/speechAudio';
-import { saveGuestRecords } from './useRecords';
 
 const AI_STYLE_KEYS = Object.keys(CUSTOM_AI_STYLES);
 const MY_PLAYER_ID = 1;
@@ -482,19 +481,9 @@ export function useGameState(authContext: AuthContext) {
           setSavedRecordId('failed');
         });
     } else if (isGuest && guestPrincipalId) {
-      const record: GameRecord = {
-        ...baseRecord,
-        id: `local-${Date.now()}`,
-        createdAt: new Date().toISOString(),
-      };
-      const next = [record, ...records].slice(0, 20);
-      let storage: Storage | null = null;
-      try { storage = globalThis.localStorage ?? null; } catch {}
-      if (!saveGuestRecords(guestPrincipalId, next, storage)) {
-        setRecordError('Local game records could not be saved.');
-      }
-      setRecords(next);
-      setSavedRecordId(record.id);
+      // Only a transient completion ID is needed by the existing cosmetic reward
+      // gate. Guest matches never enter history or browser storage.
+      setSavedRecordId(`guest-match-${generation}-${Date.now()}`);
     } else {
       setRecordError('A public identity is required before saving a game record.');
       setSavedRecordId('failed');

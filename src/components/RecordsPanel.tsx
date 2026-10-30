@@ -7,9 +7,10 @@ interface Props {
   show: boolean;
   error?: string;
   compact?: boolean;
+  isGuest?: boolean;
 }
 
-const RecordsPanel: React.FC<Props> = ({ records, show, error, compact }) => {
+const RecordsPanel: React.FC<Props> = ({ records, show, error, compact, isGuest }) => {
   if (!show) return null;
 
   const stats = useMemo(() => {
@@ -35,6 +36,8 @@ const RecordsPanel: React.FC<Props> = ({ records, show, error, compact }) => {
         <History className="w-4 h-4" />
         <h3 className="font-bold text-sm">My Records</h3>
       </div>
+
+      {isGuest && <p className="text-xs text-zinc-400 mb-4">Guest matches are not saved. Log in or create an account to save future matches.</p>}
 
       {/* Error */}
       {error && (

@@ -11,6 +11,7 @@ export interface TurnstileRenderOptions {
   sitekey: string;
   theme: 'dark';
   language: 'en';
+  size?: 'normal' | 'compact';
   callback: (token: string) => void;
   'error-callback'?: () => void;
   'expired-callback'?: () => void;
@@ -36,12 +37,13 @@ export const createTurnstileRenderOptions = ({
  */
 const TurnstileWidget: React.FC<TurnstileWidgetProps> = ({ siteKey, onVerify, onError, onExpired }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const mounted = useRef(false);
+  const callbacks = useRef({ onVerify, onError, onExpired });
+  callbacks.current = { onVerify, onError, onExpired };
 
   useEffect(() => {
-    // Prevent double-render in StrictMode
-    if (mounted.current) return;
-    mounted.current = true;
+    let disposed = false;
+    let widgetId: string | undefined;
+    let widgetSize: 'normal' | 'compact' | undefined;
 
     const container = containerRef.current;
     if (!container) return;
@@ -49,13 +51,18 @@ const TurnstileWidget: React.FC<TurnstileWidgetProps> = ({ siteKey, onVerify, on
     // Load Turnstile script once
     const existingScript = document.querySelector('script[src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"]');
     const loadWidget = () => {
-      if (window.turnstile) {
-        window.turnstile.render(container, createTurnstileRenderOptions({
+      if (!disposed && window.turnstile) {
+        const size = (container.parentElement?.clientWidth ?? 300) < 300 ? 'compact' : 'normal';
+        if (widgetId && widgetSize === size) return;
+        if (widgetId) { window.turnstile.remove(widgetId); callbacks.current.onExpired?.(); }
+        widgetSize = size;
+        container.style.minHeight = size === 'compact' ? '140px' : '65px';
+        widgetId = window.turnstile.render(container, { ...createTurnstileRenderOptions({
           siteKey,
-          onVerify,
-          onError,
-          onExpired,
-        }));
+          onVerify: token => callbacks.current.onVerify(token),
+          onError: () => callbacks.current.onError?.(),
+          onExpired: () => callbacks.current.onExpired?.(),
+        }), size });
       }
     };
 
@@ -64,7 +71,8 @@ const TurnstileWidget: React.FC<TurnstileWidgetProps> = ({ siteKey, onVerify, on
       script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
       script.async = true;
       script.defer = true;
-      script.onload = loadWidget;
+      script.addEventListener('load', loadWidget);
+      script.addEventListener('error', () => callbacks.current.onError?.(), { once: true });
       document.head.appendChild(script);
     } else if (window.turnstile) {
       loadWidget();
@@ -72,13 +80,18 @@ const TurnstileWidget: React.FC<TurnstileWidgetProps> = ({ siteKey, onVerify, on
       existingScript.addEventListener('load', loadWidget);
     }
 
+    const resizeObserver = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(loadWidget) : null;
+    if (container.parentElement) resizeObserver?.observe(container.parentElement);
+
     return () => {
-      // Cleanup: try to remove the widget if still mounted
-      if (container && window.turnstile) {
-        try { window.turnstile.remove(container); } catch { /* ignore */ }
+      disposed = true;
+      resizeObserver?.disconnect();
+      document.querySelector('script[src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"]')?.removeEventListener('load', loadWidget);
+      if (widgetId && window.turnstile) {
+        try { window.turnstile.remove(widgetId); } catch { /* ignore */ }
       }
     };
-  }, [siteKey, onVerify, onError, onExpired]);
+  }, [siteKey]);
 
   return <div ref={containerRef} style={{ minHeight: 65 }} />;
 };
@@ -88,7 +101,7 @@ declare global {
   interface Window {
     turnstile?: {
       render: (el: HTMLElement, opts: TurnstileRenderOptions) => string;
-      remove: (el: HTMLElement) => void;
+      remove: (widgetId: string) => void;
       reset: (widgetId: string) => void;
     };
   }

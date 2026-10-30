@@ -51,7 +51,7 @@ describe('supabaseClient identity contract', () => {
     const upsertSelect = vi.fn(() => ({ single }));
     const upsert = vi.fn(() => ({ select: upsertSelect }));
     const from = vi.fn(() => ({ select: existingSelect, upsert }));
-    createClientMock.mockReturnValue({ auth: { setSession }, from });
+    createClientMock.mockReturnValue({ auth: { setSession, getSession: vi.fn().mockResolvedValue({ data: { session: null } }) }, from });
 
     const { claimProfile } = await loadService();
     await expect(claimProfile(session, ' Player_ONE ', ' Village Traveler ')).resolves.toEqual({
@@ -70,7 +70,7 @@ describe('supabaseClient identity contract', () => {
     const existingSelect = vi.fn(() => ({ eq: () => ({ maybeSingle }) }));
     const single = vi.fn().mockResolvedValue({ data: null, error: { code: '23505', message: 'duplicate key' } });
     const upsert = vi.fn(() => ({ select: () => ({ single }) }));
-    createClientMock.mockReturnValue({ auth: { setSession }, from: () => ({ select: existingSelect, upsert }) });
+    createClientMock.mockReturnValue({ auth: { setSession, getSession: vi.fn().mockResolvedValue({ data: { session: null } }) }, from: () => ({ select: existingSelect, upsert }) });
 
     const { claimProfile } = await loadService();
     await expect(claimProfile(session, 'Taken_Name', '')).rejects.toThrow('That Username is unavailable');
@@ -87,5 +87,73 @@ describe('supabaseClient identity contract', () => {
     const { verifyEmailOtp } = await loadService();
     await expect(verifyEmailOtp('player@example.com', '000000')).rejects.toThrow('Token has expired or is invalid');
     expect(from).not.toHaveBeenCalled();
+  });
+});
+
+describe('Supabase password and OTP transport', () => {
+  beforeEach(() => createClientMock.mockReset());
+  afterEach(() => vi.unstubAllEnvs());
+  const sdkSession = { access_token: session.accessToken, refresh_token: session.refreshToken, user: session.user };
+
+  it('disables implicit registration on the login code path and sends CAPTCHA', async () => {
+    const signInWithOtp = vi.fn().mockResolvedValue({ error: null });
+    createClientMock.mockReturnValue({ auth: { signInWithOtp } });
+    const service = await loadService(); await service.requestEmailOtp('player@example.com', 'captcha');
+    expect(signInWithOtp).toHaveBeenCalledWith({ email: 'player@example.com', options: { shouldCreateUser: false, captchaToken: 'captcha' } });
+  });
+  it('uses password auth without storing passwords in profiles or metadata', async () => {
+    const signUp = vi.fn().mockResolvedValue({ data: { session: null }, error: null });
+    const signInWithPassword = vi.fn().mockResolvedValue({ data: { session: sdkSession }, error: null });
+    const from = vi.fn(); createClientMock.mockReturnValue({ auth: { signUp, signInWithPassword }, from });
+    const service = await loadService();
+    await expect(service.signUpWithPassword('player@example.com', 'test-password', 'captcha')).resolves.toBeNull();
+    expect(signUp).toHaveBeenCalledWith({ email: 'player@example.com', password: 'test-password', options: { captchaToken: 'captcha' } });
+    await expect(service.signInWithPassword('player@example.com', 'test-password', 'captcha')).resolves.toEqual(session);
+    expect(from).not.toHaveBeenCalled(); expect(createClientMock).toHaveBeenCalledOnce();
+    expect(createClientMock.mock.calls[0][2].auth.persistSession).toBe(false);
+  });
+  it('resends the correct signup email type and restores refreshed credentials', async () => {
+    const resend = vi.fn().mockResolvedValue({ error: null });
+    const setSession = vi.fn().mockResolvedValue({ data: { session: sdkSession }, error: null });
+    createClientMock.mockReturnValue({ auth: { resend, setSession } });
+    const service = await loadService(); await service.resendSignupCode('player@example.com', 'captcha');
+    expect(resend).toHaveBeenCalledWith({ type: 'signup', email: 'player@example.com', options: { captchaToken: 'captcha' } });
+    await expect(service.restoreAuthSession(session)).resolves.toEqual(session);
+  });
+  it('rejects failed session activation before reading or writing records', async () => {
+    const from = vi.fn();
+    const setSession = vi.fn().mockResolvedValue({ error: { message: 'Expired session' } });
+    const getSession = vi.fn().mockResolvedValue({ data: { session: null } });
+    createClientMock.mockReturnValue({ auth: { getSession, setSession }, from });
+    const service = await loadService(); await expect(service.fetchGameRecords(session)).rejects.toThrow('Expired session');
+    expect(from).not.toHaveBeenCalled();
+  });
+});
+
+describe('bounded account network requests', () => {
+  afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
+  it('aborts a stalled request so account failure cannot indefinitely block Guest Trial', async () => {
+    vi.useFakeTimers();
+    const transport = vi.fn((_input, init) => new Promise((_resolve, reject) => {
+      init.signal.addEventListener('abort', () => reject(new Error('aborted')));
+    }));
+    vi.stubGlobal('fetch', transport);
+    const { fetchAccountRequest } = await loadService();
+    const result = fetchAccountRequest('https://example.supabase.co/auth/v1/token');
+    const assertion = expect(result).rejects.toThrow('timed out');
+    await vi.advanceTimersByTimeAsync(15_000); await assertion;
+    expect(transport.mock.calls[0][1].signal.aborted).toBe(true);
+  });
+});
+
+describe('cached session ownership', () => {
+  afterEach(() => vi.unstubAllEnvs());
+  it('does not restore an old account over the newly signed-in account', async () => {
+    const setSession = vi.fn(); const from = vi.fn();
+    const getSession = vi.fn().mockResolvedValue({ data: { session: { user: { id: 'another-account' } } } });
+    createClientMock.mockReturnValue({ auth: { getSession, setSession }, from });
+    const service = await loadService();
+    await expect(service.fetchGameRecords(session)).rejects.toThrow('account changed');
+    expect(setSession).not.toHaveBeenCalled(); expect(from).not.toHaveBeenCalled();
   });
 });

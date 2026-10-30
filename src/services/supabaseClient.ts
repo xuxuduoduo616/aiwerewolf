@@ -15,22 +15,96 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undef
 
 export const isSupabaseConfigured = () => Boolean(supabaseUrl && supabaseAnonKey);
 
+export const fetchAccountRequest: typeof fetch = async (input, init) => {
+  const controller = new AbortController();
+  const originalSignal = init?.signal ?? (input instanceof Request ? input.signal : undefined);
+  const abort = () => controller.abort();
+  if (originalSignal?.aborted) abort();
+  else originalSignal?.addEventListener('abort', abort, { once: true });
+  let timedOut = false;
+  const timer = setTimeout(() => { timedOut = true; controller.abort(); }, 15_000);
+  try { return await fetch(input, { ...init, signal: controller.signal }); }
+  catch (error) {
+    if (timedOut) throw new Error('Account service request timed out.');
+    throw error;
+  } finally { clearTimeout(timer); originalSignal?.removeEventListener('abort', abort); }
+};
+
+let clientInstance: SupabaseClient | null = null;
 const getClient = (): SupabaseClient => {
   if (!supabaseUrl || !supabaseAnonKey) {
     throw new Error('Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
   }
-  return createClient(supabaseUrl, supabaseAnonKey);
+  // One client owns refresh; the application owns persistence and profile gating.
+  clientInstance ??= createClient(supabaseUrl, supabaseAnonKey, {
+    auth: { persistSession: false, autoRefreshToken: true, detectSessionInUrl: false },
+    global: { fetch: fetchAccountRequest },
+  });
+  return clientInstance;
+};
+
+export const clearClientSession = () => {
+  void clientInstance?.auth.stopAutoRefresh();
+  clientInstance = null;
+};
+
+export const subscribeToAuthRefresh = (onRefresh: (session: SupabaseSession) => void): (() => void) => {
+  const { data } = getClient().auth.onAuthStateChange((event, session) => {
+    if (event === 'TOKEN_REFRESHED' && session) onRefresh(toSession(session));
+  });
+  return () => data.subscription.unsubscribe();
 };
 
 // ─── Auth ────────────────────────────────────────────────────────────────────
 
-export const requestEmailOtp = async (email: string): Promise<void> => {
+export const requestEmailOtp = async (email: string, captchaToken?: string): Promise<void> => {
   const { error } = await getClient().auth.signInWithOtp({
     email,
-    options: { shouldCreateUser: true },
+    options: { shouldCreateUser: false, captchaToken },
   });
   if (error) throw new Error(error.message || 'Could not send the verification code.');
 };
+
+const toSession = (session: { access_token: string; refresh_token: string; user: { id: string; email?: string } }): SupabaseSession => ({
+  accessToken: session.access_token,
+  refreshToken: session.refresh_token,
+  user: { id: session.user.id, email: session.user.email || '' },
+});
+
+export const signUpWithPassword = async (
+  email: string, password: string, captchaToken?: string,
+): Promise<SupabaseSession | null> => {
+  const { data, error } = await getClient().auth.signUp({ email, password, options: { captchaToken } });
+  if (error) throw error;
+  return data.session ? toSession(data.session) : null;
+};
+
+export const signInWithPassword = async (
+  email: string, password: string, captchaToken?: string,
+): Promise<SupabaseSession> => {
+  const { data, error } = await getClient().auth.signInWithPassword({ email, password, options: { captchaToken } });
+  if (error) throw error;
+  if (!data.session) throw new Error('Login did not return a session. Please try again.');
+  return toSession(data.session);
+};
+
+export const resendSignupCode = async (email: string, captchaToken?: string): Promise<void> => {
+  const { error } = await getClient().auth.resend({ type: 'signup', email, options: { captchaToken } });
+  if (error) throw error;
+};
+
+export const restoreAuthSession = async (session: SupabaseSession): Promise<SupabaseSession> => {
+  const { data, error } = await getClient().auth.setSession({
+    access_token: session.accessToken, refresh_token: session.refreshToken || '',
+  });
+  if (error) throw error;
+  if (!data.session) throw new Error('Your session expired. Please log in again.');
+  return toSession(data.session);
+};
+
+export class ProfileIncompleteError extends Error {
+  constructor() { super('Complete your Username before entering the lobby.'); this.name = 'ProfileIncompleteError'; }
+}
 
 export const verifyEmailOtp = async (
   email: string,
@@ -69,6 +143,11 @@ export class UsernameUnavailableError extends Error {
 }
 
 const activateSession = async (client: SupabaseClient, session: SupabaseSession): Promise<void> => {
+  const { data: current } = await client.auth.getSession();
+  if (client !== clientInstance || (current.session && current.session.user.id !== session.user.id)) {
+    throw new Error('Your account changed. Please try again.');
+  }
+  if (current.session?.user.id === session.user.id) return;
   const { error } = await client.auth.setSession({
     access_token: session.accessToken,
     refresh_token: session.refreshToken || '',
@@ -85,7 +164,7 @@ export const fetchProfile = async (session: SupabaseSession): Promise<UserProfil
     .eq('id', session.user.id)
     .maybeSingle();
   if (error) throw new Error(error.message || 'Could not load the profile.');
-  if (!data) throw new Error('Complete your Username before entering the lobby.');
+  if (!data) throw new ProfileIncompleteError();
   return toProfile(data);
 };
 
@@ -138,10 +217,7 @@ export const fetchGameRecords = async (
   session: SupabaseSession,
 ): Promise<GameRecord[]> => {
   const client = getClient();
-  await client.auth.setSession({
-    access_token: session.accessToken,
-    refresh_token: session.refreshToken || '',
-  });
+  await activateSession(client, session);
 
   const { data, error } = await client
     .from('game_records')
@@ -159,10 +235,7 @@ export const saveGameRecord = async (
   record: Omit<GameRecord, 'id' | 'createdAt'>,
 ): Promise<GameRecord> => {
   const client = getClient();
-  await client.auth.setSession({
-    access_token: session.accessToken,
-    refresh_token: session.refreshToken || '',
-  });
+  await activateSession(client, session);
 
   const { data, error } = await client
     .from('game_records')
@@ -194,10 +267,7 @@ export const fetchUserCoins = async (
   session: SupabaseSession,
 ): Promise<UserCoins> => {
   const client = getClient();
-  await client.auth.setSession({
-    access_token: session.accessToken,
-    refresh_token: session.refreshToken || '',
-  });
+  await activateSession(client, session);
 
   const { data, error } = await client
     .from('user_coins')
@@ -220,10 +290,7 @@ export const upsertUserCoins = async (
   coins: UserCoins,
 ): Promise<void> => {
   const client = getClient();
-  await client.auth.setSession({
-    access_token: session.accessToken,
-    refresh_token: session.refreshToken || '',
-  });
+  await activateSession(client, session);
 
   const { error } = await client
     .from('user_coins')

@@ -30,29 +30,22 @@ const memoryStorage = () => {
 };
 
 describe('guest record ownership', () => {
-  it('migrates valid legacy records only to the first guest principal', () => {
-    const { storage } = memoryStorage();
+  it('never loads or migrates legacy guest history', () => {
+    const { storage, values } = memoryStorage();
     storage.setItem(LEGACY_GUEST_RECORD_KEY, JSON.stringify([record()]));
-    expect(loadGuestRecords(guestA, storage)).toEqual([expect.objectContaining({ userId: guestA })]);
-    expect(loadGuestRecords(guestB, storage)).toEqual([]);
-  });
-
-  it('isolates active keys and never overwrites an existing target with legacy data', () => {
-    const { storage } = memoryStorage();
-    expect(saveGuestRecords(guestA, [record(guestA)], storage)).toBe(true);
-    storage.setItem(LEGACY_GUEST_RECORD_KEY, JSON.stringify([{ ...record(), id: 'legacy-other' }]));
-    expect(loadGuestRecords(guestA, storage).map(item => item.id)).toEqual(['local-1']);
-    expect(storage.getItem(getGuestRecordStorageKey(guestA))).not.toContain('legacy-other');
-    expect(loadGuestRecords(guestB, storage)).toEqual([]);
-  });
-
-  it('fails corrupt and unknown-version target envelopes closed', () => {
-    const { storage } = memoryStorage();
-    const target = getGuestRecordStorageKey(guestA);
-    storage.setItem(target, JSON.stringify({ version: 999, records: [record()] }));
-    storage.setItem(LEGACY_GUEST_RECORD_KEY, JSON.stringify([record()]));
+    const before = [...values];
     expect(loadGuestRecords(guestA, storage)).toEqual([]);
-    expect(storage.getItem(target)).toContain('999');
+    expect(loadGuestRecords(guestB, storage)).toEqual([]);
+    expect([...values]).toEqual(before);
+  });
+
+  it('never writes new guest records or alters existing data', () => {
+    const { storage, values } = memoryStorage();
+    storage.setItem(getGuestRecordStorageKey(guestA), 'existing-history');
+    const before = [...values];
+    expect(saveGuestRecords(guestA, [record(guestA)], storage)).toBe(false);
+    expect(loadGuestRecords(guestA, storage)).toEqual([]);
+    expect([...values]).toEqual(before);
   });
 
   it('hides stale account A or guest records synchronously when principal changes', () => {

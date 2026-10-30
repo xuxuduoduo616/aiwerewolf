@@ -222,15 +222,15 @@ describe('current and stale terminal records', () => {
     hooks.dirty=true;flush();expect(service.saveGameRecord).toHaveBeenCalledOnce();
     expect(game.phase).toBe(GamePhase.GAME_OVER);expect(game.winner).toBe('VILLAGERS');
   });
-  it('keeps a real current winner and saves one guest record with a stable terminal reward request', async () => {
+  it('keeps a guest winner and transient reward ID without saving match history', async () => {
     await completeWinningVote();
     expect(game.phase).toBe(GamePhase.GAME_OVER);expect(game.winner).toBe('VILLAGERS');
-    expect(auth.setRecords).toHaveBeenCalledOnce();expect(auth.records).toHaveLength(1);
+    expect(auth.setRecords).not.toHaveBeenCalled();expect(auth.records).toHaveLength(0);expect(service.saveGameRecord).not.toHaveBeenCalled();
     const request=()=>getTerminalRewardRequest({phase:game.phase,winner:game.winner,savedRecordId:game.savedRecordId,role:game.me?.role??null,hasConfig:!!game.config});
-    const first=request();expect(first).toEqual({gameId:auth.records[0].id,won:true});
+    const first=request();expect(first).toEqual({gameId:game.savedRecordId,won:true});
     hooks.dirty=true;flush();await advance(3000);
-    expect(request()).toEqual(first);expect(auth.setRecords).toHaveBeenCalledOnce();
-    leave();expect(request()).toBeNull();expect(auth.records).toHaveLength(1);
+    expect(request()).toEqual(first);expect(auth.setRecords).not.toHaveBeenCalled();
+    leave();expect(request()).toBeNull();expect(auth.records).toHaveLength(0);
   });
 
   it('does not create a stale winner, record or reward when a winning vote resolves after exit', async () => {
