@@ -503,7 +503,17 @@ const App: React.FC = () => {
                       </div>
                     )}
                   </div>
-                  <p className="mt-4 text-sm text-zinc-300 leading-relaxed min-h-[42px]">{game.phaseHint}</p>
+                  {game.currentSpeaker && game.currentSpeaker.id !== MY_PLAYER_ID && (
+                      <button
+                        type="button"
+                        onClick={game.skipCurrentSpeech}
+                        className="skip-speech-button"
+                        title="Skip this AI speech and move to the next speaker"
+                      >
+                        Skip speech
+                      </button>
+                    )}
+                    <p className="mt-4 text-sm text-zinc-300 leading-relaxed min-h-[42px]">{game.phaseHint}</p>
                   <div key={`role-${game.phase}`} className="role-reveal mt-4 rounded border border-zinc-700 bg-black/35 p-3 text-xs text-zinc-300">
                     <div className="flex items-center gap-2 font-bold text-zinc-100">
                       <UserIcon className="w-4 h-4" />

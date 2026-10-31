@@ -151,7 +151,7 @@ export const sameLanguageVoices = (voices: VoiceLike[], lang: string): VoiceLike
  * presentation-only — the AI turn falls back to text timing after this cap.
  */
 export const speechMaxDurationMs = (text: string): number =>
-  Math.max(text.length * 30, 5000);
+  Math.max(text.length * 150, 30_000);
 
 /**
  * BCP-47 tag for an utterance: detect the text's own language first (the

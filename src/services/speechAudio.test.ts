@@ -132,9 +132,9 @@ describe('pure decision helpers', () => {
     expect(sameLanguageVoices(DEFAULT_VOICES, 'fr-FR')).toEqual([]);
   });
 
-  it('speechMaxDurationMs has a 5s floor and grows with text length', () => {
-    expect(speechMaxDurationMs('hi')).toBe(5000);
-    expect(speechMaxDurationMs('x'.repeat(200))).toBe(6000);
+  it('speechMaxDurationMs leaves room for the full text and keeps a floor', () => {
+    expect(speechMaxDurationMs('hi')).toBe(30000);
+    expect(speechMaxDurationMs('x'.repeat(2000))).toBe(300000);
   });
 
   it('speechLangTag detects the text language, falling back to the game language', () => {

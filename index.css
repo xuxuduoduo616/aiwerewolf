@@ -359,6 +359,28 @@ video {
   font-size: 12px;
   color: rgb(var(--ink-100));
 }
+.skip-speech-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(var(--ink-100), 0.45);
+  background: rgba(var(--ink-100), 0.14);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgb(var(--ink-100));
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.skip-speech-button:hover {
+  background: rgba(var(--ink-100), 0.24);
+  border-color: rgba(var(--ink-100), 0.7);
+}
+.skip-speech-button:focus-visible {
+  outline: 2px solid rgba(var(--ink-100), 0.8);
+  outline-offset: 2px;
+}
 .timer-pill.urgent {
   border-color: rgba(var(--wolf-red-400), 0.6);
   color: rgb(252,165,165);

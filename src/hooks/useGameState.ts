@@ -65,7 +65,7 @@ interface AudioPrefs {
   enabled: boolean; // AI-voice toggle (default off — needs a user gesture)
 }
 
-const DEFAULT_AUDIO_PREFS: AudioPrefs = { volume: 1, rate: 1, enabled: false };
+const DEFAULT_AUDIO_PREFS: AudioPrefs = { volume: 1, rate: 1, enabled: true };
 
 const loadAudioPrefs = (): AudioPrefs => {
   try {
@@ -1056,6 +1056,12 @@ export function useGameState(authContext: AuthContext) {
     return 'Waiting for the system and AI players.';
   })();
 
+  const skipCurrentSpeech = (): void => {
+    // Cancels the in-flight utterance; the awaited enqueue promise settles and
+    // the AI turn advances to the next speaker immediately.
+    speechAudio.cancel();
+  };
+
   return {
     // state
     config, players, phase, setPhase, logs,
@@ -1080,5 +1086,6 @@ export function useGameState(authContext: AuthContext) {
     startGame, leaveGame, handlePlayerAction,
     handleWitchSave, skipWitch,
     finishVote, handleHumanSpeechSubmit,
+    skipCurrentSpeech,
   };
 }
