@@ -2,6 +2,8 @@ import React from 'react';
 import LobbySideMenus from './LobbySideMenus';
 import LobbyActionButtons from './LobbyActionButtons';
 import ActivityBanner from './ActivityBanner';
+import RefinedLobby from './RefinedLobby';
+import { UI_PRESENTATION } from '../uiPresentation';
 import type { ShellView } from './GlobalShell';
 import type { LobbySubview } from '../lobbyFeatures';
 import { CalendarDays, GraduationCap, Heart, Play, Ticket } from 'lucide-react';
@@ -68,6 +70,10 @@ const LobbyHome: React.FC<Props> = ({
   isGuest,
   onSignIn,
 }) => {
+  if (!UI_PRESENTATION.showLegacyLobby) {
+    return <RefinedLobby onStartGame={onStartGame} onOpenTutorial={onOpenTutorial}
+      identityName={identityName} identityHandle={identityHandle} isGuest={isGuest} onSignIn={onSignIn} />;
+  }
   return (
     <section className="wol-lobby" aria-label="Lobby">
       {/* ── User Profile Panel (top-left) ───────────────────────────── */}

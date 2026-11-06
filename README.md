@@ -10,6 +10,14 @@ AI Werewolf is a browser-based social deduction game where one human player face
 
 The project separates game rules from generated expression. A deterministic rules engine and belief/action layer decide what agents know and do; the language layer turns those decisions into characterful dialogue and falls back to a bundled speech library when the external AI provider is unavailable.
 
+## UI refinement release (2026-11-06)
+
+- Review baseline: [`56180a7`](https://github.com/xuxuduoduo616/aiwerewolf/commit/56180a711c12719d86b2db9a014e3d3276b8b452).
+- Refined login and lobby: restrained red headline, clearer single-player start action, and responsive navigation.
+- Activity promotions and payment entry points are hidden through presentation switches; their components and underlying logic remain available in source.
+- Verification: 771 tests passed, 5 existing skips; TypeScript and Vite build passed. Local browser checks covered seven viewport sizes and 9/12-player launch flows; real-account OTP and cloud writes were not exercised.
+- Release identity and production verification will be recorded after deployment is confirmed; this section does not claim deployment has completed.
+
 ## Features
 
 - Complete single-player matches against AI-controlled players

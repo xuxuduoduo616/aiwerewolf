@@ -1,5 +1,6 @@
 import React from 'react';
-import { CircleDollarSign, Gem, Plus, Settings as Gear } from 'lucide-react';
+import { CircleDollarSign, Gem, Moon, Plus, Settings as Gear } from 'lucide-react';
+import { UI_PRESENTATION } from '../uiPresentation';
 
 interface Props {
   coins: number;
@@ -8,6 +9,7 @@ interface Props {
   onNavigateToShop?: () => void;
   onOpenUtilityMenu: () => void;
   utilityTriggerRef?: React.RefObject<HTMLButtonElement>;
+  quiet?: boolean;
 }
 
 const TopStatusBar: React.FC<Props> = ({
@@ -17,11 +19,21 @@ const TopStatusBar: React.FC<Props> = ({
   onNavigateToShop,
   onOpenUtilityMenu,
   utilityTriggerRef,
+  quiet = false,
 }) => {
-  const plusBtn = (
+  const plusBtn = UI_PRESENTATION.showPaymentEntryPoints && (
     <button type="button" className="wol-currency-plus" aria-label="Go to shop" onClick={onNavigateToShop}>
       <Plus aria-hidden="true" />
     </button>
+  );
+
+  if (quiet) return (
+    <header className="wol-top-bar night-top-bar">
+      <div className="night-brand"><Moon size={21} aria-hidden="true" /><span className="cinzel">AI WEREWOLF</span></div>
+      <span className="night-top-caption">Shadows of the Village</span>
+      <button ref={utilityTriggerRef} type="button" className="wol-utility-trigger" onClick={onOpenUtilityMenu}
+        aria-label="Open utility menu" title="Utility menu" aria-haspopup="menu"><Gear aria-hidden="true" /></button>
+    </header>
   );
 
   return (

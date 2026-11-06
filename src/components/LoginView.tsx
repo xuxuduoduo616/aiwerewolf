@@ -65,7 +65,7 @@ const LoginView: React.FC<Props> = ({ auth, onReady, onGuest }) => {
         <div className="auth-columns parchment-border">
           <section className="guest-welcome" aria-labelledby="guest-heading">
             <span className="auth-eyebrow">Trust your instincts. Question everyone.</span>
-            <h2 id="guest-heading" className="cinzel">NIGHT FALLS.<br />CLOSE YOUR EYES.</h2>
+            <h2 id="guest-heading" className="cinzel">Night falls.<br />Close your eyes.</h2>
             <p className="guest-intro">Step into a village of AI players. Read their stories, find the werewolves, and make your case.</p>
             <div className="guest-trial-card">
               <div className="guest-trial-label"><Play size={18} aria-hidden="true" /><h3>Guest Trial</h3><span>No account needed</span></div>

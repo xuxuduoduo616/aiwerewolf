@@ -48,8 +48,10 @@ describe('standalone lobby feature surfaces', () => {
     expect(html).toContain('guest:11111111-1111-4111-8111-111111111111');
     expect(html).toContain('Sign in or create account');
     expect(html).toContain('Start Game');
-    expect(html).toContain('NightOwl: Ready for another round of Werewolf?');
-    expect(html).toContain('MagicStar: Any tips for a new player?');
+    expect(html).toContain('Night falls.');
+    expect(html).toContain('New-Player Guide');
+    expect(html).not.toContain('Lobby Chat');
+    expect(html).not.toContain('First Purchase');
     expect(html).not.toMatch(/[\p{Script=Han}]/u);
   });
   it('shows account public identity without the guest CTA or internal UUID', () => {
@@ -72,7 +74,7 @@ describe('standalone lobby feature surfaces', () => {
     );
     expect(html).toContain('Account B');
     expect(html).toContain('@account_b');
-    expect(html).toContain('NightOwl: Ready for another round of Werewolf?');
+    expect(html).toContain('Close your eyes.');
     expect(html).not.toMatch(/[\p{Script=Han}]/u);
     expect(html).not.toContain('Sign in or create account');
     expect(html).not.toContain('account-b-internal-uuid');

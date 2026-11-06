@@ -1,6 +1,7 @@
 import React from 'react';
 import type { ShellView } from './GlobalShell';
 import type { LobbySubview } from '../lobbyFeatures';
+import { UI_PRESENTATION } from '../uiPresentation';
 import {
   BadgeCheck,
   Gamepad2,
@@ -87,7 +88,7 @@ const LobbySideMenus: React.FC<Props> = ({
       padding: '0 2px',
       zIndex: 5,
     }}>
-      {menus.map(item => (
+      {menus.filter(item => UI_PRESENTATION.showPaymentEntryPoints || item.label !== 'First Purchase').map(item => (
         <button
           key={item.label}
           type="button"

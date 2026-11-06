@@ -1,6 +1,7 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { getFocusLoopTarget } from './AccessibleDialog';
+import { UI_PRESENTATION } from '../uiPresentation';
 
 export interface OnboardingStep {
   id: string;
@@ -12,15 +13,15 @@ export interface OnboardingStep {
 export const ONBOARDING_STEPS: readonly OnboardingStep[] = [
   {
     id: 'wallet',
-    selector: '[data-tour-target="wallet"]',
-    title: 'Two clear currencies',
-    description: 'Coins are Basic currency. Crystals are Premium currency. Neither changes match rules.',
+    selector: UI_PRESENTATION.showLegacyLobby ? '[data-tour-target="wallet"]' : '[data-tour-target="identity"]',
+    title: 'Welcome to the village',
+    description: 'Play as a guest, or sign in to keep your match history and stats.',
   },
   {
     id: 'promotions',
-    selector: '[data-tour-target="promotions"]',
-    title: 'Explore village events',
-    description: 'These three native controls open the Tidal skin collection, qualifier information, and Daily Check-In.',
+    selector: UI_PRESENTATION.showLegacyLobby ? '[data-tour-target="promotions"]' : '[data-tour-target="match-details"]',
+    title: 'You and the AI village',
+    description: 'Play a full single-player Werewolf match with AI players. Choose a 9-player or 12-player board.',
   },
   {
     id: 'start-game',
@@ -32,7 +33,7 @@ export const ONBOARDING_STEPS: readonly OnboardingStep[] = [
     id: 'navigation',
     selector: '[data-tour-target="navigation"]',
     title: 'Return whenever you need',
-    description: 'The bottom navigation keeps the lobby, cosmetic shop, and profile surfaces within reach.',
+    description: 'Main navigation keeps the lobby, cosmetic shop, and profile surfaces within reach.',
   },
 ] as const;
 

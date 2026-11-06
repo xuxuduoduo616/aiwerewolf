@@ -1,5 +1,6 @@
 import React from 'react';
 import CoinStore from './CoinStore';
+import { UI_PRESENTATION } from '../uiPresentation';
 import SkinStore, { type SkinStoreFilter } from './SkinStore';
 import type { AccountEconomyPhase, AccountMutationAction } from '../economy/accountEconomy';
 import type { EconomyActionReturn, EconomyViewState } from '../hooks/useEconomy';
@@ -53,10 +54,10 @@ const ShopView: React.FC<Props> = ({
 }) => (
   <section className="shop-hub" aria-label="Shop">
     <div className="shop-hub-tabs" role="tablist" aria-label="Shop sections">
-      <button type="button" role="tab" aria-selected={section === 'skins'} className={section === 'skins' ? 'is-active' : ''} onClick={() => onSectionChange('skins')}>Cosmetic Skins</button>
-      <button type="button" role="tab" aria-selected={section === 'coin-packs'} className={section === 'coin-packs' ? 'is-active' : ''} onClick={() => onSectionChange('coin-packs')}>Coin Packs · Unavailable</button>
+      <button type="button" role="tab" aria-selected={section === 'skins' || !UI_PRESENTATION.showPaymentEntryPoints} className={section === 'skins' || !UI_PRESENTATION.showPaymentEntryPoints ? 'is-active' : ''} onClick={() => onSectionChange('skins')}>Cosmetic Skins</button>
+      {UI_PRESENTATION.showPaymentEntryPoints && <button type="button" role="tab" aria-selected={section === 'coin-packs'} className={section === 'coin-packs' ? 'is-active' : ''} onClick={() => onSectionChange('coin-packs')}>Coin Packs · Unavailable</button>}
     </div>
-    {section === 'skins' ? (
+    {section === 'skins' || !UI_PRESENTATION.showPaymentEntryPoints ? (
       <SkinStore
         state={economyState}
         coins={coins}

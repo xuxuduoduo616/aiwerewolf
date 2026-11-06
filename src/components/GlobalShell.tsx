@@ -3,6 +3,8 @@ import BottomNav from './BottomNav';
 import TopStatusBar from './TopStatusBar';
 import '../styles/mobile-shell.css';
 import '../styles/app-integration.css';
+import '../styles/lobby-refinement.css';
+import { UI_PRESENTATION } from '../uiPresentation';
 
 export type ShellView = 'home' | 'friends' | 'wolfvillage' | 'shop' | 'profile';
 
@@ -34,8 +36,9 @@ const GlobalShell: React.FC<Props> = ({
   if (fullscreen) return <>{children}</>;
 
   return (
-    <div className="wol-shell">
+    <div className={`wol-shell${UI_PRESENTATION.showLegacyLobby ? '' : ' wol-shell--refined'}`}>
       <TopStatusBar
+        quiet={!UI_PRESENTATION.showLegacyLobby}
         coins={coins}
         coupons={coupons}
         crystals={crystals}
