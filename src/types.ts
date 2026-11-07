@@ -1,3 +1,5 @@
+import type { RolePersonaId } from './services/aiStyles';
+
 export enum Role {
   WEREWOLF = 'Werewolf',
   VILLAGER = 'Villager',
@@ -38,6 +40,7 @@ export interface Player {
   aiPersonality: string;
   traits: string[];
   aiModelLabel: string;
+  aiSpeechPersonaId?: RolePersonaId;
   isHuman: boolean;
   isWolfHopper?: boolean;
   publicClaims: string[];

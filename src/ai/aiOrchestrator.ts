@@ -12,7 +12,7 @@
 import type { GameLog, GamePhase, NightState, Player, Role, VoteRecord, WolfChatMessage } from '../types';
 import { DEFAULT_DISPLAY_LANGUAGE, pickLogText, type DisplayLanguage } from '../i18n';
 import { ROLE_LABELS, WEREWOLF_SLANG } from '../constants';
-import { CUSTOM_AI_STYLES, FALLBACK_STYLE } from '../services/aiStyles';
+import { CUSTOM_AI_STYLES, FALLBACK_STYLE, ROLE_PERSONAS } from '../services/aiStyles';
 import {
   emitSpeechDiagnostic,
   guardSpeechText,
@@ -133,6 +133,15 @@ export const generateAIDialogue = async (
     globalBeliefTracker.init(players);
   }
 
+  const persona = player.isAlive && !player.isHuman
+    ? ROLE_PERSONAS.find(candidate => candidate.id === player.aiSpeechPersonaId)
+    : undefined;
+  const styleFallback = (speech: string): string => {
+    if (!persona) return speech;
+    const separator = language === 'en' ? ' ' : '';
+    return [persona.tone.leadIn[language], persona.purpose.leadIn[language], speech].join(separator);
+  };
+
   const styleKey = Object.keys(CUSTOM_AI_STYLES).find(k => player.aiModelLabel?.includes(k)) || 'GPT-4o';
   const style = CUSTOM_AI_STYLES[styleKey] || FALLBACK_STYLE;
   const slang = WEREWOLF_SLANG.slice(0, 6).join('、');
@@ -160,13 +169,20 @@ export const generateAIDialogue = async (
     Idiot: 'You are the idiot: talk like a villager; flipping your card on exile saves you.',
   };
 
+  const personaPrompt = persona && (language === 'en'
+    ? `Speech purpose: ${persona.purpose.prompt.en}
+Wording preference: ${persona.tone.prompt.en}
+Apply the style only to delivery. Keep the role context, evidence, intended targets, and game actions intact. Use only seats in the roster.`
+    : `发言目的：${persona.purpose.prompt.zh}
+措辞偏好：${persona.tone.prompt.zh}
+风格只用于表达。保留角色语境、证据、原定目标和游戏行动，只引用名单内的座位。`);
   const systemPrompt = language === 'en'
     ? `${englishOutputRule}
-You are an expert werewolf (Mafia) player. Personality: ${style.personalityPrompt}
+You are an expert werewolf (Mafia) player. ${personaPrompt ?? `Personality: ${style.personalityPrompt}`}
 ${roleStrategiesEn[player.role] || ''}
 Your true identity: ${player.role} (Player ${player.id})
 Forbidden: revealing information you should not know, filler talk, exceeding 160 words`
-    : `你是一名狼人杀高手。性格：${style.label}。说话风格：${style.speakingStyle}。
+    : `你是一名狼人杀高手。${personaPrompt ?? `性格：${style.label}。说话风格：${style.speakingStyle}。`}
 ${roleStrategies[player.role] || ''}
 你的真实身份：${ROLE_LABELS[player.role]}（${player.id}号 ${player.name}）
 必须使用的术语：${slang}
@@ -175,6 +191,7 @@ ${roleStrategies[player.role] || ''}
   const deathNoteEn = deadThisRound.length
     ? `died last night: ${deadThisRound.map(id => `Player ${id}`).join(', ')}`
     : 'a peaceful night';
+  const brief = persona?.id.startsWith('brief-');
   const userPrompt = language === 'en'
     ? `Current situation: round ${round}, ${deathNoteEn}
 Players: ${fmtPlayers(player, players, language)}
@@ -182,7 +199,7 @@ Recent speeches:
 ${fmtLogs(logs, language)}
 Votes: ${fmtVotes(voteRecords, language)}
 
-Write one full daytime speech in ENGLISH (60-160 English words, must mention specific player numbers as "Player N").
+Write one full daytime speech in ENGLISH (${brief ? '20-60' : '60-160'} English words, must mention specific player numbers as "Player N").
 Return JSON: {"en":"full English speech"}`
     : `当前局面：第${round}轮，${deathNote}
 玩家列表：${fmtPlayers(player, players, language)}
@@ -190,7 +207,7 @@ Return JSON: {"en":"full English speech"}`
 ${fmtLogs(logs, language)}
 票型：${fmtVotes(voteRecords, language)}
 
-请输出一段白天发言（80-180中文字符，必须提到具体玩家编号）。
+请输出一段白天发言（${brief ? '30-80' : '80-180'}中文字符，必须提到具体玩家编号）。
 返回JSON：{"en":"short English summary","zh":"Chinese speech"}`;
 
   // Layer 3: Try the selected expression model first. Accepted text passes the roster guard
@@ -227,13 +244,13 @@ ${fmtLogs(logs, language)}
 
   // Layer 2: Speech library fallback (corpus sanitized offline; the guard
   // still runs as the final boundary for this layer).
-  const libText = await pickSpeech(player.role, [], round, { language });
+  const libText = await pickSpeech(player.role, [], round, { language }).catch(() => '');
   if (language === 'en') {
     if (libText && libText.length > 20 && isEnglish(libText)) {
       const alive = players.filter(p => p.isAlive && p.id !== player.id);
       const suspect = globalBeliefTracker.getMostSuspicious(player.id, alive);
       const mention = suspect ? ` (watching Player ${suspect.id})` : '';
-      const guard = guardSpeechText(`${libText.slice(0, 160)}${mention}`, players, 'en');
+      const guard = guardSpeechText(styleFallback(`${libText.slice(0, 160)}${mention}`), players, 'en');
       if (guard.ok) {
         emitSpeechDiagnostic({
           context: 'day-speech', source: 'library', speakerId: player.id,
@@ -248,7 +265,7 @@ ${fmtLogs(logs, language)}
     const alive = players.filter(p => p.isAlive && p.id !== player.id);
     const suspect = globalBeliefTracker.getMostSuspicious(player.id, alive);
     const mention = suspect ? `（关注${suspect.id}号）` : '';
-    const guard = guardSpeechText(`${libText.slice(0, 160)}${mention}`, players, 'zh');
+    const guard = guardSpeechText(styleFallback(`${libText.slice(0, 160)}${mention}`), players, 'zh');
     if (guard.ok) {
       emitSpeechDiagnostic({
         context: 'day-speech', source: 'library', speakerId: player.id,
@@ -262,12 +279,15 @@ ${fmtLogs(logs, language)}
   // Layer 1: Hardcoded contextual fallback — roster-derived seat references
   // only (H7), guarded all the same; the nameless line is the last resort.
   const fallback = buildFallback(player, players, round, seerInfo, nightState, language);
-  const fallbackGuard = guardSpeechText(language === 'en' ? fallback.en : fallback.zh, players, language);
-  const safe = fallbackGuard.ok
-    ? fallback
+  const fallbackGuard = guardSpeechText(styleFallback(fallback[language]), players, language);
+  // An invalid seat in the contextual fallback should reach the nameless line
+  // instead of reappearing in the alternate language field.
+  const useContextualFallback = fallbackGuard.ok && !fallbackGuard.repaired;
+  const safe = useContextualFallback
+    ? { ...fallback, [language]: fallbackGuard.text }
     : { en: namelessFallbackLine('en'), zh: namelessFallbackLine('zh') };
   emitSpeechDiagnostic({
-    context: 'day-speech', source: fallbackGuard.ok ? 'hardcoded-fallback' : 'nameless-fallback',
+    context: 'day-speech', source: useContextualFallback ? 'hardcoded-fallback' : 'nameless-fallback',
     speakerId: player.id, fallbackReason: 'llm-and-library-rejected',
   });
   globalBeliefTracker.updateFromSpeech(player.id, language === 'en' ? safe.en : safe.zh, players);

@@ -17,7 +17,7 @@ import {
 } from '../types';
 import { AI_NAMES, AVATAR_SEEDS } from '../constants';
 import { generateAIAction, generateAIDialogue, generateWolfChat, resetAIMemory, setAIDifficulty } from '../ai/aiOrchestrator';
-import { CUSTOM_AI_STYLES } from '../services/aiStyles';
+import { CUSTOM_AI_STYLES, pickRolePersona } from '../services/aiStyles';
 import {
   applyElimination,
   applyNightResolution,
@@ -564,6 +564,7 @@ export function useGameState(authContext: AuthContext) {
 
     const nextPlayers = basePlayers.map(player => ({
       ...player,
+      ...(!player.isHuman && { aiSpeechPersonaId: pickRolePersona().id }),
       suspicionMap: createSuspicionMap(player.id, basePlayers),
       privateKnowledge: player.role === Role.WEREWOLF
         ? [`狼队友：${basePlayers.filter(p => p.role === Role.WEREWOLF && p.id !== player.id).map(p => `${p.id}号`).join('、') || '无'}`]

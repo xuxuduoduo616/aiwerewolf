@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { GamePhase, Role, type GameConfig, type GameRecord } from '../types';
 import { MODE_9_PLAYER, MODE_12_PLAYER } from '../constants';
 import { getTerminalRewardRequest } from '../economy/gameRewards';
+import * as aiStyles from '../services/aiStyles';
 
 // A dependency-aware hook runner: executes the real hook, effects, timer
 // callbacks and async continuations without requiring an installed DOM library.
@@ -275,5 +276,36 @@ describe('new-match language selection', () => {
     expect(ai.generateAIDialogue.mock.calls[0][9]).toBe('zh');
     leave(); game.startGame(fixture, 'en'); flush();
     expect(game.gameLanguage).toBe('en');
+  });
+});
+
+describe('new-match public speech personas', () => {
+  it.each([MODE_9_PLAYER, MODE_12_PLAYER])('assigns one persona to each AI on $id', async config => {
+    leave();
+    const pickPersona = vi.spyOn(aiStyles, 'pickRolePersona');
+    start(config);
+    expect(pickPersona).toHaveBeenCalledTimes(config.roles.length - 1);
+    expect(game.players[0]).not.toHaveProperty('aiSpeechPersonaId');
+    const firstIds = game.players.slice(1).map(player => player.aiSpeechPersonaId);
+    expect(firstIds).toHaveLength(config.roles.length - 1);
+    expect(new Set(firstIds)).toEqual(new Set(['brief-hesitant']));
+
+    hooks.dirty = true;
+    flush();
+    expect(game.players.slice(1).map(player => player.aiSpeechPersonaId)).toEqual(firstIds);
+
+    await enterAIStatement();
+    expect(pickPersona).toHaveBeenCalledTimes(config.roles.length - 1);
+    const [speaker, roster] = ai.generateAIDialogue.mock.calls[0];
+    expect(speaker.aiSpeechPersonaId).toBe(firstIds[speaker.id - 2]);
+    expect(roster.slice(1).map((player: typeof game.players[number]) => player.aiSpeechPersonaId)).toEqual(firstIds);
+
+    leave();
+    vi.mocked(Math.random).mockReturnValue(0.99);
+    start(config);
+    expect(pickPersona).toHaveBeenCalledTimes(2 * (config.roles.length - 1));
+    expect(game.players[0]).not.toHaveProperty('aiSpeechPersonaId');
+    expect(game.players.slice(1).map(player => player.aiSpeechPersonaId))
+      .toEqual(firstIds.map(() => 'analysis-confident'));
   });
 });

@@ -7,6 +7,8 @@ import {
 } from './aiOrchestrator';
 import { resolveGameLanguage } from '../hooks/useGameState';
 import { isCannedEnglishStub } from '../i18n';
+import { ROLE_PERSONAS, type RolePersonaId } from '../services/aiStyles';
+import { namelessFallbackLine } from '../services/rosterGuard';
 import { getRoleCamp } from '../gameEngine';
 import { GamePhase, GameLog, Player, Role } from '../types';
 import { pickSpeech, pickWolfNightSpeech } from '../services/speechLibrary';
@@ -398,5 +400,84 @@ describe('generateAIAction — deterministic action selection (invariants 6, 7)'
 
     const valid = players.filter(p => p.isAlive && p.id !== players[7].id).map(p => p.id);
     expect(valid).toContain(action.targetId);
+  });
+});
+
+describe('per-seat public speech persona', () => {
+  const personaIds = ['attack-firm', 'brief-hesitant'] as const;
+
+  it.each(['en', 'zh'] as const)('threads both style dimensions and preserves evidence in %s prompts', async language => {
+    const players = makeBoard();
+    const speaker = players[4];
+    const seerInfo = { targetId: 3, isGood: true };
+
+    for (const [index, id] of personaIds.entries()) {
+      speaker.aiSpeechPersonaId = id;
+      await dialogue(speaker, players, language, seerInfo);
+      const persona = ROLE_PERSONAS.find(candidate => candidate.id === id)!;
+      const [systemPrompt, userPrompt] = mockLLM.mock.calls[index];
+      expect(systemPrompt).toContain(persona.purpose.prompt[language]);
+      expect(systemPrompt).toContain(persona.tone.prompt[language]);
+      expect(systemPrompt).toContain(language === 'en' ? 'Player 3 is GOOD' : '3号是金水/好人');
+      expect(language === 'en' ? systemPrompt : userPrompt)
+        .toContain(language === 'en' ? 'OUTPUT LANGUAGE: English only' : '中文字符');
+      expect(userPrompt).toContain(id === 'brief-hesitant'
+        ? (language === 'en' ? '20-60 English words' : '30-80中文字符')
+        : (language === 'en' ? '60-160 English words' : '80-180中文字符'));
+    }
+  });
+
+  it.each(['en', 'zh'] as const)('styles %s corpus fallback while guarding language and seat references', async language => {
+    const players = makeBoard();
+    const speaker = players[7];
+    const enCorpus = 'I want to hear the reasoning from Player 99 and keep our discussion focused today.';
+    const zhCorpus = '我想听听99号的理由，大家先把发言听完再讨论，今天别急着下结论。';
+    mockLLM.mockResolvedValue({ en: '太短了。', zh: 'I am not a Chinese speech.' });
+    mockPickSpeech.mockResolvedValue(language === 'en' ? enCorpus : zhCorpus);
+
+    const results = [];
+    for (const id of personaIds) {
+      speaker.aiSpeechPersonaId = id;
+      const speech = (await dialogue(speaker, players, language))[language];
+      const persona = ROLE_PERSONAS.find(candidate => candidate.id === id)!;
+      expect(speech).toContain(persona.purpose.leadIn[language]);
+      expect(speech).toContain(persona.tone.leadIn[language]);
+      expect(hasCJK(speech)).toBe(language === 'zh');
+      expect(detectNameViolations(speech, players)).toHaveLength(0);
+      results.push(speech);
+    }
+    expect(results[0]).not.toBe(results[1]);
+    expect(mockLLM).toHaveBeenCalledTimes(2);
+  });
+
+  it.each(['en', 'zh'] as const)('keeps contextual and nameless %s fallbacks available offline', async language => {
+    const players = makeBoard();
+    const speaker = players[4];
+    speaker.aiSpeechPersonaId = 'analysis-confident';
+    mockLLM.mockRejectedValue(new Error('offline'));
+    mockPickSpeech.mockRejectedValue(new Error('corpus unavailable'));
+
+    const contextual = await dialogue(speaker, players, language, { targetId: 3, isGood: true });
+    expect(contextual[language]).toContain(language === 'en' ? 'I am the seer' : '我是预言家');
+    expect(detectNameViolations(contextual[language], players)).toHaveLength(0);
+
+    const nameless = await dialogue(speaker, players, language, { targetId: 99, isGood: true });
+    expect(nameless[language]).toBe(namelessFallbackLine(language));
+  });
+
+  it('uses the existing prompt when a persona ID is missing, unrecognized, or on a last-words speaker', async () => {
+    const players = makeBoard();
+    const speaker = players[7];
+    speaker.aiModelLabel = 'GPT-4o';
+    await dialogue(speaker, players);
+    speaker.aiSpeechPersonaId = 'unknown' as RolePersonaId;
+    await dialogue(speaker, players);
+    speaker.aiSpeechPersonaId = 'brief-hesitant';
+    speaker.isAlive = false;
+    await dialogue(speaker, players);
+
+    const prompts = mockLLM.mock.calls.map(([prompt]) => prompt);
+    expect(prompts[0]).toContain('Personality: You are the calm, controlling leader');
+    expect(prompts).toEqual([prompts[0], prompts[0], prompts[0]]);
   });
 });
