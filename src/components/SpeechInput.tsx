@@ -45,12 +45,14 @@ const SpeechInput = ({
   value,
   onChange,
   onSubmit,
+  submitDisabled = false,
   visible,
   selectedPlayer,
 }: {
   value: string;
   onChange: (v: string) => void;
   onSubmit: () => void;
+  submitDisabled?: boolean;
   visible: boolean;
   selectedPlayer?: { id: number; isAlive: boolean } | null;
 }) => {
@@ -127,9 +129,9 @@ const SpeechInput = ({
           data-ui-copy-allow="USER_SPEECH_INPUT"
           onChange={e => onChange(e.target.value)}
           placeholder={speechPlaceholder(language)}
-          onKeyDown={e => { if (e.key === 'Enter') onSubmit(); }}
+          onKeyDown={e => { if (e.key === 'Enter' && !submitDisabled) onSubmit(); }}
         />
-        <button onClick={onSubmit} className="action-button shrink-0 px-3" aria-label="Send speech"><Send className="w-4 h-4" /></button>
+        <button onClick={onSubmit} disabled={submitDisabled} className="action-button shrink-0 px-3" aria-label="Send speech"><Send className="w-4 h-4" /></button>
       </div>
     </div>
   );

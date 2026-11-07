@@ -8,12 +8,14 @@ import {
 import { resolveGameLanguage } from '../hooks/useGameState';
 import { isCannedEnglishStub } from '../i18n';
 import { ROLE_PERSONAS, type RolePersonaId } from '../services/aiStyles';
+import * as rosterGuard from '../services/rosterGuard';
 import { namelessFallbackLine } from '../services/rosterGuard';
 import { getRoleCamp } from '../gameEngine';
 import { GamePhase, GameLog, Player, Role } from '../types';
 import { pickSpeech, pickWolfNightSpeech } from '../services/speechLibrary';
 import { detectNameViolations } from '../diagnostics/nameDetector';
 import { generateSpeechWithLLM, generateWolfChatWithLLM } from './geminiAdapter';
+import { globalBeliefTracker } from './beliefTracker';
 
 /**
  * Tests for lobby-language-authority: the game language captured at startGame
@@ -93,6 +95,45 @@ describe('per-match expression model routing', () => {
     await generateWolfChat(wolves, players, [], 1, []);
 
     expect(mockWolfLLM.mock.calls[0][2]).toBe('gemini-3.6-flash');
+  });
+});
+
+describe('scoped expression lifecycle', () => {
+  it.each(['remote', 'library', 'hardcoded'] as const)('defers the %s diagnostic and belief update to the game commit', async source => {
+    const players = makeBoard();
+    const speaker = players[7];
+    if (source === 'remote') mockLLM.mockResolvedValue({ en: 'Player 3 is my lead today because their vote contradicts the reasoning they gave us yesterday.', zh: '' });
+    if (source === 'library') mockPickSpeech.mockResolvedValue('I will compare earlier speeches and look for gaps in their reasoning.');
+    const diagnostic = vi.spyOn(rosterGuard, 'emitSpeechDiagnostic');
+    const update = vi.spyOn(globalBeliefTracker, 'updateFromSpeech');
+    const deferCommit = vi.fn<(commit: () => void) => void>();
+    try {
+      const response = await generateAIDialogue(speaker, players, [], GamePhase.DAY_DISCUSSION, [], 1, null, [], emptyNight, 'en', {
+        runWhenActive: async work => work(),
+        deferCommit,
+      });
+      expect(response.en).not.toBe('');
+      expect(deferCommit).toHaveBeenCalledOnce();
+      expect(update).not.toHaveBeenCalled();
+      expect(diagnostic).not.toHaveBeenCalled();
+      deferCommit.mock.calls[0][0]();
+      expect(update).toHaveBeenCalledOnce();
+      expect(update).toHaveBeenCalledWith(speaker.id, response.en, players);
+      expect(diagnostic).toHaveBeenCalledOnce();
+    } finally {
+      update.mockRestore();
+      diagnostic.mockRestore();
+    }
+  });
+
+  it('does not start the adapter or library when a phase is no longer active', async () => {
+    const players = makeBoard();
+    await generateAIDialogue(players[7], players, [], GamePhase.DAY_DISCUSSION, [], 1, null, [], emptyNight, 'en', {
+      runWhenActive: async () => undefined,
+      deferCommit: () => {},
+    });
+    expect(mockLLM).not.toHaveBeenCalled();
+    expect(mockPickSpeech).not.toHaveBeenCalled();
   });
 });
 

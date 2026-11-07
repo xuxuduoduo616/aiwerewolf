@@ -47,7 +47,7 @@ import './styles/game-responsive.css';
 import './styles/economy.css';
 import {
   Clock3, History, KeyRound, Languages, Loader2,
-  LogOut, Mail, Moon, Power, RefreshCw, ScrollText, Shield,
+  LogOut, Mail, Moon, Pause, Play, Power, RefreshCw, ScrollText, Shield,
   Skull, Trophy, User as UserIcon, Volume2, VolumeX,
 } from 'lucide-react';
 
@@ -354,7 +354,7 @@ const App: React.FC = () => {
       voteRecords: game.voteRecords,
       players: game.players,
       eliminatedPlayerId: voteSummaryEliminatedId,
-      isProcessingAI: game.isProcessingAI,
+      isProcessingAI: game.isProcessingAI && !game.isPaused,
     };
 
     const gameHeader = (
@@ -487,36 +487,49 @@ const App: React.FC = () => {
                 </div>
               ) : (
                 <>
-                  <div className="flex items-center justify-between gap-3">
+                  <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
                     <div>
                       <div className="text-xs text-zinc-500">PHASE</div>
                       <div className="text-lg font-bold">{getPhaseLabel(game.phase, 'en')}</div>
                     </div>
-                    {game.wolfCountdown !== null && (
-                      <div className="timer-pill"><Clock3 className="w-4 h-4" />{game.wolfCountdown}s</div>
-                    )}
-                    {game.voteTimer !== null && (
-                      <div className={`timer-pill${game.voteTimer <= 3 ? ' urgent' : ''}`}>
-                        <Clock3 className="w-4 h-4" />{game.voteTimer}s
-                      </div>
-                    )}
-                    {game.speechTimer !== null && game.currentSpeaker?.id === MY_PLAYER_ID && (
-                      <div className={`timer-pill${game.speechTimer <= 10 ? ' urgent' : ''}`}>
-                        <Clock3 className="w-4 h-4" />{game.speechTimer}s
-                      </div>
-                    )}
+                    <div className="flex flex-wrap items-center gap-2">
+                      {game.wolfCountdown !== null && (
+                        <div className="timer-pill"><Clock3 className="w-4 h-4" />{game.wolfCountdown}s</div>
+                      )}
+                      {game.voteTimer !== null && (
+                        <div className={`timer-pill${game.voteTimer <= 3 && !game.isPaused ? ' urgent' : ''}`}>
+                          <Clock3 className="w-4 h-4" />{game.voteTimer}s
+                        </div>
+                      )}
+                      {game.speechTimer !== null && game.currentSpeaker?.id === MY_PLAYER_ID && (
+                        <div className={`timer-pill${game.speechTimer <= 10 && !game.isPaused ? ' urgent' : ''}`}>
+                          <Clock3 className="w-4 h-4" />{game.speechTimer}s
+                        </div>
+                      )}
+                      <button
+                        type="button"
+                        onClick={game.togglePause}
+                        className={`game-pause-button${game.isPaused ? ' is-paused' : ''}`}
+                      >
+                        {game.isPaused ? <>Resume <Play aria-hidden="true" size={15} /></> : <>Pause <Pause aria-hidden="true" size={15} /></>}
+                      </button>
+                    </div>
                   </div>
                   {game.currentSpeaker && game.currentSpeaker.id !== MY_PLAYER_ID && (
                       <button
                         type="button"
                         onClick={game.skipCurrentSpeech}
+                        disabled={game.isPaused}
                         className="skip-speech-button"
                         title="Skip this AI speech and move to the next speaker"
                       >
                         Skip speech
                       </button>
                     )}
-                    <p className="mt-4 text-sm text-zinc-300 leading-relaxed min-h-[42px]">{game.phaseHint}</p>
+                  <p className="mt-4 text-sm text-zinc-300 leading-relaxed min-h-[42px]">
+                    <span role="status" className="game-pause-status">{game.isPaused ? 'AI Paused — Take your time to read' : ''}</span>
+                    {!game.isPaused && game.phaseHint}
+                  </p>
                   <div key={`role-${game.phase}`} className="role-reveal mt-4 rounded border border-zinc-700 bg-black/35 p-3 text-xs text-zinc-300">
                     <div className="flex items-center gap-2 font-bold text-zinc-100">
                       <UserIcon className="w-4 h-4" />
@@ -532,7 +545,7 @@ const App: React.FC = () => {
                   </div>
                   <ActionBar
                     phase={game.phase} me={game.me} selectedPlayer={game.selectedPlayer}
-                    isProcessingAI={game.isProcessingAI} witchStatus={game.witchStatus}
+                    isProcessingAI={game.isPaused || game.isProcessingAI} witchStatus={game.witchStatus}
                     nightState={game.nightState}
                     onAction={() => game.selectedPlayerId && game.handlePlayerAction(game.selectedPlayerId)}
                     onVoteSkip={() => game.finishVote(null)}
@@ -542,6 +555,7 @@ const App: React.FC = () => {
                   <SpeechInput
                     value={game.userInput} onChange={game.setUserInput}
                     onSubmit={game.handleHumanSpeechSubmit}
+                    submitDisabled={game.isPaused}
                     visible={game.phase === GamePhase.DAY_DISCUSSION && game.currentSpeaker?.id === MY_PLAYER_ID}
                     selectedPlayer={game.selectedPlayer}
                   />

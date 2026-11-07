@@ -71,6 +71,7 @@ const advance = async (ms: number) => { await vi.advanceTimersByTimeAsync(ms); a
 const start = (config = fixture) => { game.startGame(config, 'en'); flush(); };
 const snapshot = () => JSON.stringify({ config:game.config,players:game.players,phase:game.phase,logs:game.logs,round:game.roundCount,winner:game.winner,votes:game.voteRecords,night:game.nightState,witch:game.witchStatus,wolfChat:game.wolfChat,seer:game.aiSeerLastCheck,speaker:game.currentSpeaker,processing:game.isProcessingAI,saved:game.savedRecordId,records:auth.records });
 const leave = () => { game.leaveGame(); flush(); };
+const togglePause = () => { game.togglePause(); flush(); };
 const enterAIStatement = async () => {
   game.setPhase(GamePhase.DAY_HUNTER_CHECK); flush(); await advance(700);
   await advance(700); // First speaker is the human in this deterministic fixture.
@@ -205,6 +206,249 @@ describe('match lifetime isolation', () => {
     for(const effect of hooks.effects.values())effect.cleanup?.();
     const values=[...hooks.values];work.resolve({targetId:1});await Promise.resolve();await Promise.resolve();await Promise.resolve();
     expect(hooks.values).toEqual(values);
+  });
+});
+
+describe('pause and resume', () => {
+  it.each([MODE_9_PLAYER, MODE_12_PLAYER])('restarts the automatic phase delay once on $id', async config => {
+    start(config);
+    await advance(699);
+    togglePause();
+    const before = snapshot();
+    // Rapid toggles without rendering still use the latest pause state.
+    game.togglePause();
+    game.togglePause();
+    flush();
+    await advance(61_000);
+    expect(game.isPaused).toBe(true);
+    expect(snapshot()).toBe(before);
+    expect(ai.generateWolfChat).not.toHaveBeenCalled();
+    togglePause();
+    await advance(699);
+    expect(snapshot()).toBe(before);
+    await advance(1);
+    expect(game.phase).toBe(GamePhase.NIGHT_WEREWOLVES);
+    expect(game.roundCount).toBe(1);
+  });
+
+  it.each([
+    [GamePhase.NIGHT_WEREWOLVES, GamePhase.NIGHT_SEER],
+    [GamePhase.NIGHT_SEER, GamePhase.NIGHT_WITCH],
+    [GamePhase.NIGHT_WITCH, GamePhase.DAY_ANNOUNCE],
+    [GamePhase.DAY_ANNOUNCE, GamePhase.DAY_HUNTER_CHECK],
+    [GamePhase.DAY_HUNTER_CHECK, GamePhase.DAY_DISCUSSION],
+  ])('holds the automatic %s branch until resume', async (phase, nextPhase) => {
+    game.setPhase(phase); flush();
+    togglePause();
+    const before = snapshot();
+    await advance(2500);
+    expect(snapshot()).toBe(before);
+    expect(ai.generateAIAction).not.toHaveBeenCalled();
+    expect(ai.generateWolfChat).not.toHaveBeenCalled();
+    togglePause();
+    await advance(700);
+    expect(game.phase).toBe(nextPhase);
+  });
+
+  it('holds an AI role error and its phase advance until resumed', async () => {
+    const held = deferred<{ targetId: number }>();
+    ai.generateAIAction.mockReturnValueOnce(held.promise);
+    game.setPhase(GamePhase.NIGHT_SEER); flush(); await advance(700);
+    togglePause();
+    const before = snapshot();
+    held.reject(new Error('fixture role error'));
+    await advance(2500);
+    expect(snapshot()).toBe(before);
+    togglePause();
+    await settle();
+    expect(game.phase).toBe(GamePhase.NIGHT_WITCH);
+    expect(game.logs.filter(log => log.message === 'AI error. Seer check skipped.')).toHaveLength(1);
+  });
+
+  it.each(['resolve', 'reject'] as const)('defers an in-flight speech %s through pause and consumes it once', async outcome => {
+    const work = deferred<{ en: string; zh: string }>();
+    const commit = vi.fn();
+    ai.generateAIDialogue.mockImplementationOnce((...args) => {
+      args[10].deferCommit(commit);
+      return work.promise;
+    });
+    await enterAIStatement();
+    togglePause();
+    const before = snapshot();
+    if (outcome === 'resolve') work.resolve({ en: 'A held fixture statement.', zh: '' });
+    else work.reject(new Error('fixture AI failure'));
+    await settle();
+    await advance(61_000);
+    expect(snapshot()).toBe(before);
+    expect(commit).not.toHaveBeenCalled();
+    expect(audio.enqueue).not.toHaveBeenCalled();
+    expect(ai.generateAIDialogue).toHaveBeenCalledOnce();
+    togglePause();
+    await settle();
+    expect(game.logs.filter(log => outcome === 'resolve'
+      ? log.message === 'A held fixture statement.' : log.message.includes('speech skipped (AI error)'))).toHaveLength(1);
+    expect(commit).toHaveBeenCalledTimes(outcome === 'resolve' ? 1 : 0);
+    await advance(700);
+    expect(ai.generateAIDialogue.mock.calls.map(([speaker]) => speaker.id)).toEqual([2, 3]);
+  });
+
+  it('cancels already displayed TTS and holds the current speaker until resumed', async () => {
+    const work = deferred<void>();
+    audio.enqueue.mockReturnValueOnce(work.promise);
+    await enterAIStatement();
+    const before = snapshot();
+    expect(game.logs.at(-1)?.speakerId).toBe(2);
+    audio.cancel.mockImplementationOnce(() => work.resolve());
+    togglePause();
+    await advance(10_000);
+    expect(snapshot()).toBe(before);
+    game.skipCurrentSpeech();
+    expect(audio.enqueue).toHaveBeenCalledOnce();
+    expect(ai.generateAIDialogue).toHaveBeenCalledOnce();
+    togglePause();
+    await settle();
+    expect(game.currentSpeaker).toBeNull();
+    expect(audio.enqueue).toHaveBeenCalledOnce();
+    await advance(700);
+    expect(ai.generateAIDialogue.mock.calls.map(([speaker]) => speaker.id)).toEqual([2, 3]);
+    expect(game.logs.filter(log => log.speakerId === 2)).toHaveLength(1);
+  });
+
+  it('freezes the last fractional second of a human speech and keeps the draft', async () => {
+    game.setPhase(GamePhase.DAY_HUNTER_CHECK); flush();
+    await advance(700);
+    await advance(700);
+    expect(game.speechTimer).toBe(60);
+    game.setUserInput('A draft to read later.'); flush();
+    await advance(59_875);
+    togglePause();
+    game.handleHumanSpeechSubmit(); flush();
+    await advance(61_000);
+    expect(game.userInput).toBe('A draft to read later.');
+    expect(game.currentSpeaker?.id).toBe(1);
+    expect(game.speechTimer).toBe(1);
+    togglePause();
+    await advance(124);
+    expect(game.currentSpeaker?.id).toBe(1);
+    await advance(1);
+    game.handleHumanSpeechSubmit(); flush();
+    expect(game.logs.filter(log => log.message === 'Time expired. Speech skipped.')).toHaveLength(1);
+    expect(game.logs.some(log => log.speakerId === 1)).toBe(false);
+  });
+
+  it('freezes the vote deadline and lets expiry and repeated clicks claim at most one vote', async () => {
+    game.setPhase(GamePhase.DAY_VOTING); flush();
+    await advance(9_875);
+    togglePause();
+    void game.finishVote(2);
+    await advance(61_000);
+    expect(game.voteTimer).toBe(1);
+    expect(ai.generateAIAction).not.toHaveBeenCalled();
+    togglePause();
+    await advance(124);
+    expect(game.voteTimer).toBe(1);
+    await advance(1);
+    void game.finishVote(2);
+    void game.finishVote(3);
+    await advance(8 * 180);
+    expect(ai.generateAIAction).toHaveBeenCalledTimes(8);
+    expect(game.logs.filter(log => log.message.startsWith('Vote record:'))).toHaveLength(1);
+    expect(game.voteRecords).toHaveLength(9);
+    expect(game.voteRecords.find(vote => vote.voterId === 1)?.targetId).toBeNull();
+  });
+
+  it('holds a deadline already reached when its timer callback has not run', async () => {
+    game.setPhase(GamePhase.DAY_VOTING); flush();
+    vi.setSystemTime(Date.now() + 10_000);
+    togglePause();
+    expect(game.voteTimer).toBe(0);
+    await advance(61_000);
+    expect(game.phase).toBe(GamePhase.DAY_VOTING);
+    expect(ai.generateAIAction).not.toHaveBeenCalled();
+    togglePause();
+    await advance(1 + 8 * 180);
+    expect(game.voteRecords).toHaveLength(9);
+    expect(game.logs.filter(log => log.message.startsWith('Vote record:'))).toHaveLength(1);
+  });
+
+  it('defers the next AI vote and tally while a previous vote resolves during pause', async () => {
+    const held = deferred<{ targetId: number | null }>();
+    ai.generateAIAction.mockReturnValueOnce(held.promise);
+    game.setPhase(GamePhase.DAY_VOTING); flush();
+    const voting = game.finishVote(2); flush();
+    await advance(180);
+    togglePause();
+    const before = snapshot();
+    held.resolve({ targetId: 2 });
+    await advance(61_000);
+    expect(snapshot()).toBe(before);
+    expect(ai.generateAIAction).toHaveBeenCalledOnce();
+    togglePause();
+    await settle();
+    await advance(179);
+    expect(ai.generateAIAction).toHaveBeenCalledOnce();
+    await advance(1);
+    expect(ai.generateAIAction).toHaveBeenCalledTimes(2);
+    await advance(6 * 180);
+    await voting;
+    expect(game.voteRecords.filter(vote => vote.targetId === 2).map(vote => vote.voterId)).toEqual([1, 2]);
+    expect(game.phase).toBe(GamePhase.NIGHT_START);
+  });
+
+  const wolfFixture = { ...fixture, roles: [Role.WEREWOLF, Role.VILLAGER, ...fixture.roles.slice(2)] };
+
+  it('freezes the wolf clock and never repeats an empty wolf-chat result', async () => {
+    start(wolfFixture);
+    game.setPhase(GamePhase.NIGHT_WEREWOLVES); flush();
+    await advance(19_875);
+    expect(ai.generateWolfChat).toHaveBeenCalledOnce();
+    togglePause();
+    game.handlePlayerAction(2); flush();
+    await advance(61_000);
+    expect(game.wolfCountdown).toBe(1);
+    expect(game.nightState.wolfKillId).toBeNull();
+    togglePause();
+    await advance(124);
+    expect(game.phase).toBe(GamePhase.NIGHT_WEREWOLVES);
+    await advance(1);
+    expect(game.phase).toBe(GamePhase.NIGHT_SEER);
+    expect(game.nightState.wolfKillId).toBe(2);
+    expect(ai.generateWolfChat).toHaveBeenCalledOnce();
+  });
+
+  it('keeps early human-wolf targeting and discards a late chat for the old phase', async () => {
+    start(wolfFixture);
+    const held = deferred<[]>();
+    const commit = vi.fn();
+    ai.generateWolfChat.mockImplementationOnce((...args) => {
+      args[6].deferCommit(commit);
+      return held.promise;
+    });
+    game.setPhase(GamePhase.NIGHT_WEREWOLVES); flush(); await advance(700);
+    game.handlePlayerAction(2); flush();
+    expect(game.phase).toBe(GamePhase.NIGHT_SEER);
+    held.resolve([]);
+    await settle();
+    expect(game.wolfChat).toEqual([]);
+    expect(commit).not.toHaveBeenCalled();
+    expect(ai.generateWolfChat).toHaveBeenCalledOnce();
+  });
+
+  it('drops an old paused result and lets a fresh match start running', async () => {
+    const work = deferred<{ en: string; zh: string }>();
+    ai.generateAIDialogue.mockReturnValueOnce(work.promise);
+    await enterAIStatement();
+    togglePause();
+    work.resolve({ en: 'Old paused text.', zh: '' });
+    await settle();
+    leave();
+    start(MODE_12_PLAYER);
+    await settle();
+    expect(game.isPaused).toBe(false);
+    expect(game.logs.some(log => log.message === 'Old paused text.')).toBe(false);
+    expect(audio.enqueue).not.toHaveBeenCalled();
+    await advance(700);
+    expect(game.phase).toBe(GamePhase.NIGHT_WEREWOLVES);
   });
 });
 

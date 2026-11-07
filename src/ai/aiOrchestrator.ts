@@ -18,6 +18,7 @@ import {
   guardSpeechText,
   namelessFallbackLine,
   sanitizeForeignEntities,
+  type SpeechDiagnosticMeta,
 } from '../services/rosterGuard';
 import { pickSpeech, pickWolfNightSpeech } from '../services/speechLibrary';
 import { globalBeliefTracker } from './beliefTracker';
@@ -26,6 +27,19 @@ import type { ActionType } from './actionSelector';
 import { DEFAULT_EXPRESSION_MODEL, type AIExpressionModelId } from './modelCatalog';
 
 // ─── helpers ───────────────────────────────────────────────────────────────
+
+interface ExpressionLifecycle {
+  runWhenActive: <T>(work: () => T | Promise<T>) => Promise<T | undefined>;
+  deferCommit: (commit: () => void) => void;
+}
+
+const runExpression = <T,>(lifecycle: ExpressionLifecycle | undefined, work: () => Promise<T>) =>
+  lifecycle ? lifecycle.runWhenActive(work) : work();
+
+const commitExpression = (lifecycle: ExpressionLifecycle | undefined, commit: () => void) => {
+  if (lifecycle) lifecycle.deferCommit(commit);
+  else commit();
+};
 
 const isChinese = (text: string): boolean => {
   // Count CJK characters; if >30% are Chinese, treat as Chinese
@@ -73,10 +87,11 @@ const englishOutputRule = 'OUTPUT LANGUAGE: English only. Write all player-visib
 const generateSpeechWithLLM = async (
   systemPrompt: string,
   userPrompt: string,
+  lifecycle?: ExpressionLifecycle,
 ): Promise<{ zh: string; en: string } | null> => {
   try {
     const { generateSpeechWithLLM: generate } = await import('./geminiAdapter');
-    return await generate(systemPrompt, userPrompt, currentExpressionModel);
+    return (await runExpression(lifecycle, () => generate(systemPrompt, userPrompt, currentExpressionModel))) ?? null;
   } catch {
     return null;
   }
@@ -85,10 +100,11 @@ const generateSpeechWithLLM = async (
 const generateNightMessagesWithLLM = async (
   systemPrompt: string,
   userPrompt: string,
+  lifecycle?: ExpressionLifecycle,
 ): Promise<unknown[]> => {
   try {
     const { generateWolfChatWithLLM } = await import('./geminiAdapter');
-    return await generateWolfChatWithLLM(systemPrompt, userPrompt, currentExpressionModel);
+    return (await runExpression(lifecycle, () => generateWolfChatWithLLM(systemPrompt, userPrompt, currentExpressionModel))) ?? [];
   } catch {
     return [];
   }
@@ -126,12 +142,17 @@ export const generateAIDialogue = async (
   voteRecords: VoteRecord[] = [],
   nightState: NightState = { wolfKillId: null, witchPoisonId: null, witchSaved: false },
   language: DisplayLanguage = DEFAULT_DISPLAY_LANGUAGE,
+  lifecycle?: ExpressionLifecycle,
 ): Promise<{ en: string; zh: string }> => {
 
   // Initialize beliefs if needed
   if (globalBeliefTracker.snapshot(player.id).length === 0) {
     globalBeliefTracker.init(players);
   }
+  const commitSpeech = (text: string, meta: SpeechDiagnosticMeta) => commitExpression(lifecycle, () => {
+    emitSpeechDiagnostic(meta);
+    globalBeliefTracker.updateFromSpeech(player.id, text, players);
+  });
 
   const persona = player.isAlive && !player.isHuman
     ? ROLE_PERSONAS.find(candidate => candidate.id === player.aiSpeechPersonaId)
@@ -214,17 +235,16 @@ ${fmtLogs(logs, language)}
   // (H8): out-of-roster references are structurally repaired when
   // unambiguous, otherwise the response is discarded and the library layer
   // takes over — detected-bad text never reaches the display path.
-  const llmResult = await generateSpeechWithLLM(systemPrompt, userPrompt);
+  const llmResult = await generateSpeechWithLLM(systemPrompt, userPrompt, lifecycle);
   if (language === 'en') {
     if (llmResult?.en && isSubstantiveEnglish(llmResult.en)) {
       const guard = guardSpeechText(llmResult.en, players, 'en');
       if (guard.ok && isSubstantiveEnglish(guard.text)) {
         const zhGuard = guardSpeechText(llmResult.zh || '', players, 'zh');
-        emitSpeechDiagnostic({
+        commitSpeech(guard.text, {
           context: 'day-speech', source: 'remote-model', model: currentExpressionModel,
           speakerId: player.id, repaired: guard.repaired,
         });
-        globalBeliefTracker.updateFromSpeech(player.id, guard.text, players);
         return { en: guard.text, zh: zhGuard.ok ? zhGuard.text : '' };
       }
     }
@@ -232,19 +252,17 @@ ${fmtLogs(logs, language)}
     const guard = guardSpeechText(llmResult.zh, players, 'zh');
     if (guard.ok && isChinese(guard.text)) {
       const enGuard = guardSpeechText(llmResult.en || '', players, 'en');
-      emitSpeechDiagnostic({
+      commitSpeech(guard.text, {
         context: 'day-speech', source: 'remote-model', model: currentExpressionModel,
         speakerId: player.id, repaired: guard.repaired,
       });
-      // Update beliefs from this speech
-      globalBeliefTracker.updateFromSpeech(player.id, guard.text, players);
       return { zh: guard.text, en: enGuard.ok ? enGuard.text : 'Speaks based on game situation.' };
     }
   }
 
   // Layer 2: Speech library fallback (corpus sanitized offline; the guard
   // still runs as the final boundary for this layer).
-  const libText = await pickSpeech(player.role, [], round, { language }).catch(() => '');
+  const libText = await runExpression(lifecycle, () => pickSpeech(player.role, [], round, { language })).catch(() => '');
   if (language === 'en') {
     if (libText && libText.length > 20 && isEnglish(libText)) {
       const alive = players.filter(p => p.isAlive && p.id !== player.id);
@@ -252,11 +270,10 @@ ${fmtLogs(logs, language)}
       const mention = suspect ? ` (watching Player ${suspect.id})` : '';
       const guard = guardSpeechText(styleFallback(`${libText.slice(0, 160)}${mention}`), players, 'en');
       if (guard.ok) {
-        emitSpeechDiagnostic({
+        commitSpeech(guard.text, {
           context: 'day-speech', source: 'library', speakerId: player.id,
           repaired: guard.repaired, fallbackReason: 'llm-rejected',
         });
-        globalBeliefTracker.updateFromSpeech(player.id, guard.text, players);
         return { en: guard.text, zh: '' };
       }
     }
@@ -267,11 +284,10 @@ ${fmtLogs(logs, language)}
     const mention = suspect ? `（关注${suspect.id}号）` : '';
     const guard = guardSpeechText(styleFallback(`${libText.slice(0, 160)}${mention}`), players, 'zh');
     if (guard.ok) {
-      emitSpeechDiagnostic({
+      commitSpeech(guard.text, {
         context: 'day-speech', source: 'library', speakerId: player.id,
         repaired: guard.repaired, fallbackReason: 'llm-rejected',
       });
-      globalBeliefTracker.updateFromSpeech(player.id, guard.text, players);
       return { en: 'Speaks based on game situation.', zh: guard.text };
     }
   }
@@ -286,11 +302,10 @@ ${fmtLogs(logs, language)}
   const safe = useContextualFallback
     ? { ...fallback, [language]: fallbackGuard.text }
     : { en: namelessFallbackLine('en'), zh: namelessFallbackLine('zh') };
-  emitSpeechDiagnostic({
+  commitSpeech(language === 'en' ? safe.en : safe.zh, {
     context: 'day-speech', source: useContextualFallback ? 'hardcoded-fallback' : 'nameless-fallback',
     speakerId: player.id, fallbackReason: 'llm-and-library-rejected',
   });
-  globalBeliefTracker.updateFromSpeech(player.id, language === 'en' ? safe.en : safe.zh, players);
   return safe;
 };
 
@@ -345,6 +360,7 @@ export const generateWolfChat = async (
   round: number,
   voteRecords: VoteRecord[] = [],
   language: DisplayLanguage = DEFAULT_DISPLAY_LANGUAGE,
+  lifecycle?: ExpressionLifecycle,
 ): Promise<WolfChatMessage[]> => {
   if (wolves.length === 0) return [];
 
@@ -369,7 +385,13 @@ JSON: {"messages":[{"speakerId":number,"message":"English","strategyTag":"刀口
 输出${Math.min(3, wolves.length)}条夜聊策略。
 JSON：{"messages":[{"speakerId":number,"message":"中文","strategyTag":"刀口|悍跳|冲锋|倒钩|补位"}]}`;
 
-  const raw = await generateNightMessagesWithLLM(systemPrompt, userPrompt);
+  const raw = await generateNightMessagesWithLLM(systemPrompt, userPrompt, lifecycle);
+  const diagnostics: SpeechDiagnosticMeta[] = [];
+  const report = lifecycle ? (meta: SpeechDiagnosticMeta) => { diagnostics.push(meta); } : emitSpeechDiagnostic;
+  const finishChat = (messages: WolfChatMessage[]) => {
+    lifecycle?.deferCommit(() => diagnostics.forEach(emitSpeechDiagnostic));
+    return messages;
+  };
   const generated: WolfChatMessage[] = [];
   for (const value of raw) {
     if (!value || typeof value !== 'object') continue;
@@ -386,19 +408,20 @@ JSON：{"messages":[{"speakerId":number,"message":"中文","strategyTag":"刀口
       message: guard.text,
       strategyTag,
     });
-    emitSpeechDiagnostic({
+    report({
       context: 'wolf-chat', source: 'remote-model', model: currentExpressionModel,
       speakerId: item.speakerId, repaired: guard.repaired,
     });
     if (generated.length >= Math.min(3, wolves.length)) break;
   }
-  if (generated.length > 0) return generated;
+  if (generated.length > 0) return finishChat(generated);
 
   // Library fallback: pick wolf speeches from corpus
   const result: WolfChatMessage[] = [];
   for (let i = 0; i < Math.min(3, wolves.length); i++) {
     const wolf = wolves[i];
-    const libText = await pickWolfNightSpeech(language);
+    const libText = await runExpression(lifecycle, () => pickWolfNightSpeech(language));
+    if (libText === undefined) return [];
     const tag = strategyTags[i % strategyTags.length];
     const target = aliveGood[i % aliveGood.length];
     // In EN mode a mixed-language corpus pick must actually be English,
@@ -423,7 +446,7 @@ JSON：{"messages":[{"speakerId":number,"message":"中文","strategyTag":"刀口
             ? '明天需要一张牌悍跳预言家，我可以跳。'
             : '白天别冲，倒钩配合悍跳狼。');
 
-    emitSpeechDiagnostic({
+    report({
       context: 'wolf-chat', source: libOk ? 'library' : 'hardcoded-fallback',
       speakerId: wolf.id, repaired: libGuard.repaired, fallbackReason: 'llm-rejected',
     });
@@ -435,7 +458,7 @@ JSON：{"messages":[{"speakerId":number,"message":"中文","strategyTag":"刀口
       strategyTag: tag,
     });
   }
-  return result;
+  return finishChat(result);
 };
 
 // ─── Contextual hardcoded fallback ──────────────────────────────────────────

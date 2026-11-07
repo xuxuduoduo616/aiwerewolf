@@ -140,14 +140,15 @@ export const runAIPhaseSafely = async (
   setProcessing: (value: boolean) => void,
   task: () => Promise<void>,
   onError: (error: unknown) => void,
+  commit: (work: () => void) => void | Promise<void> = work => work(),
 ): Promise<void> => {
   setProcessing(true);
   try {
     await task();
   } catch (error) {
-    onError(error);
+    await commit(() => onError(error));
   } finally {
-    setProcessing(false);
+    await commit(() => setProcessing(false));
   }
 };
 
@@ -224,6 +225,17 @@ export interface AuthContext {
   publicName: string;
 }
 
+interface PhaseScope {
+  phase: GamePhase;
+  wolfChatStarted: boolean;
+}
+
+interface PlayerClock {
+  pause: () => void;
+  resume: () => void;
+  stop: () => void;
+}
+
 export function useGameState(authContext: AuthContext) {
   const { session, isGuest, records, setRecords, setRecordError, guestPrincipalId, publicName } = authContext;
 
@@ -231,7 +243,8 @@ export function useGameState(authContext: AuthContext) {
   const [difficulty, setDifficulty] = useState<Difficulty>('normal');
   const [gameLanguage, setGameLanguage] = useState<DisplayLanguage>(DEFAULT_DISPLAY_LANGUAGE);
   const [players, setPlayers] = useState<Player[]>([]);
-  const [phase, setPhase] = useState<GamePhase>(GamePhase.LOBBY);
+  const [phaseScope, setPhaseScope] = useState<PhaseScope>({ phase: GamePhase.LOBBY, wolfChatStarted: false });
+  const { phase } = phaseScope;
   const [logs, setLogs] = useState<GameLog[]>([]);
   const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null);
   const [witchStatus, setWitchStatus] = useState({ hasSave: true, hasPoison: true });
@@ -239,6 +252,9 @@ export function useGameState(authContext: AuthContext) {
   const [roundCount, setRoundCount] = useState(0);
   const [winner, setWinner] = useState<Winner>(null);
   const [isProcessingAI, setIsProcessingAI] = useState(false);
+  // Keep a fresh view state even if two toggles are batched into one render,
+  // so a cancelled phase delay is always rearmed when running.
+  const [pause, setPause] = useState({ isPaused: false });
   const [isMuted, setIsMuted] = useState(false);
   // Audio prefs (browser-tts-mvp): restored from localStorage, synced to the
   // speechAudio service below. ttsEnabled defaults to OFF — flipping the
@@ -261,7 +277,6 @@ export function useGameState(authContext: AuthContext) {
   // NetEase rule: speech timer (60s per player)
   const [speechTimer, setSpeechTimer] = useState<number | null>(null);
   // Vote countdown: deadline-based timer for human during DAY_VOTING (10s)
-  const [voteDeadline, setVoteDeadline] = useState<number | null>(null);
   const [voteTimer, setVoteTimer] = useState<number | null>(null);
   // Track last eliminated player for clockwise speaking order
   const [lastEliminatedId, setLastEliminatedId] = useState<number | null>(null);
@@ -273,10 +288,19 @@ export function useGameState(authContext: AuthContext) {
   const logsEndRef = useRef<HTMLDivElement>(null);
   const matchGenerationRef = useRef(0);
   const matchActiveRef = useRef(false);
+  const phaseScopeRef = useRef(phaseScope);
+  const processingScopeRef = useRef<PhaseScope | null>(null);
+  const pausedRef = useRef(false);
+  const resumeWaitersRef = useRef(new Set<() => void>());
+  const phaseDelayRef = useRef<(() => void) | null>(null);
+  const playerClockRef = useRef<PlayerClock | null>(null);
   const saveStartedGenerationRef = useRef<number | null>(null);
   const timerCleanupsRef = useRef(new Set<() => void>());
   const generation = matchGenerationRef.current;
   const isCurrentMatch = () => matchActiveRef.current && generation === matchGenerationRef.current;
+  const isCurrentPhase = () => isCurrentMatch() && phaseScopeRef.current === phaseScope;
+  const canProgress = () => isCurrentPhase() && !pausedRef.current
+    && phase !== GamePhase.LOBBY && phase !== GamePhase.LOGIN && phase !== GamePhase.GAME_OVER;
 
   const trackTimer = (cleanup: () => void) => {
     const release = () => {
@@ -287,12 +311,64 @@ export function useGameState(authContext: AuthContext) {
     return release;
   };
 
+  const wakeWaiters = () => {
+    for (const resume of resumeWaitersRef.current) resume();
+    resumeWaitersRef.current.clear();
+  };
+
+  const stopPlayerClock = () => {
+    playerClockRef.current?.stop();
+    playerClockRef.current = null;
+  };
+
+  const clearPhaseWork = () => {
+    phaseDelayRef.current = null;
+    for (const cleanup of timerCleanupsRef.current) cleanup();
+    stopPlayerClock();
+    processingScopeRef.current = null;
+    wakeWaiters();
+  };
+
+  const setPhase = (nextPhase: GamePhase) => {
+    if (phaseScopeRef.current.phase === nextPhase) return;
+    const nextScope = { phase: nextPhase, wolfChatStarted: false };
+    phaseScopeRef.current = nextScope;
+    clearPhaseWork();
+    setIsProcessingAI(false);
+    setPhaseScope(nextScope);
+  };
+
   const invalidateMatch = () => {
     matchGenerationRef.current += 1;
     matchActiveRef.current = false;
-    for (const cleanup of timerCleanupsRef.current) cleanup();
-    timerCleanupsRef.current.clear();
+    pausedRef.current = false;
+    clearPhaseWork();
     speechAudio.cancel();
+  };
+
+  const togglePause = () => {
+    if (!isCurrentPhase() || phase === GamePhase.GAME_OVER || phase === GamePhase.LOBBY || phase === GamePhase.LOGIN) return;
+    const isPaused = !pausedRef.current;
+    pausedRef.current = isPaused;
+    setPause({ isPaused });
+    if (isPaused) {
+      phaseDelayRef.current?.();
+      phaseDelayRef.current = null;
+      playerClockRef.current?.pause();
+      speechAudio.cancel();
+    } else {
+      playerClockRef.current?.resume();
+      wakeWaiters();
+    }
+  };
+
+  // Check and execute in the same turn of the event loop. An await followed
+  // by a separate commit would let a new pause land between them.
+  const runWhenActive = async <T,>(work: () => T | Promise<T>): Promise<T | undefined> => {
+    while (isCurrentPhase() && pausedRef.current) {
+      await new Promise<void>(resolve => resumeWaitersRef.current.add(resolve));
+    }
+    if (isCurrentPhase()) return work();
   };
 
   // Resolving a cancelled delay lets its caller exit through the generation
@@ -302,21 +378,23 @@ export function useGameState(authContext: AuthContext) {
     const release = trackTimer(() => { window.clearTimeout(timer); resolve(); });
   });
 
-  const runCurrentAIPhase = (task: () => Promise<void>, onError: (error: unknown) => void) =>
-    runAIPhaseSafely(
-      value => { if (isCurrentMatch()) setIsProcessingAI(value); },
-      task,
-      error => { if (isCurrentMatch()) onError(error); },
-    );
+  const runCurrentAIPhase = async (task: () => Promise<void>, onError: (error: unknown) => void) => {
+    if (!canProgress() || processingScopeRef.current) return;
+    processingScopeRef.current = phaseScope;
+    await runAIPhaseSafely(value => {
+      if (!value) processingScopeRef.current = null;
+      setIsProcessingAI(value);
+    }, task, onError, runWhenActive);
+  };
 
   const leaveGame = () => {
     if (!matchActiveRef.current) return;
     invalidateMatch();
+    setPause({ isPaused: false });
     setIsProcessingAI(false);
     setCurrentSpeaker(null);
     setSpeechTimer(null);
     setWolfCountdown(null);
-    setVoteDeadline(null);
     setVoteTimer(null);
     setSelectedPlayerId(null);
     setUserInput('');
@@ -352,93 +430,66 @@ export function useGameState(authContext: AuthContext) {
     speechAudio.cancel();
   }, [phase]);
 
-  // Wolf countdown timer
+  // At most one player clock is active. Store milliseconds when paused,
+  // including the fractional second hidden by the displayed timer.
   useEffect(() => {
-    if (phase !== GamePhase.NIGHT_WEREWOLVES) {
-      setWolfCountdown(null);
-      return;
-    }
+    const wolfPhase = phase === GamePhase.NIGHT_WEREWOLVES;
+    const humanVoting = phase === GamePhase.DAY_VOTING && me?.isAlive && me.canVote;
+    const humanSpeaking = phase === GamePhase.DAY_DISCUSSION && currentSpeaker?.id === MY_PLAYER_ID;
+    if (!wolfPhase) setWolfCountdown(null);
+    if (!humanVoting) setVoteTimer(null);
+    if (!humanSpeaking) setSpeechTimer(null);
+    if (!isCurrentPhase() || (!wolfPhase && !humanVoting && !humanSpeaking)) return;
+    if (humanVoting && processingScopeRef.current) return;
 
-    setWolfCountdown(20);
-    const interval = window.setInterval(() => {
-      if (!isCurrentMatch()) return;
-      setWolfCountdown(value => {
-        if (value === null) return null;
-        return Math.max(0, value - 1);
-      });
-    }, 1000);
-
-    return trackTimer(() => window.clearInterval(interval));
-  }, [phase, roundCount]);
-
-  // Wolf countdown auto-select fallback
-  useEffect(() => {
-    if (phase !== GamePhase.NIGHT_WEREWOLVES || wolfCountdown !== 0 || !me?.isAlive || me.role !== Role.WEREWOLF || nightState.wolfKillId) return;
-    const fallbackTarget = players.find(player => player.isAlive && player.role !== Role.WEREWOLF);
-    if (fallbackTarget) {
-      addLog(`Wolf timer expired. Auto selected Player ${fallbackTarget.id}.`, true, undefined, `Wolf timer expired. Auto selected Player ${fallbackTarget.id}.`, 'wolf');
-      setNightState(prev => ({ ...prev, wolfKillId: fallbackTarget.id }));
-    }
-    setPhase(GamePhase.NIGHT_SEER);
-  }, [wolfCountdown, phase, me, nightState.wolfKillId, players]);
-
-  // Vote countdown — deadline-based timer for human during DAY_VOTING
-  useEffect(() => {
-    if (phase !== GamePhase.DAY_VOTING || !me?.isAlive || !me.canVote) {
-      setVoteDeadline(null);
-      setVoteTimer(null);
-      return;
-    }
-    const deadline = nowFn() + VOTE_DURATION_MS;
-    setVoteDeadline(deadline);
-    setVoteTimer(computeVoteRemaining(deadline, nowFn()));
-    const interval = window.setInterval(() => {
-      if (!isCurrentMatch()) return;
-      setVoteTimer(computeVoteRemaining(deadline, nowFn()));
-    }, 1000);
-    return trackTimer(() => window.clearInterval(interval));
-  }, [phase, roundCount, me?.isAlive, me?.canVote]);
-
-  // Vote countdown timeout — auto-abstain when the deadline expires
-  useEffect(() => {
-    if (!voteDeadline || isProcessingAI) return;
-    if (phase !== GamePhase.DAY_VOTING) return;
-    if (!me?.isAlive || !me.canVote) return;
-    if (!shouldAutoResolveVoteTimeout(voteDeadline, nowFn())) return;
-    // Clear deadline synchronously before async finishVote to prevent
-    // a click/timeout race from resolving the same vote round twice.
-    setVoteDeadline(null);
-    setVoteTimer(null);
-    finishVote(null);
-  }, [voteTimer, isProcessingAI, phase]);
-
-  // Speech timer — countdown for human player during discussion
-  useEffect(() => {
-    if (phase !== GamePhase.DAY_DISCUSSION || !currentSpeaker || currentSpeaker.id !== MY_PLAYER_ID) {
-      setSpeechTimer(null);
-      return;
-    }
-    setSpeechTimer(SPEECH_DURATION);
-    const interval = window.setInterval(() => {
-      if (!isCurrentMatch()) return;
-      setSpeechTimer(tickSpeechTimer);
-    }, 1000);
-    return trackTimer(() => window.clearInterval(interval));
-  }, [currentSpeaker, phase]);
-
-  // Auto-skip human speech when timer reaches 0
-  useEffect(() => {
-    if (!shouldAutoSkipSpeech(speechTimer, currentSpeaker?.id)) return;
-    addLog('Time expired. Speech skipped.', true, undefined, 'Time expired. Speech skipped.', 'system');
-    setSpokenPlayerIds(prev => new Set(prev).add(MY_PLAYER_ID));
-    setCurrentSpeaker(null);
-  }, [speechTimer]);
+    const setRemaining = wolfPhase ? setWolfCountdown : humanVoting ? setVoteTimer : setSpeechTimer;
+    const onTimeout = wolfPhase ? expireWolfChoice : humanVoting ? () => finishVote(null) : expireHumanSpeech;
+    let remainingMs = wolfPhase ? 20_000 : humanVoting ? VOTE_DURATION_MS : SPEECH_DURATION * 1000;
+    let deadline = 0;
+    let timer: number;
+    const stop = () => window.clearTimeout(timer);
+    const showRemaining = () => setRemaining(computeVoteRemaining(remainingMs, 0));
+    const schedule = () => {
+      const untilNextTick = remainingMs > 0 ? remainingMs % 1000 || 1000 : 0;
+      timer = window.setTimeout(() => {
+        if (!canProgress() || playerClockRef.current !== clock) return;
+        remainingMs = Math.max(0, deadline - nowFn());
+        showRemaining();
+        if (remainingMs > 0) {
+          schedule();
+        } else {
+          playerClockRef.current = null;
+          onTimeout();
+        }
+      }, untilNextTick);
+    };
+    const clock: PlayerClock = {
+      pause: () => {
+        stop();
+        remainingMs = Math.max(0, deadline - nowFn());
+        showRemaining();
+      },
+      resume: () => {
+        deadline = nowFn() + remainingMs;
+        schedule();
+      },
+      stop,
+    };
+    playerClockRef.current = clock;
+    showRemaining();
+    if (!pausedRef.current) clock.resume();
+    return () => {
+      stop();
+      if (playerClockRef.current === clock) playerClockRef.current = null;
+    };
+  }, [phaseScope, generation, roundCount, currentSpeaker, me?.isAlive, me?.canVote]);
 
   // Phase transition driver
   useEffect(() => {
-    if (!isCurrentMatch() || winner || !players.length || isProcessingAI) return;
+    if (!canProgress() || winner || !players.length || processingScopeRef.current) return;
     const timer = window.setTimeout(() => {
-      if (!isCurrentMatch()) return;
+      release();
+      if (!canProgress() || processingScopeRef.current) return;
       if (phase === GamePhase.NIGHT_START) beginNight();
       else if (phase === GamePhase.NIGHT_WEREWOLVES) handleWerewolfPhase();
       else if (phase === GamePhase.NIGHT_SEER) handleSeerPhase();
@@ -449,8 +500,13 @@ export function useGameState(authContext: AuthContext) {
       else if (shouldAutoResolveVote(phase, me)) finishVote(null);
     }, 700);
 
-    return trackTimer(() => window.clearTimeout(timer));
-  }, [phase, players, isProcessingAI, winner, currentSpeaker, speakingQueue, deadThisRound, nightState]);
+    const release = trackTimer(() => {
+      window.clearTimeout(timer);
+      if (phaseDelayRef.current === release) phaseDelayRef.current = null;
+    });
+    phaseDelayRef.current = release;
+    return release;
+  }, [phaseScope, generation, pause, players, isProcessingAI, winner, currentSpeaker, speakingQueue, deadThisRound, nightState]);
 
   // Game record saving
   useEffect(() => {
@@ -521,10 +577,10 @@ export function useGameState(authContext: AuthContext) {
     }
     invalidateMatch();
     matchActiveRef.current = true;
+    setPause({ isPaused: false });
     setIsProcessingAI(false);
     setSpeechTimer(null);
     setWolfCountdown(null);
-    setVoteDeadline(null);
     setVoteTimer(null);
     resetAIMemory();
     speechAudio.reset(); // new game: cancel audio, clear play-once dedupe
@@ -639,84 +695,113 @@ export function useGameState(authContext: AuthContext) {
     setPhase(GamePhase.NIGHT_WEREWOLVES);
   };
 
-  const handleWerewolfPhase = async () => {
-    if (!isCurrentMatch()) return;
+  const expireWolfChoice = () => {
+    if (!me?.isAlive || me.role !== Role.WEREWOLF || nightState.wolfKillId) return;
+    const fallbackTarget = players.find(player => player.isAlive && player.role !== Role.WEREWOLF);
+    if (fallbackTarget) {
+      addLog(`Wolf timer expired. Auto selected Player ${fallbackTarget.id}.`, true, undefined, `Wolf timer expired. Auto selected Player ${fallbackTarget.id}.`, 'wolf');
+      setNightState(prev => ({ ...prev, wolfKillId: fallbackTarget.id }));
+    }
+    setPhase(GamePhase.NIGHT_SEER);
+  };
+
+  const expireHumanSpeech = () => {
+    addLog('Time expired. Speech skipped.', true, undefined, 'Time expired. Speech skipped.', 'system');
+    setSpokenPlayerIds(prev => new Set(prev).add(MY_PLAYER_ID));
+    setCurrentSpeaker(null);
+  };
+
+  const handleWerewolfPhase = () => {
+    if (phaseScope.wolfChatStarted) return;
+    phaseScope.wolfChatStarted = true;
     const humanWolf = me?.role === Role.WEREWOLF && me.isAlive;
     const wolves = players.filter(player => player.role === Role.WEREWOLF && player.isAlive);
-    if (wolfChat.length === 0 && wolves.length > 0) {
+    const loadChat = async () => {
+      if (!wolves.length) return;
       try {
-        const chat = await generateWolfChat(wolves, players, logs, Math.max(1, roundCount), voteRecords, gameLanguage);
-        if (!isCurrentMatch()) return;
-        setWolfChat(chat);
+        let commitChat: (() => void) | undefined;
+        const chat = await generateWolfChat(wolves, players, logs, Math.max(1, roundCount), voteRecords, gameLanguage, {
+          runWhenActive,
+          deferCommit: commit => { commitChat = commit; },
+        });
+        await runWhenActive(() => {
+          commitChat?.();
+          setWolfChat(chat);
+        });
       } catch {
         // Wolf chat is cosmetic — a failed AI call must never block the night.
       }
+    };
+    if (humanWolf) {
+      // A human wolf can choose a target before the cosmetic chat arrives.
+      void loadChat();
+      return;
     }
-    if (!isCurrentMatch()) return;
-    if (humanWolf) return;
 
-    await runCurrentAIPhase(async () => {
+    void runCurrentAIPhase(async () => {
+      await loadChat();
       const leader = wolves[0];
-      const action = leader ? await generateAIAction(leader, players, logs, 'KILL', voteRecords) : { targetId: null };
-      if (!isCurrentMatch()) return;
-      const fallback = players.find(player => player.isAlive && player.role !== Role.WEREWOLF);
-      const targetId = action.targetId || fallback?.id || null;
-      if (targetId) setNightState(prev => ({ ...prev, wolfKillId: targetId }));
+      const action = await runWhenActive(() => leader ? generateAIAction(leader, players, logs, 'KILL', voteRecords) : { targetId: null });
+      await runWhenActive(() => {
+        const fallback = players.find(player => player.isAlive && player.role !== Role.WEREWOLF);
+        const targetId = action?.targetId || fallback?.id || null;
+        if (targetId) setNightState(prev => ({ ...prev, wolfKillId: targetId }));
+        setPhase(GamePhase.NIGHT_SEER);
+      });
     }, () => {
       addLog('AI error. Default wolf target used.', true, undefined, 'AI error. Default wolf target used.', 'system');
       const fallback = players.find(player => player.isAlive && player.role !== Role.WEREWOLF);
       if (fallback) setNightState(prev => ({ ...prev, wolfKillId: fallback.id }));
+      setPhase(GamePhase.NIGHT_SEER);
     });
-    if (!isCurrentMatch()) return;
-    setPhase(GamePhase.NIGHT_SEER);
   };
 
   const handleSeerPhase = async () => {
-    if (!isCurrentMatch()) return;
     if (me?.role === Role.SEER && me.isAlive) return;
     await runCurrentAIPhase(async () => {
       const seer = players.find(player => player.role === Role.SEER && player.isAlive);
-      if (seer) {
-        const action = await generateAIAction(seer, players, logs, 'CHECK', voteRecords);
-        if (!isCurrentMatch()) return;
-        const target = players.find(player => player.id === action.targetId);
+      const action = seer ? await generateAIAction(seer, players, logs, 'CHECK', voteRecords) : null;
+      await runWhenActive(() => {
+        const target = players.find(player => player.id === action?.targetId);
         if (target) setAiSeerLastCheck({ targetId: target.id, isGood: target.role !== Role.WEREWOLF });
-      }
+        setPhase(GamePhase.NIGHT_WITCH);
+      });
     }, () => {
       addLog('AI error. Seer check skipped.', true, undefined, 'AI error. Seer check skipped.', 'system');
+      setPhase(GamePhase.NIGHT_WITCH);
     });
-    if (!isCurrentMatch()) return;
-    setPhase(GamePhase.NIGHT_WITCH);
   };
 
   const handleWitchPhase = async () => {
-    if (!isCurrentMatch()) return;
     if (me?.role === Role.WITCH && me.isAlive) return;
     await runCurrentAIPhase(async () => {
       const witch = players.find(player => player.role === Role.WITCH && player.isAlive);
+      let nextNight = { ...nightState };
+      let nextWitch = { ...witchStatus };
       if (witch) {
-        let nextNight = { ...nightState };
-        let nextWitch = { ...witchStatus };
         const killedPlayer = players.find(player => player.id === nightState.wolfKillId);
         if (nightState.wolfKillId && witchStatus.hasSave && killedPlayer?.role !== Role.WEREWOLF && Math.random() > 0.45) {
           nextNight = { ...nextNight, witchSaved: true };
           nextWitch = { ...nextWitch, hasSave: false };
         } else if (witchStatus.hasPoison && Math.random() > 0.72) {
           const action = await generateAIAction(witch, players, logs, 'POISON', voteRecords);
-          if (!isCurrentMatch()) return;
           if (action.targetId && action.targetId !== nightState.wolfKillId) {
             nextNight = { ...nextNight, witchPoisonId: action.targetId };
             nextWitch = { ...nextWitch, hasPoison: false };
           }
         }
-        setNightState(nextNight);
-        setWitchStatus(nextWitch);
       }
+      await runWhenActive(() => {
+        if (witch) {
+          setNightState(nextNight);
+          setWitchStatus(nextWitch);
+        }
+        setPhase(GamePhase.DAY_ANNOUNCE);
+      });
     }, () => {
       addLog('AI error. Witch action skipped.', true, undefined, 'AI error. Witch action skipped.', 'system');
+      setPhase(GamePhase.DAY_ANNOUNCE);
     });
-    if (!isCurrentMatch()) return;
-    setPhase(GamePhase.DAY_ANNOUNCE);
   };
 
   /**
@@ -798,8 +883,7 @@ export function useGameState(authContext: AuthContext) {
   };
 
   const handleDiscussion = async () => {
-    if (!isCurrentMatch()) return;
-    if (currentSpeaker || isProcessingAI) return;
+    if (currentSpeaker) return;
     if (speakingQueue.length === 0) {
       addLog('Discussion ended. Voting starts.', true, undefined, 'Discussion ended. Exile voting starts.', 'system');
       setPhase(GamePhase.DAY_VOTING);
@@ -809,20 +893,18 @@ export function useGameState(authContext: AuthContext) {
     const nextSpeaker = speakingQueue[0];
     setSpeakingQueue(prev => prev.slice(1));
     setCurrentSpeaker(nextSpeaker);
-    // Skip dead human players — they spoke their last words already
-  if (!nextSpeaker.isAlive && nextSpeaker.isHuman) {
-    addLog(`Dead player ${nextSpeaker.id} has no further speech.`, true, undefined, `Player ${nextSpeaker.id} is out. Speech skipped.`, 'system');
-    setSpokenPlayerIds(prev => new Set(prev).add(nextSpeaker.id));
-    setCurrentSpeaker(null);
-    return;
-  }
-  // Human alive? Wait for them to type
-  if (nextSpeaker.isHuman) return;
+    // Skip dead human players — they spoke their last words already.
+    if (!nextSpeaker.isAlive && nextSpeaker.isHuman) {
+      addLog(`Dead player ${nextSpeaker.id} has no further speech.`, true, undefined, `Player ${nextSpeaker.id} is out. Speech skipped.`, 'system');
+      setSpokenPlayerIds(prev => new Set(prev).add(nextSpeaker.id));
+      setCurrentSpeaker(null);
+      return;
+    }
+    if (nextSpeaker.isHuman) return;
 
-    let ttsText = '';
-    let ttsLogId = '';
     await runCurrentAIPhase(async () => {
       const seerInfo = nextSpeaker.role === Role.SEER ? aiSeerLastCheck : null;
+      let commitSpeech: (() => void) | undefined;
       const response = await generateAIDialogue(
         nextSpeaker,
         players,
@@ -833,49 +915,43 @@ export function useGameState(authContext: AuthContext) {
         seerInfo,
         voteRecords,
         nightState,
-        gameLanguage
-      );
-      if (!isCurrentMatch()) return;
-      ttsLogId = addLog(response.en, false, nextSpeaker.id, response.zh, 'speech');
-      // TTS reads the FINAL displayed text (post roster-guard, post
-      // translation): the same field pick the log renderer makes for the
-      // fixed game language.
-      ttsText = pickTranslationSource(
-        { message: response.en, translation: response.zh, isSystem: false },
         gameLanguage,
+        { runWhenActive, deferCommit: commit => { commitSpeech = commit; } },
       );
-      setSpokenPlayerIds(prev => new Set(prev).add(nextSpeaker.id));
+      await runWhenActive(async () => {
+        commitSpeech?.();
+        const ttsLogId = addLog(response.en, false, nextSpeaker.id, response.zh, 'speech');
+        setSpokenPlayerIds(prev => new Set(prev).add(nextSpeaker.id));
+        const ttsText = pickTranslationSource(
+          { message: response.en, translation: response.zh, isSystem: false },
+          gameLanguage,
+        );
+        if (!ttsText) return;
+        try {
+          await speechAudio.enqueue(
+            ttsText,
+            speechAudio.speechLangTag(ttsText, gameLanguage),
+            nextSpeaker.id,
+            ttsLogId,
+          );
+        } catch {
+          // Audio is presentation-only; cancellation/failure never stalls play.
+        }
+      });
+      await runWhenActive(() => setCurrentSpeaker(null));
     }, () => {
       addLog(`Player ${nextSpeaker.id} speech skipped (AI error).`, true, undefined, `AI error. Player ${nextSpeaker.id}'s speech was skipped.`, 'system');
       setSpokenPlayerIds(prev => new Set(prev).add(nextSpeaker.id));
+      setCurrentSpeaker(null);
     });
-    if (!isCurrentMatch()) return;
-    // Presentation-only TTS: awaited so audio and pacing stay in sync, but
-    // enqueue always resolves (end / error / hard max duration / disabled),
-    // so this can never stall the turn or alter vote deadlines.
-    if (ttsText && ttsLogId) {
-      try {
-        await speechAudio.enqueue(
-          ttsText,
-          speechAudio.speechLangTag(ttsText, gameLanguage),
-          nextSpeaker.id,
-          ttsLogId,
-        );
-      } catch {
-        // Audio is presentation-only; cancellation/failure never stalls play.
-      }
-    }
-    if (!isCurrentMatch()) return;
-    setCurrentSpeaker(null);
   };
 
   const finishVote = async (humanTargetId: number | null) => {
-    if (!isCurrentMatch()) return;
-    // Synchronously clear the vote deadline to prevent a timeout/click race
-    // from resolving the same vote round twice.
-    setVoteDeadline(null);
-    setVoteTimer(null);
+    if (phase !== GamePhase.DAY_VOTING) return;
     await runCurrentAIPhase(async () => {
+      // The synchronous AI lock lets only the first click or expiry take the vote.
+      stopPlayerClock();
+      setVoteTimer(null);
       const votes: Record<number, number> = {};
       const votesByVoter: Record<number, number | null> = {};
       const humanCanVote = Boolean(me?.isAlive && me.canVote);
@@ -891,85 +967,93 @@ export function useGameState(authContext: AuthContext) {
 
       const aiVoters = players.filter(player => player.isAlive && !player.isHuman && player.canVote);
       for (const voter of aiVoters) {
-        await waitForMatch(180);
-        if (!isCurrentMatch()) return;
-        let targetId: number | null = null;
-        try {
-          targetId = (await generateAIAction(voter, players, logs, 'VOTE', voteRecords)).targetId;
-        } catch {
-          // Failed AI vote counts as abstain — keep the tally moving.
-        }
-        if (!isCurrentMatch()) return;
-        votesByVoter[voter.id] = targetId;
-        if (targetId) votes[targetId] = (votes[targetId] || 0) + 1;
-      }
-
-      const newVoteRecords = createVoteRecords(Math.max(1, roundCount), votesByVoter);
-      setVoteRecords(prev => [...prev, ...newVoteRecords]);
-      addLog(
-        `Vote record: ${newVoteRecords.map(v => `${v.voterId}->${v.targetId || 'skip'}`).join(', ')}`,
-        true,
-        undefined,
-        `Votes: ${newVoteRecords.map(v => `Player ${v.voterId} -> ${v.targetId ? `Player ${v.targetId}` : 'abstain'}`).join(', ')}`,
-        'vote'
-      );
-
-      const eliminatedPlayerId = resolveVoteResult(votes);
-      if (!eliminatedPlayerId) {
-        addLog('Tie vote. No one is exiled.', true, undefined, 'Tie vote. No one is exiled.', 'vote');
-        setPhase(GamePhase.NIGHT_START);
-        return;
-      }
-
-      const target = players.find(player => player.id === eliminatedPlayerId);
-      const outcome = applyElimination(players, eliminatedPlayerId, 'VOTE');
-      setPlayers(outcome.players);
-      if (outcome.sparedByIdiot) {
-        addLog(`Player ${eliminatedPlayerId} reveals Idiot and survives.`, true, undefined, `Player ${eliminatedPlayerId} reveals as the Idiot and survives, but loses their vote.`, 'action');
-        setPhase(GamePhase.NIGHT_START);
-        return;
-      }
-
-      addLog(`Player ${eliminatedPlayerId} was exiled.`, true, undefined, `Player ${eliminatedPlayerId} was exiled.`, 'vote');
-      if (outcome.winner) {
-        setWinner(outcome.winner);
-        setPhase(GamePhase.GAME_OVER);
-        return;
-      }
-
-      if (target?.role === Role.HUNTER) {
-        if (target.isHuman) {
-          setPendingHunterId(target.id);
-          setHunterReturnPhase(GamePhase.NIGHT_START);
-          setPhase(GamePhase.DAY_HUNTER_SHOT);
-          return;
-        }
-        const aliveTargets = outcome.players.filter(player => player.isAlive && player.id !== target.id);
-        const shot = aliveTargets[Math.floor(Math.random() * aliveTargets.length)];
-        if (shot) {
-          const shotOutcome = applyElimination(outcome.players, shot.id, 'HUNTER');
-          addLog(`Hunter shoots Player ${shot.id}.`, true, undefined, `Hunter shoots Player ${shot.id}.`, 'action');
-          setPlayers(shotOutcome.players);
-          if (shotOutcome.winner) {
-            setWinner(shotOutcome.winner);
-            setPhase(GamePhase.GAME_OVER);
-            return;
+        await runWhenActive(() => waitForMatch(180));
+        const targetId = await runWhenActive(async () => {
+          try {
+            return (await generateAIAction(voter, players, logs, 'VOTE', voteRecords)).targetId;
+          } catch {
+            // Failed AI vote counts as abstain — keep the tally moving.
+            return null;
           }
-        }
+        });
+        const counted = await runWhenActive(() => {
+          votesByVoter[voter.id] = targetId ?? null;
+          if (targetId) votes[targetId] = (votes[targetId] || 0) + 1;
+          return true;
+        });
+        if (!counted) return;
       }
 
-      setPhase(GamePhase.NIGHT_START);
+      await runWhenActive(() => settleVote(votes, votesByVoter));
     }, () => {
       addLog('AI error during voting. Night begins.', true, undefined, 'AI error during voting. Night begins.', 'system');
       setPhase(GamePhase.NIGHT_START);
     });
   };
 
+  const settleVote = (votes: Record<number, number>, votesByVoter: Record<number, number | null>) => {
+    const newVoteRecords = createVoteRecords(Math.max(1, roundCount), votesByVoter);
+    setVoteRecords(prev => [...prev, ...newVoteRecords]);
+    addLog(
+      `Vote record: ${newVoteRecords.map(v => `${v.voterId}->${v.targetId || 'skip'}`).join(', ')}`,
+      true,
+      undefined,
+      `Votes: ${newVoteRecords.map(v => `Player ${v.voterId} -> ${v.targetId ? `Player ${v.targetId}` : 'abstain'}`).join(', ')}`,
+      'vote'
+    );
+
+    const eliminatedPlayerId = resolveVoteResult(votes);
+    if (!eliminatedPlayerId) {
+      addLog('Tie vote. No one is exiled.', true, undefined, 'Tie vote. No one is exiled.', 'vote');
+      setPhase(GamePhase.NIGHT_START);
+      return;
+    }
+
+    const target = players.find(player => player.id === eliminatedPlayerId);
+    const outcome = applyElimination(players, eliminatedPlayerId, 'VOTE');
+    setPlayers(outcome.players);
+    if (outcome.sparedByIdiot) {
+      addLog(`Player ${eliminatedPlayerId} reveals Idiot and survives.`, true, undefined, `Player ${eliminatedPlayerId} reveals as the Idiot and survives, but loses their vote.`, 'action');
+      setPhase(GamePhase.NIGHT_START);
+      return;
+    }
+
+    addLog(`Player ${eliminatedPlayerId} was exiled.`, true, undefined, `Player ${eliminatedPlayerId} was exiled.`, 'vote');
+    if (outcome.winner) {
+      setWinner(outcome.winner);
+      setPhase(GamePhase.GAME_OVER);
+      return;
+    }
+
+    if (target?.role === Role.HUNTER) {
+      if (target.isHuman) {
+        setPendingHunterId(target.id);
+        setHunterReturnPhase(GamePhase.NIGHT_START);
+        setPhase(GamePhase.DAY_HUNTER_SHOT);
+        return;
+      }
+      const aliveTargets = outcome.players.filter(player => player.isAlive && player.id !== target.id);
+      const shot = aliveTargets[Math.floor(Math.random() * aliveTargets.length)];
+      if (shot) {
+        const shotOutcome = applyElimination(outcome.players, shot.id, 'HUNTER');
+        addLog(`Hunter shoots Player ${shot.id}.`, true, undefined, `Hunter shoots Player ${shot.id}.`, 'action');
+        setPlayers(shotOutcome.players);
+        if (shotOutcome.winner) {
+          setWinner(shotOutcome.winner);
+          setPhase(GamePhase.GAME_OVER);
+          return;
+        }
+      }
+    }
+
+    setPhase(GamePhase.NIGHT_START);
+  };
+
   const handleHumanSpeechSubmit = () => {
-    if (!isCurrentMatch()) return;
-    if (currentSpeaker?.id !== MY_PLAYER_ID) return;
+    if (!canProgress() || currentSpeaker?.id !== MY_PLAYER_ID || !playerClockRef.current) return;
     const nextSpeech = normalizeHumanSpeech(userInput);
     if (!nextSpeech) return;
+    stopPlayerClock();
     addLog(nextSpeech, false, MY_PLAYER_ID, nextSpeech, 'speech');
     setSpokenPlayerIds(prev => new Set(prev).add(MY_PLAYER_ID));
     setUserInput('');
@@ -992,8 +1076,7 @@ export function useGameState(authContext: AuthContext) {
   };
 
   const handlePlayerAction = (targetId: number) => {
-    if (!isCurrentMatch()) return;
-    if (isProcessingAI) return;
+    if (!canProgress() || processingScopeRef.current) return;
     // Hunter shot: a dead Hunter can still act (the only dead-human action path)
     if (phase === GamePhase.DAY_HUNTER_SHOT && pendingHunterId === MY_PLAYER_ID) {
       handleHunterShot(targetId);
@@ -1028,7 +1111,7 @@ export function useGameState(authContext: AuthContext) {
   };
 
   const handleWitchSave = () => {
-    if (!isCurrentMatch()) return;
+    if (!canProgress() || phase !== GamePhase.NIGHT_WITCH || processingScopeRef.current) return;
     if (!witchStatus.hasSave || !nightState.wolfKillId) return;
     setNightState(prev => ({ ...prev, witchSaved: true }));
     setWitchStatus(prev => ({ ...prev, hasSave: false }));
@@ -1037,7 +1120,7 @@ export function useGameState(authContext: AuthContext) {
   };
 
   const skipWitch = () => {
-    if (!isCurrentMatch()) return;
+    if (!canProgress() || phase !== GamePhase.NIGHT_WITCH || processingScopeRef.current) return;
     addLog('Witch passed.', true, undefined, 'The Witch chose not to use a potion.', 'action');
     setPhase(GamePhase.DAY_ANNOUNCE);
   };
@@ -1058,6 +1141,7 @@ export function useGameState(authContext: AuthContext) {
   })();
 
   const skipCurrentSpeech = (): void => {
+    if (!canProgress()) return;
     // Cancels the in-flight utterance; the awaited enqueue promise settles and
     // the AI turn advances to the next speaker immediately.
     speechAudio.cancel();
@@ -1070,7 +1154,7 @@ export function useGameState(authContext: AuthContext) {
     gameLanguage,
     selectedPlayerId, setSelectedPlayerId,
     witchStatus, nightState, roundCount, winner,
-    isProcessingAI, isMuted, setIsMuted,
+    isProcessingAI, isPaused: pause.isPaused, isMuted, setIsMuted,
     audioVolume, setAudioVolume,
     ttsEnabled, setTtsEnabled,
     ttsRate, setTtsRate,
@@ -1087,6 +1171,6 @@ export function useGameState(authContext: AuthContext) {
     startGame, leaveGame, handlePlayerAction,
     handleWitchSave, skipWitch,
     finishVote, handleHumanSpeechSubmit,
-    skipCurrentSpeech,
+    skipCurrentSpeech, togglePause,
   };
 }
