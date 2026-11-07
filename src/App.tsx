@@ -36,6 +36,7 @@ import { mapGameSetupToConfig, type GameSetup, type LobbySubview } from './lobby
 import { useLobbyFeatures } from './hooks/useLobbyFeatures';
 import { useEconomy, type EconomyViewState } from './hooks/useEconomy';
 import { SKIN_CATALOG_BY_ID } from './economy/catalog';
+import { useEquippedSkinProduct } from './economy/equippedSkin';
 import { navigateEconomyRoute, readEconomyRoute, type EconomyRoute } from './economy/routes';
 import { getTerminalRewardRequest } from './economy/gameRewards';
 import type { SkinStoreFilter } from './components/SkinStore';
@@ -222,6 +223,7 @@ const App: React.FC = () => {
   const displayedCoins = economy.state.coins;
   const displayedCrystals = economy.state.crystals;
   const equippedSkinName = resolveEquippedSkinName(economy.state, auth.isGuest);
+  const equippedSkinProduct = useEquippedSkinProduct(economy, auth.isGuest ? guestPrincipalId : auth.session?.user.id ?? null);
 
   const finishStartRequest = React.useCallback((setup: GameSetup) => {
     const config = mapGameSetupToConfig(setup);
@@ -453,6 +455,7 @@ const App: React.FC = () => {
                 <GamePlayerSeat key={player.id} desktopStyle={seatStyle(index, game.players.length)}>
                   <PlayerCard
                     player={player} isMe={player.id === MY_PLAYER_ID}
+                    equippedSkin={player.id === MY_PLAYER_ID ? equippedSkinProduct : null}
                     revealRole={game.phase === GamePhase.GAME_OVER}
                     isSelected={game.selectedPlayerId === player.id}
                     isSpeaking={game.currentSpeaker?.id === player.id}

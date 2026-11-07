@@ -347,6 +347,8 @@
 .skin-card-art { overflow: hidden; border-radius: 10px; background: #0b0b0c; }
 .skin-artwork { display: block; width: 100%; aspect-ratio: 4 / 5; }
 .skin-artwork--large { max-height: 58vh; }
+.wuxia-character-avatar { display: block; flex-shrink: 0; padding: 1px; overflow: visible; pointer-events: none; }
+.wuxia-character { pointer-events: none; }
 .skin-card-heading { padding: 11px 3px 6px; }
 .skin-card-heading > span { color: #8b8983; font-size: .61rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
 .skin-card-heading h2 { margin: 4px 0; font-family: Cinzel, Georgia, serif; font-size: .98rem; }
@@ -519,4 +521,25 @@
   .shop-hub-tabs button:hover:not(:disabled),
   .onboarding-actions button:hover:not(:disabled),
   .wol-activity-card:hover { transform: none; }
+}
+
+.skin-check-in-guide,
+.skin-earnability {
+  color: #cbd5e1;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.skin-check-in-guide {
+  margin: 0.75rem 0;
+}
+
+.skin-earnability p {
+  margin: 0;
+}
+
+.skin-check-in-guide a {
+  color: #bfdbfe;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
 }

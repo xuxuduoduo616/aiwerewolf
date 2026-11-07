@@ -418,6 +418,7 @@ export const getGuestEconomyStorageKey = (principalId: string): string =>
 export const readGuestEconomyLedgerForPrincipal = (
   principalId: string,
   storage?: Storage | null,
+  { migrateLegacy = true }: { migrateLegacy?: boolean } = {},
 ): LedgerReadResult => {
   if (!isGuestPrincipalId(principalId)) {
     return { status: 'corrupt', ledger: null, state: EMPTY_STATE() };
@@ -429,20 +430,21 @@ export const readGuestEconomyLedgerForPrincipal = (
   const targetKey = getGuestEconomyStorageKey(principalId);
   try {
     const raw = activeStorage.getItem(targetKey);
+    const migrationMarker = migrateLegacy ? activeStorage.getItem(GUEST_ECONOMY_MIGRATION_KEY) : null;
+    const pendingMarker = `pending:${principalId}`;
     if (raw !== null) {
-      if (
-        activeStorage.getItem(GUEST_ECONOMY_MIGRATION_KEY) === null
-        && activeStorage.getItem(GUEST_ECONOMY_STORAGE_KEY) !== null
-      ) {
-        try { activeStorage.setItem(GUEST_ECONOMY_MIGRATION_KEY, principalId); } catch {}
-      }
       const parsed = parseGuestEconomyLedger(raw, principalId);
-      return parsed
-        ? { status: 'valid', ledger: parsed.ledger, state: parsed.state }
-        : { status: 'corrupt', ledger: null, state: EMPTY_STATE() };
+      if (!parsed) return { status: 'corrupt', ledger: null, state: EMPTY_STATE() };
+      if (
+        migrateLegacy && (migrationMarker === pendingMarker
+          || (migrationMarker === null && activeStorage.getItem(GUEST_ECONOMY_STORAGE_KEY) !== null))
+      ) {
+        activeStorage.setItem(GUEST_ECONOMY_MIGRATION_KEY, principalId);
+      }
+      return { status: 'valid', ledger: parsed.ledger, state: parsed.state };
     }
 
-    if (activeStorage.getItem(GUEST_ECONOMY_MIGRATION_KEY) !== null) {
+    if (!migrateLegacy || (migrationMarker !== null && migrationMarker !== pendingMarker)) {
       return { status: 'missing', ledger: createEmptyGuestEconomyLedger(principalId), state: EMPTY_STATE() };
     }
     const legacyRaw = activeStorage.getItem(GUEST_ECONOMY_STORAGE_KEY);
@@ -452,6 +454,9 @@ export const readGuestEconomyLedgerForPrincipal = (
     const legacy = parseGuestEconomyLedger(legacyRaw);
     if (!legacy) return { status: 'corrupt', ledger: null, state: EMPTY_STATE() };
     const migrated: GuestEconomyLedgerV1 = { ...legacy.ledger, namespace: principalId };
+    // Reserve a single owner before copying. An interrupted copy can be retried
+    // only by that owner, while the completed marker keeps its original format.
+    if (migrationMarker === null) activeStorage.setItem(GUEST_ECONOMY_MIGRATION_KEY, pendingMarker);
     activeStorage.setItem(targetKey, JSON.stringify(migrated));
     activeStorage.setItem(GUEST_ECONOMY_MIGRATION_KEY, principalId);
     return { status: 'valid', ledger: migrated, state: legacy.state };

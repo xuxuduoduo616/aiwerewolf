@@ -33,7 +33,8 @@ describe('useGuestEconomy identity runtime', () => {
       const resultCode = useRef('');
       if (!didRun.current) {
         didRun.current = true;
-        resultCode.current = economy.finishTutorial().code;
+        const result = economy.finishTutorial();
+        if ('code' in result) resultCode.current = result.code;
       }
       return <output>{resultCode.current}|{economy.feedback}</output>;
     };
@@ -55,12 +56,12 @@ describe('useGuestEconomy identity runtime', () => {
       const phase = useRef(0);
       if (phase.current === 0) {
         phase.current = 1;
-        expect(economy.finishTutorial().code).toBe('applied');
+        expect(economy.finishTutorial()).toMatchObject({ code: 'applied' });
         setIsGuest(false);
       } else if (phase.current === 1 && !isGuest) {
         phase.current = 2;
         writesBeforeAccountAction = storage.setItem.mock.calls.length;
-        expect(economy.finishTutorial().code).toBe('account-unavailable');
+        expect(economy.finishTutorial()).toMatchObject({ code: 'account-unavailable' });
         writesAfterAccountAction = storage.setItem.mock.calls.length;
       }
       return <output data-identity={isGuest ? 'guest' : 'account'}>{economy.feedback}</output>;

@@ -368,6 +368,54 @@ describe('useAccountEconomy live effects and transport behavior', () => {
     expect(ordinal).toBe(3);
   });
 
+  it('uses verified server state for unlock, equipment and refresh', async () => {
+    const initial = accountState({ inventory: [], equippedSkinId: null });
+    const owned = accountState({ wallet: { coins: 25, crystals: 0 }, equippedSkinId: null });
+    const equipped = { ...owned, equippedSkinId: 'mist-wanderer' };
+    const confirmUnlock = deferred<Response>();
+    const queue = [
+      response(envelope(initial)),
+      response({ data: { accepted: true } }),
+      confirmUnlock.promise,
+      response({ data: { accepted: true } }),
+      response(envelope(equipped)),
+      response(envelope(equipped)),
+    ];
+    const posts: Record<string, unknown>[] = [];
+    const fetchImpl = vi.fn(async (_url: string | URL | Request, init?: RequestInit) => {
+      if (init?.method === 'POST') posts.push(JSON.parse(String(init.body)) as Record<string, unknown>);
+      const next = queue.shift();
+      if (!next) throw new Error('unexpected fetch');
+      return next;
+    }) as unknown as typeof fetch;
+    const { harness } = mount(session('account-a', 'generation-a'), fetchImpl);
+    await harness.settle();
+    await expect(harness.result.equipSkin('mist-wanderer')).resolves.toBe(false);
+    expect(posts).toHaveLength(0);
+
+    const first = harness.result.unlockSkin('mist-wanderer');
+    const second = harness.result.unlockSkin('mist-wanderer');
+    expect(harness.result.state.wallet.coins).toBe(900);
+    expect(harness.result.state.inventory).toEqual([]);
+    confirmUnlock.resolve(response(envelope(owned)));
+    await expect(Promise.all([first, second])).resolves.toEqual([true, true]);
+    await harness.settle();
+    expect(harness.result.state.wallet.coins).toBe(25);
+    expect(harness.result.state.inventory).toHaveLength(1);
+    expect(harness.result.state.equippedSkinId).toBeNull();
+
+    await expect(harness.result.equipSkin('mist-wanderer')).resolves.toBe(true);
+    await expect(harness.result.refresh()).resolves.toBe(true);
+    await harness.settle();
+    expect(harness.result.state.equippedSkinId).toBe('mist-wanderer');
+    expect(harness.result.state.wallet.coins).toBe(25);
+    expect(posts).toEqual([
+      { action: 'unlock_skin', skinId: 'mist-wanderer', idempotencyKey: expect.any(String) },
+      { action: 'equip_skin', skinId: 'mist-wanderer', idempotencyKey: expect.any(String) },
+    ]);
+    expect(queue).toHaveLength(0);
+  });
+
   it('retains one intent key through POST success/GET failure, explicit refresh and retry', async () => {
     const confirmed = accountState({
       wallet: { coins: 930, crystals: 0 },

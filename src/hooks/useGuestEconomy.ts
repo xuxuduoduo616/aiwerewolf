@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
   claimGuestDailyCheckIn,
   createEmptyGuestEconomyState,
@@ -17,7 +17,9 @@ import {
 export const ACCOUNT_ECONOMY_UNAVAILABLE = 'Account rewards and cosmetic changes are unavailable until the server economy is enabled.';
 
 type EconomyAction = 'check-in' | 'tutorial-skip' | 'tutorial-finish' | 'game-reward' | 'skin-unlock' | 'skin-equip';
+type GuestActionReturn = EconomyMutationResult | Promise<boolean>;
 export type EconomyIdentity = 'guest' | 'account';
+const GUEST_LEDGER_LOCK = 'aiwerewolf:guest-economy-ledger';
 
 export interface EconomyFeedbackState {
   identity: EconomyIdentity;
@@ -31,12 +33,12 @@ export interface UseGuestEconomyResult {
   feedback: string;
   clearFeedback: () => void;
   refresh: () => void;
-  checkIn: () => EconomyMutationResult;
-  skipTutorial: () => EconomyMutationResult;
-  finishTutorial: () => EconomyMutationResult;
-  rewardGame: (gameId: string, won: boolean) => EconomyMutationResult;
-  unlockSkin: (skinId: string) => EconomyMutationResult;
-  equipSkin: (skinId: string) => EconomyMutationResult;
+  checkIn: () => GuestActionReturn;
+  skipTutorial: () => GuestActionReturn;
+  finishTutorial: () => GuestActionReturn;
+  rewardGame: (gameId: string, won: boolean) => GuestActionReturn;
+  unlockSkin: (skinId: string) => GuestActionReturn;
+  equipSkin: (skinId: string) => GuestActionReturn;
 }
 
 const accountUnavailableResult = (): EconomyMutationResult => ({
@@ -90,63 +92,89 @@ const feedbackForResult = (action: EconomyAction, result: EconomyMutationResult)
 
 export const useGuestEconomy = (isGuest: boolean, guestPrincipalId: string | null = null): UseGuestEconomyResult => {
   const identity: EconomyIdentity = isGuest ? 'guest' : 'account';
+  const principal = isGuest ? guestPrincipalId : null;
   const initial = useMemo(
-    () => isGuest && guestPrincipalId ? readGuestEconomyLedgerForPrincipal(guestPrincipalId) : null,
-    // The hook must re-bootstrap only when the auth boundary changes.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isGuest, guestPrincipalId],
+    () => principal ? readGuestEconomyLedgerForPrincipal(principal, undefined, { migrateLegacy: false }) : null,
+    [principal],
   );
-  const [state, setState] = useState<GuestEconomyState>(initial?.state ?? createEmptyGuestEconomyState());
-  const [ledgerStatus, setLedgerStatus] = useState<LedgerReadResult['status'] | 'account'>(initial?.status ?? 'account');
-  const [feedback, setFeedback] = useState<EconomyFeedbackState>({ identity, message: '' });
+  const [snapshot, setSnapshot] = useState<{
+    principal: string;
+    state: GuestEconomyState;
+    status: LedgerReadResult['status'];
+  } | null>(null);
+  const [feedback, setFeedback] = useState<EconomyFeedbackState & { principal: string | null }>({
+    identity, principal, message: '',
+  });
+  const activeScope = useRef<{ principal: string | null } | null>(null);
+  useLayoutEffect(() => {
+    activeScope.current = { principal };
+    return () => { activeScope.current = null; };
+  }, [principal]);
 
   const refresh = useCallback(() => {
-    if (!isGuest) {
-      setState(createEmptyGuestEconomyState());
-      setLedgerStatus('account');
-      return;
-    }
-    if (!guestPrincipalId) {
-      setState(createEmptyGuestEconomyState());
-      setLedgerStatus('corrupt');
-      return;
-    }
-    const result = readGuestEconomyLedgerForPrincipal(guestPrincipalId);
-    setState(result.state);
-    setLedgerStatus(result.status);
-  }, [guestPrincipalId, isGuest]);
+    if (!principal) return;
+    const scope = activeScope.current;
+    if (scope?.principal !== principal) return;
+    const sync = (migrateLegacy: boolean) => {
+      if (activeScope.current !== scope) return;
+      const result = readGuestEconomyLedgerForPrincipal(principal, undefined, { migrateLegacy });
+      setSnapshot({ principal, state: result.state, status: migrateLegacy ? result.status : 'corrupt' });
+    };
+    // The origin-wide lock also serializes the existing one-time legacy copy.
+    const locks = navigator.locks;
+    if (locks) void locks.request(GUEST_LEDGER_LOCK, () => sync(true)).catch(() => sync(false));
+    else sync(false);
+  }, [principal]);
 
   useEffect(() => {
     refresh();
   }, [refresh]);
 
   useEffect(() => {
-    setFeedback({ identity, message: '' });
-  }, [identity]);
+    setFeedback({ identity, principal, message: '' });
+  }, [identity, principal]);
 
   useEffect(() => {
-    if (!isGuest || typeof window === 'undefined') return;
+    if (!principal) return;
     const handleStorage = (event: StorageEvent) => {
-      if (guestPrincipalId && event.key === getGuestEconomyStorageKey(guestPrincipalId)) refresh();
+      if (event.key === null || event.key === getGuestEconomyStorageKey(principal)) refresh();
     };
     window.addEventListener('storage', handleStorage);
     return () => window.removeEventListener('storage', handleStorage);
-  }, [guestPrincipalId, isGuest, refresh]);
+  }, [principal, refresh]);
 
   const run = useCallback((
     action: EconomyAction,
     operation: () => EconomyMutationResult,
-  ): EconomyMutationResult => {
-    const result = isGuest && !guestPrincipalId
-      ? missingGuestIdentityResult()
-      : runEconomyMutationForIdentity(isGuest, operation);
-    if (isGuest) {
-      setState(result.state);
-      setLedgerStatus(result.code === 'ledger-corrupt' ? 'corrupt' : 'valid');
-    }
-    setFeedback({ identity, message: feedbackForResult(action, result) });
-    return result;
-  }, [guestPrincipalId, identity, isGuest]);
+  ): GuestActionReturn => {
+    const publish = (result: EconomyMutationResult) => {
+      if (principal) {
+        const unavailable = ['ledger-corrupt', 'storage-unavailable', 'write-failed'].includes(result.code);
+        setSnapshot({ principal, state: result.state, status: unavailable ? 'corrupt' : 'valid' });
+      }
+      setFeedback({ identity, principal, message: feedbackForResult(action, result) });
+      return result;
+    };
+    if (!isGuest) return publish(accountUnavailableResult());
+    if (!principal) return publish(missingGuestIdentityResult());
+    if (typeof window === 'undefined') return publish(operation());
+
+    const scope = activeScope.current;
+    if (scope?.principal !== principal) return Promise.resolve(false);
+    const unavailable = () => {
+      if (activeScope.current === scope) {
+        const { state } = readGuestEconomyLedgerForPrincipal(principal, undefined, { migrateLegacy: false });
+        publish({ ok: false, code: 'storage-unavailable', state });
+      }
+      return false;
+    };
+    const locks = navigator.locks;
+    if (!locks) return Promise.resolve(unavailable());
+    return locks.request(GUEST_LEDGER_LOCK, () => {
+      if (activeScope.current !== scope) return false;
+      return publish(operation()).ok;
+    }).catch(unavailable);
+  }, [identity, isGuest, principal]);
 
   const checkIn = useCallback(() => run('check-in', () => claimGuestDailyCheckIn(undefined, new Date(), guestPrincipalId ?? undefined)), [guestPrincipalId, run]);
   const skipTutorial = useCallback(() => run('tutorial-skip', () => recordGuestTutorialSkip(undefined, new Date(), guestPrincipalId ?? undefined)), [guestPrincipalId, run]);
@@ -158,14 +186,13 @@ export const useGuestEconomy = (isGuest: boolean, guestPrincipalId: string | nul
   const unlockSkin = useCallback((skinId: string) => run('skin-unlock', () => unlockGuestSkin(skinId, undefined, new Date(), guestPrincipalId ?? undefined)), [guestPrincipalId, run]);
   const equipSkin = useCallback((skinId: string) => run('skin-equip', () => equipGuestSkin(skinId, undefined, new Date(), guestPrincipalId ?? undefined)), [guestPrincipalId, run]);
 
+  const current = snapshot?.principal === principal ? snapshot : initial;
   return {
-    state: isGuest ? state : createEmptyGuestEconomyState(),
-    ledgerStatus: isGuest ? ledgerStatus : 'account',
+    state: current?.state ?? createEmptyGuestEconomyState(),
+    ledgerStatus: isGuest ? current?.status ?? 'corrupt' : 'account',
     isGuestEconomy: isGuest,
-    // Identity-tagging hides a prior guest/account message synchronously, before
-    // the boundary-clearing effect runs after commit.
-    feedback: getVisibleEconomyFeedback(identity, feedback),
-    clearFeedback: () => setFeedback({ identity, message: '' }),
+    feedback: feedback.principal === principal ? getVisibleEconomyFeedback(identity, feedback) : '',
+    clearFeedback: () => setFeedback({ identity, principal, message: '' }),
     refresh,
     checkIn,
     skipTutorial,

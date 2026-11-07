@@ -206,6 +206,15 @@ describe('cosmetic and tutorial contracts', () => {
       expect(html).toContain(label);
     }
     expect(html).toContain('Art prompt metadata');
+    expect(html.match(/class="skin-earnability"/g)).toHaveLength(4);
+    for (const days of [12, 14, 24, 35]) {
+      expect(html).toContain(`From zero: ${days} check-ins.`);
+      expect(html).toContain(`With your balance: ${days} check-ins left.`);
+    }
+    const premiumCards = html.match(/<article[^>]+skin-card--premium[^>]+>[\s\S]*?<\/article>/g);
+    expect(premiumCards).toHaveLength(3);
+    for (const card of premiumCards ?? []) expect(card).not.toContain('skin-earnability');
+    expect(html).toContain('Daily Check-In');
     expect(html).toContain('never change rules, AI decisions, rewards, hit areas, or hidden information');
     expect(html).not.toMatch(/<img[^>]+https?:\/\//);
   });
@@ -273,6 +282,7 @@ describe('cosmetic and tutorial contracts', () => {
     expect(html).toContain('Premium · Core Collection');
     expect(html).toContain('37 Crystals');
     expect(html).toContain('Unlock Server Mist Edition for 37 crystals');
+    expect(html).not.toContain('skin-earnability');
 
     const product = SKIN_CATALOG_BY_ID.get('mist-wanderer');
     expect(product).toBeDefined();

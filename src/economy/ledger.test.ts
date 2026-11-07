@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   CHECK_IN_MILESTONES,
   CHECK_IN_REWARDS,
+  GUEST_ECONOMY_MIGRATION_KEY,
   GUEST_ECONOMY_NAMESPACE,
   GUEST_ECONOMY_SCHEMA,
   GUEST_ECONOMY_STORAGE_KEY,
@@ -166,6 +167,60 @@ describe('fail-closed recovery and account boundary', () => {
     expect(readGuestEconomyLedgerForPrincipal(guestB, storage).state.coins).toBe(0);
   });
 
+  it.each(['reservation', 'target copy', 'completion'] as const)(
+    'preserves the v1 ledger and exactly one owner after a denied %s',
+    stage => {
+      const { storage } = createMemoryStorage();
+      finishGuestTutorial(storage, localNoon(0));
+      for (let offset = 0; offset < 12; offset += 1) claimGuestDailyCheckIn(storage, localNoon(offset));
+      expect(unlockGuestSkin('mist-wanderer', storage, localNoon(11)).ok).toBe(true);
+      expect(equipGuestSkin('mist-wanderer', storage, localNoon(11)).ok).toBe(true);
+      const raw = storage.getItem(GUEST_ECONOMY_STORAGE_KEY);
+      const target = getGuestEconomyStorageKey(guestA);
+      const denied = {
+        ...storage,
+        setItem: (key: string, value: string) => {
+          if (
+            (stage === 'reservation' && key === GUEST_ECONOMY_MIGRATION_KEY && value !== guestA)
+            || (stage === 'target copy' && key === target)
+            || (stage === 'completion' && key === GUEST_ECONOMY_MIGRATION_KEY && value === guestA)
+          ) throw new Error('Storage denied');
+          storage.setItem(key, value);
+        },
+      };
+
+      expect(readGuestEconomyLedgerForPrincipal(guestA, denied).status).toBe('corrupt');
+      const persistedCopy = storage.getItem(target);
+      expect(persistedCopy !== null).toBe(stage === 'completion');
+      if (stage === 'reservation') {
+        expect(storage.getItem(GUEST_ECONOMY_MIGRATION_KEY)).toBeNull();
+      } else {
+        expect(storage.getItem(GUEST_ECONOMY_MIGRATION_KEY)).toBe(`pending:${guestA}`);
+        expect(readGuestEconomyLedgerForPrincipal(guestB, storage).status).toBe('missing');
+      }
+
+      const retried = readGuestEconomyLedgerForPrincipal(guestA, storage);
+      expect(retried.status).toBe('valid');
+      expect(retried.state).toMatchObject({
+        coins: 250, equippedSkinId: 'mist-wanderer',
+        inventory: ['avatar-frame:ink-ring', 'skin:mist-wanderer'], claimedMilestoneDays: [7],
+      });
+      expect(storage.getItem(GUEST_ECONOMY_MIGRATION_KEY)).toBe(guestA);
+      expect(storage.getItem(GUEST_ECONOMY_STORAGE_KEY)).toBe(raw);
+      expect(readGuestEconomyLedgerForPrincipal(guestB, storage).status).toBe('missing');
+      if (persistedCopy !== null) expect(storage.getItem(target)).toBe(persistedCopy);
+    },
+  );
+
+  it('does not replay the legacy source when an original completed marker already exists', () => {
+    const { storage } = createMemoryStorage();
+    finishGuestTutorial(storage, localNoon(0));
+    storage.setItem(GUEST_ECONOMY_MIGRATION_KEY, guestA);
+    expect(readGuestEconomyLedgerForPrincipal(guestA, storage).status).toBe('missing');
+    expect(readGuestEconomyLedgerForPrincipal(guestB, storage).status).toBe('missing');
+    expect(storage.getItem(getGuestEconomyStorageKey(guestA))).toBeNull();
+  });
+
   it('does not overwrite an existing principal ledger and fails corrupt target data closed', () => {
     const { storage } = createMemoryStorage();
     finishGuestTutorial(storage, localNoon(0), guestA);
@@ -177,6 +232,41 @@ describe('fail-closed recovery and account boundary', () => {
     storage.setItem(getGuestEconomyStorageKey(guestB), corrupt);
     expect(readGuestEconomyLedgerForPrincipal(guestB, storage).status).toBe('corrupt');
     expect(storage.getItem(getGuestEconomyStorageKey(guestB))).toBe(corrupt);
+  });
+
+  it('replays v1 purchase, equip and milestone assets without writing or duplicating Day 60 ownership', () => {
+    const { storage } = createMemoryStorage();
+    for (let offset = 0; offset < 60; offset += 1) {
+      expect(claimGuestDailyCheckIn(storage, localNoon(offset)).ok).toBe(true);
+      if (offset === 11) {
+        expect(unlockGuestSkin('mist-wanderer', storage, localNoon(offset)).ok).toBe(true);
+        expect(equipGuestSkin('mist-wanderer', storage, localNoon(offset)).ok).toBe(true);
+      }
+    }
+    const legacyRaw = storage.getItem(GUEST_ECONOMY_STORAGE_KEY);
+    expect(readGuestEconomyLedgerForPrincipal(guestA, storage, { migrateLegacy: false }).status).toBe('missing');
+    expect(storage.getItem(getGuestEconomyStorageKey(guestA))).toBeNull();
+    const migrated = readGuestEconomyLedgerForPrincipal(guestA, storage);
+    expect(migrated.state.equippedSkinId).toBe('mist-wanderer');
+    expect(migrated.state.claimedMilestoneDays).toEqual([7, 14, 30, 60]);
+    expect(migrated.state.inventory.filter(id => id === 'skin:mist-wanderer')).toHaveLength(1);
+    expect(storage.getItem(GUEST_ECONOMY_STORAGE_KEY)).toBe(legacyRaw);
+    const scopedRaw = storage.getItem(getGuestEconomyStorageKey(guestA));
+    expect(readGuestEconomyLedgerForPrincipal(guestA, storage, { migrateLegacy: false })).toEqual(migrated);
+    expect(storage.getItem(getGuestEconomyStorageKey(guestA))).toBe(scopedRaw);
+    expect(readGuestEconomyLedgerForPrincipal(guestB, storage).state.inventory).toEqual([]);
+  });
+
+  it('fails a denied write without clearing a verified v1 balance or ledger', () => {
+    const { storage } = createMemoryStorage();
+    expect(claimGuestDailyCheckIn(storage, localNoon(0), guestA).ok).toBe(true);
+    const key = getGuestEconomyStorageKey(guestA);
+    const raw = storage.getItem(key);
+    const denied = { ...storage, setItem: () => { throw new Error('Storage denied'); } };
+    const result = claimGuestDailyCheckIn(denied, localNoon(1), guestA);
+    expect(result.code).toBe('write-failed');
+    expect(result.state.coins).toBe(30);
+    expect(storage.getItem(key)).toBe(raw);
   });
   it.each([
     ['invalid JSON', '{bad-json'],

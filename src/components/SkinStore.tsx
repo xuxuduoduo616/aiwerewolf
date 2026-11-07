@@ -3,7 +3,10 @@ import { Check, Eye, History, LockKeyhole, Sparkles } from 'lucide-react';
 import AccessibleDialog from './AccessibleDialog';
 import EconomyBalances from './EconomyBalances';
 import SkinArtwork from './SkinArtwork';
+import SkinEarnability from './SkinEarnability';
 import { SKIN_CATALOG, type SkinProduct } from '../economy/catalog';
+import { localDayFromDate } from '../economy/ledger';
+import { economyRouteHash } from '../economy/routes';
 import type { AccountCatalogItem, AccountEconomyPhase, AccountMutationAction } from '../economy/accountEconomy';
 import type { EconomyActionReturn, EconomyViewState } from '../hooks/useEconomy';
 
@@ -128,6 +131,17 @@ const SkinStore: React.FC<Props> = ({
     return true;
   }), [filter, isGuest, state.accountCatalog]);
   const mutationUnavailable = mutationsDisabled || ledgerCorrupt;
+  const currentDay = isGuest ? localDayFromDate(new Date()) : state.serverDate;
+  const checkInProgress = currentDay && phase === 'ready' && !ledgerCorrupt ? {
+    balance: coins,
+    streak: state.checkInStreak,
+    lastCheckInDay: state.lastCheckInDay,
+    currentDay,
+    claimedMilestoneDays: state.claimedMilestoneDays,
+  } : undefined;
+  const hasCoinSkins = visibleProducts.some(product => isGuest
+    ? product.currency === 'coins'
+    : state.accountCatalog.some(item => item.id === product.id && item.currency === 'coins' && item.purchaseEnabled));
   const unavailableMessage = ledgerCorrupt
       ? isGuest
         ? 'Local economy data could not be verified. Unlock and equip actions are disabled without changing stored data.'
@@ -176,6 +190,15 @@ const SkinStore: React.FC<Props> = ({
       )}
       <p className="economy-live-feedback" role="status" aria-live="polite">{feedback}</p>
 
+      {hasCoinSkins && (
+        <p className="skin-check-in-guide">
+          Earn Coins from <a href={economyRouteHash({ page: 'daily-check-in' })}>Daily Check-In</a>. Estimates assume consecutive check-ins and include
+          unclaimed Coin milestones. The estimate from zero starts on Day 1 with no milestones claimed.
+          {' '}Tutorial and match rewards are excluded.
+          {!isGuest && ' Your balance estimate uses the latest verified account date.'}
+        </p>
+      )}
+
       <div className="skin-grid">
         {visibleProducts.map(product => {
           const owned = state.inventory.includes(`skin:${product.id}`);
@@ -211,6 +234,9 @@ const SkinStore: React.FC<Props> = ({
                   )
                   : <strong aria-label="Verified price unavailable">Price unavailable</strong>}
               </div>
+              {serverEnabled && presentation.currency === 'coins' && presentation.price !== null && (
+                <SkinEarnability price={presentation.price} progress={checkInProgress} owned={owned} />
+              )}
               <details className="skin-prompt-metadata">
                 <summary>Art prompt metadata</summary>
                 <p>{product.prompt}</p>
