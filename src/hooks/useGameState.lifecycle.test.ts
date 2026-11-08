@@ -42,7 +42,7 @@ vi.mock('react', async importOriginal => {
 });
 const ai = vi.hoisted(() => ({ generateAIAction: vi.fn(), generateAIDialogue: vi.fn(), generateWolfChat: vi.fn(), resetAIMemory: vi.fn(), setAIDifficulty: vi.fn() }));
 vi.mock('../ai/aiOrchestrator', () => ai);
-const audio = vi.hoisted(() => ({ cancel: vi.fn(), reset: vi.fn(), setMuted: vi.fn(), setVolume: vi.fn(), setRate: vi.fn(), setEnabled: vi.fn(), enqueue: vi.fn(), speechLangTag: vi.fn(() => 'en-US') }));
+const audio = vi.hoisted(() => ({ cancel: vi.fn(), pause: vi.fn(), resume: vi.fn(), reset: vi.fn(), setMuted: vi.fn(), setVolume: vi.fn(), setRate: vi.fn(), setEnabled: vi.fn(), enqueue: vi.fn(), speechLangTag: vi.fn(() => 'en-US') }));
 vi.mock('../services/speechAudio', () => audio);
 const service = vi.hoisted(() => ({ isSupabaseConfigured: vi.fn(() => true), saveGameRecord: vi.fn(), fetchGameRecords: vi.fn() }));
 vi.mock('../services/supabaseClient', () => service);
@@ -292,20 +292,26 @@ describe('pause and resume', () => {
     expect(ai.generateAIDialogue.mock.calls.map(([speaker]) => speaker.id)).toEqual([2, 3]);
   });
 
-  it('cancels already displayed TTS and holds the current speaker until resumed', async () => {
+  it('pauses displayed TTS and waits for the same utterance to finish', async () => {
     const work = deferred<void>();
     audio.enqueue.mockReturnValueOnce(work.promise);
     await enterAIStatement();
     const before = snapshot();
     expect(game.logs.at(-1)?.speakerId).toBe(2);
-    audio.cancel.mockImplementationOnce(() => work.resolve());
+    const cancelsBeforePause = audio.cancel.mock.calls.length;
     togglePause();
+    expect(audio.pause).toHaveBeenCalledOnce();
+    expect(audio.cancel).toHaveBeenCalledTimes(cancelsBeforePause);
     await advance(10_000);
     expect(snapshot()).toBe(before);
     game.skipCurrentSpeech();
     expect(audio.enqueue).toHaveBeenCalledOnce();
     expect(ai.generateAIDialogue).toHaveBeenCalledOnce();
     togglePause();
+    await settle();
+    expect(audio.resume).toHaveBeenCalledOnce();
+    expect(game.currentSpeaker?.id).toBe(2);
+    work.resolve();
     await settle();
     expect(game.currentSpeaker).toBeNull();
     expect(audio.enqueue).toHaveBeenCalledOnce();

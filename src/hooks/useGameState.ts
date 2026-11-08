@@ -355,9 +355,10 @@ export function useGameState(authContext: AuthContext) {
       phaseDelayRef.current?.();
       phaseDelayRef.current = null;
       playerClockRef.current?.pause();
-      speechAudio.cancel();
+      speechAudio.pause();
     } else {
       playerClockRef.current?.resume();
+      speechAudio.resume();
       wakeWaiters();
     }
   };
@@ -933,6 +934,7 @@ export function useGameState(authContext: AuthContext) {
             speechAudio.speechLangTag(ttsText, gameLanguage),
             nextSpeaker.id,
             ttsLogId,
+            isGuest ? undefined : session?.accessToken,
           );
         } catch {
           // Audio is presentation-only; cancellation/failure never stalls play.

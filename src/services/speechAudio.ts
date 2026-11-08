@@ -30,6 +30,7 @@
 
 import type { DisplayLanguage } from '../i18n';
 import { detectLanguage } from './translationService';
+import { playCloudSpeech } from './cloudSpeechAudio';
 
 // ─── Backend shapes (structural — satisfied by the real browser API) ─────────
 
@@ -53,6 +54,8 @@ export interface UtteranceLike {
 export interface SynthLike {
   speak(utterance: UtteranceLike): void;
   cancel(): void;
+  pause?(): void;
+  resume?(): void;
   getVoices(): VoiceLike[];
   addEventListener?(type: 'voiceschanged', listener: () => void): void;
 }
@@ -72,7 +75,9 @@ const prefs = {
 const spokenIds = new Set<string>();
 
 /** Active utterance + its settle function (null when idle). */
-let current: { utterance: UtteranceLike; finish: () => void } | null = null;
+let current: { utterance: UtteranceLike; finish: () => void; pause: () => void; resume: () => void } | null = null;
+let browserPaused = false;
+let cloud: ReturnType<typeof playCloudSpeech> | null = null;
 
 /** Per-`playerId:lang` voice assignment, invalidated on voiceschanged. */
 const voiceCache = new Map<string, VoiceLike>();
@@ -192,12 +197,17 @@ const getVoiceForPlayer = (playerId: string, lang: string): VoiceLike | null => 
 // ─── Cancel ──────────────────────────────────────────────────────────────────
 
 const cancelCurrent = (): void => {
+  const previousCloud = cloud;
+  cloud = null;
+  previousCloud?.cancel();
   const synth = getSynth();
   try {
     synth?.cancel();
+    if (browserPaused) synth?.resume?.();
   } catch {
     // Cancelling is best-effort — never throw into game code.
   }
+  browserPaused = false;
   const finish = current?.finish;
   current = null;
   if (finish) finish(); // settle the pending enqueue promise immediately
@@ -211,7 +221,7 @@ const cancelCurrent = (): void => {
  * game. No-ops (resolved promise) when: the log id was already spoken, TTS is
  * disabled or muted, the text is empty, or the API is absent.
  */
-export const enqueue = (
+const enqueueBrowser = (
   text: string,
   lang: string,
   speakerPlayerId: number | string,
@@ -255,10 +265,29 @@ export const enqueue = (
       if (current?.utterance === utterance) current = null;
       resolve();
     };
-    const timeoutId = setTimeout(finish, speechMaxDurationMs(text));
+    let remaining = speechMaxDurationMs(text);
+    let deadline = Date.now() + remaining;
+    let timeoutId = setTimeout(finish, remaining);
     utterance.onend = finish;
     utterance.onerror = finish;
-    current = { utterance, finish };
+    current = {
+      utterance, finish,
+      pause: () => {
+        if (!synth.pause || browserPaused) return;
+        synth.pause();
+        browserPaused = true;
+        remaining = Math.max(0, deadline - Date.now());
+        clearTimeout(timeoutId);
+      },
+      resume: () => {
+        if (!synth.resume || !browserPaused) return;
+        synth.resume();
+        browserPaused = false;
+        clearTimeout(timeoutId);
+        deadline = Date.now() + remaining;
+        timeoutId = setTimeout(finish, remaining);
+      },
+    };
     try {
       synth.speak(utterance);
     } catch {
@@ -267,9 +296,54 @@ export const enqueue = (
   });
 };
 
+/**
+ * Try expressive speech for signed-in pilot games. A cancelled request cannot
+ * start a fallback or speak over the next player.
+ */
+export const enqueue = (
+  text: string,
+  lang: string,
+  speakerPlayerId: number | string,
+  speechLogId: string,
+  accessToken?: string,
+): Promise<void> => {
+  if (!accessToken || import.meta.env.VITE_BAILIAN_TTS_ENABLED !== 'true'
+      || typeof Audio === 'undefined' || typeof speakerPlayerId !== 'number'
+      || !Number.isInteger(speakerPlayerId) || speakerPlayerId < 2 || speakerPlayerId > 12
+      || [...text].length > 600) {
+    return enqueueBrowser(text, lang, speakerPlayerId, speechLogId);
+  }
+  if (!prefs.enabled || prefs.muted || !text.trim() || (speechLogId && spokenIds.has(speechLogId))) {
+    return Promise.resolve();
+  }
+  cancelCurrent();
+  if (speechLogId) spokenIds.add(speechLogId);
+  const request = playCloudSpeech({
+    text, lang, seat: speakerPlayerId, accessToken,
+    volume: prefs.volume, rate: prefs.rate, maxPlaybackMs: speechMaxDurationMs(text),
+  });
+  cloud = request;
+  return request.result.then(outcome => {
+    if (cloud !== request) return;
+    cloud = null;
+    if (outcome === 'fallback') return enqueueBrowser(text, lang, speakerPlayerId, '');
+  });
+};
+
 /** Cancel the current speech immediately. Safe to call unconditionally. */
 export const cancel = (): void => {
   cancelCurrent();
+};
+
+/** Pause the current utterance without advancing the speaker. */
+export const pause = (): void => {
+  cloud?.pause();
+  current?.pause();
+};
+
+export const resume = (): void => {
+  cloud?.resume();
+  current?.resume();
 };
 
 /** Master volume (0–1, clamped). Applies to subsequent utterances. */
@@ -298,10 +372,11 @@ export const setMuted = (b: boolean): void => {
 };
 
 /** True while an utterance is active. */
-export const isSpeaking = (): boolean => current !== null;
+export const isSpeaking = (): boolean => current !== null || cloud !== null;
 
 /** True when a speechSynthesis backend is available. */
-export const isSupported = (): boolean => getSynth() !== null;
+export const isSupported = (): boolean => getSynth() !== null
+  || (import.meta.env.VITE_BAILIAN_TTS_ENABLED === 'true' && typeof Audio !== 'undefined');
 
 /** New game/restart: cancel audio and clear the play-once dedupe set. */
 export const reset = (): void => {
