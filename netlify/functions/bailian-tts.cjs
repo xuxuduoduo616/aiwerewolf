@@ -157,10 +157,6 @@ exports.handler = async (event = {}) => {
 
 async function synthesize(speech, host, key, signal) {
   const language = speech.lang === 'zh-CN' ? 'Chinese' : 'English';
-  const question = /[?？]/.test(speech.text);
-  const instructions = question
-    ? 'Speak in the indicated language like a player at a Werewolf table. Keep the delivery conversational and use a focused, curious inflection on questions. Read the text verbatim.'
-    : 'Speak in the indicated language like a player explaining their thinking across a Werewolf table. Use natural, understated inflection and read the text verbatim.';
   const response = await fetch(`https://${host}${MODEL_PATH}`, {
     method: 'POST',
     signal,
@@ -173,7 +169,7 @@ async function synthesize(speech, host, key, signal) {
         format: 'wav',
         sample_rate: 24000,
         voice: VOICES[language][(speech.seat - 2) % VOICES[language].length],
-        instruction: `Use ${language}. ${instructions}`,
+        instruction: `Speak in ${language}. Read the text verbatim in a plain, everyday speaking voice at a normal pace. Use natural sentence intonation and a dry voice without singing or vocal effects.`,
       },
     }),
   });
