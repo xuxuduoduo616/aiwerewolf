@@ -141,7 +141,7 @@ exports.handler = async (event = {}) => {
 
   // English sentences are longer and need a wider synthesis budget; the
   // previous 5.5s cutoff produced 502s that fell back to browser voices.
-  const signal = AbortSignal.timeout(speech.lang === 'en-US' ? 12000 : 5500);
+  const signal = AbortSignal.timeout(speech.lang === 'en-US' ? 20000 : 5500);
   try {
     const auth = createClient(supabaseUrl, anonKey, {
       auth: { autoRefreshToken: false, persistSession: false, detectSessionInUrl: false },

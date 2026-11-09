@@ -150,12 +150,12 @@ describe('Bailian voice pilot', () => {
     });
   });
 
-  it('gives English a 12s synthesis budget while keeping Chinese at 5.5s', async () => {
+  it('gives English a 20s synthesis budget while keeping Chinese at 5.5s', async () => {
     const timeout = vi.spyOn(AbortSignal, 'timeout');
     upstream.mockResolvedValueOnce(auth()).mockResolvedValueOnce(output())
       .mockResolvedValueOnce(new Response(wave));
     expect((await handler(event)).statusCode).toBe(200);
-    expect(timeout).toHaveBeenLastCalledWith(12_000);
+    expect(timeout).toHaveBeenLastCalledWith(20_000);
 
     timeout.mockClear();
     upstream.mockResolvedValueOnce(auth()).mockResolvedValueOnce(output())

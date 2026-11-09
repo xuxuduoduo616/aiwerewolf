@@ -162,8 +162,24 @@ describe('long cloud speech', () => {
     expect(splitCloudSpeech('   ')).toBeNull();
   });
 
-  it('splits an overlong token only at the request limit', () => {
-    expect(splitCloudSpeech('A'.repeat(1300))).toEqual(['A'.repeat(600), 'A'.repeat(600), 'A'.repeat(100)]);
+  it('splits an overlong token at the client target', () => {
+    expect(splitCloudSpeech('A'.repeat(1300))).toEqual([
+      'A'.repeat(CLOUD_SPEECH_LIMIT),
+      'A'.repeat(CLOUD_SPEECH_LIMIT),
+      'A'.repeat(CLOUD_SPEECH_LIMIT),
+      'A'.repeat(1300 - CLOUD_SPEECH_LIMIT * 3),
+    ]);
+  });
+
+  it('keeps every clip under the provider request limit', () => {
+    const text = 'I think Player 7 is lying. '.repeat(80);
+    const chunks = splitCloudSpeech(text)!;
+    expect(chunks.length).toBeGreaterThan(2);
+    for (const chunk of chunks) {
+      expect([...chunk].length).toBeLessThanOrEqual(CLOUD_SPEECH_LIMIT);
+      expect([...chunk].length).toBeLessThanOrEqual(600);
+    }
+    expect(chunks.join('')).toBe(text);
   });
 
   it('prefers sentence boundaries for Chinese text', () => {
@@ -201,7 +217,7 @@ describe('long cloud speech', () => {
     await vi.waitFor(() => expect(synth.speak).toHaveBeenCalledOnce());
     const utterance = synth.speak.mock.calls[0][0] as BrowserUtterance;
     expect(utterance.text).toBe(chunks.slice(1).join(''));
-    expect(utterance.text).not.toContain(chunks[0]);
+    expect(utterance.text).not.toBe(longLine);
     utterance.onend?.();
     await done;
     expect(request).toHaveBeenCalledTimes(2);

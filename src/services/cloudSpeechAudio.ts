@@ -1,9 +1,12 @@
 type PlaybackResult = 'finished' | 'fallback' | 'interrupted' | 'cancelled';
 type BrowserFallback = { text: string; maxDurationMs?: number };
 
-export const CLOUD_SPEECH_LIMIT = 600;
-/** Extra time the English provider needs beyond the old 5.5s cutoff. */
-export const ENGLISH_REQUEST_TIMEOUT_MS = 14_000;
+/** Soft client target; the provider still accepts up to 600 code points. */
+export const CLOUD_SPEECH_LIMIT = 360;
+/** Provider accepts up to 600 code points per request. */
+export const CLOUD_SPEECH_SERVER_LIMIT = 600;
+/** English synthesis routinely takes >5.5s; leave room for slow provider turns. */
+export const ENGLISH_REQUEST_TIMEOUT_MS = 22_000;
 export const DEFAULT_REQUEST_TIMEOUT_MS = 6_500;
 export const PLAYBACK_START_TIMEOUT_MS = 6_500;
 
