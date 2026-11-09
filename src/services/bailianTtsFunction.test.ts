@@ -1,12 +1,18 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createRequire } from 'node:module';
 
-const { handler } = createRequire(import.meta.url)('../../netlify/functions/bailian-tts.cjs');
+const { handler, selectVoice, ENGLISH_VOICES } = createRequire(import.meta.url)('../../netlify/functions/bailian-tts.cjs');
 const origin = 'https://deploy-preview-123--werewolf-example.netlify.app';
 const tester = '39fae582-93ac-42b3-813b-6abb49b6e09b';
 const jwt = 'test-placeholder-auth-token';
 const text = '  You said you did not suspect Seven. Why did you vote for him?  ';
 const seats = Array.from({ length: 11 }, (_, index) => index + 2);
+const ENGLISH_BY_SEAT = [
+  'Andy_v3.1', 'Ava_v3.1', 'Brian_v3.1', 'Emily_v3.1', 'David_v3.1',
+  'Annie_v3.1', 'Eric_v3.1', 'Beth_v3.1', 'Luca_v3.1', 'Luna_v3.1', 'Donna_v3.1',
+];
+const instruction = (language: 'English' | 'Chinese') =>
+  `Speak in ${language}. Read the text verbatim in a plain, everyday speaking voice at a normal pace. Use natural sentence intonation and a dry voice without singing, vocal effects, or exaggerated character acting.`;
 const event = {
   httpMethod: 'POST',
   rawUrl: origin + '/.netlify/functions/bailian-tts',
@@ -98,7 +104,7 @@ describe('Bailian voice pilot', () => {
     const [, synthesis, audio] = upstream.mock.calls;
     expect(JSON.parse(synthesis[1].body)).toMatchObject({
       model: 'qwen-audio-3.1-tts-flash',
-      input: { text, format: 'wav', voice: 'Andy_v3.1', instruction: expect.any(String) },
+      input: { text, format: 'wav', voice: 'Andy_v3.1', instruction: instruction('English') },
     });
     expect(String(audio[0])).toBe(objectUrl.replace('http:', 'https:'));
     expect(audio[1].headers).toBeUndefined();
@@ -109,22 +115,35 @@ describe('Bailian voice pilot', () => {
     ['statement', '  I want to hear from Seven before we vote.  '],
     ['question', text],
   ])('English %s', (_, line) => {
-    it.each(seats)('uses the approved seat-2 synthesis settings for seat %i', async (seat) => {
-      upstream.mockResolvedValueOnce(auth()).mockResolvedValueOnce(output())
-        .mockResolvedValueOnce(new Response(wave));
-      const body = JSON.stringify({ text: line, lang: 'en-US', seat });
-      expect((await handler({ ...event, body })).statusCode).toBe(200);
-      expect(JSON.parse(upstream.mock.calls[1][1].body)).toEqual({
-        model: 'qwen-audio-3.1-tts-flash',
-        input: {
-          text: line,
-          format: 'wav',
-          sample_rate: 24000,
-          voice: 'Andy_v3.1',
-          instruction: 'Speak in English. Read the text verbatim in a plain, everyday speaking voice at a normal pace. Use natural sentence intonation and a dry voice without singing or vocal effects.',
-        },
-      });
-    });
+    it.each(seats.map((seat, index) => [seat, ENGLISH_BY_SEAT[index]] as const))(
+      'uses the assigned premium voice for seat %i',
+      async (seat, voice) => {
+        upstream.mockResolvedValueOnce(auth()).mockResolvedValueOnce(output())
+          .mockResolvedValueOnce(new Response(wave));
+        const body = JSON.stringify({ text: line, lang: 'en-US', seat });
+        expect((await handler({ ...event, body })).statusCode).toBe(200);
+        expect(JSON.parse(upstream.mock.calls[1][1].body)).toEqual({
+          model: 'qwen-audio-3.1-tts-flash',
+          input: {
+            text: line,
+            format: 'wav',
+            sample_rate: 24000,
+            voice,
+            instruction: instruction('English'),
+          },
+        });
+      },
+    );
+  });
+
+  it('gives every AI seat a distinct voice in both English board sizes', () => {
+    expect(new Set(ENGLISH_VOICES).size).toBe(ENGLISH_VOICES.length);
+    expect(ENGLISH_VOICES).toEqual(ENGLISH_BY_SEAT);
+    for (const boardSize of [9, 12]) {
+      const assigned = Array.from({ length: boardSize - 1 }, (_, index) => selectVoice('en-US', index + 2));
+      expect(assigned).toHaveLength(boardSize - 1);
+      expect(new Set(assigned).size).toBe(assigned.length);
+    }
   });
 
   it.each([
@@ -145,7 +164,7 @@ describe('Bailian voice pilot', () => {
         format: 'wav',
         sample_rate: 24000,
         voice,
-        instruction: 'Speak in Chinese. Read the text verbatim in a plain, everyday speaking voice at a normal pace. Use natural sentence intonation and a dry voice without singing or vocal effects.',
+        instruction: instruction('Chinese'),
       },
     });
   });

@@ -4,6 +4,13 @@ const { createClient } = require('@supabase/supabase-js');
 const MODEL_PATH = '/api/v1/services/audio/tts/SpeechSynthesizer';
 const AUDIO_HOST = 'dashscope-result-bj.oss-cn-beijing.aliyuncs.com';
 const CHINESE_VOICES = ['longanhuan_v3.1', 'longze_v3.1', 'longyan_v3.1'];
+// Premium English narrators, ordered so adjacent seats alternate gender and
+// accent. Seats 2-9 (9-player) and 2-12 (12-player) therefore never share a
+// voice. All IDs are native English voices; none are novelty/effect voices.
+const ENGLISH_VOICES = [
+  'Andy_v3.1', 'Ava_v3.1', 'Brian_v3.1', 'Emily_v3.1', 'David_v3.1',
+  'Annie_v3.1', 'Eric_v3.1', 'Beth_v3.1', 'Luca_v3.1', 'Luna_v3.1', 'Donna_v3.1',
+];
 const MAX_AUDIO_BYTES = 2 * 1024 * 1024;
 // Bailian's streamed WAV uses these lengths before the final PCM size is known.
 const STREAMED_RIFF_SIZE = 0x7fffffbf;
@@ -51,6 +58,11 @@ function parseSpeech(event) {
   } catch {
     return null;
   }
+}
+
+function selectVoice(lang, seat) {
+  const voices = lang === 'en-US' ? ENGLISH_VOICES : CHINESE_VOICES;
+  return voices[(seat - 2) % voices.length];
 }
 
 function trustedAudioUrl(raw) {
@@ -170,8 +182,8 @@ async function synthesize(speech, host, key, signal) {
         text: speech.text,
         format: 'wav',
         sample_rate: 24000,
-        voice: language === 'English' ? 'Andy_v3.1' : CHINESE_VOICES[(speech.seat - 2) % CHINESE_VOICES.length],
-        instruction: `Speak in ${language}. Read the text verbatim in a plain, everyday speaking voice at a normal pace. Use natural sentence intonation and a dry voice without singing or vocal effects.`,
+        voice: selectVoice(speech.lang, speech.seat),
+        instruction: `Speak in ${language}. Read the text verbatim in a plain, everyday speaking voice at a normal pace. Use natural sentence intonation and a dry voice without singing, vocal effects, or exaggerated character acting.`,
       },
     }),
   });
@@ -189,3 +201,5 @@ async function synthesize(speech, host, key, signal) {
 
 exports.synthesize = synthesize;
 exports.parseSpeech = parseSpeech;
+exports.selectVoice = selectVoice;
+exports.ENGLISH_VOICES = ENGLISH_VOICES;

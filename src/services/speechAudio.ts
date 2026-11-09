@@ -222,27 +222,36 @@ export const speechLangTag = (text: string, language: DisplayLanguage): string =
 
 // ─── Voice assignment ────────────────────────────────────────────────────────
 
-const getVoiceForPlayer = (playerId: string, lang: string): VoiceLike | null => {
+interface VoiceSelection {
+  voice: VoiceLike | null;
+  /** True when every candidate is a novelty/effect voice: stay silent, not default. */
+  blocked: boolean;
+}
+
+const getVoiceForPlayer = (playerId: string, lang: string): VoiceSelection => {
   const synth = getSynth();
-  if (!synth) return null;
+  if (!synth) return { voice: null, blocked: false };
   let all: VoiceLike[] = [];
   try {
     all = synth.getVoices() ?? [];
   } catch {
-    return null;
+    return { voice: null, blocked: false };
   }
   const sameLang = sameLanguageVoices(all, lang);
   const candidates = sameLang.length > 0 ? sameLang : all;
   const pool = naturalVoicePool(candidates);
-  if (pool.length === 0) return null; // browser default via utterance.lang
+  // No candidate at all means Chrome has not loaded voices yet: let the
+  // utterance lang pick the default. Candidates that are all effects are a
+  // different case — falling through would emit the novelty voice we ban.
+  if (pool.length === 0) return { voice: null, blocked: candidates.length > 0 };
 
   const cacheKey = `${playerId}:${lang}`;
   const cached = voiceCache.get(cacheKey);
-  if (cached && pool.includes(cached)) return cached;
+  if (cached && pool.includes(cached)) return { voice: cached, blocked: false };
 
   const voice = pool[pickVoiceIndex(playerId, pool.length)];
   voiceCache.set(cacheKey, voice);
-  return voice;
+  return { voice, blocked: false };
 };
 
 // ─── Cancel ──────────────────────────────────────────────────────────────────
@@ -288,6 +297,8 @@ const enqueueBrowser = (
   }
 
   ensureVoicesInit();
+  const selection = getVoiceForPlayer(String(speakerPlayerId), lang);
+  if (selection.blocked) return Promise.resolve();
   cancelCurrent(); // max one active utterance — new speech replaces current
 
   // Play-once: committed here so rerenders/cancels never replay this log.
@@ -304,8 +315,7 @@ const enqueueBrowser = (
     utterance.lang = lang;
     utterance.volume = prefs.volume;
     utterance.rate = prefs.rate;
-    const voice = getVoiceForPlayer(String(speakerPlayerId), lang);
-    if (voice) utterance.voice = voice;
+    if (selection.voice) utterance.voice = selection.voice;
 
     let settled = false;
     const finish = (): void => {

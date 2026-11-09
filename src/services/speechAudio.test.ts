@@ -276,12 +276,12 @@ describe('voice assignment', () => {
     expect(chosen.size).toBeGreaterThan(1);
   });
 
-  it('uses the browser default instead of an effect when only effects exist', () => {
+  it('stays silent instead of using an effect when only effects exist', async () => {
     install([makeVoice('Bubbles', 'en-US'), makeVoice('Cellos', 'en-US')]);
     setEnabled(true);
-    void enqueue('hello', 'en-US', 3, 'log-effects');
-    expect(utterances[0].voice).toBeNull();
-    utterances[0].onend?.();
+    await enqueue('hello', 'en-US', 3, 'log-effects');
+    expect(synth.speak).not.toHaveBeenCalled();
+    expect(utterances).toHaveLength(0);
   });
 
   it('prefers a natural narrator over an unknown legacy voice', () => {
