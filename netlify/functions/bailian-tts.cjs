@@ -139,7 +139,9 @@ exports.handler = async (event = {}) => {
   const speech = parseSpeech(event);
   if (!speech) return errorResponse(400, 'INVALID_SPEECH');
 
-  const signal = AbortSignal.timeout(5500);
+  // English sentences are longer and need a wider synthesis budget; the
+  // previous 5.5s cutoff produced 502s that fell back to browser voices.
+  const signal = AbortSignal.timeout(speech.lang === 'en-US' ? 12000 : 5500);
   try {
     const auth = createClient(supabaseUrl, anonKey, {
       auth: { autoRefreshToken: false, persistSession: false, detectSessionInUrl: false },

@@ -30,7 +30,7 @@
 
 import type { DisplayLanguage } from '../i18n';
 import { detectLanguage } from './translationService';
-import { playCloudSpeech } from './cloudSpeechAudio';
+import { CLOUD_SPEECH_LIMIT, playCloudSpeech, splitCloudSpeech } from './cloudSpeechAudio';
 
 // ─── Backend shapes (structural — satisfied by the real browser API) ─────────
 
@@ -152,6 +152,56 @@ export const sameLanguageVoices = (voices: VoiceLike[], lang: string): VoiceLike
 };
 
 /**
+ * macOS ships novelty/effect voices (Bubbles, Cellos, Zarvox, ...) in the same
+ * language list as real narrators. Picking one produces the underwater,
+ * singing or robotic speech this feature must never emit.
+ */
+const NOVELTY_VOICE_NAMES = new Set([
+  'albert', 'bad news', 'bahh', 'bells', 'boing', 'bubbles', 'cellos',
+  'deranged', 'good news', 'hysterical', 'jester', 'organ', 'superstar',
+  'trinoids', 'whisper', 'wobble', 'zarvox',
+]);
+
+const NATURAL_VOICE_NAMES = new Set([
+  'samantha', 'alex', 'ava', 'allison', 'susan', 'tom', 'daniel', 'karen',
+  'moira', 'tessa', 'serena', 'fiona', 'kate', 'oliver', 'stephanie',
+  'tingting', 'ting-ting', 'meijia', 'mei-jia', 'sinji', 'li-mu', 'yu-shu',
+]);
+
+const NATURAL_VOICE_HINTS = [
+  'google us english', 'google uk english', 'google 普通话', 'google 國語',
+  'microsoft aria', 'microsoft jenny', 'microsoft guy', 'microsoft libby',
+  'microsoft sonia', 'microsoft natasha', 'microsoft ryan', 'microsoft zira',
+  'microsoft david', 'microsoft mark', 'microsoft xiaoxiao', 'microsoft yunxi',
+  'microsoft xiaoyi', 'microsoft yunjian', 'microsoft xiaobei', 'microsoft yunyang',
+  'natural', 'neural', 'premium', 'enhanced',
+];
+
+/** Lower-case display name without a trailing "(English (US))" qualifier. */
+const normalizedVoiceName = (voice: VoiceLike): string =>
+  (voice.name || '').toLowerCase().replace(/\s*\(.*$/, '').trim();
+
+export const isNoveltyVoice = (voice: VoiceLike): boolean =>
+  NOVELTY_VOICE_NAMES.has(normalizedVoiceName(voice));
+
+/** 2 = known natural voice, 0 = unknown but not an effect, -1 = never use. */
+const naturalVoiceRank = (voice: VoiceLike): number => {
+  if (isNoveltyVoice(voice)) return -1;
+  const name = normalizedVoiceName(voice);
+  if (NATURAL_VOICE_NAMES.has(name)) return 2;
+  if (NATURAL_VOICE_HINTS.some(hint => name.includes(hint))) return 2;
+  return 0;
+};
+
+/** Keep the best available tier: natural narrators when present, else anything non-effect. */
+const naturalVoicePool = (voices: VoiceLike[]): VoiceLike[] => {
+  const ranked = voices.map(voice => ({ voice, rank: naturalVoiceRank(voice) }));
+  const best = ranked.reduce((max, item) => Math.max(max, item.rank), -1);
+  if (best < 0) return [];
+  return ranked.filter(item => item.rank === best).map(item => item.voice);
+};
+
+/**
  * Hard max speech duration: per-char allowance with a 5s floor. TTS is
  * presentation-only — the AI turn falls back to text timing after this cap.
  */
@@ -183,13 +233,14 @@ const getVoiceForPlayer = (playerId: string, lang: string): VoiceLike | null => 
   }
   const sameLang = sameLanguageVoices(all, lang);
   const candidates = sameLang.length > 0 ? sameLang : all;
-  if (candidates.length === 0) return null; // browser default via utterance.lang
+  const pool = naturalVoicePool(candidates);
+  if (pool.length === 0) return null; // browser default via utterance.lang
 
   const cacheKey = `${playerId}:${lang}`;
   const cached = voiceCache.get(cacheKey);
-  if (cached && candidates.includes(cached)) return cached;
+  if (cached && pool.includes(cached)) return cached;
 
-  const voice = candidates[pickVoiceIndex(playerId, candidates.length)];
+  const voice = pool[pickVoiceIndex(playerId, pool.length)];
   voiceCache.set(cacheKey, voice);
   return voice;
 };
@@ -226,6 +277,7 @@ const enqueueBrowser = (
   lang: string,
   speakerPlayerId: number | string,
   speechLogId: string,
+  maxDurationMs = speechMaxDurationMs(text),
 ): Promise<void> => {
   if (speechLogId && spokenIds.has(speechLogId)) return Promise.resolve();
 
@@ -265,7 +317,7 @@ const enqueueBrowser = (
       if (current?.utterance === utterance) current = null;
       resolve();
     };
-    let remaining = speechMaxDurationMs(text);
+    let remaining = maxDurationMs;
     let deadline = Date.now() + remaining;
     let timeoutId = setTimeout(finish, remaining);
     utterance.onend = finish;
@@ -309,24 +361,29 @@ export const enqueue = (
 ): Promise<void> => {
   if (!accessToken || import.meta.env.VITE_BAILIAN_TTS_ENABLED !== 'true'
       || typeof Audio === 'undefined' || typeof speakerPlayerId !== 'number'
-      || !Number.isInteger(speakerPlayerId) || speakerPlayerId < 2 || speakerPlayerId > 12
-      || [...text].length > 600) {
+      || !Number.isInteger(speakerPlayerId) || speakerPlayerId < 2 || speakerPlayerId > 12) {
     return enqueueBrowser(text, lang, speakerPlayerId, speechLogId);
   }
   if (!prefs.enabled || prefs.muted || !text.trim() || (speechLogId && spokenIds.has(speechLogId))) {
     return Promise.resolve();
   }
+  const long = [...text].length > CLOUD_SPEECH_LIMIT;
+  const chunks = long ? splitCloudSpeech(text) ?? undefined : undefined;
+  if (long && !chunks) return enqueueBrowser(text, lang, speakerPlayerId, speechLogId);
+
   cancelCurrent();
   if (speechLogId) spokenIds.add(speechLogId);
   const request = playCloudSpeech({
     text, lang, seat: speakerPlayerId, accessToken,
     volume: prefs.volume, rate: prefs.rate, maxPlaybackMs: speechMaxDurationMs(text),
-  });
+  }, chunks ?? undefined);
   cloud = request;
-  return request.result.then(outcome => {
+  return request.result.then(fallback => {
     if (cloud !== request) return;
     cloud = null;
-    if (outcome === 'fallback') return enqueueBrowser(text, lang, speakerPlayerId, '');
+    if (fallback) {
+      return enqueueBrowser(fallback.text, lang, speakerPlayerId, '', fallback.maxDurationMs);
+    }
   });
 };
 

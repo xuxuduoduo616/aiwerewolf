@@ -52,6 +52,7 @@ beforeEach(() => {
 afterEach(() => {
   vi.unstubAllGlobals();
   vi.unstubAllEnvs();
+  vi.restoreAllMocks();
 });
 
 describe('Bailian voice pilot', () => {
@@ -147,6 +148,21 @@ describe('Bailian voice pilot', () => {
         instruction: 'Speak in Chinese. Read the text verbatim in a plain, everyday speaking voice at a normal pace. Use natural sentence intonation and a dry voice without singing or vocal effects.',
       },
     });
+  });
+
+  it('gives English a 12s synthesis budget while keeping Chinese at 5.5s', async () => {
+    const timeout = vi.spyOn(AbortSignal, 'timeout');
+    upstream.mockResolvedValueOnce(auth()).mockResolvedValueOnce(output())
+      .mockResolvedValueOnce(new Response(wave));
+    expect((await handler(event)).statusCode).toBe(200);
+    expect(timeout).toHaveBeenLastCalledWith(12_000);
+
+    timeout.mockClear();
+    upstream.mockResolvedValueOnce(auth()).mockResolvedValueOnce(output())
+      .mockResolvedValueOnce(new Response(wave));
+    const chinese = JSON.stringify({ text: '  你为什么投三号？  ', lang: 'zh-CN', seat: 2 });
+    expect((await handler({ ...event, body: chinese })).statusCode).toBe(200);
+    expect(timeout).toHaveBeenLastCalledWith(5_500);
   });
 
   it('refuses an unexpected audio host before downloading it', async () => {

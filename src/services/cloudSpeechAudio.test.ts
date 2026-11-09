@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { __test, cancel, pause, resume, enqueue, isSpeaking, setEnabled, speechMaxDurationMs } from './speechAudio';
+import { CLOUD_SPEECH_LIMIT, ENGLISH_REQUEST_TIMEOUT_MS, splitCloudSpeech } from './cloudSpeechAudio';
 
 class BrowserUtterance {
   lang = '';
@@ -142,5 +143,117 @@ describe('Cloud speech and the existing speaker queue', () => {
     expect(isSpeaking()).toBe(false);
     expect(request).toHaveBeenCalledOnce();
     expect(synth.speak).not.toHaveBeenCalled();
+  });
+});
+
+const longLine = 'I want to hear from Seven before we vote. '.repeat(20).trim();
+
+describe('long cloud speech', () => {
+  it('preserves every code point and caps each clip', () => {
+    const text = ('I think Player 7 is lying. ').repeat(40) + '😀'.repeat(50);
+    const chunks = splitCloudSpeech(text);
+    expect(chunks).not.toBeNull();
+    expect(chunks!.join('')).toBe(text);
+    expect(chunks!.length).toBeGreaterThan(1);
+    for (const chunk of chunks!) {
+      expect([...chunk].length).toBeLessThanOrEqual(CLOUD_SPEECH_LIMIT);
+      expect(chunk.trim().length).toBeGreaterThan(0);
+    }
+    expect(splitCloudSpeech('   ')).toBeNull();
+  });
+
+  it('splits an overlong token only at the request limit', () => {
+    expect(splitCloudSpeech('A'.repeat(1300))).toEqual(['A'.repeat(600), 'A'.repeat(600), 'A'.repeat(100)]);
+  });
+
+  it('prefers sentence boundaries for Chinese text', () => {
+    const sentence = '我怀疑三号是狼人，因为他昨天一直在改票。';
+    const text = sentence.repeat(40);
+    const chunks = splitCloudSpeech(text);
+    expect(chunks).not.toBeNull();
+    expect(chunks!.join('')).toBe(text);
+    expect(chunks![0].endsWith('。')).toBe(true);
+  });
+
+  it('plays long text as sequential cloud clips without browser fallback', async () => {
+    request.mockImplementation(async () => wave());
+    const done = enqueue(longLine, 'en-US', 2, 'long-turn', 'fake-token');
+    const chunks = splitCloudSpeech(longLine)!;
+    for (let index = 0; index < chunks.length; index++) {
+      await vi.waitFor(() => expect(AudioPlayer.instances).toHaveLength(index + 1));
+      AudioPlayer.instances[index].onended?.();
+    }
+    await done;
+    expect(request).toHaveBeenCalledTimes(chunks.length);
+    const sent = request.mock.calls.map(call => JSON.parse(call[1].body).text as string);
+    expect(sent.join('')).toBe(longLine);
+    expect(sent.every(text => [...text].length <= CLOUD_SPEECH_LIMIT)).toBe(true);
+    expect(synth.speak).not.toHaveBeenCalled();
+  });
+
+  it('falls back only to the unplayed suffix when a later clip fails', async () => {
+    request.mockImplementationOnce(async () => wave())
+      .mockResolvedValueOnce(new Response('', { status: 502 }));
+    const done = enqueue(longLine, 'en-US', 2, 'long-suffix', 'fake-token');
+    const chunks = splitCloudSpeech(longLine)!;
+    await vi.waitFor(() => expect(AudioPlayer.instances).toHaveLength(1));
+    AudioPlayer.instances[0].onended?.();
+    await vi.waitFor(() => expect(synth.speak).toHaveBeenCalledOnce());
+    const utterance = synth.speak.mock.calls[0][0] as BrowserUtterance;
+    expect(utterance.text).toBe(chunks.slice(1).join(''));
+    expect(utterance.text).not.toContain(chunks[0]);
+    utterance.onend?.();
+    await done;
+    expect(request).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('cloud request budgets', () => {
+  it('waits the wider English budget before falling back', async () => {
+    vi.useFakeTimers();
+    request.mockImplementation(() => new Promise(() => {}));
+    const done = enqueue(line, 'en-US', 2, 'en-timeout', 'fake-token');
+    await vi.advanceTimersByTimeAsync(ENGLISH_REQUEST_TIMEOUT_MS - 1);
+    expect(isSpeaking()).toBe(true);
+    expect(synth.speak).not.toHaveBeenCalled();
+    await vi.advanceTimersByTimeAsync(1);
+    expect(synth.speak).toHaveBeenCalledOnce();
+    const utterance = synth.speak.mock.calls[0][0] as BrowserUtterance;
+    expect(utterance.text).toBe(line);
+    utterance.onend?.();
+    await done;
+  });
+
+  it('keeps the shorter Chinese budget', async () => {
+    vi.useFakeTimers();
+    request.mockImplementation(() => new Promise(() => {}));
+    const done = enqueue('你为什么投三号？', 'zh-CN', 2, 'zh-timeout', 'fake-token');
+    await vi.advanceTimersByTimeAsync(6_499);
+    expect(isSpeaking()).toBe(true);
+    expect(synth.speak).not.toHaveBeenCalled();
+    await vi.advanceTimersByTimeAsync(1);
+    expect(synth.speak).toHaveBeenCalledOnce();
+    const utterance = synth.speak.mock.calls[0][0] as BrowserUtterance;
+    utterance.onend?.();
+    await done;
+  });
+
+  it('holds a paused request and plays it after resume without re-fetching', async () => {
+    vi.useFakeTimers();
+    let respond!: (value: Response) => void;
+    request.mockImplementationOnce(() => new Promise(resolve => { respond = resolve; }));
+    const done = enqueue(line, 'en-US', 2, 'pause-fetch', 'fake-token');
+    pause();
+    await vi.advanceTimersByTimeAsync(ENGLISH_REQUEST_TIMEOUT_MS * 2);
+    expect(synth.speak).not.toHaveBeenCalled();
+    respond(wave());
+    await vi.advanceTimersByTimeAsync(0);
+    expect(AudioPlayer.instances).toHaveLength(1);
+    expect(AudioPlayer.instances[0].play).not.toHaveBeenCalled();
+    resume();
+    expect(AudioPlayer.instances[0].play).toHaveBeenCalledOnce();
+    AudioPlayer.instances[0].onended?.();
+    await done;
+    expect(request).toHaveBeenCalledOnce();
   });
 });

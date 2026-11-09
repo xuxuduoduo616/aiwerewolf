@@ -257,6 +257,40 @@ describe('voice assignment', () => {
     expect(utterances[0].voice).toBeNull();
     utterances[0].onend?.();
   });
+
+  it('never assigns macOS novelty/effect voices', async () => {
+    install([
+      makeVoice('Bubbles', 'en-US'), makeVoice('Cellos', 'en-US'), makeVoice('Zarvox', 'en-US'),
+      makeVoice('Samantha', 'en-US'), makeVoice('Daniel', 'en-US'),
+    ]);
+    setEnabled(true);
+    const chosen = new Set<string>();
+    for (let seat = 2; seat <= 12; seat++) {
+      const promise = enqueue('hello', 'en-US', seat, `log-seat-${seat}`);
+      const utterance = utterances[utterances.length - 1];
+      expect(['Samantha', 'Daniel']).toContain(utterance.voice?.name);
+      chosen.add(utterance.voice?.name ?? '');
+      utterance.onend?.();
+      await promise;
+    }
+    expect(chosen.size).toBeGreaterThan(1);
+  });
+
+  it('uses the browser default instead of an effect when only effects exist', () => {
+    install([makeVoice('Bubbles', 'en-US'), makeVoice('Cellos', 'en-US')]);
+    setEnabled(true);
+    void enqueue('hello', 'en-US', 3, 'log-effects');
+    expect(utterances[0].voice).toBeNull();
+    utterances[0].onend?.();
+  });
+
+  it('prefers a natural narrator over an unknown legacy voice', () => {
+    install([makeVoice('Fred', 'en-US'), makeVoice('Samantha', 'en-US')]);
+    setEnabled(true);
+    void enqueue('hello', 'en-US', 3, 'log-preferred');
+    expect(utterances[0].voice?.name).toBe('Samantha');
+    utterances[0].onend?.();
+  });
 });
 
 describe('voice-change recalculation', () => {
