@@ -3,7 +3,7 @@ const { createClient } = require('@supabase/supabase-js');
 
 const MODEL_PATH = '/api/v1/services/audio/tts/SpeechSynthesizer';
 const AUDIO_HOST = 'dashscope-result-bj.oss-cn-beijing.aliyuncs.com';
-const VOICES = { Chinese: ['longanhuan_v3.1', 'longze_v3.1', 'longyan_v3.1'], English: ['Andy_v3.1', 'Abby_v3.1', 'Brian_v3.1'] };
+const CHINESE_VOICES = ['longanhuan_v3.1', 'longze_v3.1', 'longyan_v3.1'];
 const MAX_AUDIO_BYTES = 2 * 1024 * 1024;
 // Bailian's streamed WAV uses these lengths before the final PCM size is known.
 const STREAMED_RIFF_SIZE = 0x7fffffbf;
@@ -168,7 +168,7 @@ async function synthesize(speech, host, key, signal) {
         text: speech.text,
         format: 'wav',
         sample_rate: 24000,
-        voice: VOICES[language][(speech.seat - 2) % VOICES[language].length],
+        voice: language === 'English' ? 'Andy_v3.1' : CHINESE_VOICES[(speech.seat - 2) % CHINESE_VOICES.length],
         instruction: `Speak in ${language}. Read the text verbatim in a plain, everyday speaking voice at a normal pace. Use natural sentence intonation and a dry voice without singing or vocal effects.`,
       },
     }),

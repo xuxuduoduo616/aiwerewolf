@@ -6,6 +6,7 @@ const origin = 'https://deploy-preview-123--werewolf-example.netlify.app';
 const tester = '39fae582-93ac-42b3-813b-6abb49b6e09b';
 const jwt = 'test-placeholder-auth-token';
 const text = '  You said you did not suspect Seven. Why did you vote for him?  ';
+const seats = Array.from({ length: 11 }, (_, index) => index + 2);
 const event = {
   httpMethod: 'POST',
   rawUrl: origin + '/.netlify/functions/bailian-tts',
@@ -101,6 +102,51 @@ describe('Bailian voice pilot', () => {
     expect(String(audio[0])).toBe(objectUrl.replace('http:', 'https:'));
     expect(audio[1].headers).toBeUndefined();
     expect(audio[1].redirect).toBe('error');
+  });
+
+  describe.each([
+    ['statement', '  I want to hear from Seven before we vote.  '],
+    ['question', text],
+  ])('English %s', (_, line) => {
+    it.each(seats)('uses the approved seat-2 synthesis settings for seat %i', async (seat) => {
+      upstream.mockResolvedValueOnce(auth()).mockResolvedValueOnce(output())
+        .mockResolvedValueOnce(new Response(wave));
+      const body = JSON.stringify({ text: line, lang: 'en-US', seat });
+      expect((await handler({ ...event, body })).statusCode).toBe(200);
+      expect(JSON.parse(upstream.mock.calls[1][1].body)).toEqual({
+        model: 'qwen-audio-3.1-tts-flash',
+        input: {
+          text: line,
+          format: 'wav',
+          sample_rate: 24000,
+          voice: 'Andy_v3.1',
+          instruction: 'Speak in English. Read the text verbatim in a plain, everyday speaking voice at a normal pace. Use natural sentence intonation and a dry voice without singing or vocal effects.',
+        },
+      });
+    });
+  });
+
+  it.each([
+    [2, 'longanhuan_v3.1'], [3, 'longze_v3.1'], [4, 'longyan_v3.1'],
+    [5, 'longanhuan_v3.1'], [6, 'longze_v3.1'], [7, 'longyan_v3.1'],
+    [8, 'longanhuan_v3.1'], [9, 'longze_v3.1'], [10, 'longyan_v3.1'],
+    [11, 'longanhuan_v3.1'], [12, 'longze_v3.1'],
+  ])('keeps the Chinese voice for seat %i', async (seat, voice) => {
+    upstream.mockResolvedValueOnce(auth()).mockResolvedValueOnce(output())
+      .mockResolvedValueOnce(new Response(wave));
+    const line = '  你为什么在最后一轮改票？  ';
+    const body = JSON.stringify({ text: line, lang: 'zh-CN', seat });
+    expect((await handler({ ...event, body })).statusCode).toBe(200);
+    expect(JSON.parse(upstream.mock.calls[1][1].body)).toEqual({
+      model: 'qwen-audio-3.1-tts-flash',
+      input: {
+        text: line,
+        format: 'wav',
+        sample_rate: 24000,
+        voice,
+        instruction: 'Speak in Chinese. Read the text verbatim in a plain, everyday speaking voice at a normal pace. Use natural sentence intonation and a dry voice without singing or vocal effects.',
+      },
+    });
   });
 
   it('refuses an unexpected audio host before downloading it', async () => {
