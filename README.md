@@ -14,7 +14,7 @@ The project separates game rules from generated expression. A deterministic rule
 
 - Post-game replay review: after a match ends, inspect AI suspicion curves, vote reasons, and werewolf night chat from the saved local replay.
 - Share card: export a client-side PNG of "AI's view of you" from the replay panel; nothing is uploaded.
-- Push-to-talk voice input: speak on your own turn, review the editable transcription, then send it as text. Transcription happens after release, not live; voice input requires the server-side `QWEN_API_KEY` environment variable.
+- Click-to-record voice input: on your own turn, click the microphone to start recording (the button dims), click again to stop, review the editable transcription, then send it as text. Transcription happens after you stop, not live; voice input requires the server-side `QWEN_API_KEY` environment variable.
 - Release verification: 1,131 tests passed / 5 skipped; TypeScript and Vite build passed. Production deployment is verified separately through the existing Netlify Git integration.
 
 ## Previous production release (2026-11-09)
@@ -38,7 +38,7 @@ The project separates game rules from generated expression. A deterministic rule
 - Belief tracking, strategic action selection, wolf-team coordination, voting, last words, and win resolution
 - Post-game replay review with suspicion curves, vote reasons, and werewolf night chat
 - Client-side share card export for a finished match
-- Push-to-talk voice input with editable transcription
+- Click-to-record voice input with editable transcription
 - Per-match dialogue refinement with server-verified Gemini 3.6 Flash, Gemini 2.5 Flash fallback, and local speech fallback
 - Email OTP authentication, guest trial, local guest records, and player statistics
 - Responsive desktop, tablet, and mobile layouts with keyboard and safe-area support

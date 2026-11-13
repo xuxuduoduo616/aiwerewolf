@@ -1,5 +1,5 @@
 /**
- * V-C contract tests: the push-to-talk controller is driven through the real
+ * V-C contract tests: the click-to-record controller is driven through the real
  * `createSttAdapter` / `createCloudTranscribe` seam, with `fetch` mocked. No
  * real network, no `QWEN_API_KEY` and no real microphone are involved.
  *

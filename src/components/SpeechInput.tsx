@@ -48,7 +48,7 @@ export const buildQuickSpeeches = (_language: DisplayLanguage): QuickSpeechPrese
 export const applyQuickTemplate = (preset: QuickSpeechPreset, playerId: number): string =>
   preset.text.replace('X', String(playerId));
 
-// ── Voice input (push-to-talk, same-origin cloud ASR) ───────────────
+// ── Voice input (click-to-record, same-origin cloud ASR) ─────────────
 
 export type VoiceStatus = 'idle' | 'recording' | 'transcribing';
 
@@ -202,7 +202,7 @@ const messageForPermission = (error: unknown): string => {
 };
 
 /**
- * Framework-free push-to-talk state machine (`idle → recording → transcribing
+ * Framework-free click-to-record state machine (`idle → recording → transcribing
  * → idle`). The component owns rendering only, so every failure path is unit
  * testable without a DOM.
  */
@@ -471,12 +471,8 @@ export const createVoiceInputController = (options: VoiceControllerOptions): Voi
 // ── Voice control presentation ──────────────────────────────────────
 
 export interface VoiceControlHandlers {
-  onPointerDown?: React.PointerEventHandler<HTMLButtonElement>;
-  onPointerUp?: React.PointerEventHandler<HTMLButtonElement>;
-  onPointerLeave?: React.PointerEventHandler<HTMLButtonElement>;
-  onPointerCancel?: React.PointerEventHandler<HTMLButtonElement>;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   onKeyDown?: React.KeyboardEventHandler<HTMLButtonElement>;
-  onKeyUp?: React.KeyboardEventHandler<HTMLButtonElement>;
 }
 
 export interface VoiceControlProps extends VoiceControlHandlers {
@@ -491,37 +487,29 @@ export const VoiceControl: React.FC<VoiceControlProps> = ({
   status,
   message,
   disabled = false,
-  onPointerDown,
-  onPointerUp,
-  onPointerLeave,
-  onPointerCancel,
+  onClick,
   onKeyDown,
-  onKeyUp,
 }) => {
   const recording = status === 'recording';
   const transcribing = status === 'transcribing';
   const label = recording
-    ? 'Cancel voice input'
-    : transcribing ? 'Transcribing' : 'Hold to record speech';
+    ? 'Stop recording'
+    : transcribing ? 'Transcribing' : 'Record speech';
 
   return (
     <div className="game-voice-input flex w-full min-w-0 flex-wrap items-center gap-2" data-voice-status={status}>
       <button
         type="button"
-        className="action-button voice-input-button shrink-0 px-3"
+        className={`action-button voice-input-button shrink-0 px-3 ${recording ? 'opacity-50' : ''}`}
         aria-label={label}
         aria-pressed={recording}
-        title={supported ? label : VOICE_MESSAGES.unsupported}
+        title={supported ? (recording ? 'Click to stop recording' : label) : VOICE_MESSAGES.unsupported}
         disabled={!supported || disabled || transcribing}
         data-voice-control
         style={{ touchAction: 'none' }}
         onContextMenu={event => event.preventDefault()}
-        onPointerDown={onPointerDown}
-        onPointerUp={onPointerUp}
-        onPointerLeave={onPointerLeave}
-        onPointerCancel={onPointerCancel}
+        onClick={onClick}
         onKeyDown={onKeyDown}
-        onKeyUp={onKeyUp}
       >
         <Mic className="w-4 h-4" />
       </button>
@@ -645,29 +633,16 @@ const SpeechInput = ({
     }
   };
 
-  const handleVoicePointerDown: React.PointerEventHandler<HTMLButtonElement> = event => {
-    event.preventDefault();
-    if (controller.getStatus() === 'recording') controller.cancel();
-    else void controller.start();
+  const handleVoiceClick = () => {
+    if (controller.getStatus() === 'recording') controller.stop();
+    else if (controller.getStatus() === 'idle') void controller.start();
   };
-
-  const handleVoiceStop = () => controller.stop();
 
   const handleVoiceKeyDown: React.KeyboardEventHandler<HTMLButtonElement> = event => {
     if (event.key === 'Escape') {
       event.preventDefault();
       controller.cancel();
-      return;
     }
-    if (event.key !== ' ' && event.key !== 'Enter') return;
-    event.preventDefault();
-    if (event.repeat) return;
-    if (controller.getStatus() === 'recording') controller.cancel();
-    else void controller.start();
-  };
-
-  const handleVoiceKeyUp: React.KeyboardEventHandler<HTMLButtonElement> = event => {
-    if (event.key === ' ' || event.key === 'Enter') controller.stop();
   };
 
   return (
@@ -716,12 +691,8 @@ const SpeechInput = ({
         supported={voiceSupported}
         status={voice.status}
         message={voice.message}
-        onPointerDown={handleVoicePointerDown}
-        onPointerUp={handleVoiceStop}
-        onPointerLeave={handleVoiceStop}
-        onPointerCancel={handleVoiceStop}
+        onClick={handleVoiceClick}
         onKeyDown={handleVoiceKeyDown}
-        onKeyUp={handleVoiceKeyUp}
       />
     </div>
   );

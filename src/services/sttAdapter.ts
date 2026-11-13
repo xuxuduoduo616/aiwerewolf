@@ -1,5 +1,5 @@
 /**
- * Speech-to-text adapter for the optional push-to-talk voice input.
+ * Speech-to-text adapter for the optional click-to-record voice input.
  *
  * Audio is sent to the same-origin Netlify function only. This module never
  * imports or calls the LLM/TTS proxies, and the browser never holds the ASR

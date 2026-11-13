@@ -8,12 +8,12 @@ import {
 } from './helpers/game';
 
 /**
- * V-C: Chromium fake-media smoke test for the push-to-talk voice input.
+ * V-C: Chromium fake-media smoke test for the click-to-toggle voice input.
  *
  * What this spec proves:
  * - the microphone button only exists on the human's own day-discussion turn;
- * - press → `recording` (`aria-pressed="true"`), release → `transcribing` and
- *   then back to `idle`;
+ * - first click → `recording` (`aria-pressed="true"`, dimmed), second click →
+ *   `transcribing` and then back to `idle`;
  * - the recording is POSTed exactly once to the same-origin
  *   `/.netlify/functions/asr-transcribe` endpoint, which is mocked with
  *   `page.route` (fixed text) so no real `QWEN_API_KEY` or upstream ASR is
@@ -117,7 +117,7 @@ const instrumentRecorderStart = async (page: Page): Promise<void> => {
   });
 };
 
-test.describe('push-to-talk voice input', () => {
+test.describe('click-to-toggle voice input', () => {
   test('records only on the human turn and uploads once to the mocked same-origin ASR', async ({ page }, testInfo) => {
     test.setTimeout(300_000);
 
@@ -201,15 +201,10 @@ test.describe('push-to-talk voice input', () => {
     await expect(voiceControl).toBeEnabled();
     await expect(voiceStatus).toHaveAttribute('data-voice-status', 'idle');
 
-    // ── Press ────────────────────────────────────────────────────────────
-    // Real pointer events (not a synthetic dispatch) so the push-to-talk
-    // pointerdown/pointerup handlers receive the same sequence a user does.
-    const voiceBox = await voiceControl.boundingBox();
-    expect(voiceBox, 'the microphone button has a layout box').not.toBeNull();
-    if (!voiceBox) throw new Error('The microphone button has no layout box.');
-    await page.mouse.move(voiceBox.x + voiceBox.width / 2, voiceBox.y + voiceBox.height / 2);
-    await page.mouse.down();
+    // ── First click: start recording ─────────────────────────────────────
+    await voiceControl.click();
     await expect(voiceControl).toHaveAttribute('aria-pressed', 'true');
+    await expect(voiceControl).toHaveClass(/opacity-50/);
     await expect(voiceStatus).toHaveAttribute('data-voice-status', 'recording');
     await expect(page.getByText('Recording…')).toBeVisible();
     await page.waitForFunction(
@@ -218,8 +213,8 @@ test.describe('push-to-talk voice input', () => {
       { timeout: 10_000 },
     );
 
-    // Hold across one application-visible speech-clock tick instead of a fixed
-    // timeout, so the MediaRecorder emits a non-empty recording before release.
+    // Keep recording across one application-visible speech-clock tick instead
+    // of a fixed timeout, so the MediaRecorder emits a non-empty recording.
     const speechClock = page.locator('.game-action-console .timer-pill').first();
     await expect(speechClock).toBeVisible();
     const clockAtPress = Number((await speechClock.innerText()).replace(/\D/g, ''));
@@ -230,8 +225,8 @@ test.describe('push-to-talk voice input', () => {
       )
       .toBeLessThan(clockAtPress);
 
-    // ── Release ──────────────────────────────────────────────────────────
-    await page.mouse.up();
+    // ── Second click: stop recording and transcribe ──────────────────────
+    await voiceControl.click();
     await expect(voiceStatus).toHaveAttribute('data-voice-status', 'transcribing');
     await expect(page.getByText('Transcribing…')).toBeVisible();
 

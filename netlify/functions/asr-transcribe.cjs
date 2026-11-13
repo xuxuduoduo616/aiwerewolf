@@ -1,4 +1,4 @@
-// Same-origin speech-to-text proxy for the optional push-to-talk microphone.
+// Same-origin speech-to-text proxy for the optional click-to-record microphone.
 // The Qwen API key stays server-side; the recording is forwarded in memory and
 // dropped with the response. Audio, transcript and user identity are never
 // stored or logged. Only the validated `{ audio, lang, durationMs }` contract
@@ -8,7 +8,10 @@
 // Qwen ASR model and returns `{ text }` to the browser. The API key is read
 // from `process.env.QWEN_API_KEY` and is never echoed back.
 
-const MODEL = 'qwen-audio-3.1-asr-flash-message';
+// The `qwen-audio-3.1-asr-flash-message` / `-streaming` models are WebSocket
+// real-time models. This function is a single-shot HTTP proxy, so it uses the
+// non-realtime Qwen3-ASR-Flash sibling with the same `input_audio` contract.
+const MODEL = 'qwen3-asr-flash';
 // OpenAI-compatible Qwen ASR endpoint (single-shot request, `messages` input).
 const ASR_ENDPOINT = 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
 const ASR_TIMEOUT_MS = 12_000;
@@ -140,7 +143,11 @@ async function transcribe(request, key) {
           content: [{ type: 'input_audio', input_audio: { data: request.dataUrl } }],
         },
       ],
-      asr_options: { language: request.lang === 'zh-CN' ? 'zh' : 'en' },
+      stream: false,
+      asr_options: {
+        language: request.lang === 'zh-CN' ? 'zh' : 'en',
+        enable_itn: true,
+      },
     }),
   });
 

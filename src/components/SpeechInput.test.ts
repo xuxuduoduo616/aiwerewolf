@@ -161,18 +161,19 @@ describe('VoiceControl presentation', () => {
       ...props,
     }));
 
-  it('renders an enabled push-to-talk button while idle', () => {
+  it('renders an enabled click-to-record button while idle', () => {
     const html = render();
-    expect(html).toContain('aria-label="Hold to record speech"');
+    expect(html).toContain('aria-label="Record speech"');
     expect(html).toContain('data-voice-control');
     expect(html).not.toContain('disabled');
   });
 
-  it('shows Recording… and offers cancellation while recording', () => {
+  it('dims the button and offers stopping while recording', () => {
     const html = render({ status: 'recording' });
     expect(html).toContain(VOICE_MESSAGES.recording);
-    expect(html).toContain('aria-label="Cancel voice input"');
+    expect(html).toContain('aria-label="Stop recording"');
     expect(html).toContain('aria-pressed="true"');
+    expect(html).toContain('opacity-50');
   });
 
   it('shows Transcribing… and disables new recordings', () => {

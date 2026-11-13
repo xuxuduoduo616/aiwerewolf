@@ -160,8 +160,10 @@ describe('asr-transcribe provider contract', () => {
         role: 'user',
         content: [{ type: 'input_audio', input_audio: { data: dataUrl } }],
       }],
-      asr_options: { language: 'en' },
+      stream: false,
+      asr_options: { language: 'en', enable_itn: true },
     });
+    expect(MODEL).toBe('qwen3-asr-flash');
   });
 
   it('maps zh-CN to the Qwen language hint', async () => {
@@ -171,7 +173,10 @@ describe('asr-transcribe provider contract', () => {
 
     expect(result.statusCode).toBe(200);
     expect(JSON.parse(result.body).text).toBe('你好');
-    expect(JSON.parse(fetchMock.mock.calls[0][1].body).asr_options).toEqual({ language: 'zh' });
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body).asr_options).toEqual({
+      language: 'zh',
+      enable_itn: true,
+    });
   });
 
   it('returns an empty string for silence rather than inventing text', async () => {

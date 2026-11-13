@@ -1,6 +1,6 @@
 # 语音输入（STT）选型与合规（决策材料）
 
-> **状态：owner 已批准方案 B（Qwen `qwen-audio-3.1-asr-flash-message`，松开后转写，无 interim）；V-B/V-C/V-D 已实现并通过本地测试。** 本文件保留选型与合规材料；生产需要服务端 `QWEN_API_KEY`，且本次授权不含该环境变量配置。真实 Qwen 识别质量、时延与 iOS 真机仍未验证。
+> **状态：owner 已批准方案 B；V-B/V-C/V-D 已实现。2026-11-13 实现更新：交互改为“点击开始录音、再次点击停止”（按钮录音时变暗）；`*-message`/`*-streaming` 是 WebSocket 实时模型，单次 HTTP 转写改用同系列非实时 `qwen3-asr-flash`。** 本文件保留选型与合规材料；生产 `QWEN_API_KEY` 已配置。真实 Qwen 识别质量、时延与 iOS 真机仍未验证。
 >
 > 基线：`d3bc477b3efeb3954ac55e606e9fe62421c7d9e9`（2026-11-09 发布）。
 > 场景：阶段一（单机 AI 对局 + 社交基础），用户以中学生/青少年为主；语音只作为文字发言的辅助输入，默认关闭、按下才启用。
@@ -42,7 +42,7 @@
 | 成本（每条 30s） | $0 直接成本（由浏览器厂商承担） | 供应商计费量级约 $0.002–0.009；具体单价以供应商当前页面为准 | $0 边际成本 |
 | 成本（每局 4–6 条） | $0 | 约 $0.01–0.05 | $0（一次性工程与模型资产另计） |
 | 成本（1000 局/月） | $0 | 约 $10–50 + 现有 Netlify 计划内的函数调用（约 5k 次/月，远低于免费额度） | $0 边际成本；模型首次下载 40–150 MB/新用户，命中缓存后接近 0 |
-| 延迟与稳定性 | 首字约 0.5–2s；依赖浏览器版本与网络；长会话/连续模式易自动结束，错误事件不统一 | 松开后约 1–5s（上传 + 供应商识别 + 函数冷启动）；可用 10–20s 超时 + 文字回退兜底；各浏览器行为一致 | 首次加载模型 5–30s；之后视设备，低端手机可能慢于实时；无网络抖动 |
+| 延迟与稳定性 | 首字约 0.5–2s；依赖浏览器版本与网络；长会话/连续模式易自动结束，错误事件不统一 | 再次点击停止后约 1–5s（上传 + 供应商识别 + 函数冷启动）；可用 10–20s 超时 + 文字回退兜底；各浏览器行为一致 | 首次加载模型 5–30s；之后视设备，低端手机可能慢于实时；无网络抖动 |
 | 离线可用 | 否 | 否 | 是（模型缓存后） |
 | 实现复杂度 | S：只改 `SpeechInput` 与一个 adapter，零新依赖、零新函数 | M：adapter + 1 个函数 + 1 份函数测试 + 1 个密钥/开关 + 限流与超时；无新依赖 | L：新依赖 + 模型资产 + 构建/缓存 + 移动端真机调优，至少 3 张卡 |
 | CSP / Permissions-Policy | 需要 `microphone=(self)`；CSP 不需要新域（识别不经页面 `fetch`，浏览器厂商流量不受 `connect-src` 约束） | 需要 `microphone=(self)`；**走同源函数时 CSP 也不需要新域**（`'self'` 已覆盖 `/.netlify/functions/*`）。只有"浏览器直连供应商"才要 `connect-src` 精确域，而那会暴露客户端凭据，不推荐 | 需要 `microphone=(self)` 录音；wasm 从同源加载时 `script-src`/`worker-src` 已有 `'self'`；若模型放 CDN 或开多线程，需另改 CSP/COOP-COEP（未评估） |
@@ -57,7 +57,7 @@
 5. 不做声纹/说话人识别、不做情绪识别、不做语音指纹、不做录音回放、不把音频或转写写进 telemetry/localStorage。
 6. 观测侧沿用 `docs/observability-decision.md` 第 5 节：连 STT 转写都不得进入观测事件。函数最多输出**枚举**日志（`asr_timeout` / `asr_rate_limited` / `asr_unavailable`），不含音频、转写、prompt、用户身份。
 7. 面向青少年要能直接说清处理方：A 的处理方随浏览器变化（Google / Apple / Microsoft），无法统一披露；B 只需在隐私说明里点名一个供应商；C 不涉及外发。
-8. 语音是**可选辅助**：默认不录音、默认文字输入；只有用户主动按住说话才采集，界面必须在按钮附近说明"语音会发送到 <处理方>"。
+8. 语音是**可选辅助**：默认不录音、默认文字输入；只有用户主动点击录音才采集，界面必须在按钮附近说明"语音会发送到 <处理方>"。
 
 ## 5. 推荐：B（云 ASR，同源 Netlify 函数）
 
@@ -84,7 +84,7 @@
 ## 6. 与现有管线的接缝（V-B 必须遵守）
 
 ```text
-麦克风（push-to-talk，仅本人回合）
+麦克风（click-to-record，仅本人回合）
   → sttAdapter（A 或 B 的同一契约：onInterim / onFinal / onError / onEnd）
   → SpeechInput 的 onChange → userInput（可编辑，绝不自动提交）
   → 玩家按 Send → onSubmit → handleHumanSpeechSubmit
@@ -97,7 +97,7 @@
 2. **音频与转写都不得发给 LLM 或 TTS**：`sttAdapter` 不得 import 或请求 `provider-adapter` / `genai-proxy` / `bailian-tts` / `aiOrchestrator` / `geminiAdapter` / `cloudSpeechAudio` / `speechAudio`；云分支只允许请求同源的 `asr-transcribe`，函数只把音频转发给 ASR 供应商。
 3. **60 秒上限**：从按下开始计时，到 60s 硬停，与 `SPEECH_DURATION = 60` 对齐（常量在 adapter 内集中定义，并注明来源是 `useGameState.ts` L289）。到达上限时停止录音、保留已识别的文本供编辑，**不自动提交**、不再请求麦克风。玩家时钟（`playerClockRef`）到 0 时以先到者为准。
 4. **仅本人回合**：麦克风按钮只在 `visible === true` 时渲染并可用（`visible` 已等价于 `DAY_DISCUSSION && currentSpeaker?.id === MY_PLAYER_ID`）；`visible` 变 false、`phase` 变化、组件卸载时立刻停止并 `track.stop()`，丢弃未完成的 interim，不提示错误。
-5. **默认 push-to-talk**：按下开始、松开停止，不做常开监听、不做 VAD、不做唤醒词；离开页面/切后台按取消处理。
+5. **默认点击录制**：点击开始、再次点击停止（录音时按钮变暗），不做常开监听、不做 VAD、不做唤醒词；离开页面/切后台按取消处理。
 6. **双分支同契约**：`sttAdapter.ts` 暴露一个可注入的工厂，A 与 B 只是两种实现；`SpeechInput` 不感知具体方案，云分支不得把 key、供应商域名或音频字节泄漏到组件层。
 
 ## 7. 权限与降级矩阵
@@ -108,7 +108,7 @@
 | 不支持 | 无 `SpeechRecognition`（A）或无 `navigator.mediaDevices`/`MediaRecorder`（B） | 按钮 `disabled` + "Voice input unavailable in this browser" | 是 | 不写入、不提交 |
 | 无结果超时 | 开始录音后约 10s 没有任何 interim/final | 停止并提示 "No speech detected. Please try again." | 是 | 已有文本保留，不提交 |
 | 静音 / 空结果 | 识别结束但文本为空 | 提示同上，不修改输入框 | 是 | 不写入、不提交 |
-| 用户取消 | 再次点击、按 Escape、`pointerleave`/`pointercancel`、切后台 | 静默停止并丢弃中间态，不弹错误 | 是 | 不写入、不提交 |
+| 用户取消 | 按 Escape、`pointerleave`/`pointercancel`、切后台 | 静默停止并丢弃中间态，不弹错误 | 是 | 不写入、不提交 |
 | 切阶段 / 失去发言权 | `visible` 变 false、`phase` 变化、`currentSpeaker` 变化 | 静默停止，不提示错误（这是正常流程） | 是 | 不写入、不提交 |
 | 云分支补充：网络失败 | `fetch` 抛错 / `AbortError` | "Voice input unavailable. Please type instead." | 是 | 不写入、不提交 |
 | 云分支补充：429 / 5xx / 超时 | 函数返回非 2xx 或客户端 10–20s 超时 | 同上，一次提示；音频丢弃，不重试 | 是 | 不写入、不提交 |
@@ -186,7 +186,7 @@ CSP：
 | # | 问题 | 推荐 | 影响与选错代价 |
 | --- | --- | --- | --- |
 | D3 | STT 方案选 A / B / C？ | **B（云 ASR，同源函数 + 服务端密钥）**：跨浏览器一致、处理方可披露、成本 1000 局/月约 $10–50 | 选 A：Firefox 无语音、iOS 不稳、处理方随浏览器变化，后续补 B 约 +2 卡；选 C：需改卡、加依赖与模型资产，至少 +2–3 卡并推迟首发 |
-| D5 | 是否允许音频离开设备（到自家函数，再转发给一个 owner 点名的 ASR 供应商，不落库）？ | **允许**，但仅限用户主动 push-to-talk、仅在本人发言回合、函数不落库不记日志 | 不允许：A 同样会外发（Google/Apple/Microsoft），所以只剩 C 或"暂不做语音"；允许：需在隐私说明里点名处理方，并接受供应商侧留存以合同为准 |
+| D5 | 是否允许音频离开设备（到自家函数，再转发给一个 owner 点名的 ASR 供应商，不落库）？ | **允许**，但仅限用户主动点击录制、仅在本人发言回合、函数不落库不记日志 | 不允许：A 同样会外发（Google/Apple/Microsoft），所以只剩 C 或"暂不做语音"；允许：需在隐私说明里点名处理方，并接受供应商侧留存以合同为准 |
 | D6 | 是否允许新增 1 个服务端函数与相应环境变量（ASR 密钥 + 开关）？ | **允许**，密钥只进 Netlify 环境变量，仓库与 `.env.example` 只有变量名 | 不允许：退回 A，接受跨浏览器与隐私代价；允许：多 1 个函数的运维、限流与密钥轮换责任，V-B 云分支才可开工 |
 
 **未拍板前 V-B 与 V-D 都不能开工。** V-B 的第一条依赖就是 owner 对 D3 的明确选择（V-A 的推荐不构成批准）；V-D 需要 owner 对 `microphone=(self)` 与（若适用）CSP 追加域的逐项批准。在答复落盘前，V-B / V-D 保持 `Queued`，V-C 也随之后移。
