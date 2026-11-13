@@ -16,6 +16,30 @@ const ok = (payload: unknown) => new Response(JSON.stringify(payload), {
   headers: { 'content-type': 'application/json' },
 });
 
+const makeWav = (seconds: number): Blob => {
+  const rate = 16_000;
+  const dataLength = rate * seconds * 2;
+  const bytes = new Uint8Array(44 + dataLength);
+  const view = new DataView(bytes.buffer);
+  const put = (offset: number, text: string) => {
+    for (let index = 0; index < text.length; index += 1) bytes[offset + index] = text.charCodeAt(index);
+  };
+  put(0, 'RIFF');
+  view.setUint32(4, 36 + dataLength, true);
+  put(8, 'WAVE');
+  put(12, 'fmt ');
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, 1, true);
+  view.setUint32(24, rate, true);
+  view.setUint32(28, rate * 2, true);
+  view.setUint16(32, 2, true);
+  view.setUint16(34, 16, true);
+  put(36, 'data');
+  view.setUint32(40, dataLength, true);
+  return new Blob([bytes], { type: 'audio/wav' });
+};
+
 afterEach(() => {
   vi.useRealTimers();
   vi.restoreAllMocks();
@@ -67,6 +91,21 @@ describe('cloud transcribe', () => {
       lang: 'en-US',
       durationMs: 1235,
     });
+  });
+
+  it('splits a long WAV into short same-origin requests and merges the text', async () => {
+    const fetchMock = vi.fn(async (_url: string, _init?: RequestInit) => ok({ text: 'Player four is suspicious' }));
+    const transcribe = createCloudTranscribe({ fetchImpl: fetchMock as unknown as typeof fetch });
+
+    const result = await transcribe(makeWav(7), 'en-US', { durationMs: 7_000 });
+
+    expect(fetchMock.mock.calls.length).toBeGreaterThan(1);
+    const bodies = fetchMock.mock.calls.map(([, init]) => JSON.parse(String(init?.body)));
+    for (const body of bodies) {
+      expect(body.audio).toMatch(/^data:audio\/wav;base64,/);
+      expect(body.durationMs).toBeLessThanOrEqual(4_000);
+    }
+    expect(result.text).toContain('Player four is suspicious');
   });
 
   it('clamps an over-long duration so the function can reject it consistently', async () => {
