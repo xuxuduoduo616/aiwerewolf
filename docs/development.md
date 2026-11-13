@@ -52,6 +52,39 @@ npm run audit:speech-names   # Speech-name diagnostics
 npm run audit:speech-corpus  # Corpus consistency audit
 ```
 
+## Browser Smoke Tests (Playwright)
+
+The browser smoke layer lives in `e2e/` and is configured by
+`playwright.config.ts`. It covers three short guest flows only — guest match
+start, the first-day human speech plus exile vote, and the Settings
+language/audio toggles — and it never plays a full match.
+
+```bash
+npx playwright install chromium   # one-time browser download
+npm run test:e2e                  # same as: npx playwright test
+npx playwright test --repeat-each=3
+```
+
+The config starts the regular Vite server on port 5173. On that port the app
+uses its local AI speech fallback, so the smoke tests need no `API_KEY`,
+Supabase variables, Turnstile key, or other secrets, and they never call the
+Netlify AI/TTS Functions. The existing `npm run test:run` gate stays
+unaffected: Vitest excludes `**/e2e/**` in `vite.config.ts`, and
+`tsconfig.json` only includes `src`, so the Playwright files never enter the
+guarded build either.
+
+If `npx playwright install chromium` cannot write the user-level browser cache
+(for example in a sandboxed local run), install the browsers inside
+`node_modules` instead; the Playwright config detects that local install
+automatically:
+
+```bash
+PLAYWRIGHT_BROWSERS_PATH=0 npx playwright install chromium
+```
+
+`.github/workflows/e2e.yml` runs the same suite on pushes and pull requests
+targeting `main`; it is independent from the guarded deploy workflow.
+
 ## Project Layout
 
 ```text

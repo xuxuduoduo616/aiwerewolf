@@ -1,0 +1,868 @@
+{
+  "schemaVersion": 1,
+  "gameId": "ed622470-4fb5-41b0-a864-a41d531ece1f",
+  "createdAt": "2026-11-12T07:23:40.820Z",
+  "boardId": "9-standard",
+  "difficulty": "normal",
+  "language": "zh",
+  "isGuest": true,
+  "players": [
+    {
+      "seat": 1,
+      "role": "Werewolf",
+      "isHuman": true
+    },
+    {
+      "seat": 2,
+      "role": "Villager",
+      "isHuman": false
+    },
+    {
+      "seat": 3,
+      "role": "Villager",
+      "isHuman": false
+    },
+    {
+      "seat": 4,
+      "role": "Villager",
+      "isHuman": false
+    },
+    {
+      "seat": 5,
+      "role": "Witch",
+      "isHuman": false
+    },
+    {
+      "seat": 6,
+      "role": "Seer",
+      "isHuman": false
+    },
+    {
+      "seat": 7,
+      "role": "Hunter",
+      "isHuman": false
+    },
+    {
+      "seat": 8,
+      "role": "Werewolf",
+      "isHuman": false
+    },
+    {
+      "seat": 9,
+      "role": "Werewolf",
+      "isHuman": false
+    }
+  ],
+  "phases": [
+    {
+      "phase": "NIGHT_START",
+      "round": 0
+    },
+    {
+      "phase": "NIGHT_WEREWOLVES",
+      "round": 1
+    },
+    {
+      "phase": "NIGHT_SEER",
+      "round": 1
+    },
+    {
+      "phase": "NIGHT_WITCH",
+      "round": 1
+    },
+    {
+      "phase": "DAY_ANNOUNCE",
+      "round": 1
+    },
+    {
+      "phase": "DAY_HUNTER_CHECK",
+      "round": 1
+    },
+    {
+      "phase": "DAY_DISCUSSION",
+      "round": 1
+    },
+    {
+      "phase": "DAY_VOTING",
+      "round": 1
+    },
+    {
+      "phase": "NIGHT_START",
+      "round": 1
+    },
+    {
+      "phase": "NIGHT_WEREWOLVES",
+      "round": 2
+    },
+    {
+      "phase": "NIGHT_SEER",
+      "round": 2
+    },
+    {
+      "phase": "NIGHT_WITCH",
+      "round": 2
+    },
+    {
+      "phase": "DAY_ANNOUNCE",
+      "round": 2
+    },
+    {
+      "phase": "DAY_HUNTER_CHECK",
+      "round": 2
+    },
+    {
+      "phase": "DAY_DISCUSSION",
+      "round": 2
+    },
+    {
+      "phase": "DAY_VOTING",
+      "round": 2
+    },
+    {
+      "phase": "GAME_OVER",
+      "round": 2
+    }
+  ],
+  "speeches": [
+    {
+      "round": 1,
+      "phase": "DAY_DISCUSSION",
+      "speakerId": 1,
+      "text": "[human speech omitted]"
+    },
+    {
+      "round": 1,
+      "phase": "DAY_DISCUSSION",
+      "speakerId": 2,
+      "text": "我直说。我就追问一个点。あの人は理由後出しと占い先のズレで偽目、今日は処刑寄り。（关注1号）"
+    },
+    {
+      "round": 1,
+      "phase": "DAY_DISCUSSION",
+      "speakerId": 3,
+      "text": "我的理由可以说清楚。我先把自己的思路说清楚。ダリルの根拠は曖昧じゃ。言葉選びが雑な占い師は信用できん。（关注1号）"
+    },
+    {
+      "round": 1,
+      "phase": "DAY_DISCUSSION",
+      "speakerId": 4,
+      "text": "我的理由可以说清楚。我先把自己的思路说清楚。あの人を黒めに見る。結果軽視でもう一人叩きが不自然。（关注1号）"
+    },
+    {
+      "round": 1,
+      "phase": "DAY_DISCUSSION",
+      "speakerId": 5,
+      "text": "我直说。我就追问一个点。団結し続け、脅威としてあの人に焦点を当てよう。村を守ることが鍵だ。（关注1号）"
+    },
+    {
+      "round": 1,
+      "phase": "DAY_DISCUSSION",
+      "speakerId": 6,
+      "text": "我还在琢磨。我先把自己的思路说清楚。賢く投票することが極めて重要だ。 私は自分が占い師だと知っている。 あの人は嘘をついている。 私は彼に投票する。  @もう一人  沈黙は危険だ。何か考えや理由は？（关注1号）"
+    },
+    {
+      "round": 1,
+      "phase": "DAY_DISCUSSION",
+      "speakerId": 7,
+      "text": "我还在琢磨。我就说一句。霊媒名乗りで票軸はできた。曲げませんだけならあの人処刑です。 @もう一人 票割れ回避の集約先を早めに頼みます。（关注1号）"
+    },
+    {
+      "round": 1,
+      "phase": "DAY_DISCUSSION",
+      "speakerId": 8,
+      "text": "我的理由可以说清楚。我就追问一个点。襲撃はアキでどうです？騙り、投票も相談を。（关注2号）"
+    },
+    {
+      "round": 1,
+      "phase": "DAY_DISCUSSION",
+      "speakerId": 9,
+      "text": "我还在琢磨。我就说一句。@あの人  の相方候補として @もう一人 が寡黙すぎて気になる。意見を聞きたい（关注2号）"
+    },
+    {
+      "round": 2,
+      "phase": "DAY_DISCUSSION",
+      "speakerId": 2,
+      "text": "あの人の霊媒師COは信頼に足る動きだね。みんな、もう一人を見守ろう！（关注9号）"
+    },
+    {
+      "round": 2,
+      "phase": "DAY_DISCUSSION",
+      "speakerId": 4,
+      "text": "あの人への集団投票は狼ペアを見落とす危険があると感じる。今日、ペアの中に怪しいラインを見つけられる人いる？（关注1号）"
+    },
+    {
+      "round": 2,
+      "phase": "DAY_DISCUSSION",
+      "speakerId": 3,
+      "text": "我的理由可以说清楚。我先把自己的思路说清楚。占い師が名乗り出ないのは危険だよ。投票先考えよう！@シオンシオンの意見に賛成だけど、占い師が気になるね。（关注5号）"
+    },
+    {
+      "round": 2,
+      "phase": "DAY_DISCUSSION",
+      "speakerId": 5,
+      "text": "我直说。我就追问一个点。あの人を占って、人間だった！あの人が本物の霊媒師だ！勝とう！ダ-ダ-ダ（关注1号）"
+    },
+    {
+      "round": 2,
+      "phase": "DAY_DISCUSSION",
+      "speakerId": 6,
+      "text": "我还在琢磨。我先把自己的思路说清楚。あの人は昨夜の私の占いで人狼と確定しました。今日はあの人に投票し、惑わされないようにしましょう。（关注1号）"
+    },
+    {
+      "round": 2,
+      "phase": "DAY_DISCUSSION",
+      "speakerId": 7,
+      "text": "我还在琢磨。我就说一句。1号铁逻辑断点太明显了，不解释清楚我就先投他。"
+    },
+    {
+      "round": 2,
+      "phase": "DAY_DISCUSSION",
+      "speakerId": 8,
+      "text": "我的理由可以说清楚。我就追问一个点。まだ情報が少ない状況だね。慎重に考えないと、話の流れが危うくなるよ。（关注3号）"
+    },
+    {
+      "round": 2,
+      "phase": "DAY_DISCUSSION",
+      "speakerId": 9,
+      "text": "我还在琢磨。我就说一句。次はユリを整理吊りに誘導したい。理由つけやすいし自然な流れで票集められそう。（关注3号）"
+    },
+    {
+      "round": 2,
+      "phase": "DAY_DISCUSSION",
+      "speakerId": 1,
+      "text": "[human speech omitted]"
+    }
+  ],
+  "votes": [
+    {
+      "round": 1,
+      "voterId": 1,
+      "targetId": 2
+    },
+    {
+      "round": 1,
+      "voterId": 2,
+      "targetId": 9,
+      "reason": "（低难度）随机选择"
+    },
+    {
+      "round": 1,
+      "voterId": 3,
+      "targetId": 2,
+      "reason": "投可疑度最高的 2号"
+    },
+    {
+      "round": 1,
+      "voterId": 4,
+      "targetId": 1,
+      "reason": "投可疑度最高的 1号"
+    },
+    {
+      "round": 1,
+      "voterId": 5,
+      "targetId": 1,
+      "reason": "投可疑度最高的 1号"
+    },
+    {
+      "round": 1,
+      "voterId": 6,
+      "targetId": 1,
+      "reason": "投可疑度最高的 1号"
+    },
+    {
+      "round": 1,
+      "voterId": 7,
+      "targetId": 1,
+      "reason": "投可疑度最高的 1号"
+    },
+    {
+      "round": 1,
+      "voterId": 8,
+      "targetId": 2,
+      "reason": "投可疑度最高的 2号"
+    },
+    {
+      "round": 1,
+      "voterId": 9,
+      "targetId": 2,
+      "reason": "投可疑度最高的 2号"
+    },
+    {
+      "round": 2,
+      "voterId": 1,
+      "targetId": 3
+    },
+    {
+      "round": 2,
+      "voterId": 3,
+      "targetId": 5,
+      "reason": "投可疑度最高的 5号"
+    },
+    {
+      "round": 2,
+      "voterId": 5,
+      "targetId": 1,
+      "reason": "投可疑度最高的 1号"
+    },
+    {
+      "round": 2,
+      "voterId": 6,
+      "targetId": 9,
+      "reason": "（低难度）随机选择"
+    },
+    {
+      "round": 2,
+      "voterId": 7,
+      "targetId": 1,
+      "reason": "投可疑度最高的 1号"
+    },
+    {
+      "round": 2,
+      "voterId": 8,
+      "targetId": 3,
+      "reason": "投可疑度最高的 3号"
+    },
+    {
+      "round": 2,
+      "voterId": 9,
+      "targetId": 3,
+      "reason": "投可疑度最高的 3号"
+    }
+  ],
+  "beliefSnapshots": [
+    {
+      "round": 1,
+      "actorId": 2,
+      "scores": [
+        {
+          "targetId": 9,
+          "score": 0.65
+        },
+        {
+          "targetId": 1,
+          "score": 0.5
+        },
+        {
+          "targetId": 3,
+          "score": 0.5
+        },
+        {
+          "targetId": 4,
+          "score": 0.5
+        },
+        {
+          "targetId": 5,
+          "score": 0.5
+        },
+        {
+          "targetId": 6,
+          "score": 0.5
+        },
+        {
+          "targetId": 7,
+          "score": 0.5
+        },
+        {
+          "targetId": 8,
+          "score": 0.5
+        }
+      ]
+    },
+    {
+      "round": 1,
+      "actorId": 3,
+      "scores": [
+        {
+          "targetId": 2,
+          "score": 0.65
+        },
+        {
+          "targetId": 4,
+          "score": 0.5
+        },
+        {
+          "targetId": 5,
+          "score": 0.5
+        },
+        {
+          "targetId": 6,
+          "score": 0.5
+        },
+        {
+          "targetId": 7,
+          "score": 0.5
+        },
+        {
+          "targetId": 8,
+          "score": 0.5
+        },
+        {
+          "targetId": 9,
+          "score": 0.5
+        },
+        {
+          "targetId": 1,
+          "score": 0.42
+        }
+      ]
+    },
+    {
+      "round": 1,
+      "actorId": 4,
+      "scores": [
+        {
+          "targetId": 1,
+          "score": 0.65
+        },
+        {
+          "targetId": 2,
+          "score": 0.5
+        },
+        {
+          "targetId": 3,
+          "score": 0.5
+        },
+        {
+          "targetId": 5,
+          "score": 0.5
+        },
+        {
+          "targetId": 6,
+          "score": 0.5
+        },
+        {
+          "targetId": 7,
+          "score": 0.5
+        },
+        {
+          "targetId": 8,
+          "score": 0.5
+        },
+        {
+          "targetId": 9,
+          "score": 0.5
+        }
+      ]
+    },
+    {
+      "round": 1,
+      "actorId": 5,
+      "scores": [
+        {
+          "targetId": 1,
+          "score": 0.65
+        },
+        {
+          "targetId": 2,
+          "score": 0.5
+        },
+        {
+          "targetId": 3,
+          "score": 0.5
+        },
+        {
+          "targetId": 4,
+          "score": 0.5
+        },
+        {
+          "targetId": 6,
+          "score": 0.5
+        },
+        {
+          "targetId": 7,
+          "score": 0.5
+        },
+        {
+          "targetId": 8,
+          "score": 0.5
+        },
+        {
+          "targetId": 9,
+          "score": 0.5
+        }
+      ]
+    },
+    {
+      "round": 1,
+      "actorId": 6,
+      "scores": [
+        {
+          "targetId": 1,
+          "score": 0.77
+        },
+        {
+          "targetId": 2,
+          "score": 0.5
+        },
+        {
+          "targetId": 3,
+          "score": 0.5
+        },
+        {
+          "targetId": 4,
+          "score": 0.5
+        },
+        {
+          "targetId": 5,
+          "score": 0.5
+        },
+        {
+          "targetId": 7,
+          "score": 0.5
+        },
+        {
+          "targetId": 8,
+          "score": 0.5
+        },
+        {
+          "targetId": 9,
+          "score": 0.5
+        }
+      ]
+    },
+    {
+      "round": 1,
+      "actorId": 7,
+      "scores": [
+        {
+          "targetId": 1,
+          "score": 0.65
+        },
+        {
+          "targetId": 2,
+          "score": 0.5
+        },
+        {
+          "targetId": 3,
+          "score": 0.5
+        },
+        {
+          "targetId": 4,
+          "score": 0.5
+        },
+        {
+          "targetId": 5,
+          "score": 0.5
+        },
+        {
+          "targetId": 6,
+          "score": 0.5
+        },
+        {
+          "targetId": 8,
+          "score": 0.5
+        },
+        {
+          "targetId": 9,
+          "score": 0.5
+        }
+      ]
+    },
+    {
+      "round": 1,
+      "actorId": 8,
+      "scores": [
+        {
+          "targetId": 2,
+          "score": 0.77
+        },
+        {
+          "targetId": 3,
+          "score": 0.5
+        },
+        {
+          "targetId": 4,
+          "score": 0.5
+        },
+        {
+          "targetId": 5,
+          "score": 0.5
+        },
+        {
+          "targetId": 6,
+          "score": 0.5
+        },
+        {
+          "targetId": 7,
+          "score": 0.5
+        },
+        {
+          "targetId": 1,
+          "score": 0.05
+        },
+        {
+          "targetId": 9,
+          "score": 0.05
+        }
+      ]
+    },
+    {
+      "round": 1,
+      "actorId": 9,
+      "scores": [
+        {
+          "targetId": 2,
+          "score": 0.65
+        },
+        {
+          "targetId": 3,
+          "score": 0.5
+        },
+        {
+          "targetId": 4,
+          "score": 0.5
+        },
+        {
+          "targetId": 5,
+          "score": 0.5
+        },
+        {
+          "targetId": 6,
+          "score": 0.5
+        },
+        {
+          "targetId": 7,
+          "score": 0.5
+        },
+        {
+          "targetId": 1,
+          "score": 0.05
+        },
+        {
+          "targetId": 8,
+          "score": 0.05
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "actorId": 3,
+      "scores": [
+        {
+          "targetId": 5,
+          "score": 0.77
+        },
+        {
+          "targetId": 6,
+          "score": 0.5
+        },
+        {
+          "targetId": 7,
+          "score": 0.5
+        },
+        {
+          "targetId": 8,
+          "score": 0.5
+        },
+        {
+          "targetId": 9,
+          "score": 0.5
+        },
+        {
+          "targetId": 1,
+          "score": 0.42
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "actorId": 5,
+      "scores": [
+        {
+          "targetId": 1,
+          "score": 0.8
+        },
+        {
+          "targetId": 3,
+          "score": 0.5
+        },
+        {
+          "targetId": 6,
+          "score": 0.5
+        },
+        {
+          "targetId": 7,
+          "score": 0.5
+        },
+        {
+          "targetId": 8,
+          "score": 0.5
+        },
+        {
+          "targetId": 9,
+          "score": 0.5
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "actorId": 6,
+      "scores": [
+        {
+          "targetId": 1,
+          "score": 0.89
+        },
+        {
+          "targetId": 9,
+          "score": 0.65
+        },
+        {
+          "targetId": 3,
+          "score": 0.5
+        },
+        {
+          "targetId": 5,
+          "score": 0.5
+        },
+        {
+          "targetId": 7,
+          "score": 0.5
+        },
+        {
+          "targetId": 8,
+          "score": 0.5
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "actorId": 7,
+      "scores": [
+        {
+          "targetId": 1,
+          "score": 0.92
+        },
+        {
+          "targetId": 3,
+          "score": 0.5
+        },
+        {
+          "targetId": 5,
+          "score": 0.5
+        },
+        {
+          "targetId": 6,
+          "score": 0.5
+        },
+        {
+          "targetId": 8,
+          "score": 0.5
+        },
+        {
+          "targetId": 9,
+          "score": 0.5
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "actorId": 8,
+      "scores": [
+        {
+          "targetId": 3,
+          "score": 0.65
+        },
+        {
+          "targetId": 5,
+          "score": 0.5
+        },
+        {
+          "targetId": 6,
+          "score": 0.5
+        },
+        {
+          "targetId": 7,
+          "score": 0.5
+        },
+        {
+          "targetId": 1,
+          "score": 0.05
+        },
+        {
+          "targetId": 9,
+          "score": 0.05
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "actorId": 9,
+      "scores": [
+        {
+          "targetId": 3,
+          "score": 0.65
+        },
+        {
+          "targetId": 5,
+          "score": 0.5
+        },
+        {
+          "targetId": 6,
+          "score": 0.5
+        },
+        {
+          "targetId": 7,
+          "score": 0.5
+        },
+        {
+          "targetId": 1,
+          "score": 0.05
+        },
+        {
+          "targetId": 8,
+          "score": 0.05
+        }
+      ]
+    }
+  ],
+  "wolfChat": [
+    {
+      "round": 1,
+      "speakerId": 1,
+      "message": "私が前衛。あなたは後衛。吊りはあの人かもう一人。狂人不在なら私が占い騙り。"
+    },
+    {
+      "round": 1,
+      "speakerId": 8,
+      "message": "私はMs. あの人を私たちの真に明晰な声とみなすことを提案します。彼女の穏やかな導きは、村人の真実に沿っており、まるでチェスを横切って動く女王のように"
+    },
+    {
+      "round": 1,
+      "speakerId": 9,
+      "message": "あの人の疑いは精査不足で流せる。今夜はもう一人を噛み、明日はあの人を真扱いして盤面を壊そう。Over"
+    },
+    {
+      "round": 2,
+      "speakerId": 1,
+      "message": "溶け込むために追放投票はあの人に合わせておいて、霊媒師がCOしない限り今夜は彼を噛む予定でいこう。"
+    },
+    {
+      "round": 2,
+      "speakerId": 8,
+      "message": "投票はあの人寄せ継続、夜はもう一人噛み優先じゃ"
+    },
+    {
+      "round": 2,
+      "speakerId": 9,
+      "message": "明日は私あの人白出すね。 @もう一人  ロラ言い出すタイミング任せる"
+    }
+  ],
+  "checks": [
+    {
+      "round": 1,
+      "actorId": 6,
+      "targetId": 1,
+      "isGood": false
+    },
+    {
+      "round": 2,
+      "actorId": 6,
+      "targetId": 2,
+      "isGood": true
+    }
+  ],
+  "outcome": {
+    "winner": "WEREWOLVES",
+    "rounds": 2
+  }
+}

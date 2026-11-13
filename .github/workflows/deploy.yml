@@ -19,6 +19,7 @@ jobs:
           node-version: 20
       - run: npm ci
       - run: npx vitest run scripts/netlify-ignore-build.test.js
+      - run: npm run test:run
       - run: npm run build
         env:
           VITE_TURNSTILE_SITE_KEY: ${{ secrets.VITE_TURNSTILE_SITE_KEY }}

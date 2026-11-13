@@ -23,6 +23,21 @@ const errorResponse = (statusCode, code) => ({
   body: JSON.stringify({ code }),
 });
 
+// H1-D observability: one enum-only JSON line per failed synthesis attempt.
+// `lang` and `seat` are the validated request enums; no speech text, token or
+// origin is logged, and the HTTP response contract stays `502 TTS_UNAVAILABLE`.
+const ttsEventForError = (error) => {
+  const name = String(error?.name || '');
+  const message = String(error?.message || '').toLowerCase();
+  return name === 'TimeoutError' || name === 'AbortError'
+    || message.includes('timeout') || message.includes('aborted')
+    ? 'tts_timeout' : 'tts_unavailable';
+};
+const logTtsEvent = (event, speech) => {
+  if (typeof console === 'undefined') return;
+  console.warn(JSON.stringify({ event, lang: speech.lang, seat: speech.seat }));
+};
+
 const header = (event, name) =>
   Object.entries(event.headers || {}).find(([key]) => key.toLowerCase() === name)?.[1] || '';
 
@@ -164,7 +179,8 @@ exports.handler = async (event = {}) => {
       return errorResponse(403, 'TESTER_REQUIRED');
     }
     return await synthesize(speech, host, key, signal);
-  } catch {
+  } catch (error) {
+    logTtsEvent(ttsEventForError(error), speech);
     return errorResponse(502, 'TTS_UNAVAILABLE');
   }
 };
@@ -187,7 +203,10 @@ async function synthesize(speech, host, key, signal) {
       },
     }),
   });
-  if (!response.ok) return errorResponse(502, 'TTS_UNAVAILABLE');
+  if (!response.ok) {
+    logTtsEvent(response.status === 429 ? 'tts_rate_limited' : 'tts_unavailable', speech);
+    return errorResponse(502, 'TTS_UNAVAILABLE');
+  }
   const dataFromModel = await response.json();
   const audioUrl = trustedAudioUrl(dataFromModel.output?.audio?.url);
   const audio = await readWave(await fetch(audioUrl, { signal, redirect: 'error' }));

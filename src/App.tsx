@@ -12,6 +12,7 @@ import WolfChannel from './components/WolfChannel';
 import SpeechInput from './components/SpeechInput';
 import GameRoom, { GamePlayerSeat } from './components/GameRoom';
 import GameLogDialog, { GameLogFeed } from './components/GameLogDialog';
+import ReplayReview from './components/ReplayReview';
 import GlobalShell from './components/GlobalShell';
 import type { ShellView } from './components/GlobalShell';
 import LobbyHome from './components/LobbyHome';
@@ -484,6 +485,10 @@ const App: React.FC = () => {
                   <p className="text-sm text-zinc-300 mt-2">Round {Math.max(1, game.roundCount)} complete{game.me ? ` · ${ROLE_LABELS_EN[game.me.role]}` : ''}</p>
                   <p className="text-xs text-zinc-400 mt-2">{auth.isGuest ? 'Guest match complete. Log in to save future matches.' : game.savedRecordId === 'failed' ? 'Record could not be saved.' : game.savedRecordId ? 'Record saved.' : 'Saving record...'}</p>
                   <button onClick={returnToLobby} className="mt-5 action-button game-return-button">Return to Lobby</button>
+                  <ReplayReview
+                    isGameOver={game.phase === GamePhase.GAME_OVER && Boolean(game.winner)}
+                    refreshKey={game.savedRecordId}
+                  />
                 </div>
               ) : (
                 <>
@@ -558,6 +563,7 @@ const App: React.FC = () => {
                     submitDisabled={game.isPaused}
                     visible={game.phase === GamePhase.DAY_DISCUSSION && game.currentSpeaker?.id === MY_PLAYER_ID}
                     selectedPlayer={game.selectedPlayer}
+                    language={displayLanguage}
                   />
                 </>
               )}

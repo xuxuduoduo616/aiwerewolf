@@ -7,7 +7,7 @@ export default defineConfig(() => {
     base: './', // Ensures assets load correctly on any path
     plugins: [react()],
     test: {
-      exclude: ['**/node_modules/**', '**/dist/**', '**/.*/**'],
+      exclude: ['**/node_modules/**', '**/dist/**', '**/.*/**', '**/e2e/**'],
     },
     // NOTE: We intentionally do NOT inject API_KEY into the frontend.
     // The Gemini API key lives ONLY server-side in netlify/functions/genai-proxy.cjs.

@@ -222,3 +222,42 @@ describe('Bailian voice pilot', () => {
     });
   });
 });
+
+describe('structured failure logs', () => {
+  const warnings: unknown[][] = [];
+  const lines = () => warnings.map(args => JSON.parse(String(args[0])) as Record<string, unknown>);
+  beforeEach(() => {
+    warnings.length = 0;
+    vi.spyOn(console, 'warn').mockImplementation((...args: unknown[]) => { warnings.push(args); });
+  });
+
+  it('logs tts_rate_limited for upstream 429 while keeping the 502 contract', async () => {
+    upstream.mockResolvedValueOnce(auth()).mockResolvedValueOnce(new Response('', { status: 429 }));
+    const result = await handler(event);
+    expect(result).toMatchObject({ statusCode: 502, body: JSON.stringify({ code: 'TTS_UNAVAILABLE' }) });
+    expect(lines()).toEqual([{ event: 'tts_rate_limited', lang: 'en-US', seat: 2 }]);
+    expect(JSON.stringify(lines())).not.toContain(text);
+    expect(JSON.stringify(lines())).not.toContain('test-placeholder-key');
+  });
+
+  it('logs tts_timeout for an aborted synthesis deadline', async () => {
+    upstream.mockResolvedValueOnce(auth()).mockResolvedValueOnce(
+      Promise.reject(new DOMException('The operation was aborted due to timeout', 'TimeoutError')),
+    );
+    expect((await handler(event)).statusCode).toBe(502);
+    expect(lines()).toEqual([{ event: 'tts_timeout', lang: 'en-US', seat: 2 }]);
+  });
+
+  it('logs tts_unavailable for other upstream failures', async () => {
+    upstream.mockResolvedValueOnce(auth()).mockResolvedValueOnce(new Response('', { status: 503 }));
+    expect((await handler(event)).statusCode).toBe(502);
+    expect(lines()).toEqual([{ event: 'tts_unavailable', lang: 'en-US', seat: 2 }]);
+  });
+
+  it('keeps the success path free of failure logs', async () => {
+    upstream.mockResolvedValueOnce(auth()).mockResolvedValueOnce(output())
+      .mockResolvedValueOnce(new Response(wave));
+    expect((await handler(event)).statusCode).toBe(200);
+    expect(warnings).toEqual([]);
+  });
+});

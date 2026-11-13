@@ -10,13 +10,25 @@ AI Werewolf is a browser-based social deduction game where one human player face
 
 The project separates game rules from generated expression. A deterministic rules engine and belief/action layer decide what agents know and do; the language layer turns those decisions into characterful dialogue and falls back to a bundled speech library when the external AI provider is unavailable.
 
-## UI refinement release (2026-11-06)
+## Latest release (2026-11-13)
 
-- Review baseline: [`56180a7`](https://github.com/xuxuduoduo616/aiwerewolf/commit/56180a711c12719d86b2db9a014e3d3276b8b452).
+- Post-game replay review: after a match ends, inspect AI suspicion curves, vote reasons, and werewolf night chat from the saved local replay.
+- Share card: export a client-side PNG of "AI's view of you" from the replay panel; nothing is uploaded.
+- Push-to-talk voice input: speak on your own turn, review the editable transcription, then send it as text. Transcription happens after release, not live; voice input requires the server-side `QWEN_API_KEY` environment variable.
+- Release verification: 1,131 tests passed / 5 skipped; TypeScript and Vite build passed. Production deployment is verified separately through the existing Netlify Git integration.
+
+## Previous production release (2026-11-09)
+
+- Release identity: local `main`, `origin/main`, the GitHub `main` branch, and the Netlify production commit all match `d3bc477b3efeb3954ac55e606e9fe62421c7d9e9`; Netlify production deploy `6af1b6b7b22bb26aa431fd64` is ready, and GitHub Actions run `42613934667` completed successfully. This release is confirmed in production.
+- Every English AI player now speaks with a distinct voice: 11 Premium English voices are assigned by seat, so all AI players in 9-player and 12-player matches sound different. Chinese speech keeps its existing voices, and browser fallback stays restricted to natural voices.
+- Release verification: 915 passed / 5 skipped, and the build with cloud speech enabled passed. The production homepage returned 200; the speech endpoint returned 405 for GET and 401 for anonymous POST from the production origin.
+- Not verified: real-account email OTP, authenticated cloud writes, how the 11 voices actually sound, external AI provider reliability, and any guarantee for arbitrary input languages.
+
+## Previous UI refinement (2026-11-06)
+
 - Refined login and lobby: restrained red headline, clearer single-player start action, and responsive navigation.
 - Activity promotions and payment entry points are hidden through presentation switches; their components and underlying logic remain available in source.
-- Verification: 771 tests passed, 5 existing skips; TypeScript and Vite build passed. Local browser checks covered seven viewport sizes and 9/12-player launch flows; real-account OTP and cloud writes were not exercised.
-- Release identity and production verification will be recorded after deployment is confirmed; this section does not claim deployment has completed.
+- Local browser checks covered seven viewport sizes and 9/12-player launch flows; real-account OTP and cloud writes were not exercised.
 
 ## Features
 
@@ -24,6 +36,9 @@ The project separates game rules from generated expression. A deterministic rule
 - 9-player and 12-player boards with Villager, Werewolf, Seer, Witch, Hunter, and Idiot roles
 - Three difficulty levels and role-specific AI behavior profiles
 - Belief tracking, strategic action selection, wolf-team coordination, voting, last words, and win resolution
+- Post-game replay review with suspicion curves, vote reasons, and werewolf night chat
+- Client-side share card export for a finished match
+- Push-to-talk voice input with editable transcription
 - Per-match dialogue refinement with server-verified Gemini 3.6 Flash, Gemini 2.5 Flash fallback, and local speech fallback
 - Email OTP authentication, guest trial, local guest records, and player statistics
 - Responsive desktop, tablet, and mobile layouts with keyboard and safe-area support
@@ -60,7 +75,7 @@ Multiplayer rooms, premium purchases, real rewards, and live payment processing 
 | Authentication and data | Supabase Auth and Postgres |
 | Hosting | Netlify CDN and Functions |
 | Continuous integration | GitHub Actions production-build verification |
-| Testing | Vitest |
+| Testing | Vitest and Playwright |
 
 ## Current Development Status
 
@@ -75,7 +90,10 @@ Multiplayer rooms, premium purchases, real rewards, and live payment processing 
 | Social lobby surfaces | Preview only |
 | Real-player multiplayer | Planned |
 | Payment processing | Disabled; provider integration not configured |
-| Cloud text-to-speech | Planned |
+| Cloud text-to-speech | Complete for AI speech; browser fallback remains |
+| Post-game replay review | Complete; local replay storage |
+| Share card export | Complete; client-side PNG |
+| Voice input | Complete; requires `QWEN_API_KEY` |
 
 ## Architecture
 

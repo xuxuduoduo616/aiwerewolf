@@ -4,13 +4,18 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import vm from 'node:vm';
 
-const mocks = vi.hoisted(() => ({ GoogleGenAI: vi.fn(), get: vi.fn(), generateContent: vi.fn() }));
+const mocks = vi.hoisted(() => ({
+  GoogleGenAI: vi.fn(),
+  get: vi.fn(),
+  generateContent: vi.fn(),
+  console: { warn: vi.fn(), log: vi.fn(), error: vi.fn() },
+}));
 const source = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '../functions/provider-adapter.cjs'), 'utf8');
 const original = { API_KEY: process.env.API_KEY, GEMINI_API_KEY: process.env.GEMINI_API_KEY, ALLOWED_ORIGIN: process.env.ALLOWED_ORIGIN, ADAPTER_DRY_RUN: process.env.ADAPTER_DRY_RUN, ADAPTER_DAILY_BUDGET_USD: process.env.ADAPTER_DAILY_BUDGET_USD };
 const load = () => {
   const module = { exports: {} };
   const context = vm.createContext({
-    Date, Map, JSON, process, Promise, Math, Number, Infinity, URL, setTimeout, clearTimeout,
+    Date, Map, JSON, process, Promise, Math, Number, Infinity, URL, setTimeout, clearTimeout, console: mocks.console,
     require: (id) => id === '@google/genai' ? { GoogleGenAI: mocks.GoogleGenAI, ThinkingLevel: { MINIMAL: 'MINIMAL' } } : (() => { throw new Error(`Unexpected require ${id}`); })(),
     module, exports: module.exports,
   });
@@ -168,6 +173,29 @@ describe('Gemini provider adapter', () => {
     expect(adapter.getCircuitState()['gemini-3.6-flash'].openUntil).toBeGreaterThan(0);
     expect(adapter.classifyError({ status: 429 })).toBe('rate-limit');
     expect(adapter.getRequestCounters()['gemini-3.6-flash']).toBeGreaterThan(0);
+  });
+  it('logs one enum-only line per failed model and the local fallback', async () => {
+    mocks.generateContent.mockRejectedValue(Object.assign(new Error('limited'), { status: 429 }));
+    const adapter = load();
+    const response = await adapter.handler(event({ model: 'gemini-3.6-flash', prompt: 'SECRET PROMPT TEXT' }));
+    expect(json(response)).toMatchObject({ model_used: 'local-fallback', fallback_used: true });
+    const lines = mocks.console.warn.mock.calls.map(([line]) => JSON.parse(line));
+    expect(lines).toEqual([
+      { event: 'provider_rate_limited', model: 'gemini-3.6-flash', cause: 'rate-limit', fallback: true },
+      { event: 'provider_rate_limited', model: 'gemini-2.5-flash', cause: 'rate-limit', fallback: true },
+      { event: 'provider_fallback', model: 'local-fallback', cause: 'rate-limit', fallback: true },
+    ]);
+    expect(Object.keys(lines[0])).toEqual(['event', 'model', 'cause', 'fallback']);
+    for (const [line] of mocks.console.warn.mock.calls) expect(line).not.toContain('SECRET PROMPT TEXT');
+  });
+  it('maps a primary timeout to provider_timeout before the secondary succeeds', async () => {
+    mocks.generateContent.mockRejectedValueOnce(new Error('timeout')).mockResolvedValueOnce({ text: 'secondary' });
+    const adapter = load();
+    const response = await adapter.handler(event({ model: 'gemini-3.6-flash', prompt: 'hello' }));
+    expect(json(response)).toMatchObject({ model_used: 'gemini-2.5-flash', fallback_used: true });
+    expect(mocks.console.warn.mock.calls.map(([line]) => JSON.parse(line))).toEqual([
+      { event: 'provider_timeout', model: 'gemini-3.6-flash', cause: 'timeout', fallback: true },
+    ]);
   });
   it('rejects invalid requests without leaking errors', async () => {
     const adapter = load();

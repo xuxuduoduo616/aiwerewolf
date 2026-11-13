@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { __test, cancel, pause, resume, enqueue, isSpeaking, setEnabled, speechMaxDurationMs } from './speechAudio';
 import { CLOUD_SPEECH_LIMIT, ENGLISH_REQUEST_TIMEOUT_MS, splitCloudSpeech } from './cloudSpeechAudio';
+import { TTS_COST_PER_SYNTH_USD, reset, snapshot, startMatch } from './matchTelemetry';
 
 class BrowserUtterance {
   lang = '';
@@ -34,6 +35,7 @@ const begin = () => enqueue(line, 'en-US', 2, 'turn-2', 'fake-token');
 
 beforeEach(() => {
   __test.resetAll();
+  reset();
   __test.inject(synth, BrowserUtterance);
   vi.clearAllMocks();
   AudioPlayer.instances = [];
@@ -45,6 +47,7 @@ beforeEach(() => {
 
 afterEach(() => {
   __test.resetAll();
+  reset();
   vi.useRealTimers();
   vi.unstubAllGlobals();
   vi.unstubAllEnvs();
@@ -271,5 +274,76 @@ describe('cloud request budgets', () => {
     AudioPlayer.instances[0].onended?.();
     await done;
     expect(request).toHaveBeenCalledOnce();
+  });
+});
+
+const beginTelemetry = () => {
+  startMatch({ boardId: '9-standard', difficulty: 'normal', language: 'en-US', isGuest: true });
+  return begin();
+};
+const currentTelemetry = () => snapshot().current!;
+const speakFallback = async (done: Promise<void>) => {
+  const utterance = synth.speak.mock.calls[0][0] as BrowserUtterance;
+  utterance.onend?.();
+  await done;
+};
+
+describe('cloud speech telemetry', () => {
+  it('records a successful synthesis and the fixed cost estimate', async () => {
+    request.mockResolvedValueOnce(wave());
+    const done = beginTelemetry();
+    await vi.waitFor(() => expect(AudioPlayer.instances[0]?.play).toHaveBeenCalledOnce());
+    expect(currentTelemetry().ttsRequests).toBe(1);
+    expect(currentTelemetry().ttsSuccesses).toBe(1);
+    expect(currentTelemetry().ttsCostUSD).toBeCloseTo(TTS_COST_PER_SYNTH_USD, 6);
+    expect(currentTelemetry().events.tts_success).toBe(1);
+    AudioPlayer.instances[0].onended?.();
+    await done;
+  });
+
+  it('classifies HTTP 429 as tts_rate_limited and still falls back', async () => {
+    request.mockResolvedValueOnce(new Response('', { status: 429 }));
+    const done = beginTelemetry();
+    await vi.waitFor(() => expect(synth.speak).toHaveBeenCalledOnce());
+    expect(currentTelemetry().events.tts_rate_limited).toBe(1);
+    expect(currentTelemetry().ttsFailures).toBe(1);
+    expect(currentTelemetry().ttsCostUSD).toBe(0);
+    expect((synth.speak.mock.calls[0][0] as BrowserUtterance).text).toBe(line);
+    await speakFallback(done);
+  });
+
+  it('classifies other non-2xx responses as tts_unavailable', async () => {
+    request.mockResolvedValueOnce(new Response('', { status: 502 }));
+    const done = beginTelemetry();
+    await vi.waitFor(() => expect(synth.speak).toHaveBeenCalledOnce());
+    expect(currentTelemetry().events.tts_unavailable).toBe(1);
+    await speakFallback(done);
+  });
+
+  it('classifies a non-audio content type as tts_invalid_media', async () => {
+    request.mockResolvedValueOnce(new Response('json', { status: 200, headers: { 'Content-Type': 'application/json' } }));
+    const done = beginTelemetry();
+    await vi.waitFor(() => expect(synth.speak).toHaveBeenCalledOnce());
+    expect(currentTelemetry().events.tts_invalid_media).toBe(1);
+    await speakFallback(done);
+  });
+
+  it('classifies the request deadline as tts_timeout and falls back once', async () => {
+    vi.useFakeTimers();
+    request.mockImplementation(() => new Promise(() => {}));
+    const done = beginTelemetry();
+    await vi.advanceTimersByTimeAsync(ENGLISH_REQUEST_TIMEOUT_MS);
+    expect(currentTelemetry().events.tts_timeout).toBe(1);
+    expect(synth.speak).toHaveBeenCalledOnce();
+    await speakFallback(done);
+  });
+
+  it('does not record a timeout when Skip speech cancels an in-flight request', async () => {
+    request.mockImplementationOnce(() => new Promise(() => {}));
+    const done = beginTelemetry();
+    cancel();
+    await done;
+    expect(currentTelemetry().ttsRequests).toBe(0);
+    expect(currentTelemetry().events.tts_timeout).toBe(0);
   });
 });

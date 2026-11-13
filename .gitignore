@@ -52,3 +52,9 @@ dist/
 # Editor
 .vscode/
 .idea/
+
+# Playwright browser smoke artifacts
+/test-results/
+/playwright-report/
+/blob-report/
+/.playwright-artifacts/

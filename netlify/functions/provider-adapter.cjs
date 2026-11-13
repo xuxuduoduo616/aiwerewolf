@@ -83,6 +83,20 @@ const circuitAllows = (model) => {
   if (state.openUntil) circuits.delete(model);
   return true;
 };
+// H1-D observability: one JSON line per model failure / fallback. The line is
+// an enum-only whitelist (event, model id, cause, fallback) so no prompt,
+// model output, client IP or origin can leak into Netlify function logs.
+const PROVIDER_EVENT_BY_CAUSE = Object.freeze({
+  timeout: 'provider_timeout',
+  'rate-limit': 'provider_rate_limited',
+  authentication: 'provider_auth_error',
+  upstream: 'provider_upstream_error',
+  unavailable: 'provider_fallback',
+});
+const logProviderEvent = (event, model, cause, fallback) => {
+  if (typeof console === 'undefined') return;
+  console.warn(JSON.stringify({ event, model, cause, fallback }));
+};
 const recordCircuitSuccess = (model) => circuits.delete(model);
 const recordCircuitFailure = (model, error) => {
   const current = circuits.get(model) || { failures: 0, openUntil: 0, lastError: '' };
@@ -172,7 +186,7 @@ const generationConfig = (model, responseMimeType) => {
 };
 const tryModel = async (model, prompt, responseMimeType, cost) => {
   const key = getApiKey();
-  if (!key || !canSpend(cost) || !circuitAllows(model)) return null;
+  if (!key || !canSpend(cost) || !circuitAllows(model)) return { text: null, cause: 'unavailable', skipped: true };
   const cfg = MODEL_REGISTRY[model];
   try {
     recordSpend(cost);
@@ -185,13 +199,17 @@ const tryModel = async (model, prompt, responseMimeType, cost) => {
     }), cfg.timeout);
     if (typeof response?.text === 'string' && response.text.trim()) {
       recordCircuitSuccess(model);
-      return response.text;
+      return { text: response.text, cause: null, skipped: false };
     }
+    const cause = classifyError(new Error('empty-response'));
     recordCircuitFailure(model, new Error('empty-response'));
-    return null;
+    logProviderEvent(PROVIDER_EVENT_BY_CAUSE[cause], model, cause, true);
+    return { text: null, cause, skipped: false };
   } catch (error) {
+    const cause = classifyError(error);
     recordCircuitFailure(model, error);
-    return null;
+    logProviderEvent(PROVIDER_EVENT_BY_CAUSE[cause], model, cause, true);
+    return { text: null, cause, skipped: false };
   }
 };
 const localResult = () => ({ text: '', model_used: LOCAL_FALLBACK, cost_estimate: 0, fallback_used: true });
@@ -227,11 +245,14 @@ exports.handler = async (event) => {
     const model = chain[0];
     return { statusCode: 200, headers, body: JSON.stringify({ text: '[dry-run] mock response', model_used: model, cost_estimate: estimateCost(model, tokens), fallback_used: false }) };
   }
+  let fallbackCause = 'unavailable';
   for (const model of chain) {
     const cost = estimateCost(model, tokens);
-    const text = await tryModel(model, prompt, responseMimeType, cost);
-    if (text) return { statusCode: 200, headers, body: JSON.stringify({ text, model_used: model, cost_estimate: cost, fallback_used: model !== requested }) };
+    const outcome = await tryModel(model, prompt, responseMimeType, cost);
+    if (outcome.text) return { statusCode: 200, headers, body: JSON.stringify({ text: outcome.text, model_used: model, cost_estimate: cost, fallback_used: model !== requested }) };
+    if (!outcome.skipped) fallbackCause = outcome.cause;
   }
+  logProviderEvent('provider_fallback', LOCAL_FALLBACK, fallbackCause, true);
   return { statusCode: 200, headers, body: JSON.stringify(localResult()) };
 };
 

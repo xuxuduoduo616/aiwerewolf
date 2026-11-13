@@ -32,6 +32,9 @@ import {
 import { isSupabaseConfigured, saveGameRecord } from '../services/supabaseClient';
 import { DEFAULT_DISPLAY_LANGUAGE, pickTranslationSource, type DisplayLanguage } from '../i18n';
 import * as speechAudio from '../services/speechAudio';
+import { endMatch, startMatch } from '../services/matchTelemetry';
+import { globalBeliefTracker } from '../ai/beliefTracker';
+import { createReplayRecorder, saveReplay, type ReplayRecorder } from '../replay';
 
 const AI_STYLE_KEYS = Object.keys(CUSTOM_AI_STYLES);
 const MY_PLAYER_ID = 1;
@@ -296,6 +299,13 @@ export function useGameState(authContext: AuthContext) {
   const playerClockRef = useRef<PlayerClock | null>(null);
   const saveStartedGenerationRef = useRef<number | null>(null);
   const timerCleanupsRef = useRef(new Set<() => void>());
+  // H2-A: replay capture stays in memory for the whole match and is persisted
+  // exactly once at GAME_OVER. The refs below only guard against duplicate
+  // recording; they do not participate in the phase machine.
+  const replayRecorderRef = useRef<ReplayRecorder | null>(null);
+  const replaySavedRef = useRef(false);
+  const replayLastBeliefRoundRef = useRef<number | null>(null);
+  const replayLastPhaseKeyRef = useRef<string | null>(null);
   const generation = matchGenerationRef.current;
   const isCurrentMatch = () => matchActiveRef.current && generation === matchGenerationRef.current;
   const isCurrentPhase = () => isCurrentMatch() && phaseScopeRef.current === phaseScope;
@@ -390,6 +400,10 @@ export function useGameState(authContext: AuthContext) {
 
   const leaveGame = () => {
     if (!matchActiveRef.current) return;
+    // H1-F: only a match without a winner is an abandonment. A match that
+    // already reached GAME_OVER was finalized by the effect below, and
+    // `endMatch` would be a no-op anyway.
+    if (!winner) endMatch({ completed: false, phase, rounds: roundCount });
     invalidateMatch();
     setPause({ isPaused: false });
     setIsProcessingAI(false);
@@ -405,6 +419,45 @@ export function useGameState(authContext: AuthContext) {
   useEffect(() => () => invalidateMatch(), []);
 
   const me = players.find(player => player.id === MY_PLAYER_ID);
+
+  /**
+   * H2-A: project the frozen belief tracker into replay snapshots for one
+   * round. Only living AI seats are read; each target list is filtered to the
+   * seats that were alive at capture time, so `scores.length === alive - 1`.
+   * This is a read-only `snapshot()` call — no belief state is modified.
+   */
+  const recordReplayBeliefSnapshots = (round: number) => {
+    const recorder = replayRecorderRef.current;
+    if (!recorder || !matchActiveRef.current) return;
+    if (replayLastBeliefRoundRef.current === round) return;
+    const alive = players.filter(player => player.isAlive);
+    const snapshots = alive
+      .filter(player => !player.isHuman)
+      .map(player => ({
+        round,
+        actorId: player.id,
+        scores: globalBeliefTracker
+          .snapshot(player.id)
+          .filter(entry => entry.targetId !== player.id && alive.some(candidate => candidate.id === entry.targetId))
+          .map(entry => ({ targetId: entry.targetId, score: entry.score })),
+      }))
+      // A tracker that has not been initialized yet has no beliefs to record.
+      .filter(snapshot => snapshot.scores.length > 0);
+    if (snapshots.length === 0) return;
+    replayLastBeliefRoundRef.current = round;
+    recorder.recordBeliefSnapshots(snapshots);
+  };
+
+  // H2-A: capture the ordered phase sequence from state. setPhase() and the
+  // transition driver are untouched; this effect only reads them.
+  useEffect(() => {
+    const recorder = replayRecorderRef.current;
+    if (!recorder || !matchActiveRef.current) return;
+    const key = `${phase}:${roundCount}`;
+    if (replayLastPhaseKeyRef.current === key) return;
+    replayLastPhaseKeyRef.current = key;
+    recorder.recordPhase(phase, roundCount);
+  }, [phase, roundCount]);
 
   // Scroll logs to bottom
   useEffect(() => {
@@ -547,6 +600,33 @@ export function useGameState(authContext: AuthContext) {
     }
   }, [winner, config, me, savedRecordId, roundCount, logs, session, isGuest, guestPrincipalId, records]);
 
+  // H1-D/H1-F: close the per-match telemetry aggregate exactly when the match
+  // ends. `endMatch` is idempotent, so repeated renders or a following
+  // leaveGame() cannot double-record.
+  useEffect(() => {
+    if (winner && phase === GamePhase.GAME_OVER) endMatch({ completed: true, winner, rounds: roundCount });
+  }, [winner, phase, roundCount]);
+
+  // H2-A: persist exactly one replay, only once the match reached GAME_OVER.
+  // The guard ref, the recorder's one-shot finalize and saveReplay's gameId
+  // upsert all defend the "one record per match" rule independently.
+  useEffect(() => {
+    const recorder = replayRecorderRef.current;
+    if (!recorder || !isCurrentMatch() || !winner || phase !== GamePhase.GAME_OVER) return;
+    if (replaySavedRef.current) return;
+    replaySavedRef.current = true;
+    try {
+      const rounds = Math.max(1, roundCount);
+      // A round that ended at night (or with the hunter shot) has no vote
+      // settlement point, so capture its final snapshot here.
+      recordReplayBeliefSnapshots(rounds);
+      const record = recorder.finalize({ winner, rounds });
+      if (record) saveReplay(record);
+    } catch {
+      // Replay capture is observational; it must never interrupt the match.
+    }
+  }, [winner, phase, roundCount, players]);
+
   const addLog = (
     message: string,
     isSystem: boolean,
@@ -578,6 +658,8 @@ export function useGameState(authContext: AuthContext) {
     }
     invalidateMatch();
     matchActiveRef.current = true;
+    const nextLanguage = resolveGameLanguage(language);
+    startMatch({ boardId: nextConfig.id, difficulty, language: nextLanguage, isGuest });
     setPause({ isPaused: false });
     setIsProcessingAI(false);
     setSpeechTimer(null);
@@ -585,7 +667,7 @@ export function useGameState(authContext: AuthContext) {
     setVoteTimer(null);
     resetAIMemory();
     speechAudio.reset(); // new game: cancel audio, clear play-once dedupe
-    setGameLanguage(resolveGameLanguage(language));
+    setGameLanguage(nextLanguage);
     setAIDifficulty(DIFFICULTY_CONFIGS[difficulty].actionAccuracy);
     const shuffledRoles = [...nextConfig.roles].sort(() => Math.random() - 0.5);
     const wolfIndices: number[] = [];
@@ -627,6 +709,20 @@ export function useGameState(authContext: AuthContext) {
         ? [`狼队友：${basePlayers.filter(p => p.role === Role.WEREWOLF && p.id !== player.id).map(p => `${p.id}号`).join('、') || '无'}`]
         : [],
     }));
+
+    // H2-A: a fresh in-memory recorder per match. It snapshots the roster as
+    // seat + role + isHuman only (never the player name) and writes nothing
+    // until the GAME_OVER effect finalizes it.
+    replayRecorderRef.current = createReplayRecorder({
+      boardId: nextConfig.id,
+      difficulty,
+      language: nextLanguage,
+      isGuest,
+      players: nextPlayers.map(player => ({ seat: player.id, role: player.role, isHuman: player.isHuman })),
+    });
+    replaySavedRef.current = false;
+    replayLastBeliefRoundRef.current = null;
+    replayLastPhaseKeyRef.current = null;
 
     setConfig(nextConfig);
     setPlayers(nextPlayers);
@@ -728,6 +824,14 @@ export function useGameState(authContext: AuthContext) {
         await runWhenActive(() => {
           commitChat?.();
           setWolfChat(chat);
+          // H2-A: capture the committed night chat (already free of names).
+          for (const entry of chat) {
+            replayRecorderRef.current?.recordWolfChat({
+              round: entry.round,
+              speakerId: entry.speakerId,
+              message: entry.message,
+            });
+          }
         });
       } catch {
         // Wolf chat is cosmetic — a failed AI call must never block the night.
@@ -763,8 +867,18 @@ export function useGameState(authContext: AuthContext) {
       const seer = players.find(player => player.role === Role.SEER && player.isAlive);
       const action = seer ? await generateAIAction(seer, players, logs, 'CHECK', voteRecords) : null;
       await runWhenActive(() => {
-        const target = players.find(player => player.id === action?.targetId);
-        if (target) setAiSeerLastCheck({ targetId: target.id, isGood: target.role !== Role.WEREWOLF });
+        const target = seer ? players.find(player => player.id === action?.targetId) : undefined;
+        if (seer && target) {
+          const isGood = target.role !== Role.WEREWOLF;
+          setAiSeerLastCheck({ targetId: target.id, isGood });
+          // H2-A: AI seer path of the check chain.
+          replayRecorderRef.current?.recordCheck({
+            round: Math.max(1, roundCount),
+            actorId: seer.id,
+            targetId: target.id,
+            isGood,
+          });
+        }
         setPhase(GamePhase.NIGHT_WITCH);
       });
     }, () => {
@@ -922,6 +1036,13 @@ export function useGameState(authContext: AuthContext) {
       await runWhenActive(async () => {
         commitSpeech?.();
         const ttsLogId = addLog(response.en, false, nextSpeaker.id, response.zh, 'speech');
+        // H2-A: every AI public speech, as delivered in the match language.
+        replayRecorderRef.current?.recordSpeech({
+          round: Math.max(1, roundCount),
+          phase: GamePhase.DAY_DISCUSSION,
+          speakerId: nextSpeaker.id,
+          text: gameLanguage === 'zh' ? (response.zh || response.en) : (response.en || response.zh),
+        });
         setSpokenPlayerIds(prev => new Set(prev).add(nextSpeaker.id));
         const ttsText = pickTranslationSource(
           { message: response.en, translation: response.zh, isSystem: false },
@@ -956,6 +1077,8 @@ export function useGameState(authContext: AuthContext) {
       setVoteTimer(null);
       const votes: Record<number, number> = {};
       const votesByVoter: Record<number, number | null> = {};
+      // H2-A: AI reasons come from the same action object used for the tally.
+      const voteReasons: Record<number, string | undefined> = {};
       const humanCanVote = Boolean(me?.isAlive && me.canVote);
 
       if (humanCanVote && humanTargetId) {
@@ -970,14 +1093,16 @@ export function useGameState(authContext: AuthContext) {
       const aiVoters = players.filter(player => player.isAlive && !player.isHuman && player.canVote);
       for (const voter of aiVoters) {
         await runWhenActive(() => waitForMatch(180));
-        const targetId = await runWhenActive(async () => {
+        const action = await runWhenActive(async () => {
           try {
-            return (await generateAIAction(voter, players, logs, 'VOTE', voteRecords)).targetId;
+            return await generateAIAction(voter, players, logs, 'VOTE', voteRecords);
           } catch {
             // Failed AI vote counts as abstain — keep the tally moving.
             return null;
           }
         });
+        const targetId = action?.targetId ?? null;
+        if (action?.reason) voteReasons[voter.id] = action.reason;
         const counted = await runWhenActive(() => {
           votesByVoter[voter.id] = targetId ?? null;
           if (targetId) votes[targetId] = (votes[targetId] || 0) + 1;
@@ -986,16 +1111,32 @@ export function useGameState(authContext: AuthContext) {
         if (!counted) return;
       }
 
-      await runWhenActive(() => settleVote(votes, votesByVoter));
+      await runWhenActive(() => settleVote(votes, votesByVoter, voteReasons));
     }, () => {
       addLog('AI error during voting. Night begins.', true, undefined, 'AI error during voting. Night begins.', 'system');
       setPhase(GamePhase.NIGHT_START);
     });
   };
 
-  const settleVote = (votes: Record<number, number>, votesByVoter: Record<number, number | null>) => {
+  const settleVote = (
+    votes: Record<number, number>,
+    votesByVoter: Record<number, number | null>,
+    voteReasons: Record<number, string | undefined> = {},
+  ) => {
     const newVoteRecords = createVoteRecords(Math.max(1, roundCount), votesByVoter);
     setVoteRecords(prev => [...prev, ...newVoteRecords]);
+    // H2-A: one vote entry per voter (abstentions stay as `targetId: null`)
+    // plus a per-round belief snapshot after the tally is settled.
+    for (const vote of newVoteRecords) {
+      const reason = voteReasons[vote.voterId];
+      replayRecorderRef.current?.recordVote({
+        round: vote.round,
+        voterId: vote.voterId,
+        targetId: vote.targetId,
+        ...(reason ? { reason } : {}),
+      });
+    }
+    recordReplayBeliefSnapshots(Math.max(1, roundCount));
     addLog(
       `Vote record: ${newVoteRecords.map(v => `${v.voterId}->${v.targetId || 'skip'}`).join(', ')}`,
       true,
@@ -1057,6 +1198,13 @@ export function useGameState(authContext: AuthContext) {
     if (!nextSpeech) return;
     stopPlayerClock();
     addLog(nextSpeech, false, MY_PLAYER_ID, nextSpeech, 'speech');
+    // H2-A: human speech verbatim (seat only, never the player name).
+    replayRecorderRef.current?.recordSpeech({
+      round: Math.max(1, roundCount),
+      phase: GamePhase.DAY_DISCUSSION,
+      speakerId: MY_PLAYER_ID,
+      text: nextSpeech,
+    });
     setSpokenPlayerIds(prev => new Set(prev).add(MY_PLAYER_ID));
     setUserInput('');
     setCurrentSpeaker(null);
@@ -1097,6 +1245,13 @@ export function useGameState(authContext: AuthContext) {
       const isGood = target.role !== Role.WEREWOLF;
       addLog(`Check Player ${targetId}: ${isGood ? 'GOOD' : 'WOLF'}.`, true, undefined, `Player ${targetId} check result: ${isGood ? 'GOOD' : 'WOLF'}.`, 'action');
       setAiSeerLastCheck({ targetId, isGood });
+      // H2-A: human seer path of the check chain.
+      replayRecorderRef.current?.recordCheck({
+        round: Math.max(1, roundCount),
+        actorId: MY_PLAYER_ID,
+        targetId,
+        isGood,
+      });
       setPhase(GamePhase.NIGHT_WITCH);
     } else if (phase === GamePhase.NIGHT_WITCH && me.role === Role.WITCH) {
       if (!isTargetableAliveOther(players, MY_PLAYER_ID, targetId) || !witchStatus.hasPoison) return;

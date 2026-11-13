@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:run": "vitest run",
+    "test:e2e": "playwright test",
     "preflight:gemini-models": "node scripts/gemini-model-preflight.mjs",
     "audit:speech-names": "SPEECH_NAME_AUDIT=1 vitest run src/diagnostics/",
     "audit:speech-corpus": "node scripts/speech-corpus-name-audit.mjs"
@@ -22,6 +23,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.0",
     "@types/node": "^20.19.43",
     "@types/react": "^18.2.64",
     "@types/react-dom": "^18.2.21",

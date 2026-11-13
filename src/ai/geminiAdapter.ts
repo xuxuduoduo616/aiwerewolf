@@ -1,5 +1,6 @@
 /** Browser adapter: exactly one server request; the server owns model fallback. */
 import { DEFAULT_EXPRESSION_MODEL, type AIExpressionModelId } from './modelCatalog';
+import { recordProviderOutcome } from '../services/matchTelemetry';
 
 export { fetchAvailableExpressionModels } from './providerCapabilities';
 
@@ -16,6 +17,11 @@ const isLocalVite = () => typeof window !== 'undefined'
 const timeoutSignal = (): AbortSignal | undefined =>
   typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function'
     ? AbortSignal.timeout(FETCH_TIMEOUT_MS) : undefined;
+const isTimeoutError = (error: unknown): boolean => {
+  if (!error || typeof error !== 'object') return false;
+  const name = (error as { name?: unknown }).name;
+  return name === 'TimeoutError' || name === 'AbortError';
+};
 
 export const generateWithGemini = async (
   req: SpeechRequest,
@@ -33,11 +39,34 @@ export const generateWithGemini = async (
       }),
       signal: timeoutSignal(),
     });
-    if (!res.ok) return '';
-    const body: unknown = await res.json();
-    return typeof body === 'object' && body !== null && typeof (body as { text?: unknown }).text === 'string'
-      ? (body as { text: string }).text : '';
-  } catch {
+    if (!res.ok) {
+      recordProviderOutcome('provider_failed');
+      return '';
+    }
+    let body: { text?: unknown; cost_estimate?: unknown } | null;
+    try {
+      body = await res.json() as { text?: unknown; cost_estimate?: unknown } | null;
+    } catch {
+      recordProviderOutcome('provider_unparsable');
+      return '';
+    }
+    const text = typeof body?.text === 'string' ? body.text : null;
+    if (text === null) {
+      recordProviderOutcome('provider_unparsable');
+      return '';
+    }
+    // The server returns 200 with empty text for its local fallback; that is a
+    // provider failure for the expression layer, never a successful speech.
+    if (!text) {
+      recordProviderOutcome('provider_failed');
+      return '';
+    }
+    recordProviderOutcome('provider_success', {
+      costUSD: typeof body?.cost_estimate === 'number' ? body.cost_estimate : 0,
+    });
+    return text;
+  } catch (error) {
+    recordProviderOutcome(isTimeoutError(error) ? 'provider_timeout' : 'provider_failed');
     return '';
   }
 };

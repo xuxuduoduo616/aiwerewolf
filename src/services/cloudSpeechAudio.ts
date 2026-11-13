@@ -1,5 +1,10 @@
+import { recordTtsOutcome } from './matchTelemetry';
+
 type PlaybackResult = 'finished' | 'fallback' | 'interrupted' | 'cancelled';
 type BrowserFallback = { text: string; maxDurationMs?: number };
+
+const isAbortError = (error: unknown): boolean => Boolean(error) && typeof error === 'object'
+  && ['AbortError', 'TimeoutError'].includes(String((error as { name?: unknown }).name));
 
 /** Soft client target; the provider still accepts up to 600 code points. */
 export const CLOUD_SPEECH_LIMIT = 360;
@@ -130,6 +135,7 @@ function playCloudClip(options: CloudSpeech) {
     requestRemaining = ms;
     requestDeadline = Date.now() + ms;
     timer = setTimeout(() => {
+      if (requesting) recordTtsOutcome('tts_timeout');
       requesting = false;
       fail();
     }, ms);
@@ -137,38 +143,53 @@ function playCloudClip(options: CloudSpeech) {
   armRequestTimer(requestTimeoutMs);
 
   void (async () => {
-    const response = await fetch('/.netlify/functions/bailian-tts', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${options.accessToken}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: options.text, lang: options.lang, seat: options.seat }),
-      redirect: 'error',
-      signal: controller.signal,
-    });
-    if (settled || deferred) return;
-    if (!response.ok || response.headers.get('content-type') !== 'audio/wav') {
+    try {
+      const response = await fetch('/.netlify/functions/bailian-tts', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${options.accessToken}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: options.text, lang: options.lang, seat: options.seat }),
+        redirect: 'error',
+        signal: controller.signal,
+      });
+      if (settled || deferred) return;
+      if (!response.ok) {
+        requesting = false;
+        recordTtsOutcome(response.status === 429 ? 'tts_rate_limited' : 'tts_unavailable');
+        finish('fallback');
+        return;
+      }
+      if (response.headers.get('content-type') !== 'audio/wav') {
+        requesting = false;
+        recordTtsOutcome('tts_invalid_media');
+        finish('fallback');
+        return;
+      }
+      const audio = await response.blob();
+      if (settled || deferred) return;
       requesting = false;
-      finish('fallback');
-      return;
-    }
-    const audio = await response.blob();
-    if (settled || deferred) return;
-    requesting = false;
-    clearTimeout(timer);
-    url = URL.createObjectURL(audio);
-    player = new Audio(url);
-    player.volume = options.volume;
-    player.playbackRate = options.rate;
-    player.onplaying = () => {
-      started = true;
-      if (paused || settled || playbackDeadline !== undefined) return;
       clearTimeout(timer);
-      playbackDeadline = Date.now() + playbackRemaining;
-      timer = setTimeout(() => finish('finished'), playbackRemaining);
-    };
-    player.onended = () => finish('finished');
-    player.onerror = fail;
-    play();
-  })().catch(() => finish('fallback'));
+      recordTtsOutcome('tts_success');
+      url = URL.createObjectURL(audio);
+      player = new Audio(url);
+      player.volume = options.volume;
+      player.playbackRate = options.rate;
+      player.onplaying = () => {
+        started = true;
+        if (paused || settled || playbackDeadline !== undefined) return;
+        clearTimeout(timer);
+        playbackDeadline = Date.now() + playbackRemaining;
+        timer = setTimeout(() => finish('finished'), playbackRemaining);
+      };
+      player.onended = () => finish('finished');
+      player.onerror = fail;
+      play();
+    } catch (error) {
+      if (settled || deferred) return;
+      requesting = false;
+      recordTtsOutcome(isAbortError(error) ? 'tts_timeout' : 'tts_unavailable');
+      finish('fallback');
+    }
+  })();
 
   return {
     result,
