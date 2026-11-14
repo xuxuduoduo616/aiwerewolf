@@ -3,7 +3,11 @@
 > **无真机，全部未验证。** 本文所有条目默认 `结果 = 未验证`、`证据 = 未验证`；
 > 在有人按本文逐项在真机上执行并填表之前，**不得据此声称支持 iOS Safari**，
 > 也不得声称真实识别质量、真实时延或真实麦克风可用。自动化层（桌面 Chromium fake
-> media）只覆盖状态机与网络边界，不能替代本文。
+> media）只覆盖状态机、60 秒分段链路与网络边界，不能替代本文。
+>
+> 2026-11-14 补充：60 秒完整录音已增加两层自动化证据——合成 60s WAV 单测与
+> 桌面 Chromium fake-media 真实 60s 硬停 e2e（见第 4 节）。两者都**不**验证
+> iOS Safari、真实麦克风、真实识别质量或真实时延，本文全部条目仍为 `未验证`。
 
 ## 0. 使用说明
 
@@ -67,17 +71,39 @@
 
 ## 4. 与自动化覆盖的边界
 
-- **已自动化（桌面 Chromium，见 `e2e/voice-input.spec.ts`）**：仅本人回合出现麦克风、
-  点击 `recording`/再次点击 `transcribing`→`idle`、同源 `asr-transcribe` 被 `page.route`
-  mock 恰好命中 1 次、无 `provider-adapter`/`bailian-tts` 请求、外部域实际流量为 0、
-  写入固定 mock 文本。它**不**验证真实识别内容、真实麦克风、iOS、真实时延。
-- **未验证**：本文全部条目（无真机）；真实 `QWEN_API_KEY` 与线上函数；生产
+**已自动化的三部分（都只是桌面 Chromium / Node 的工程证据，不是真机证据）**
+
+- **合成 60 秒 WAV 单测（`npx vitest run src/services/sttAdapter.test.ts`）**：
+  用 60_000ms / 16 kHz / mono / PCM16 的合成 WAV 断言 `splitWavIntoChunks` 的精确
+  分段规划——当前常量（3,200ms 片段、200ms 重叠、步长 3,000ms）下共
+  `floor((60_000 - 1) / 3_000) + 1 = 20` 段（19 段 × 3,200ms + 末段 3,000ms）；
+  首段从 0 开始、相邻段重叠 200ms、末段覆盖到 60,000ms；每段仍是同源
+  `/.netlify/functions/asr-transcribe` 请求；20 段响应按顺序合并、边界重复词去重。
+  它验证的是**客户端分段与合并算法**，不涉及真实 `MediaRecorder`、真实麦克风或识别质量。
+- **真实 60 秒硬停 e2e（桌面 Chromium fake media，`e2e/voice-input.spec.ts`）**：
+  `--use-fake-device-for-media-stream` 真实录制满 60 秒并触发产品自身的 60s 硬停
+  （录音期间暂停对局 60s 时钟，只冻结回合计时，不冻结麦克风计时）；同源 ASR 由
+  `page.route` mock，实测 20 段并行请求（19 段 3,200ms + 末段 3,000ms），合并文本
+  一次性写入输入框、`data-voice-status` 回到 `idle`、**不自动提交**；无
+  `provider-adapter` / `bailian-tts` / `genai-proxy` 请求、无外部域请求、无
+  qwen/dashscope/aliyuncs 域。它**不**验证真实识别内容、真实麦克风、iOS、真实时延。
+- **原有单请求冒烟（同一 spec）**：仅本人回合出现麦克风、点击 `recording`/再次点击
+  `transcribing`→`idle`、同源 `asr-transcribe` 恰好命中 1 次、写入固定 mock 文本。
+
+**仍未验证（自动化不能替代本文）**
+
+- 本文全部条目（无真机）；真实 `QWEN_API_KEY` 与线上函数；生产
   `Permissions-Policy` 生效后的真实行为。
-- **不可自动化**：第 3 节的人工听感与识别质量判断。
+- 第 8 项「60 秒上限」在真机上的行为（计时精度、来电/切后台）仍需按本文执行；
+  自动化只证明桌面 Chromium 上 60s 硬停会停止录音并走多段上传，不证明 iOS 行为。
+- 第 3 节的人工听感、识别质量（含口音/噪声）与真实时延判断。
 
 ## 5. 结论填写（执行后）
 
 - 总体结论：`未验证`（默认；执行后按实际填写，不得超出证据）。
+- 自动化覆盖结论：**部分自动化覆盖**（合成 60s WAV 单测 + 桌面 Chromium fake-media
+  真实 60s 硬停 e2e 覆盖客户端分段/并行上传/合并与网络边界）；**iOS Safari 与
+  噪声/口音环境未验证**，发布措辞不得声称 iOS 已验证或已支持。
 - 阻塞/缺陷：执行中若发现实现缺陷，按 coordinator 的 bug 路由提交，不在本文修复；
   记录 URL、时间、Safari 版本、复现步骤与截图路径。
 - 发布口径：在本文完成并填入证据前，发布说明只能写“语音输入在部分浏览器可用，

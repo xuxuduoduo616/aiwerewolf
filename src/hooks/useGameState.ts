@@ -32,7 +32,7 @@ import {
 import { isSupabaseConfigured, saveGameRecord } from '../services/supabaseClient';
 import { DEFAULT_DISPLAY_LANGUAGE, pickTranslationSource, type DisplayLanguage } from '../i18n';
 import * as speechAudio from '../services/speechAudio';
-import { endMatch, startMatch } from '../services/matchTelemetry';
+import { endMatch, installPageLifecycleCapture, startMatch } from '../services/matchTelemetry';
 import { globalBeliefTracker } from '../ai/beliefTracker';
 import { createReplayRecorder, saveReplay, type ReplayRecorder } from '../replay';
 
@@ -292,6 +292,10 @@ export function useGameState(authContext: AuthContext) {
   const matchGenerationRef = useRef(0);
   const matchActiveRef = useRef(false);
   const phaseScopeRef = useRef(phaseScope);
+  // OBS-DENOM: latest round count for the page-lifecycle abandonment event.
+  // A ref keeps the capture installed once per mount, so a pending hidden-grace
+  // timer is not cancelled by a phase/round change.
+  const roundCountRef = useRef(roundCount);
   const processingScopeRef = useRef<PhaseScope | null>(null);
   const pausedRef = useRef(false);
   const resumeWaitersRef = useRef(new Set<() => void>());
@@ -400,10 +404,11 @@ export function useGameState(authContext: AuthContext) {
 
   const leaveGame = () => {
     if (!matchActiveRef.current) return;
-    // H1-F: only a match without a winner is an abandonment. A match that
-    // already reached GAME_OVER was finalized by the effect below, and
-    // `endMatch` would be a no-op anyway.
-    if (!winner) endMatch({ completed: false, phase, rounds: roundCount });
+    // H1-F/OBS-DENOM: only a match without a winner is an abandonment. A match
+    // that already reached GAME_OVER was finalized by the effect below, and
+    // `endMatch` would be a no-op anyway. The reason distinguishes the explicit
+    // in-game leave from a page-lifecycle abandonment.
+    if (!winner) endMatch({ completed: false, phase, rounds: roundCount, reason: 'leave-game' });
     invalidateMatch();
     setPause({ isPaused: false });
     setIsProcessingAI(false);
@@ -417,6 +422,22 @@ export function useGameState(authContext: AuthContext) {
   };
 
   useEffect(() => () => invalidateMatch(), []);
+
+  // OBS-DENOM: keep the round count the page-lifecycle capture reads in sync
+  // with state. Declared as a ref-only effect so the capture below stays
+  // installed exactly once per mount.
+  useEffect(() => {
+    roundCountRef.current = roundCount;
+  });
+
+  // OBS-DENOM: finalize an unfinished match as `match_abandoned`
+  // (`reason: 'page-hidden'`) when the page is refreshed/closed (`pagehide`) or
+  // stays hidden past the grace window. Telemetry only: it never touches the
+  // phase machine, timers, votes or AI ordering, and the installer is removed on
+  // unmount. Without an installed DOM (unit tests) it degrades to a no-op.
+  useEffect(() => installPageLifecycleCapture({
+    getMatchState: () => ({ phase: phaseScopeRef.current.phase, rounds: roundCountRef.current }),
+  }), []);
 
   const me = players.find(player => player.id === MY_PLAYER_ID);
 

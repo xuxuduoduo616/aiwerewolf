@@ -1,6 +1,6 @@
 # Roadmap
 
-This roadmap distinguishes shipped behavior from planned work. Dates are intentionally omitted until external-service, moderation, security, and data requirements are verified.
+This roadmap distinguishes shipped behavior from planned work. Planned dates are intentionally omitted until external-service, moderation, security, and data requirements are verified.
 
 ## v1.0 - Playable AI Werewolf
 
@@ -17,7 +17,16 @@ Status: complete and deployed.
 
 ## v1.1 - AI Quality
 
-Status: planned.
+Status: shipped (2026-11-13); scope of this release and deferred items are listed below.
+
+Shipped in this release, with local verification boundaries documented in the [AI quality report](ai-quality-report.md):
+
+- Post-game replay review: per-AI suspicion curves toward the human, vote reasons, werewolf night chat, and the final ranking, read from local replay data.
+- Local replay benchmark and three-tier difficulty calibration: measured on local real-match samples, with the thresholds kept as regression guards rather than quality targets.
+- Client-side share card: exports a 1080×1350 PNG of the AI's view of the human from the replay panel; nothing is uploaded.
+- Click-to-record voice input: click to start, click again to stop, then transcribe through the same-origin `asr-transcribe` function; long recordings are split into short chunks and transcribed in parallel. The production `QWEN_API_KEY` is configured, but iOS real devices and full 60-second recordings remain unverified.
+
+Deferred / still pending (not shipped in this release):
 
 - Resolve residual generic player references in generated dialogue
 - Improve fallback-language consistency without changing user-authored content

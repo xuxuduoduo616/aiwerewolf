@@ -52,21 +52,31 @@ npm run audit:speech-names   # Speech-name diagnostics
 npm run audit:speech-corpus  # Corpus consistency audit
 ```
 
-## Browser Smoke Tests (Playwright)
+## Browser Tests (Playwright)
 
-The browser smoke layer lives in `e2e/` and is configured by
-`playwright.config.ts`. It covers three short guest flows only — guest match
-start, the first-day human speech plus exile vote, and the Settings
-language/audio toggles — and it never plays a full match.
+The browser layer lives in `e2e/` and is configured by `playwright.config.ts`.
+It is split into two Playwright projects so a long match can never hide a
+short-flow regression:
+
+- `smoke`: four short guest flows — guest match start, the first-day human
+  speech plus exile vote, the Settings language/audio toggles, and
+  click-to-toggle voice input;
+- `deep`: two specs that play a full 9-player match — the post-game replay
+  review and the share-card export. Their match is made reproducible by a
+  test-only seeded `Math.random` (`e2e/helpers/seededRandom.ts`), so the
+  project runs with `retries: 0`; a retry would double an already minutes-long
+  job instead of masking a failure.
 
 ```bash
 npx playwright install chromium   # one-time browser download
-npm run test:e2e                  # same as: npx playwright test
+npm run test:e2e                  # both projects: every spec runs once
+npx playwright test --project=smoke
+npx playwright test --project=deep
 npx playwright test --repeat-each=3
 ```
 
 The config starts the regular Vite server on port 5173. On that port the app
-uses its local AI speech fallback, so the smoke tests need no `API_KEY`,
+uses its local AI speech fallback, so the browser tests need no `API_KEY`,
 Supabase variables, Turnstile key, or other secrets, and they never call the
 Netlify AI/TTS Functions. The existing `npm run test:run` gate stays
 unaffected: Vitest excludes `**/e2e/**` in `vite.config.ts`, and
@@ -82,8 +92,10 @@ automatically:
 PLAYWRIGHT_BROWSERS_PATH=0 npx playwright install chromium
 ```
 
-`.github/workflows/e2e.yml` runs the same suite on pushes and pull requests
-targeting `main`; it is independent from the guarded deploy workflow.
+`.github/workflows/e2e.yml` runs the suite on pushes and pull requests
+targeting `main` in two independent jobs, `Playwright smoke` (10 minute limit)
+and `Playwright deep` (35 minute limit); it is independent from the guarded
+deploy workflow.
 
 ## Project Layout
 

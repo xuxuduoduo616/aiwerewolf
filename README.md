@@ -146,11 +146,11 @@ More detail is available in [Development](docs/development.md) and [Supabase set
 ## Roadmap
 
 - **v1.0 - Playable AI Werewolf:** two boards, full role resolution, AI strategy, responsive UI, authentication, and production deployment
-- **v1.1 - AI quality:** resolve remaining dialogue placeholders, improve language consistency, and evaluate cloud text-to-speech
-- **v1.2 - Social foundation:** profiles, friend relationships, messaging, presence, moderation boundaries, and verified row-level security
-- **v2.0 - Server-authoritative multiplayer:** private rooms, invitations, reconnect support, secret-state projection, and idempotent game commands
+- **v1.1 - AI quality:** shipped 2026-11-13 with post-game replay review, a local replay benchmark and three-tier difficulty calibration on local real-match samples, a client-side share card, and click-to-record voice input; remaining dialogue placeholders, fallback-language consistency, and speech-corpus licensing are deferred
+- **v1.2 - Social foundation:** planned; profiles, friend relationships, messaging, presence, moderation boundaries, and verified row-level security
+- **v2.0 - Server-authoritative multiplayer:** planned; private rooms, invitations, reconnect support, secret-state projection, and idempotent game commands
 
-See [Roadmap](docs/roadmap.md) for scope and release gates. Planned work is not presented as an available feature.
+See [Roadmap](docs/roadmap.md) for scope and release gates. Local verification notes and limits: [AI quality report](docs/ai-quality-report.md), [observability operations](docs/observability-operations.md). Planned work is not presented as an available feature.
 
 ## Contributing
 

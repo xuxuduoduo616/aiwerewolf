@@ -5,6 +5,7 @@ import {
   startNinePlayerGame,
   watchProviderRequests,
 } from './helpers/game';
+import { E2E_GAME_SEED, installSeededRandom } from './helpers/seededRandom';
 
 /**
  * H2-E: the "AI's view of you" share card is a purely local canvas export.
@@ -14,6 +15,11 @@ import {
  * terminal state, then exports the PNG at 1440x900 and 390x844 and checks the
  * Playwright download event, the suggested file name, the PNG signature and
  * the 1080x1350 dimensions. No network/Function request may be added.
+ *
+ * The same test-only seeded `Math.random` as the replay spec makes the first
+ * match reproducible (the human stays in the final snapshot round, so the
+ * primary stats path is the one under test), while the retry loop below stays
+ * as a defensive guard only.
  */
 
 const SEAT = '.game-player-seat';
@@ -278,6 +284,9 @@ const scrollShareCardIntoView = async (page: Page): Promise<void> => {
 test.describe('post-game share card', () => {
   test('exports a local 1080x1350 PNG at 1440x900 and 390x844 with no network', async ({ page }) => {
     test.setTimeout(600_000);
+    // Same deterministic match as the replay-review spec: the human is alive in
+    // the final snapshot round, which is the card's primary stats path.
+    await installSeededRandom(page);
     // Another card may edit this shared worktree while the spec runs; mocking
     // the local Vite HMR socket keeps the guest session alive. Product code and
     // the network assertions below are unaffected.
@@ -337,6 +346,7 @@ test.describe('post-game share card', () => {
 
     const expectedFileName = `ai-view-of-you-${replay.gameId}.png`;
     const suspicionAvailable = hasFinalRoundHumanSuspicion(replay);
+    console.log(`[H2-E] seeded match: seed ${E2E_GAME_SEED}, winner ${replay.outcome.winner}, rounds ${replay.outcome.rounds}, suspicionAvailable ${suspicionAvailable}`);
 
     // The application itself loads pre-existing third-party assets. Record them
     // at GAME_OVER and prove the share card adds no external request of its own.

@@ -20,6 +20,18 @@
  * carry enums, counters and ISO timestamps only — no player name, speech text,
  * account id or credential. `summarizeMatches()` turns that ledger (or an injected
  * snapshot) into a completion rate and an abandonment-phase histogram.
+ *
+ * OBS-DENOM adds page-lifecycle abandonment capture on top of H1-F: `pagehide`
+ * and a `visibilitychange` that stays hidden past `PAGE_HIDDEN_GRACE_MS`
+ * finalize the active match as an abandoned match with `reason: 'page-hidden'`.
+ * Finalizing flushes the buffered `match_started` together with the end event,
+ * so a refresh / tab close / switched-away tab shows up in the completion-rate
+ * denominator instead of vanishing. `pagehide` is a real unload and is recorded
+ * immediately; a quick visibility bounce writes nothing. `endMatch()` is
+ * idempotent, so `leaveGame`, `GAME_OVER`, a repeat `pagehide` and a bfcache
+ * restore can never add a second end event for the same match. The listeners
+ * are installed by the hook through `installPageLifecycleCapture()` and removed
+ * on unmount; this module still never sends data anywhere.
  */
 
 export const MATCH_TELEMETRY_STORAGE_KEY = 'werewolf.matchTelemetry.v1';
@@ -30,6 +42,27 @@ export const MAX_RETAINED_MATCHES = 20;
 export const MAX_RETAINED_EVENTS = MAX_RETAINED_MATCHES * 2;
 /** Planning estimate per successful synthesis; NOT a billing value. */
 export const TTS_COST_PER_SYNTH_USD = 0.001;
+
+/**
+ * Grace window for `visibilitychange` → hidden (OBS-DENOM).
+ *
+ * A hidden page is not necessarily a lost player: alt-tab, an incoming call or
+ * a glance at another tab usually lasts seconds. 20 s is long enough that a
+ * transient switch back to `visible` records nothing, and short enough that
+ * real tab-switch churn (a player who never comes back) still lands in the
+ * completion-rate denominator without waiting a whole match. `pagehide`
+ * (refresh / close / navigation) is a real unload and is recorded immediately,
+ * without this window. Kept as one named constant so the choice is auditable.
+ */
+export const PAGE_HIDDEN_GRACE_MS = 20_000;
+
+/** Why a local match ended without reaching `GAME_OVER` (OBS-DENOM). */
+export type MatchAbandonReason = 'leave-game' | 'page-hidden' | 'superseded';
+
+const ABANDON_REASONS: readonly MatchAbandonReason[] = ['leave-game', 'page-hidden', 'superseded'];
+
+const isAbandonReason = (value: unknown): value is MatchAbandonReason =>
+  typeof value === 'string' && (ABANDON_REASONS as readonly string[]).includes(value);
 
 export type ProviderTelemetryEvent =
   | 'provider_success'
@@ -80,6 +113,12 @@ export interface MatchAbandonedEvent {
   round: number;
   durationMs: number;
   completed: false;
+  /**
+   * OBS-DENOM: why the match ended without a winner. Optional so ledgers
+   * written before this field existed still parse; `summarizeMatches()` counts
+   * a missing reason as `unknown`. Enum only — never user text or identity.
+   */
+  reason?: MatchAbandonReason;
 }
 
 export type MatchLifecycleEvent = MatchStartedEvent | MatchFinishedEvent | MatchAbandonedEvent;
@@ -93,6 +132,13 @@ export interface MatchSummary {
   completionRate: number;
   /** Abandoned matches per phase, for example `{ DAY_VOTING: 2 }`. */
   abandonedByPhase: Record<string, number>;
+  /**
+   * OBS-DENOM: abandoned matches per `reason`. Ledgers written before the
+   * reason existed (or the `matches` fallback below) count as `unknown`.
+   * `leave-game` = in-game back/leave, `page-hidden` = `pagehide` or a hidden
+   * tab past the grace window, `superseded` = a new match replaced this one.
+   */
+  abandonedByReason: Record<string, number>;
   /** Mean final round count of finished matches; 0 when none finished. */
   averageRounds: number;
 }
@@ -129,6 +175,8 @@ export interface MatchEndOutcome {
   phase?: string | null;
   /** Rounds played when the match was finalized; recorded as 0 if omitted. */
   rounds?: number;
+  /** Why an abandoned match ended (OBS-DENOM). Ignored for completed matches. */
+  reason?: MatchAbandonReason | null;
 }
 
 export interface MatchTelemetryRecord {
@@ -277,7 +325,10 @@ const startEventFor = (record: MatchTelemetryRecord): MatchStartedEvent => ({
   startedAt: record.startedAt,
 });
 
-const endEventFor = (record: MatchTelemetryRecord): MatchLifecycleEvent =>
+const endEventFor = (
+  record: MatchTelemetryRecord,
+  reason?: MatchAbandonReason | null,
+): MatchLifecycleEvent =>
   record.completed
     ? {
         type: 'match_finished',
@@ -296,6 +347,8 @@ const endEventFor = (record: MatchTelemetryRecord): MatchLifecycleEvent =>
         round: record.rounds,
         durationMs: record.durationMs,
         completed: false,
+        // Only new writes carry a reason; old events stay byte-compatible.
+        ...(reason ? { reason } : {}),
       };
 
 const storage = (): Storage | null => {
@@ -365,7 +418,7 @@ const updateCurrent = (mutate: (record: MatchTelemetryRecord) => void): void => 
 /** Start a new per-match aggregate. An unfinished previous match is recorded. */
 export const startMatch = (input: StartMatchInput): void => {
   try {
-    if (currentMatch) endMatch({ completed: false, phase: 'SUPERSEDED' });
+    if (currentMatch) endMatch({ completed: false, phase: 'SUPERSEDED', reason: 'superseded' });
     const record = createRecord(input);
     currentMatch = record;
     // Buffered with the active match; written together with the final record so
@@ -391,10 +444,13 @@ export const endMatch = (outcome: MatchEndOutcome): void => {
     record.rounds = normalizeRounds(outcome.rounds);
     record.durationMs = durationBetween(record.startedAt, record.endedAt);
     finalizeCosts(record);
+    const reason = record.completed ? null : (isAbandonReason(outcome.reason) ? outcome.reason : null);
 
     const ledger = readLedger();
     const pending = currentEvents.length > 0 ? currentEvents : [startEventFor(record)];
-    const events = [...ledger.events, ...pending, endEventFor(record)];
+    const events = [...ledger.events, ...pending, endEventFor(record, reason)];
+    // Cleared before the write so even a throwing/full storage cannot leave the
+    // match "active" for a later pagehide/leaveGame to finalize a second time.
     currentMatch = null;
     currentEvents = [];
     writeLedger([record, ...ledger.matches], events);
@@ -402,6 +458,192 @@ export const endMatch = (outcome: MatchEndOutcome): void => {
     currentMatch = null;
     currentEvents = [];
   }
+};
+
+/**
+ * Minimal event-target surface used by the page-lifecycle capture (OBS-DENOM).
+ * Declared locally so the capture can be driven by injected fake targets in
+ * tests and never needs a real DOM library.
+ */
+export interface MatchLifecycleEventTarget {
+  addEventListener(type: string, listener: (event: Event) => void): void;
+  removeEventListener(type: string, listener: (event: Event) => void): void;
+}
+
+/** Match state handed to the abandonment event when a page-lifecycle event fires. */
+export interface MatchLifecycleState {
+  phase?: string | null;
+  rounds?: number | null;
+}
+
+export interface PageLifecycleCaptureOptions {
+  /** Current phase / round of the active match; read only when finalizing. */
+  getMatchState: () => MatchLifecycleState;
+  /** Receives `pagehide` / `pageshow`; defaults to the global `window`. */
+  pageTarget?: MatchLifecycleEventTarget | null;
+  /** Receives `visibilitychange`; defaults to the global `document`. */
+  visibilityTarget?: MatchLifecycleEventTarget | null;
+  /** Current visibility; defaults to `document.visibilityState`. */
+  getVisibilityState?: () => string;
+  /** Hidden grace window; defaults to `PAGE_HIDDEN_GRACE_MS`. */
+  graceMs?: number;
+  scheduleTimeout?: (callback: () => void, ms: number) => ReturnType<typeof setTimeout>;
+  cancelTimeout?: (handle: ReturnType<typeof setTimeout>) => void;
+}
+
+const isLifecycleTarget = (value: unknown): value is MatchLifecycleEventTarget => {
+  if (!value || (typeof value !== 'object' && typeof value !== 'function')) return false;
+  const candidate = value as Partial<MatchLifecycleEventTarget>;
+  return typeof candidate.addEventListener === 'function'
+    && typeof candidate.removeEventListener === 'function';
+};
+
+/** `window` when it exists and can register listeners; `null` in a bare Node test. */
+const globalPageTarget = (): MatchLifecycleEventTarget | null => {
+  try {
+    return isLifecycleTarget(globalThis.window) ? globalThis.window : null;
+  } catch {
+    return null;
+  }
+};
+
+/** `document` when it exists and can register listeners; `null` in a bare Node test. */
+const globalVisibilityTarget = (): MatchLifecycleEventTarget | null => {
+  try {
+    return isLifecycleTarget(globalThis.document) ? globalThis.document : null;
+  } catch {
+    return null;
+  }
+};
+
+const defaultVisibilityState = (): string => {
+  try {
+    if (typeof document === 'undefined') return 'visible';
+    const state = document.visibilityState;
+    return typeof state === 'string' ? state : 'visible';
+  } catch {
+    return 'visible';
+  }
+};
+
+/**
+ * Install page-lifecycle abandonment capture (OBS-DENOM). Returns an idempotent
+ * dispose function that removes every listener and cancels a pending timer.
+ *
+ * - `pagehide` (refresh / close / navigation / bfcache entry) finalizes the
+ *   active match immediately as `reason: 'page-hidden'`, writing the buffered
+ *   `match_started` together with the end event.
+ * - `visibilitychange` → hidden starts a `graceMs` timer; becoming visible again
+ *   cancels it. Only a page still hidden when the timer fires is finalized, so
+ *   a transient alt-tab records nothing.
+ * - `pageshow` only cancels a stale timer. A bfcache restore must not record a
+ *   second abandonment for the match `pagehide` already finalized; `endMatch`
+ *   is idempotent on top of that.
+ *
+ * Everything is best effort: missing targets, throwing listener registration or
+ * a failed storage write never interrupt the page. With no active match
+ * (`endMatch` no-op) nothing is written, so a lobby visit or a finished match
+ * never produces an abandonment.
+ */
+export const installPageLifecycleCapture = (
+  options: PageLifecycleCaptureOptions,
+): (() => void) => {
+  const pageTarget = options.pageTarget === undefined ? globalPageTarget() : options.pageTarget;
+  const visibilityTarget = options.visibilityTarget === undefined
+    ? globalVisibilityTarget()
+    : options.visibilityTarget;
+  const getVisibilityState = options.getVisibilityState ?? defaultVisibilityState;
+  const graceMs = typeof options.graceMs === 'number' && Number.isFinite(options.graceMs)
+    ? Math.max(0, options.graceMs)
+    : PAGE_HIDDEN_GRACE_MS;
+  const schedule = options.scheduleTimeout ?? ((callback, ms) => setTimeout(callback, ms));
+  const cancel = options.cancelTimeout ?? (handle => clearTimeout(handle));
+  const attached: { target: MatchLifecycleEventTarget; type: string; listener: (event: Event) => void }[] = [];
+  let graceTimer: ReturnType<typeof setTimeout> | null = null;
+  let disposed = false;
+
+  const cancelGrace = (): void => {
+    if (graceTimer === null) return;
+    try {
+      cancel(graceTimer);
+    } catch {
+      // A failed cancel only means the callback may still run; it re-checks state.
+    }
+    graceTimer = null;
+  };
+
+  const recordPageAbandon = (): void => {
+    cancelGrace();
+    if (disposed) return;
+    try {
+      const state = options.getMatchState();
+      endMatch({
+        completed: false,
+        phase: state?.phase,
+        rounds: state?.rounds ?? undefined,
+        reason: 'page-hidden',
+      });
+    } catch {
+      // Telemetry must never interrupt page unload or visibility handling.
+    }
+  };
+
+  const isHidden = (): boolean => {
+    try {
+      return getVisibilityState() === 'hidden';
+    } catch {
+      return false;
+    }
+  };
+
+  const onVisibilityChange = (): void => {
+    if (disposed) return;
+    if (!isHidden()) {
+      cancelGrace();
+      return;
+    }
+    // One pending timer at most; repeated hidden events keep the first deadline.
+    if (graceTimer !== null) return;
+    try {
+      graceTimer = schedule(() => {
+        graceTimer = null;
+        if (!disposed && isHidden()) recordPageAbandon();
+      }, graceMs);
+    } catch {
+      graceTimer = null;
+    }
+  };
+
+  const onPageHide = (): void => { recordPageAbandon(); };
+  const onPageShow = (): void => { cancelGrace(); };
+
+  const attach = (target: MatchLifecycleEventTarget | null, type: string, listener: (event: Event) => void): void => {
+    if (!target) return;
+    try {
+      target.addEventListener(type, listener);
+      attached.push({ target, type, listener });
+    } catch {
+      // Registration is best effort; a missing listener only loses telemetry.
+    }
+  };
+
+  attach(pageTarget, 'pagehide', onPageHide);
+  attach(pageTarget, 'pageshow', onPageShow);
+  attach(visibilityTarget, 'visibilitychange', onVisibilityChange);
+
+  return () => {
+    if (disposed) return;
+    disposed = true;
+    cancelGrace();
+    for (const entry of attached) {
+      try {
+        entry.target.removeEventListener(entry.type, entry.listener);
+      } catch {
+        // Nothing else to clean up.
+      }
+    }
+    attached.length = 0;
+  };
 };
 
 /** Read the active aggregate (if any) and the retained finished matches. */
@@ -464,6 +706,7 @@ const emptySummary = (): MatchSummary => ({
   abandoned: 0,
   completionRate: 0,
   abandonedByPhase: {},
+  abandonedByReason: {},
   averageRounds: 0,
 });
 
@@ -496,6 +739,8 @@ const summarizeLedger = (ledger: MatchTelemetryLedger): MatchSummary => {
       abandoned += 1;
       const phase = typeof event.phase === 'string' && event.phase ? event.phase : 'UNKNOWN';
       summary.abandonedByPhase[phase] = (summary.abandonedByPhase[phase] ?? 0) + 1;
+      const reason = isAbandonReason(event.reason) ? event.reason : 'unknown';
+      summary.abandonedByReason[reason] = (summary.abandonedByReason[reason] ?? 0) + 1;
     }
   } else {
     // Compatibility with ledgers written before H1-F added lifecycle events.
@@ -512,6 +757,8 @@ const summarizeLedger = (ledger: MatchTelemetryLedger): MatchSummary => {
         abandoned += 1;
         const phase = match.phaseAtEnd ?? 'UNKNOWN';
         summary.abandonedByPhase[phase] = (summary.abandonedByPhase[phase] ?? 0) + 1;
+        // Records written before OBS-DENOM never carried a reason.
+        summary.abandonedByReason.unknown = (summary.abandonedByReason.unknown ?? 0) + 1;
       }
     }
   }

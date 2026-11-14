@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page, type TestInfo } from '@playwright/test';
 import {
   advanceToHumanSpeech,
   enterGuestLobby,
@@ -47,6 +47,21 @@ const PRE_EXISTING_STATIC_HOSTS = new Set([
   'api.dicebear.com',
 ]);
 const ASR_PROVIDER_URL = /qwen|dashscope|aliyuncs|bailian/i;
+
+/**
+ * Long-recording boundary (V-C follow-up): a full 60s recording through the
+ * real MediaRecorder → WAV normalise → overlapping-chunk upload chain.
+ *
+ * The chunk window/step mirror `WAV_CHUNK_MS` / `WAV_OVERLAP_MS` in
+ * `src/services/sttAdapter.ts` (3,200ms window, 200ms overlap ⇒ 3,000ms step).
+ * `src/services/sttAdapter.test.ts` asserts the exact synthetic-60s plan; this
+ * spec asserts the real-browser chain produces the same shape.
+ */
+const CHUNK_WINDOW_MS = 3_200;
+const CHUNK_STEP_MS = 3_000;
+/** Wait past the 60s hard stop, then let the split upload finish. */
+const HARD_STOP_WAIT_MS = 60_500;
+const LONG_RECORDING_MIN_MS = 55_000;
 
 /** Same fake-media launch flags as a manual Chromium voice smoke run. */
 test.use({
@@ -115,6 +130,41 @@ const instrumentRecorderStart = async (page: Page): Promise<void> => {
       (window as unknown as { __voiceRecorderStarted?: boolean }).__voiceRecorderStarted = true;
     };
   });
+};
+
+/**
+ * Plays the first night and, when the human was eliminated overnight or the
+ * turn was skipped, restarts the match — same retry contract as the single
+ * request case. Kept as a helper so the long-recording case does not duplicate
+ * the restart logic (the single-request case keeps its own inline copy).
+ */
+const reachHumanSpeechTurn = async (page: Page, testInfo: TestInfo): Promise<void> => {
+  let reachedHumanTurn = false;
+  for (let attempt = 1; attempt <= MAX_MATCH_ATTEMPTS && !reachedHumanTurn; attempt += 1) {
+    await startNinePlayerGame(page);
+    let status = 'stalled';
+    try {
+      status = await advanceToHumanSpeech(page, ADVANCE_TIMEOUT_MS);
+    } catch (error) {
+      const message = error instanceof Error ? error.message.split('\n')[0] : 'unknown error';
+      testInfo.annotations.push({
+        type: 'match-retry',
+        description: `attempt ${attempt}: advancement stalled (${message})`,
+      });
+    }
+    if (status === 'human') {
+      reachedHumanTurn = true;
+      break;
+    }
+    if (status !== 'stalled') {
+      testInfo.annotations.push({
+        type: 'match-retry',
+        description: `attempt ${attempt}: human day-1 speech unavailable (${status})`,
+      });
+    }
+    await leaveGameToLobby(page).catch(() => undefined);
+  }
+  expect(reachedHumanTurn, 'human survived to the day-1 speech turn').toBe(true);
 };
 
 test.describe('click-to-toggle voice input', () => {
@@ -306,3 +356,212 @@ test.describe('click-to-toggle voice input', () => {
     expect(pageErrors, 'no uncaught page error during the voice flow').toEqual([]);
   });
 });
+
+/**
+ * V-C long-recording case: one real 60s fake-microphone capture (full hard
+ * stop), split client-side into overlapping WAV chunks, uploaded in parallel to
+ * the same-origin ASR endpoint (mocked) and merged back into the draft input.
+ *
+ * The in-game speech clock is paused for the capture so the 60s turn clock
+ * cannot expire mid-recording; the microphone timer is independent of pause and
+ * still fires the 60s hard stop. No real microphone, key, provider or external
+ * host is involved. The fake device emits a synthetic tone, so this case never
+ * asserts real recognition content — only the transport/merge/UI chain.
+ */
+test.describe('long voice recording (60s hard stop)', () => {
+  test('splits a full 60s capture into parallel same-origin chunks and merges the text once', async ({ page }, testInfo) => {
+    test.setTimeout(420_000);
+
+    const configuredBaseURL = testInfo.project.use.baseURL;
+    const baseURL = typeof configuredBaseURL === 'string' ? configuredBaseURL : 'http://127.0.0.1:5173';
+    const baseOrigin = new URL(baseURL).origin;
+    const localHost = new URL(baseURL).host;
+
+    // Keep a same-worktree edit from reloading the session mid-recording.
+    await page.routeWebSocket(/^ws:\/\/127\.0\.0\.1:5173\//, () => undefined);
+
+    const audit = watchNetwork(page, localHost);
+    const providerRequests = watchProviderRequests(page);
+    const pageErrors: string[] = [];
+    page.on('pageerror', error => pageErrors.push(error.message));
+
+    await page.route(url => url.origin !== baseOrigin, route => route.abort());
+
+    // Same-origin ASR mock: one fixed sentence per chunk (the chunk index is
+    // the request order), held open until the test has observed the parallel
+    // burst and the `transcribing` state. No real ASR key is involved.
+    let asrCalls = 0;
+    const asrBodies: string[] = [];
+    let releaseAsr: (() => void) | null = null;
+    const asrGate = new Promise<void>(resolve => {
+      releaseAsr = resolve;
+    });
+    await page.route(ASR_URL_PATTERN, async route => {
+      const chunkIndex = asrCalls;
+      asrCalls += 1;
+      asrBodies.push(route.request().postData() ?? '');
+      await asrGate;
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ text: `Voice ${chunkIndex} segment`, model: 'mock-asr', durationMs: 1000 }),
+      });
+    });
+
+    await instrumentRecorderStart(page);
+    await enterGuestLobby(page);
+    await reachHumanSpeechTurn(page, testInfo);
+
+    await expect(page.getByText('It is your turn to speak publicly.')).toBeVisible();
+    expect(audit.functions, 'no Function request before the microphone is used').toEqual([]);
+
+    const voiceControl = page.locator('[data-voice-control]');
+    const voiceStatus = page.locator('[data-voice-status]');
+    const pauseButton = page.locator('.game-pause-button');
+    const pauseStatus = page.locator('.game-pause-status');
+    const transcriptInput = page.locator('[data-speech-input-row] input');
+    await expect(voiceControl, 'the microphone exists on the human turn').toBeVisible();
+    await expect(voiceControl).toBeEnabled();
+    await expect(voiceStatus).toHaveAttribute('data-voice-status', 'idle');
+
+    // ── Full 60s capture: hard stop, no second click ─────────────────────
+    await voiceControl.click();
+    await expect(voiceControl).toHaveAttribute('aria-pressed', 'true');
+    await expect(voiceStatus).toHaveAttribute('data-voice-status', 'recording');
+    await expect(page.getByText('Recording…')).toBeVisible();
+    await page.waitForFunction(
+      () => (window as unknown as { __voiceRecorderStarted?: boolean }).__voiceRecorderStarted === true,
+      undefined,
+      { timeout: 10_000 },
+    );
+
+    // Freeze the 60s in-game speech clock so the day turn cannot end first.
+    // The microphone timer is independent of pause, so the hard stop below is
+    // still the product's own 60s safety boundary; the capture itself remains
+    // real wall-clock audio from the fake device.
+    await pauseButton.click();
+    await expect(pauseButton).toContainText('Resume');
+    await expect(pauseStatus).toContainText('AI Paused');
+
+    // The captured interval is the measurement itself, so this is a real
+    // wall-clock wait rather than a state wait: exceed the 60s hard stop (and
+    // leave room for MediaRecorder's start lag) before inspecting the result.
+    await page.waitForTimeout(HARD_STOP_WAIT_MS);
+
+    // ── Hard stop fired: transcribing, then the parallel chunk burst ─────
+    await expect(voiceStatus).toHaveAttribute('data-voice-status', 'transcribing', { timeout: 10_000 });
+    await expect.poll(() => asrCalls, { timeout: 90_000 }).toBeGreaterThan(1);
+    expect(releaseAsr, 'the ASR mock gate is ready').not.toBeNull();
+    releaseAsr?.();
+    await expect(voiceStatus).toHaveAttribute('data-voice-status', 'idle', { timeout: 30_000 });
+    await expect(voiceControl).toBeEnabled();
+
+    // ── Chunk plan and per-request contract ──────────────────────────────
+    expect(asrCalls, 'a full capture is split into many chunks').toBeGreaterThan(1);
+    const bodies = asrBodies.map(raw => JSON.parse(raw) as {
+      audio: string;
+      durationMs: number;
+      lang: string;
+    });
+    expect(bodies, 'one same-origin request per chunk').toHaveLength(asrCalls);
+    for (const body of bodies) {
+      expect(Object.keys(body).sort(), 'only audio + language + duration are sent').toEqual([
+        'audio',
+        'durationMs',
+        'lang',
+      ]);
+      expect(body.lang).toBe('en-US');
+      expect(body.audio).toMatch(/^data:audio\/wav;base64,[A-Za-z0-9+/=]+$/);
+      expect(body.durationMs).toBeGreaterThan(0);
+      expect(body.durationMs).toBeLessThanOrEqual(CHUNK_WINDOW_MS);
+    }
+
+    const chunkDurations = bodies.map(body => body.durationMs);
+    expect(
+      chunkDurations.slice(0, -1),
+      `every non-final chunk is the ${CHUNK_WINDOW_MS}ms window`,
+    ).toEqual(Array.from({ length: asrCalls - 1 }, () => CHUNK_WINDOW_MS));
+    const lastChunkMs = chunkDurations[chunkDurations.length - 1];
+    expect(lastChunkMs).toBeGreaterThan(0);
+    expect(lastChunkMs).toBeLessThanOrEqual(CHUNK_STEP_MS);
+
+    // Derive the recorded length from the chunk plan: chunk i starts at
+    // i * 3,000ms and covers `durationMs`. The ±1 chunk tolerance in the card
+    // is unnecessary because the expected count is derived from the measured
+    // audio length; the MediaRecorder start lag is what makes it 19 or 20.
+    const recordedMs = Math.max(
+      ...chunkDurations.map((durationMs, index) => index * CHUNK_STEP_MS + durationMs),
+    );
+    expect(recordedMs, 'a real 55s+ capture was recorded').toBeGreaterThanOrEqual(LONG_RECORDING_MIN_MS);
+    expect(recordedMs).toBeLessThanOrEqual(60_000);
+    expect(asrCalls, 'chunk count follows the 3s-step / 3.2s-window formula')
+      .toBe(Math.floor((recordedMs - 1) / CHUNK_STEP_MS) + 1);
+
+    // ── Merged draft: written once, ordered, never auto-submitted ────────
+    const expectedTranscript = Array.from(
+      { length: asrCalls },
+      (_, index) => `Voice ${index} segment`,
+    ).join(' ');
+    await expect(transcriptInput, 'the merged text lands in the draft input').toHaveValue(expectedTranscript);
+    await expect(page.locator('[data-speech-input-row]')).toBeVisible();
+
+    const logFeed = page.locator('.game-log-feed').first();
+    await expect(logFeed).toBeAttached();
+    expect(
+      await logFeed.innerText(),
+      'the transcript is only a draft until the player presses Send speech',
+    ).not.toContain(expectedTranscript);
+
+    // ── Resume and submit explicitly ─────────────────────────────────────
+    await pauseButton.click();
+    await expect(pauseButton).toContainText('Pause');
+    await expect.poll(async () => (await pauseStatus.innerText()).trim()).toBe('');
+    await page.getByRole('button', { name: 'Send speech' }).click();
+    await expect(page.locator('[data-speech-input-row]')).toHaveCount(0);
+    await expect
+      .poll(async () => (await page.locator('.game-log-feed').first().innerText()))
+      .toContain(expectedTranscript);
+
+    // ── Network boundary ─────────────────────────────────────────────────
+    expect(
+      audit.functions.filter(path => path === ASR_PATH),
+      'the only Function path used by the long voice flow',
+    ).toHaveLength(asrCalls);
+    expect(
+      audit.functions.filter(path => path !== ASR_PATH),
+      'no provider-adapter / bailian-tts / other Function request',
+    ).toEqual([]);
+    expect(providerRequests, 'no external AI/TTS Function request').toEqual([]);
+    expect(audit.asrProviderHosts, 'no qwen / dashscope / aliyuncs / bailian URL').toEqual([]);
+    expect(audit.externalWithBody, 'no external request carries an audio body').toEqual([]);
+    expect(audit.externalResponses, 'no third-party host answers any request').toEqual([]);
+
+    const unexpectedExternal = audit.external.filter(url => {
+      try {
+        return !PRE_EXISTING_STATIC_HOSTS.has(new URL(url).hostname);
+      } catch {
+        return true;
+      }
+    });
+    expect(unexpectedExternal, 'the only attempted external requests are the pre-existing static assets')
+      .toEqual([]);
+
+    testInfo.annotations.push({
+      type: 'long-recording-audit',
+      description: JSON.stringify({
+        asrMockHits: asrCalls,
+        recordedMs,
+        chunkDurations,
+        functionPaths: audit.functions,
+        blockedExternalAttempts: audit.external.length,
+        externalResponses: audit.externalResponses.length,
+        externalWithBody: audit.externalWithBody.length,
+        asrProviderHosts: audit.asrProviderHosts,
+        providerRequests,
+      }),
+    });
+
+    expect(pageErrors, 'no uncaught page error during the long voice flow').toEqual([]);
+  });
+});
+
