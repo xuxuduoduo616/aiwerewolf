@@ -3,8 +3,10 @@ import {
   MATCH_TELEMETRY_STORAGE_KEY,
   MAX_RETAINED_EVENTS,
   MAX_RETAINED_MATCHES,
+  PAGE_HIDDEN_GRACE_MS,
   TTS_COST_PER_SYNTH_USD,
   endMatch,
+  installPageLifecycleCapture,
   recordProviderOutcome,
   recordTtsOutcome,
   reset,
@@ -296,6 +298,7 @@ describe('match lifecycle ledger (completion and abandonment)', () => {
       abandoned: 2,
       completionRate: 0.5,
       abandonedByPhase: { DAY_VOTING: 1, NIGHT_WEREWOLVES: 1 },
+      abandonedByReason: { unknown: 2 },
       averageRounds: 4,
     });
   });
@@ -307,6 +310,7 @@ describe('match lifecycle ledger (completion and abandonment)', () => {
       abandoned: 0,
       completionRate: 0,
       abandonedByPhase: {},
+      abandonedByReason: {},
       averageRounds: 0,
     };
     expect(summarizeMatches()).toEqual(empty);
@@ -328,6 +332,7 @@ describe('match lifecycle ledger (completion and abandonment)', () => {
       abandoned: 1,
       completionRate: 0.5,
       abandonedByPhase: { DAY_DISCUSSION: 1 },
+      abandonedByReason: { unknown: 1 },
       averageRounds: 4,
     });
   });
@@ -388,7 +393,327 @@ describe('match lifecycle ledger (completion and abandonment)', () => {
       abandoned: 1,
       completionRate: 0,
       abandonedByPhase: { DAY_DISCUSSION: 1 },
+      abandonedByReason: { unknown: 1 },
       averageRounds: 0,
+    });
+  });
+});
+
+/**
+ * OBS-DENOM: page-lifecycle abandonment capture. Fake event targets keep the
+ * capture DOM-free; fake timers drive the visibility grace window.
+ */
+const fakeLifecycleTarget = () => {
+  const listeners = new Map<string, Set<(event: Event) => void>>();
+  const target = {
+    addEventListener: (type: string, listener: (event: Event) => void) => {
+      if (!listeners.has(type)) listeners.set(type, new Set());
+      listeners.get(type)!.add(listener);
+    },
+    removeEventListener: (type: string, listener: (event: Event) => void) => {
+      listeners.get(type)?.delete(listener);
+    },
+  };
+  return {
+    target,
+    dispatch: (type: string) => {
+      for (const listener of [...(listeners.get(type) ?? [])]) listener({ type } as Event);
+    },
+    count: (type: string) => listeners.get(type)?.size ?? 0,
+  };
+};
+
+describe('page lifecycle abandonment capture (OBS-DENOM)', () => {
+  it('writes match_started and match_abandoned(reason page-hidden) on pagehide', () => {
+    start();
+    const page = fakeLifecycleTarget();
+    const visibility = fakeLifecycleTarget();
+    const dispose = installPageLifecycleCapture({
+      getMatchState: () => ({ phase: 'DAY_VOTING', rounds: 2 }),
+      pageTarget: page.target,
+      visibilityTarget: visibility.target,
+      getVisibilityState: () => 'visible',
+    });
+
+    page.dispatch('pagehide');
+
+    const stored = readStored();
+    expect(stored.events).toHaveLength(2);
+    expect(stored.events[0]).toMatchObject({ type: 'match_started' });
+    expect(stored.events[1]).toMatchObject({
+      type: 'match_abandoned',
+      phase: 'DAY_VOTING',
+      round: 2,
+      completed: false,
+      reason: 'page-hidden',
+    });
+    expect(Object.keys(stored.events[1]).sort()).toEqual([
+      'at', 'completed', 'durationMs', 'matchId', 'phase', 'reason', 'round', 'type',
+    ]);
+    expect(stored.events[1].durationMs).toBeGreaterThanOrEqual(0);
+    expect(stored.matches).toHaveLength(1);
+    expect(stored.matches[0]).toMatchObject({ completed: false, phaseAtEnd: 'DAY_VOTING', rounds: 2 });
+    // Exactly one end event: the buffered start is flushed with it.
+    expect(stored.events.filter((event: { type: string }) => event.type !== 'match_started')).toHaveLength(1);
+    expect(summarizeMatches()).toMatchObject({
+      started: 1,
+      finished: 0,
+      abandoned: 1,
+      completionRate: 0,
+      abandonedByPhase: { DAY_VOTING: 1 },
+      abandonedByReason: { 'page-hidden': 1 },
+    });
+
+    dispose();
+    expect(page.count('pagehide')).toBe(0);
+    expect(visibility.count('visibilitychange')).toBe(0);
+  });
+
+  it('does not add a second end event after leaveGame', () => {
+    start();
+    endMatch({ completed: false, phase: 'DAY_DISCUSSION', rounds: 1, reason: 'leave-game' });
+    const page = fakeLifecycleTarget();
+    const visibility = fakeLifecycleTarget();
+    const dispose = installPageLifecycleCapture({
+      getMatchState: () => ({ phase: 'DAY_DISCUSSION', rounds: 1 }),
+      pageTarget: page.target,
+      visibilityTarget: visibility.target,
+      getVisibilityState: () => 'hidden',
+    });
+
+    page.dispatch('pagehide');
+    page.dispatch('pageshow');
+    page.dispatch('pagehide');
+    visibility.dispatch('visibilitychange');
+
+    const stored = readStored();
+    expect(stored.events).toHaveLength(2);
+    expect(stored.events.filter((event: { type: string }) => event.type === 'match_abandoned')).toHaveLength(1);
+    expect(stored.matches).toHaveLength(1);
+    expect(summarizeMatches()).toMatchObject({
+      started: 1,
+      finished: 0,
+      abandoned: 1,
+      completionRate: 0,
+      abandonedByReason: { 'leave-game': 1 },
+    });
+
+    dispose();
+  });
+
+  it('never records an abandonment after the match reached GAME_OVER', () => {
+    start();
+    endMatch({ completed: true, winner: 'VILLAGERS', rounds: 3 });
+    const page = fakeLifecycleTarget();
+    const dispose = installPageLifecycleCapture({
+      getMatchState: () => ({ phase: 'GAME_OVER', rounds: 3 }),
+      pageTarget: page.target,
+      visibilityTarget: null,
+    });
+
+    page.dispatch('pagehide');
+    page.dispatch('pageshow');
+    page.dispatch('pagehide');
+
+    const stored = readStored();
+    expect(stored.events.map((event: { type: string }) => event.type)).toEqual([
+      'match_started',
+      'match_finished',
+    ]);
+    expect(summarizeMatches()).toMatchObject({
+      started: 1,
+      finished: 1,
+      abandoned: 0,
+      completionRate: 1,
+      abandonedByReason: {},
+    });
+
+    dispose();
+  });
+
+  it('ignores a hidden page that becomes visible again inside the grace window', () => {
+    vi.useFakeTimers();
+    try {
+      let visibilityState = 'visible';
+      start();
+      const visibility = fakeLifecycleTarget();
+      const dispose = installPageLifecycleCapture({
+        getMatchState: () => ({ phase: 'DAY_VOTING', rounds: 1 }),
+        pageTarget: null,
+        visibilityTarget: visibility.target,
+        getVisibilityState: () => visibilityState,
+      });
+
+      visibilityState = 'hidden';
+      visibility.dispatch('visibilitychange');
+      vi.advanceTimersByTime(PAGE_HIDDEN_GRACE_MS - 1);
+      visibilityState = 'visible';
+      visibility.dispatch('visibilitychange');
+      vi.advanceTimersByTime(PAGE_HIDDEN_GRACE_MS * 2);
+
+      // A transient tab switch writes nothing, not even the buffered start.
+      expect(store.has(MATCH_TELEMETRY_STORAGE_KEY)).toBe(false);
+      expect(snapshot().current).not.toBeNull();
+
+      // The match can still finish normally, with exactly one lifecycled finish.
+      endMatch({ completed: true, winner: 'VILLAGERS', rounds: 2 });
+      const stored = readStored();
+      expect(stored.events.map((event: { type: string }) => event.type)).toEqual([
+        'match_started',
+        'match_finished',
+      ]);
+      expect(summarizeMatches()).toMatchObject({
+        started: 1,
+        finished: 1,
+        abandoned: 0,
+        completionRate: 1,
+      });
+
+      dispose();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('records an abandonment only after the hidden grace window elapses', () => {
+    vi.useFakeTimers();
+    try {
+      let visibilityState = 'visible';
+      start();
+      const visibility = fakeLifecycleTarget();
+      const dispose = installPageLifecycleCapture({
+        getMatchState: () => ({ phase: 'NIGHT_WEREWOLVES', rounds: 1 }),
+        pageTarget: null,
+        visibilityTarget: visibility.target,
+        getVisibilityState: () => visibilityState,
+      });
+
+      visibilityState = 'hidden';
+      visibility.dispatch('visibilitychange');
+      vi.advanceTimersByTime(PAGE_HIDDEN_GRACE_MS - 1);
+      expect(store.has(MATCH_TELEMETRY_STORAGE_KEY)).toBe(false);
+
+      vi.advanceTimersByTime(1);
+      const stored = readStored();
+      expect(stored.events).toHaveLength(2);
+      expect(stored.events[1]).toMatchObject({
+        type: 'match_abandoned',
+        phase: 'NIGHT_WEREWOLVES',
+        round: 1,
+        reason: 'page-hidden',
+      });
+      expect(summarizeMatches()).toMatchObject({
+        started: 1,
+        abandoned: 1,
+        completionRate: 0,
+        abandonedByPhase: { NIGHT_WEREWOLVES: 1 },
+        abandonedByReason: { 'page-hidden': 1 },
+      });
+
+      // Repeated hidden events after finalization stay one end event.
+      visibility.dispatch('visibilitychange');
+      vi.advanceTimersByTime(PAGE_HIDDEN_GRACE_MS * 2);
+      expect(readStored().events).toHaveLength(2);
+
+      dispose();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('keeps a single abandonment across repeated pagehide and a bfcache restore', () => {
+    start();
+    const page = fakeLifecycleTarget();
+    const dispose = installPageLifecycleCapture({
+      getMatchState: () => ({ phase: 'DAY_VOTING', rounds: 2 }),
+      pageTarget: page.target,
+      visibilityTarget: null,
+    });
+
+    page.dispatch('pagehide');
+    page.dispatch('pageshow');
+    page.dispatch('pagehide');
+
+    const stored = readStored();
+    expect(stored.events.filter((event: { type: string }) => event.type === 'match_abandoned')).toHaveLength(1);
+    expect(summarizeMatches()).toMatchObject({
+      started: 1,
+      abandoned: 1,
+      completionRate: 0,
+      abandonedByReason: { 'page-hidden': 1 },
+    });
+
+    dispose();
+  });
+
+  it('writes nothing when no match is active', () => {
+    const page = fakeLifecycleTarget();
+    const dispose = installPageLifecycleCapture({
+      getMatchState: () => ({ phase: 'LOBBY', rounds: 0 }),
+      pageTarget: page.target,
+      visibilityTarget: null,
+    });
+
+    page.dispatch('pagehide');
+    expect(store.has(MATCH_TELEMETRY_STORAGE_KEY)).toBe(false);
+
+    dispose();
+  });
+
+  it('counts a page-hidden abandonment in the completion-rate denominator', () => {
+    start();
+    endMatch({ completed: true, winner: 'VILLAGERS', rounds: 2 });
+    start();
+    const page = fakeLifecycleTarget();
+    const dispose = installPageLifecycleCapture({
+      getMatchState: () => ({ phase: 'DAY_VOTING', rounds: 1 }),
+      pageTarget: page.target,
+      visibilityTarget: null,
+    });
+
+    page.dispatch('pagehide');
+
+    expect(summarizeMatches()).toMatchObject({
+      started: 2,
+      finished: 1,
+      abandoned: 1,
+      completionRate: 0.5,
+      abandonedByReason: { 'page-hidden': 1 },
+    });
+
+    dispose();
+  });
+
+  it('summarizes legacy unlabelled abandonments as unknown next to new reasons', () => {
+    const source = {
+      matches: [],
+      events: [
+        { type: 'match_started', matchId: 'a' },
+        { type: 'match_started', matchId: 'b' },
+        { type: 'match_started', matchId: 'c' },
+        { type: 'match_finished', matchId: 'a', winner: 'VILLAGERS', rounds: 3, durationMs: 1000, completed: true },
+        { type: 'match_abandoned', matchId: 'b', phase: 'DAY_VOTING', round: 2, durationMs: 500, completed: false },
+        {
+          type: 'match_abandoned',
+          matchId: 'c',
+          phase: 'DAY_VOTING',
+          round: 1,
+          durationMs: 600,
+          completed: false,
+          reason: 'page-hidden',
+        },
+      ],
+    };
+
+    expect(() => summarizeMatches(source)).not.toThrow();
+    expect(summarizeMatches(source)).toEqual({
+      started: 3,
+      finished: 1,
+      abandoned: 2,
+      completionRate: 0.3333,
+      abandonedByPhase: { DAY_VOTING: 2 },
+      abandonedByReason: { unknown: 1, 'page-hidden': 1 },
+      averageRounds: 3,
     });
   });
 });

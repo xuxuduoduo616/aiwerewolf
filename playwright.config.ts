@@ -16,6 +16,23 @@ if (!process.env.PLAYWRIGHT_BROWSERS_PATH && existsSync(localBrowsers)) {
 const PORT = 5173;
 const BASE_URL = `http://127.0.0.1:${PORT}`;
 
+// Two independently judgeable suites:
+//  - smoke: four short guest flows (seconds each), safe to rerun;
+//  - deep: the two specs that play a full 9-player match (minutes each) and
+//    therefore must not be retried; a retry would double an already long job.
+// `npx playwright test` still runs every spec exactly once (each file matches
+// exactly one project).
+const SMOKE_SPECS = [
+  '**/guest-start.spec.ts',
+  '**/first-day-speech-vote.spec.ts',
+  '**/language-audio-toggle.spec.ts',
+  '**/voice-input.spec.ts',
+];
+const DEEP_SPECS = [
+  '**/replay-review.spec.ts',
+  '**/share-card.spec.ts',
+];
+
 export default defineConfig({
   testDir: './e2e',
   fullyParallel: true,
@@ -33,7 +50,17 @@ export default defineConfig({
   },
   projects: [
     {
-      name: 'chromium',
+      name: 'smoke',
+      testMatch: SMOKE_SPECS,
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'deep',
+      testMatch: DEEP_SPECS,
+      // The full-match specs are deterministic through their test-only seeded
+      // Math.random and prove first-attempt success locally (`--repeat-each=5`),
+      // so CI must surface a failure instead of hiding it behind a retry.
+      retries: 0,
       use: { ...devices['Desktop Chrome'] },
     },
   ],

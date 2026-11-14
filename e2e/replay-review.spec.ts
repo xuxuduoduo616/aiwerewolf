@@ -4,6 +4,7 @@ import {
   startNinePlayerGame,
   watchProviderRequests,
 } from './helpers/game';
+import { E2E_GAME_SEED, installSeededRandom } from './helpers/seededRandom';
 
 /**
  * H2-B: the replay review exists only after GAME_OVER, is driven by the saved
@@ -11,10 +12,14 @@ import {
  * overflow and without any provider/network request.
  *
  * The match is played through the real UI (Skip speech / immediate vote / the
- * human night action) rather than seeded storage. If the human happens to die
- * before the first vote there is no "suspicion of you" data in the replay, so
- * that rare match is restarted (up to three attempts) instead of weakening the
- * row/line assertions below.
+ * human night action) rather than seeded storage. The product randomizes the
+ * role deal, night kills, speeches and votes; a match where the human dies
+ * before the second vote settlement has no multi-round "the AI suspected you"
+ * data at all. `installSeededRandom` replaces `Math.random` with a fixed
+ * mulberry32 PRNG before the app boots, so the first match is reproducible and
+ * satisfies the assertions below on attempt 1. The bounded retry loop stays
+ * only as a defensive guard for an aborted/reloaded match — it is not what
+ * makes these assertions pass.
  */
 
 const SEAT = '.game-player-seat';
@@ -231,6 +236,10 @@ async function expectInViewport(locator: Locator, page: Page): Promise<void> {
 test.describe('post-game replay review', () => {
   test('only appears after GAME_OVER and renders the saved 9-player replay at 390x844 and 1440x900', async ({ page }) => {
     test.setTimeout(480_000);
+    // Deterministic match: without it a random deal can end with the human dead
+    // before the second vote settlement, which the assertions below must not
+    // paper over. The seed keeps the human alive through both rounds.
+    await installSeededRandom(page);
     // Another card may be editing this shared worktree while the spec runs.
     // Mock the local Vite HMR socket so a dev-server file change cannot reload
     // the page and drop the guest session mid-match; the product code and the
@@ -303,6 +312,7 @@ test.describe('post-game replay review', () => {
         && (latest.outcome.rounds <= 1 || humanSuspicionRounds.size >= 2);
       if (enoughHumanData) {
         replay = latest;
+        console.log(`[H2-B] seeded match captured on attempt ${attempt}: seed ${E2E_GAME_SEED}, rounds ${latest.outcome.rounds}, humanSuspicionRounds ${humanSuspicionRounds.size}`);
         break;
       }
 

@@ -3,6 +3,7 @@ import { GamePhase, Role, type GameConfig } from '../types';
 import { MODE_9_PLAYER } from '../constants';
 import {
   MATCH_TELEMETRY_STORAGE_KEY,
+  PAGE_HIDDEN_GRACE_MS,
   reset,
   snapshot,
   summarizeMatches,
@@ -73,6 +74,36 @@ const fixture: GameConfig = {
 let game: ReturnType<typeof useGameState>;
 let auth: AuthContext;
 let values: Map<string, string>;
+
+// OBS-DENOM: fake page/document event targets. The hook installs the real
+// page-lifecycle capture against these globals, so no DOM library is needed.
+const createLifecycleTarget = () => {
+  const listeners = new Map<string, Set<(event: Event) => void>>();
+  const target = {
+    addEventListener: (type: string, listener: (event: Event) => void) => {
+      if (!listeners.has(type)) listeners.set(type, new Set());
+      listeners.get(type)!.add(listener);
+    },
+    removeEventListener: (type: string, listener: (event: Event) => void) => {
+      listeners.get(type)?.delete(listener);
+    },
+  };
+  return {
+    target,
+    dispatch: (type: string) => {
+      for (const listener of [...(listeners.get(type) ?? [])]) listener({ type } as Event);
+    },
+    count: (type: string) => listeners.get(type)?.size ?? 0,
+  };
+};
+type FakeDocument = {
+  visibilityState: string;
+  addEventListener: (type: string, listener: (event: Event) => void) => void;
+  removeEventListener: (type: string, listener: (event: Event) => void) => void;
+};
+let pageLifecycle: ReturnType<typeof createLifecycleTarget>;
+let visibilityLifecycle: ReturnType<typeof createLifecycleTarget>;
+let fakeDocument: FakeDocument;
 const flush = () => {
   for (let i = 0; hooks.dirty; i++) {
     if (i > 40) throw new Error('Hook render did not settle');
@@ -90,7 +121,20 @@ const readStored = () => JSON.parse(values.get(MATCH_TELEMETRY_STORAGE_KEY)!);
 beforeEach(() => {
   vi.useFakeTimers();
   hooks.values = []; hooks.cursor = 0; hooks.dirty = true; hooks.effects.clear(); hooks.pending = [];
-  vi.stubGlobal('window', { setTimeout, clearTimeout, setInterval, clearInterval, location: { port: '4175' } });
+  pageLifecycle = createLifecycleTarget();
+  visibilityLifecycle = createLifecycleTarget();
+  fakeDocument = {
+    visibilityState: 'visible',
+    addEventListener: visibilityLifecycle.target.addEventListener,
+    removeEventListener: visibilityLifecycle.target.removeEventListener,
+  };
+  vi.stubGlobal('window', {
+    setTimeout, clearTimeout, setInterval, clearInterval,
+    location: { port: '4175' },
+    addEventListener: pageLifecycle.target.addEventListener,
+    removeEventListener: pageLifecycle.target.removeEventListener,
+  });
+  vi.stubGlobal('document', fakeDocument);
   values = new Map();
   vi.stubGlobal('localStorage', {
     getItem: (key: string) => values.get(key) ?? null,
@@ -160,6 +204,7 @@ describe('match lifecycle wiring (completion and abandonment)', () => {
       abandoned: 1,
       completionRate: 0,
       abandonedByPhase: { [GamePhase.DAY_DISCUSSION]: 1 },
+      abandonedByReason: { 'leave-game': 1 },
       averageRounds: 0,
     });
     leave();
@@ -210,5 +255,113 @@ describe('match lifecycle wiring (completion and abandonment)', () => {
     expect(snapshot().current).toBeNull();
     expect(snapshot().matches).toHaveLength(1);
     expect(summarizeMatches()).toMatchObject({ started: 1, finished: 0, abandoned: 1, completionRate: 0 });
+  });
+});
+
+describe('page lifecycle wiring (OBS-DENOM)', () => {
+  it('installs page and visibility listeners with the hook mount', () => {
+    expect(pageLifecycle.count('pagehide')).toBe(1);
+    expect(pageLifecycle.count('pageshow')).toBe(1);
+    expect(visibilityLifecycle.count('visibilitychange')).toBe(1);
+  });
+
+  it('records pagehide abandonment with the current phase and round', async () => {
+    await advance(800); // NIGHT_START → beginNight increments the round
+    game.setPhase(GamePhase.DAY_DISCUSSION); flush();
+    expect(game.roundCount).toBe(1);
+
+    pageLifecycle.dispatch('pagehide');
+
+    const stored = readStored();
+    expect(stored.events).toHaveLength(2);
+    expect(stored.events[1]).toMatchObject({
+      type: 'match_abandoned',
+      phase: GamePhase.DAY_DISCUSSION,
+      round: 1,
+      completed: false,
+      reason: 'page-hidden',
+    });
+    expect(summarizeMatches()).toMatchObject({
+      started: 1,
+      finished: 0,
+      abandoned: 1,
+      completionRate: 0,
+      abandonedByPhase: { [GamePhase.DAY_DISCUSSION]: 1 },
+      abandonedByReason: { 'page-hidden': 1 },
+    });
+  });
+
+  it('does not double-record when pagehide follows leaveGame', () => {
+    leave();
+    const afterLeave = readStored();
+    expect(afterLeave.events).toHaveLength(2);
+    expect(afterLeave.events[1]).toMatchObject({ type: 'match_abandoned', reason: 'leave-game' });
+
+    pageLifecycle.dispatch('pagehide');
+    pageLifecycle.dispatch('pageshow');
+    pageLifecycle.dispatch('pagehide');
+
+    expect(readStored().events).toHaveLength(2);
+    expect(snapshot().matches).toHaveLength(1);
+  });
+
+  it('does not record an abandonment after GAME_OVER', async () => {
+    engine.applyElimination.mockReturnValue({ players: game.players, winner: 'VILLAGERS' });
+    game.setPhase(GamePhase.DAY_VOTING); flush();
+    const vote = game.finishVote(2); flush();
+    for (let i = 0; i < 12 && game.phase !== GamePhase.GAME_OVER; i += 1) await advance(200);
+    await vote; await settle();
+    flush(); flush();
+    expect(game.phase).toBe(GamePhase.GAME_OVER);
+
+    pageLifecycle.dispatch('pagehide');
+
+    const stored = readStored();
+    expect(stored.events.map((event: { type: string }) => event.type)).toEqual([
+      'match_started',
+      'match_finished',
+    ]);
+    expect(stored.events.filter((event: { type: string }) => event.type === 'match_abandoned')).toHaveLength(0);
+  });
+
+  it('records a hidden tab only after the grace window and ignores a transient bounce', async () => {
+    // Pause the phase machine so the match state is stable while time advances.
+    game.togglePause(); flush();
+
+    fakeDocument.visibilityState = 'hidden';
+    visibilityLifecycle.dispatch('visibilitychange');
+    await advance(PAGE_HIDDEN_GRACE_MS - 1);
+    expect(values.has(MATCH_TELEMETRY_STORAGE_KEY)).toBe(false);
+
+    fakeDocument.visibilityState = 'visible';
+    visibilityLifecycle.dispatch('visibilitychange');
+    await advance(PAGE_HIDDEN_GRACE_MS * 2);
+    expect(values.has(MATCH_TELEMETRY_STORAGE_KEY)).toBe(false);
+
+    fakeDocument.visibilityState = 'hidden';
+    visibilityLifecycle.dispatch('visibilitychange');
+    await advance(PAGE_HIDDEN_GRACE_MS);
+
+    const stored = readStored();
+    expect(stored.events).toHaveLength(2);
+    expect(stored.events[1]).toMatchObject({
+      type: 'match_abandoned',
+      reason: 'page-hidden',
+      phase: game.phase,
+      round: game.roundCount,
+    });
+  });
+
+  it('removes the page-lifecycle listeners on unmount and then records nothing', () => {
+    expect(pageLifecycle.count('pagehide')).toBeGreaterThan(0);
+
+    for (const effect of hooks.effects.values()) effect.cleanup?.();
+
+    expect(pageLifecycle.count('pagehide')).toBe(0);
+    expect(pageLifecycle.count('pageshow')).toBe(0);
+    expect(visibilityLifecycle.count('visibilitychange')).toBe(0);
+
+    pageLifecycle.dispatch('pagehide');
+    expect(values.has(MATCH_TELEMETRY_STORAGE_KEY)).toBe(false);
   });
 });

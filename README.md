@@ -10,12 +10,18 @@ AI Werewolf is a browser-based social deduction game where one human player face
 
 The project separates game rules from generated expression. A deterministic rules engine and belief/action layer decide what agents know and do; the language layer turns those decisions into characterful dialogue and falls back to a bundled speech library when the external AI provider is unavailable.
 
-## Latest release (2026-11-13)
+## Latest release (2026-11-14)
 
-- Post-game replay review: after a match ends, inspect AI suspicion curves, vote reasons, and werewolf night chat from the saved local replay.
-- Share card: export a client-side PNG of "AI's view of you" from the replay panel; nothing is uploaded.
-- Click-to-record voice input: on your own turn, click the microphone to start recording (the button dims), click again to stop, review the editable transcription, then send it as text. Transcription happens after you stop, not live; voice input requires the server-side `QWEN_API_KEY` environment variable.
-- Release verification: 1,131 tests passed / 5 skipped; TypeScript and Vite build passed. Production deployment is verified separately through the existing Netlify Git integration.
+- Verification tail for the 2026-11-13 release: deterministic browser E2E for the replay and share-card specs, independent Playwright smoke and deep CI jobs, roadmap and observability documentation sync, page-hidden abandonment telemetry, and 60-second voice recording coverage. No new product features, multiplayer, payments, or social features.
+- Release verification: 1,150 tests passed / 5 skipped; TypeScript and Vite build passed; the GitHub Actions E2E smoke and deep jobs pass on the release commit. Production deployment is verified separately through the existing Netlify Git integration.
+- Voice input still requires the server-side `QWEN_API_KEY` environment variable. iOS Safari real devices, noise conditions, and full 60-second human recordings remain unverified.
+
+## Previous production release (2026-11-13)
+
+- Release identity: local `main`, `origin/main`, the GitHub `main` branch, and the Netlify production commit all match `d19c20d45f611ba3c4a9374e392019b29bf20998`; Netlify production deploy `6af6c4a66e12bd081a49320a` is ready.
+- Post-game replay review, client-side share card, and click-to-record voice input shipped with this release.
+- Release verification: 1,131 tests passed / 5 skipped; TypeScript and Vite build passed.
+- Not verified: iOS Safari real devices, full 60-second recordings, noise environments, the all-player replay matrix, and refresh-abandonment statistics.
 
 ## Previous production release (2026-11-09)
 
@@ -146,11 +152,11 @@ More detail is available in [Development](docs/development.md) and [Supabase set
 ## Roadmap
 
 - **v1.0 - Playable AI Werewolf:** two boards, full role resolution, AI strategy, responsive UI, authentication, and production deployment
-- **v1.1 - AI quality:** resolve remaining dialogue placeholders, improve language consistency, and evaluate cloud text-to-speech
-- **v1.2 - Social foundation:** profiles, friend relationships, messaging, presence, moderation boundaries, and verified row-level security
-- **v2.0 - Server-authoritative multiplayer:** private rooms, invitations, reconnect support, secret-state projection, and idempotent game commands
+- **v1.1 - AI quality:** shipped 2026-11-13 with post-game replay review, a local replay benchmark and three-tier difficulty calibration on local real-match samples, a client-side share card, and click-to-record voice input; remaining dialogue placeholders, fallback-language consistency, and speech-corpus licensing are deferred
+- **v1.2 - Social foundation:** planned; profiles, friend relationships, messaging, presence, moderation boundaries, and verified row-level security
+- **v2.0 - Server-authoritative multiplayer:** planned; private rooms, invitations, reconnect support, secret-state projection, and idempotent game commands
 
-See [Roadmap](docs/roadmap.md) for scope and release gates. Planned work is not presented as an available feature.
+See [Roadmap](docs/roadmap.md) for scope and release gates. Local verification notes and limits: [AI quality report](docs/ai-quality-report.md), [observability operations](docs/observability-operations.md). Planned work is not presented as an available feature.
 
 ## Contributing
 
