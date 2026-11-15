@@ -1,9 +1,7 @@
 {
   "schema_version": 1,
   "public_documents": [
-    "README.md",
     "CODE_OF_CONDUCT.md",
-    "CONTRIBUTING.md",
     "SECURITY.md",
     "docs/architecture.md",
     "docs/development.md",
@@ -16,9 +14,7 @@
     "docs/profile-identity-migration.sql",
     "docs/supabase-init.sql"
   ],
-  "asset_prefixes": [
-    "docs/images/"
-  ],
+  "asset_prefixes": [],
   "excluded_prefixes": [
     "docs/prompts/",
     "reports/",
@@ -27,6 +23,8 @@
     ".github/ISSUE_TEMPLATE/"
   ],
   "excluded_paths": [
-    "drive-source-policy.json"
+    "drive-source-policy.json",
+    "README.md",
+    "CONTRIBUTING.md"
   ]
 }
