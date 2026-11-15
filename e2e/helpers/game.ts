@@ -66,6 +66,10 @@ async function dismissOnboardingIfPresent(page: Page): Promise<void> {
 export async function startNinePlayerGame(page: Page): Promise<void> {
   await page.getByRole('button', { name: 'Start Game', exact: true }).click();
   await page.getByRole('button', { name: /Single-Player/ }).click();
+  // First-time players see a configuration spotlight before editing the form.
+  if (await page.locator('.onboarding-panel').isVisible()) {
+    await dismissOnboardingIfPresent(page);
+  }
   await expect(page.getByRole('heading', { name: /Choose Board, Difficulty/ })).toBeVisible();
 
   const ninePlayerBoard = page.getByRole('radio', { name: /9-Player Standard/ });

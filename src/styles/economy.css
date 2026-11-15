@@ -409,6 +409,10 @@
   bottom: max(24px, env(safe-area-inset-bottom));
   width: min(92vw, 560px);
   transform: translateX(-50%);
+  height: 208px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
   padding: 20px;
   border: 1px solid rgba(255, 255, 255, .22);
   border-radius: 14px;
@@ -416,19 +420,14 @@
   background: rgba(14, 14, 16, .98);
   box-shadow: 0 20px 60px rgba(0, 0, 0, .58);
 }
-.onboarding-panel--top {
-  top: max(18px, env(safe-area-inset-top));
-  bottom: auto;
-}
 .onboarding-panel h2 { margin: 0; font-family: Cinzel, Georgia, serif; font-size: 1.2rem; }
 .onboarding-panel > p:not(.economy-eyebrow) { margin: 8px 0 17px; color: #aaa7a0; font-size: .8rem; line-height: 1.5; }
-.onboarding-panel .onboarding-pointer-copy {
-  margin-top: -8px;
-  color: #e7ce92;
-  font-size: .7rem;
-  font-weight: 700;
+.onboarding-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; margin-top: auto; }
+.onboarding-target-action { position: fixed; z-index: 1002; background: transparent; border: 0; border-radius: 8px; cursor: pointer; }
+.onboarding-target-action:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+@media (max-width: 640px) {
+  .wol-shell[data-onboarding-step="navigation"] .wol-bottom-nav { bottom: var(--onboarding-panel-space, 250px); }
 }
-.onboarding-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; }
 .onboarding-actions button { min-height: 44px; padding: 0 9px; font-size: .72rem; font-weight: 800; }
 
 .wol-activity-card {
@@ -476,17 +475,13 @@
   .economy-history-list > li { grid-template-columns: 1fr; }
   .economy-history-deltas { justify-content: space-between; }
   .skin-preview-content { grid-template-columns: 1fr; }
-  .onboarding-actions { grid-template-columns: 1fr 1fr; }
 }
 
 @media (max-height: 520px) {
   .onboarding-panel {
     bottom: max(6px, env(safe-area-inset-bottom));
     padding: 10px 14px;
-  }
-  .onboarding-panel--top {
-    top: max(6px, env(safe-area-inset-top));
-    bottom: auto;
+    height: 160px;
   }
   .onboarding-panel h2 { font-size: 1rem; }
   .onboarding-panel > p:not(.economy-eyebrow) {
@@ -494,7 +489,6 @@
     font-size: .7rem;
     line-height: 1.3;
   }
-  .onboarding-panel .onboarding-pointer-copy { margin-top: -2px; }
   .onboarding-actions { gap: 4px; }
 }
 

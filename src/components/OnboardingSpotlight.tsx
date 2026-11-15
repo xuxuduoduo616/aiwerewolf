@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { getFocusLoopTarget } from './AccessibleDialog';
 import { UI_PRESENTATION } from '../uiPresentation';
@@ -8,6 +8,8 @@ export interface OnboardingStep {
   selector: string;
   title: string;
   description: string;
+  actionLabel?: string;
+  wholePanel?: boolean;
 }
 
 export const ONBOARDING_STEPS: readonly OnboardingStep[] = [
@@ -15,32 +17,50 @@ export const ONBOARDING_STEPS: readonly OnboardingStep[] = [
     id: 'wallet',
     selector: UI_PRESENTATION.showLegacyLobby ? '[data-tour-target="wallet"]' : '[data-tour-target="identity"]',
     title: 'Welcome to the village',
-    description: 'Play as a guest, or sign in to keep your match history and stats.',
+    description: 'Play as a guest, or sign in to save your match history.',
   },
   {
     id: 'promotions',
     selector: UI_PRESENTATION.showLegacyLobby ? '[data-tour-target="promotions"]' : '[data-tour-target="match-details"]',
     title: 'You and the AI village',
-    description: 'Play a full single-player Werewolf match with AI players. Choose a 9-player or 12-player board.',
-  },
-  {
-    id: 'start-game',
-    selector: '[data-tour-target="start-game"]',
-    title: 'Start a local match',
-    description: 'Choose a verified 9-player or 12-player single-player board. Unfinished matches never grant rewards.',
+    description: 'Play Werewolf with AI players on a 9- or 12-player board.',
   },
   {
     id: 'navigation',
     selector: '[data-tour-target="navigation"]',
-    title: 'Return whenever you need',
-    description: 'Main navigation keeps the lobby, cosmetic shop, and profile surfaces within reach.',
+    title: 'Shop',
+    description: 'Browse skins and customize your look.',
+  },
+  {
+    id: 'start-game',
+    selector: '[data-tour-target="start-game"]',
+    title: 'Start Game',
+    description: 'Ready to play? Start your first match.',
+    actionLabel: 'Start Game',
   },
 ] as const;
+
+export const SINGLE_PLAYER_GUIDE: readonly OnboardingStep[] = [{
+  id: 'single-player',
+  selector: '[data-tour-target="single-player"]',
+  title: 'Single-Player',
+  description: 'Select Single-Player to try a match with AI players.',
+  actionLabel: 'Single-Player',
+}];
+
+export const MATCH_SETUP_GUIDE: readonly OnboardingStep[] = [{
+  id: 'match-setup',
+  selector: '[data-tour-target="match-setup"]',
+  title: 'Make it your game',
+  description: 'Choose your board, difficulty, and dialogue model.',
+  wholePanel: true,
+}];
 
 interface Props {
   open: boolean;
   onSkip: () => void;
   onFinish: () => void;
+  steps?: readonly OnboardingStep[];
 }
 
 export interface HighlightRect {
@@ -126,17 +146,18 @@ export const findAvailableOnboardingStep = (
   startIndex: number,
   direction: 1 | -1,
   hasTarget: (selector: string) => boolean,
+  steps: readonly OnboardingStep[] = ONBOARDING_STEPS,
 ): number | null => {
-  for (let index = startIndex; index >= 0 && index < ONBOARDING_STEPS.length; index += direction) {
-    if (hasTarget(ONBOARDING_STEPS[index].selector)) return index;
+  for (let index = startIndex; index >= 0 && index < steps.length; index += direction) {
+    if (hasTarget(steps[index].selector)) return index;
   }
   return null;
 };
 
 export const getOnboardingPanelPlacement = (
-  rect: HighlightRect,
-  viewportHeight: number,
-): OnboardingPanelPlacement => rect.top + rect.height / 2 >= viewportHeight / 2 ? 'top' : 'bottom';
+  _rect: HighlightRect,
+  _viewportHeight: number,
+): OnboardingPanelPlacement => 'bottom';
 
 export const getOnboardingArrowLayout = (
   rect: HighlightRect,
@@ -359,12 +380,12 @@ interface LayerProps {
   arrowLayout?: OnboardingArrowLayout;
   positioning?: boolean;
   isFirst: boolean;
-  isLast: boolean;
+  stepCount?: number;
   panelRef?: React.RefObject<HTMLDivElement>;
   onBack: () => void;
   onNext: () => void;
   onSkip: () => void;
-  onFinish: () => void;
+  onTargetAction?: () => void;
 }
 
 /** Presentational layer exported so semantic controls can be DOM-rendered in tests. */
@@ -379,16 +400,20 @@ export const OnboardingSpotlightLayer: React.FC<LayerProps> = ({
   arrowLayout = getOnboardingArrowLayout(rect, viewportHeight, { viewportWidth }),
   positioning = false,
   isFirst,
-  isLast,
+  stepCount = ONBOARDING_STEPS.length,
   panelRef,
   onBack,
   onNext,
   onSkip,
-  onFinish,
+  onTargetAction,
 }) => (
   <div
     className={`onboarding-spotlight${positioning ? ' onboarding-spotlight--positioning' : ''}`}
-    role="presentation"
+    role="dialog"
+    aria-modal="true"
+    aria-busy={positioning}
+    aria-labelledby="onboarding-title"
+    aria-describedby="onboarding-description onboarding-position"
     data-target-step={step.id}
     data-positioning={positioning ? 'true' : 'false'}
   >
@@ -398,6 +423,15 @@ export const OnboardingSpotlightLayer: React.FC<LayerProps> = ({
       style={highlightRect}
       aria-hidden="true"
     />
+    {step.actionLabel && onTargetAction && !positioning && (
+      <button
+        type="button"
+        className="onboarding-target-action"
+        style={rect}
+        aria-label={step.actionLabel}
+        onClick={onTargetAction}
+      />
+    )}
     <svg
       key={`arrow-${step.id}-${positioning ? 'positioning' : 'ready'}`}
       className={`onboarding-direction-arrow onboarding-direction-arrow--${arrowLayout.placement}`}
@@ -414,21 +448,14 @@ export const OnboardingSpotlightLayer: React.FC<LayerProps> = ({
     <div
       ref={panelRef}
       className={`onboarding-panel onboarding-panel--${panelPlacement}`}
-      role="dialog"
-      aria-modal="true"
-      aria-busy={positioning}
-      aria-labelledby="onboarding-title"
-      aria-describedby="onboarding-description onboarding-position onboarding-pointer"
     >
-      <p id="onboarding-position" className="economy-eyebrow">Step {stepIndex + 1} of {ONBOARDING_STEPS.length}</p>
+      <p id="onboarding-position" className="economy-eyebrow">Step {stepIndex + 1} of {stepCount}</p>
       <h2 id="onboarding-title">{step.title}</h2>
       <p id="onboarding-description">{step.description}</p>
-      <p id="onboarding-pointer" className="onboarding-pointer-copy">Follow the gold arrow to the highlighted control.</p>
       <div className="onboarding-actions">
         <button type="button" onClick={onBack} disabled={positioning || isFirst}>Back</button>
-        <button type="button" onClick={onNext} disabled={positioning || isLast}>Next</button>
+        <button type="button" className="economy-primary-action" onClick={onNext} disabled={positioning}>Next</button>
         <button type="button" onClick={onSkip}>Skip</button>
-        <button type="button" className="economy-primary-action" onClick={onFinish} disabled={positioning || !isLast}>Finish</button>
       </div>
     </div>
   </div>
@@ -444,12 +471,14 @@ interface SpotlightLayout {
   arrow?: OnboardingArrowLayout;
 }
 
-const OnboardingSpotlight: React.FC<Props> = ({ open, onSkip, onFinish }) => {
+const OnboardingSpotlight: React.FC<Props> = ({ open, onSkip, onFinish, steps = ONBOARDING_STEPS }) => {
   const [stepIndex, setStepIndex] = useState(0);
   const [layout, setLayout] = useState<SpotlightLayout | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const targetRef = useRef<HTMLElement | null>(null);
-  const step = ONBOARDING_STEPS[stepIndex];
+  const step = steps[stepIndex];
+  const onSkipRef = useRef(onSkip);
+  onSkipRef.current = onSkip;
 
   useEffect(() => {
     if (open) setStepIndex(0);
@@ -466,8 +495,8 @@ const OnboardingSpotlight: React.FC<Props> = ({ open, onSkip, onFinish }) => {
     const element = document.querySelector<HTMLElement>(step.selector);
     targetRef.current = element;
     if (!element) {
-      const next = findAvailableOnboardingStep(stepIndex + 1, 1, selector => Boolean(document.querySelector(selector)));
-      if (next === null) onSkip();
+      const next = findAvailableOnboardingStep(stepIndex + 1, 1, selector => Boolean(document.querySelector(selector)), steps);
+      if (next === null) onSkipRef.current();
       else setStepIndex(next);
       return undefined;
     }
@@ -482,13 +511,17 @@ const OnboardingSpotlight: React.FC<Props> = ({ open, onSkip, onFinish }) => {
         positioning: true,
       });
     };
+    const shell = document.querySelector<HTMLElement>('.wol-shell');
+    shell?.setAttribute('data-onboarding-step', step.id);
     beginPositioning();
     window.addEventListener('resize', beginPositioning);
     return () => {
       targetRef.current = null;
+      shell?.removeAttribute('data-onboarding-step');
+      shell?.style.removeProperty('--onboarding-panel-space');
       window.removeEventListener('resize', beginPositioning);
     };
-  }, [onSkip, open, step.selector, stepIndex]);
+  }, [open, step.selector, stepIndex, steps]);
 
   useLayoutEffect(() => {
     if (!open || !layout?.positioning || !panelRef.current || !targetRef.current) return undefined;
@@ -505,7 +538,17 @@ const OnboardingSpotlight: React.FC<Props> = ({ open, onSkip, onFinish }) => {
 
     const positionTarget = (attempt: number) => {
       if (cancelled || !panelRef.current || !targetRef.current) return;
-      const targetRect = toHighlightRect(targetRef.current.getBoundingClientRect());
+      const shell = document.querySelector<HTMLElement>('.wol-shell');
+      shell?.style.setProperty('--onboarding-panel-space', `${window.innerHeight - panelRef.current.getBoundingClientRect().top + 18}px`);
+      const fullTargetRect = toHighlightRect(targetRef.current.getBoundingClientRect());
+      // The configuration panel can exceed the viewport. Frame its visible portion;
+      // Next dismisses the guide so the full form is available for editing/scrolling.
+      const panelTop = panelRef.current.getBoundingClientRect().top;
+      const targetRect = step.wholePanel ? {
+        ...fullTargetRect,
+        top: Math.max(62, fullTargetRect.top),
+        height: Math.max(0, Math.min(fullTargetRect.top + fullTargetRect.height, panelTop - 20) - Math.max(62, fullTargetRect.top)),
+      } : fullTargetRect;
       const panelRect = toHighlightRect(panelRef.current.getBoundingClientRect());
       const plan = planOnboardingViewport(
         targetRect,
@@ -529,7 +572,7 @@ const OnboardingSpotlight: React.FC<Props> = ({ open, onSkip, onFinish }) => {
       }
 
       if (attempt >= MAX_POSITION_ATTEMPTS || Math.abs(plan.scrollDeltaY) < 0.5) {
-        onSkip();
+        onSkipRef.current();
         return;
       }
 
@@ -542,7 +585,7 @@ const OnboardingSpotlight: React.FC<Props> = ({ open, onSkip, onFinish }) => {
       cancelled = true;
       for (const frame of animationFrames) window.cancelAnimationFrame(frame);
     };
-  }, [layout?.panelPlacement, layout?.positioning, onSkip, open, stepIndex]);
+  }, [layout?.panelPlacement, layout?.positioning, open, stepIndex, step.wholePanel]);
 
   useEffect(() => {
     if (!open || !layout || layout.positioning) return undefined;
@@ -552,16 +595,22 @@ const OnboardingSpotlight: React.FC<Props> = ({ open, onSkip, onFinish }) => {
     return () => window.cancelAnimationFrame(animationFrame);
   }, [layout, open, stepIndex]);
 
-  const actions = useMemo(() => ({
+  const actions = {
     back: () => {
-      const previous = findAvailableOnboardingStep(stepIndex - 1, -1, selector => Boolean(document.querySelector(selector)));
+      const previous = findAvailableOnboardingStep(stepIndex - 1, -1, selector => Boolean(document.querySelector(selector)), steps);
       if (previous !== null) setStepIndex(previous);
     },
     next: () => {
-      const next = findAvailableOnboardingStep(stepIndex + 1, 1, selector => Boolean(document.querySelector(selector)));
+      if (step.actionLabel) {
+        if (step.id === 'start-game') onFinish();
+        targetRef.current?.click();
+        return;
+      }
+      const next = findAvailableOnboardingStep(stepIndex + 1, 1, selector => Boolean(document.querySelector(selector)), steps);
       if (next !== null) setStepIndex(next);
+      else onFinish();
     },
-  }), [stepIndex]);
+  };
 
   useEffect(() => {
     if (!open) return undefined;
@@ -572,7 +621,7 @@ const OnboardingSpotlight: React.FC<Props> = ({ open, onSkip, onFinish }) => {
         return;
       }
       if (event.key !== 'Tab' || !panelRef.current) return;
-      const focusable = [...panelRef.current.querySelectorAll<HTMLButtonElement>('button:not([disabled])')];
+      const focusable = [...panelRef.current.parentElement!.querySelectorAll<HTMLButtonElement>('button:not([disabled])')];
       const current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       const target = getOnboardingFocusLoopTarget(focusable, current, event.shiftKey);
       if (target !== undefined) {
@@ -585,8 +634,7 @@ const OnboardingSpotlight: React.FC<Props> = ({ open, onSkip, onFinish }) => {
   }, [onSkip, open]);
 
   if (!open || !layout || typeof document === 'undefined') return null;
-  const isLast = findAvailableOnboardingStep(stepIndex + 1, 1, selector => Boolean(document.querySelector(selector))) === null;
-  const isFirst = findAvailableOnboardingStep(stepIndex - 1, -1, selector => Boolean(document.querySelector(selector))) === null;
+  const isFirst = findAvailableOnboardingStep(stepIndex - 1, -1, selector => Boolean(document.querySelector(selector)), steps) === null;
 
   return createPortal(
     <OnboardingSpotlightLayer
@@ -600,12 +648,12 @@ const OnboardingSpotlight: React.FC<Props> = ({ open, onSkip, onFinish }) => {
       highlightRect={layout.highlightRect}
       arrowLayout={layout.arrow}
       isFirst={isFirst}
-      isLast={isLast}
+      stepCount={steps.length}
       panelRef={panelRef}
       onBack={actions.back}
       onNext={actions.next}
       onSkip={onSkip}
-      onFinish={onFinish}
+      onTargetAction={actions.next}
     />,
     document.body,
   );

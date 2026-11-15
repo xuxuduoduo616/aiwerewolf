@@ -10,11 +10,12 @@ AI Werewolf is a browser-based social deduction game where one human player face
 
 The project separates game rules from generated expression. A deterministic rules engine and belief/action layer decide what agents know and do; the language layer turns those decisions into characterful dialogue and falls back to a bundled speech library when the external AI provider is unavailable.
 
-## Latest release (2026-11-14)
+## Current interface
 
-- Verification tail for the 2026-11-13 release: deterministic browser E2E for the replay and share-card specs, independent Playwright smoke and deep CI jobs, roadmap and observability documentation sync, page-hidden abandonment telemetry, and 60-second voice recording coverage. No new product features, multiplayer, payments, or social features.
-- Release verification: 1,150 tests passed / 5 skipped; TypeScript and Vite build passed; the GitHub Actions E2E smoke and deep jobs pass on the release commit. Production deployment is verified separately through the existing Netlify Git integration.
-- Voice input still requires the server-side `QWEN_API_KEY` environment variable. iOS Safari real devices, noise conditions, and full 60-second human recordings remain unverified.
+- The new-player guide introduces the lobby, Shop, and Start Game, then guides first-time players through Single-Player and match setup. Prompts share a consistent bottom position; Next advances and Skip dismisses the current guide.
+- A responsive particle background supports pointer interaction and respects reduced-motion preferences.
+- Role knowledge badges distinguish Seer checks from the Witch's saved or attacked player information without revealing another role's private checks.
+- Voice input requires the server-side `QWEN_API_KEY`. iOS Safari real devices, noise conditions, and full 60-second human recordings remain unverified.
 
 ## Previous production release (2026-11-13)
 

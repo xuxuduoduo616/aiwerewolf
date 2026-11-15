@@ -24,6 +24,7 @@ const BASE_URL = `http://127.0.0.1:${PORT}`;
 // exactly one project).
 const SMOKE_SPECS = [
   '**/guest-start.spec.ts',
+  '**/onboarding-guide.spec.ts',
   '**/first-day-speech-vote.spec.ts',
   '**/language-audio-toggle.spec.ts',
   '**/voice-input.spec.ts',

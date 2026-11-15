@@ -225,6 +225,7 @@ const StartGameFlow: React.FC<StartGameFlowProps> = ({
           <div className="start-mode-grid">
             <button
               className="start-mode-option is-enabled"
+              data-tour-target="single-player"
               type="button"
               onClick={() => {
                 setSetup(DEFAULT_SETUP);
@@ -255,7 +256,7 @@ const StartGameFlow: React.FC<StartGameFlowProps> = ({
       )}
 
       {step === 'match-setup' && (
-        <section className="start-game-panel" aria-labelledby="match-setup-title">
+        <section className="start-game-panel" aria-labelledby="match-setup-title" data-tour-target="match-setup">
           <div className="app-section-heading">
             <div>
               <p className="app-page-kicker">Step 2</p>

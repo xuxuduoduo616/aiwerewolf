@@ -6,6 +6,7 @@ import { useRecords } from './hooks/useRecords';
 import { useGameState } from './hooks/useGameState';
 import { purchaseUnavailable } from './hooks/useWallet';
 import { PlayerCard } from './components/PlayerCard';
+import { PlayerKnowledgeBadge, WitchVictimNotice } from './components/PlayerKnowledgeBadge';
 import ActionBar from './components/ActionBar';
 import RecordsPanel from './components/RecordsPanel';
 import WolfChannel from './components/WolfChannel';
@@ -21,7 +22,7 @@ import ShopView, { type ShopSection } from './components/ShopView';
 import DailyCheckInView from './components/DailyCheckInView';
 import EconomyHistoryView from './components/EconomyHistoryView';
 import OnlineQualifierView from './components/OnlineQualifierView';
-import OnboardingSpotlight from './components/OnboardingSpotlight';
+import OnboardingSpotlight, { SINGLE_PLAYER_GUIDE, MATCH_SETUP_GUIDE } from './components/OnboardingSpotlight';
 import StartGameFlow from './components/StartGameFlow';
 import LeaveGameDialog from './components/LeaveGameDialog';
 import UtilityMenu, { type UtilityDestination } from './components/UtilityMenu';
@@ -115,6 +116,9 @@ const App: React.FC = () => {
   const [shopSection, setShopSection] = useState<ShopSection>('skins');
   const [skinStoreFilter, setSkinStoreFilter] = useState<SkinStoreFilter>('all');
   const [isTutorialOpen, setIsTutorialOpen] = useState(false);
+  const [tutorialStage, setTutorialStage] = useState<'lobby' | 'single-player' | 'match-setup'>('lobby');
+  const setupGuidePrincipalRef = React.useRef<string | null>(null);
+  const startGuideSeenRef = React.useRef(new Set<string>());
   const [isRouteReady, setIsRouteReady] = useState(false);
   const historyReturnRef = React.useRef<EconomyRoute>({ page: 'lobby' });
   const autoTutorialAttemptedRef = React.useRef(false);
@@ -225,6 +229,29 @@ const App: React.FC = () => {
   const displayedCrystals = economy.state.crystals;
   const equippedSkinName = resolveEquippedSkinName(economy.state, auth.isGuest);
   const equippedSkinProduct = useEquippedSkinProduct(economy, auth.isGuest ? guestPrincipalId : auth.session?.user.id ?? null);
+
+  const openStartGame = () => {
+    setLobbySubview('mode-choice');
+    if (!principalId) return;
+    const key = `aiwerewolf:first-start-guide:v1:${principalId}`;
+    let seen = startGuideSeenRef.current.has(principalId);
+    try { seen ||= window.localStorage.getItem(key) === 'seen'; } catch { /* This tab still deduplicates. */ }
+    if (seen) return;
+    startGuideSeenRef.current.add(principalId);
+    try { window.localStorage.setItem(key, 'seen'); } catch { /* Storage is optional. */ }
+    setupGuidePrincipalRef.current = principalId;
+    setTutorialStage('single-player');
+    setIsTutorialOpen(true);
+  };
+
+  const changeStartSubview = (subview: LobbySubview) => {
+    setLobbySubview(subview);
+    if (subview === 'match-setup' && setupGuidePrincipalRef.current === principalId && principalId) {
+      setupGuidePrincipalRef.current = null;
+      setTutorialStage('match-setup');
+      setIsTutorialOpen(true);
+    }
+  };
 
   const finishStartRequest = React.useCallback((setup: GameSetup) => {
     const config = mapGameSetupToConfig(setup);
@@ -466,11 +493,13 @@ const App: React.FC = () => {
                     customBadge={
                       game.nightState.wolfKillId === player.id && game.me?.role === Role.WEREWOLF
                         ? <Skull className="w-5 h-5 text-red-300" />
-                        : game.aiSeerLastCheck && game.aiSeerLastCheck.targetId === player.id && (game.me?.role === Role.SEER || game.me?.role === Role.WITCH)
-                          ? (game.aiSeerLastCheck.isGood
-                            ? <span className="bg-emerald-900/80 border border-emerald-500 text-emerald-200 text-[10px] px-1.5 py-0.5 rounded-full font-bold">Known Good</span>
-                            : <span className="bg-red-950/80 border border-red-500 text-red-200 text-[10px] px-1.5 py-0.5 rounded-full font-bold">Confirmed Wolf</span>)
-                          : undefined
+                        : <PlayerKnowledgeBadge
+                            playerId={player.id}
+                            viewer={game.me}
+                            phase={game.phase}
+                            nightState={game.nightState}
+                            seerCheck={game.aiSeerLastCheck}
+                          />
                     }
                   />
                 </GamePlayerSeat>
@@ -542,11 +571,7 @@ const App: React.FC = () => {
                     </div>
                     <p className="mt-2 text-zinc-400">{game.me ? ROLE_DESCRIPTIONS_EN[game.me.role] : ''}</p>
                     {game.selectedPlayer && <p className="mt-2 text-zinc-300">Selected: Player {game.selectedPlayer.id} <span data-ui-copy-category="USER_AUTHORED" data-ui-copy-allow="USER_APP_SELECTED_PLAYER">{game.selectedPlayer.name}</span></p>}
-                    {game.me?.role === Role.WITCH && game.nightState.wolfKillId && (
-                      <p className="mt-2 text-amber-200 text-xs">
-                        Player {game.nightState.wolfKillId} was attacked by the werewolves last night.
-                      </p>
-                    )}
+                    <WitchVictimNotice viewer={game.me} phase={game.phase} nightState={game.nightState} />
                   </div>
                   <ActionBar
                     phase={game.phase} me={game.me} selectedPlayer={game.selectedPlayer}
@@ -627,14 +652,14 @@ const App: React.FC = () => {
       case 'home':
         return (
           <LobbyHome
-            onStartGame={() => setLobbySubview('mode-choice')}
+            onStartGame={openStartGame}
             onOpenSubview={setLobbySubview}
             onOpenUtilityMenu={() => setUtilityView('menu')}
             onNavigate={navigateShell}
             onOpenTidalStore={() => navigateEconomy({ page: 'skin-store', season: 'tidal', section: 'skins' })}
             onOpenQualifier={() => navigateEconomy({ page: 'online-qualifier' })}
             onOpenDailyCheckIn={() => navigateEconomy({ page: 'daily-check-in' })}
-            onOpenTutorial={() => setIsTutorialOpen(true)}
+            onOpenTutorial={() => { setTutorialStage('lobby'); setIsTutorialOpen(true); }}
             equippedSkinName={equippedSkinName}
             identityName={publicName}
             identityHandle={publicHandle}
@@ -650,7 +675,7 @@ const App: React.FC = () => {
         return (
           <StartGameFlow
             initialStep={lobbySubview}
-            onSubviewChange={setLobbySubview}
+            onSubviewChange={changeStartSubview}
             onBackToLobby={() => setLobbySubview('home')}
             onConfirm={finishStartRequest}
           />
@@ -841,13 +866,15 @@ const App: React.FC = () => {
     >
       {renderShellContent()}
       <OnboardingSpotlight
+        key={`${principalId}:${tutorialStage}`}
+        steps={tutorialStage === 'single-player' ? SINGLE_PLAYER_GUIDE : tutorialStage === 'match-setup' ? MATCH_SETUP_GUIDE : undefined}
         open={isTutorialOpen}
         onSkip={() => {
-          economy.skipTutorial();
+          if (tutorialStage === 'lobby') economy.skipTutorial();
           setIsTutorialOpen(false);
         }}
         onFinish={() => {
-          economy.finishTutorial();
+          if (tutorialStage === 'lobby') economy.finishTutorial();
           setIsTutorialOpen(false);
         }}
       />

@@ -9,7 +9,7 @@
 
 .wol-shell--refined {
   --wol-desktop-rail-w: 176px;
-  background: var(--night-background);
+  background: rgba(13, 13, 15, .68);
   color: var(--night-text);
 }
 .wol-shell--refined .night-top-bar {
@@ -63,7 +63,7 @@
 .night-lobby-footer > span { font-size: 10px; letter-spacing: .04em; }
 
 /* Apply the same restrained visual language to the public entry page. */
-.sketch-scene.login-page { background: radial-gradient(ellipse at 25% 35%, #41202728, transparent 55%), #0d0d0f; }
+.sketch-scene.login-page { background: radial-gradient(ellipse at 25% 35%, #41202728, transparent 55%), rgba(13, 13, 15, .68); }
 .sketch-scene.login-page::before { opacity: .12; }
 .sketch-scene.login-page::after { animation: none; opacity: .06; }
 .login-page .auth-layout { width: min(100%, 1120px); }

@@ -1,0 +1,64 @@
+import React from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { describe, expect, it } from 'vitest';
+import { GamePhase, Role } from '../types';
+import { PlayerKnowledgeBadge, WitchVictimNotice } from './PlayerKnowledgeBadge';
+
+const props = {
+  playerId: 4,
+  viewer: { role: Role.WITCH, isAlive: true },
+  phase: GamePhase.DAY_DISCUSSION,
+  nightState: { wolfKillId: 9, witchPoisonId: null, witchSaved: false },
+  seerCheck: { targetId: 4, isGood: true },
+};
+const badge = (overrides: Partial<React.ComponentProps<typeof PlayerKnowledgeBadge>> = {}) =>
+  renderToStaticMarkup(<PlayerKnowledgeBadge {...props} {...overrides} />);
+
+describe('role-private seat knowledge', () => {
+  it.each([true, false])('never gives the Witch an AI Seer result (isGood=%s)', isGood => {
+    expect(badge({ seerCheck: { targetId: 4, isGood } })).toBe('');
+    const target = badge({ playerId: 9, seerCheck: { targetId: 9, isGood } });
+    expect(target).toContain('Attacked');
+    expect(target).not.toMatch(/Known Good|Confirmed Wolf|Seer check/);
+  });
+
+  it.each([Role.VILLAGER, Role.WEREWOLF, Role.HUNTER, Role.IDIOT])('hides private badge data from %s', role => {
+    expect(badge({ viewer: { role, isAlive: true } })).toBe('');
+    expect(badge({ playerId: 9, viewer: { role, isAlive: true } })).toBe('');
+  });
+
+  it('retains the human Seer check without displaying Witch victim knowledge', () => {
+    const viewer = { role: Role.SEER, isAlive: true };
+    expect(badge({ viewer })).toContain('Known Good');
+    expect(badge({ viewer, seerCheck: { targetId: 4, isGood: false } })).toContain('Confirmed Wolf');
+    expect(badge({ viewer, playerId: 9 })).toBe('');
+    expect(badge({ viewer, seerCheck: null })).toBe('');
+  });
+
+  it('distinguishes the current Wolf Target, the attacked player and a saved player', () => {
+    expect(badge({ playerId: 9, phase: GamePhase.NIGHT_WITCH })).toContain('Wolf Target');
+    expect(badge({ playerId: 9 })).toContain('Attacked');
+    const saved = badge({ playerId: 9, nightState: { ...props.nightState, witchSaved: true } });
+    expect(saved).toContain('Saved');
+    expect(saved).toContain('alignment is unknown');
+    expect(saved).not.toMatch(/Known Good|Confirmed Wolf/);
+  });
+
+  it.each([GamePhase.NIGHT_START, GamePhase.NIGHT_WEREWOLVES, GamePhase.NIGHT_SEER])('does not reveal the victim early during %s', phase => {
+    expect(badge({ playerId: 9, phase })).toBe('');
+    expect(renderToStaticMarkup(<WitchVictimNotice {...props} phase={phase} />)).toBe('');
+  });
+
+  it('does not reveal future attacks to a dead Witch or invent a target on an empty night', () => {
+    expect(badge({ playerId: 9, viewer: { role: Role.WITCH, isAlive: false } })).toBe('');
+    expect(badge({ playerId: 9, nightState: { ...props.nightState, wolfKillId: null } })).toBe('');
+    expect(badge({ viewer: undefined })).toBe('');
+  });
+
+  it('keeps the role notice consistent with the victim and antidote state', () => {
+    expect(renderToStaticMarkup(<WitchVictimNotice {...props} />)).toContain('Player 9 was attacked');
+    const saved = renderToStaticMarkup(<WitchVictimNotice {...props} nightState={{ ...props.nightState, witchSaved: true }} />);
+    expect(saved).toContain('You saved Player 9');
+    expect(saved).not.toContain('Player 4');
+  });
+});

@@ -362,25 +362,24 @@ describe('cosmetic and tutorial contracts', () => {
       .toBe('Equipped cosmetic unavailable');
   });
 
-  it('renders a target-bound arrow and preserves Back/Next/Skip/Finish behavior', () => {
+  it('renders bottom-aligned guidance with an enabled final Next and actionable target', () => {
     expect(ONBOARDING_STEPS).toHaveLength(4);
-    expect(ONBOARDING_STEPS.map(step => step.id)).toEqual(['wallet', 'promotions', 'start-game', 'navigation']);
-    expect(findAvailableOnboardingStep(0, 1, selector => selector.includes('start-game'))).toBe(2);
+    expect(ONBOARDING_STEPS.map(step => step.id)).toEqual(['wallet', 'promotions', 'navigation', 'start-game']);
+    expect(findAvailableOnboardingStep(0, 1, selector => selector.includes('start-game'))).toBe(3);
     expect(findAvailableOnboardingStep(3, -1, () => false)).toBeNull();
 
-    const handlers = { back: vi.fn(), next: vi.fn(), skip: vi.fn(), finish: vi.fn() };
+    const handlers = { back: vi.fn(), next: vi.fn(), skip: vi.fn() };
     const rect = { top: 180, left: 80, width: 160, height: 44 };
     const layer = OnboardingSpotlightLayer({
-      step: ONBOARDING_STEPS[2],
-      stepIndex: 2,
+      step: ONBOARDING_STEPS[3],
+      stepIndex: 3,
       rect,
       viewportHeight: 700,
       isFirst: false,
-      isLast: true,
       onBack: handlers.back,
       onNext: handlers.next,
       onSkip: handlers.skip,
-      onFinish: handlers.finish,
+      onTargetAction: handlers.next,
     });
     const html = renderToStaticMarkup(layer);
     const arrow = getOnboardingArrowLayout(rect, 700);
@@ -388,22 +387,22 @@ describe('cosmetic and tutorial contracts', () => {
     expect(html).toContain('aria-modal="true"');
     expect(html).toContain('data-target-step="start-game"');
     expect(html).toContain('class="onboarding-direction-arrow onboarding-direction-arrow--above"');
-    expect(html).toContain('aria-label="Arrow pointing to Start a local match"');
+    expect(html).toContain('aria-label="Arrow pointing to Start Game"');
     expect(html).toContain(`top:${arrow.top}px`);
     expect(html).toContain(`left:${arrow.left}px`);
 
     const buttons = collectButtons(layer);
-    expect(buttons.map(button => textContent(button))).toEqual(['Back', 'Next', 'Skip', 'Finish']);
+    expect(buttons.map(button => textContent(button))).toEqual(['', 'Back', 'Next', 'Skip']);
     for (const label of ['Back', 'Next', 'Skip']) {
       const button = buttons.find(candidate => textContent(candidate) === label);
       (button?.props as { onClick?: () => void }).onClick?.();
-      expect(handlers.finish).not.toHaveBeenCalled();
     }
-    (buttons.find(button => textContent(button) === 'Finish')?.props as { onClick?: () => void }).onClick?.();
+    expect(html).not.toContain('Finish');
+    expect(html).toContain('onboarding-panel--bottom');
+    expect((buttons.find(button => textContent(button) === 'Next')?.props as { disabled?: boolean }).disabled).toBe(false);
     expect(handlers.back).toHaveBeenCalledOnce();
     expect(handlers.next).toHaveBeenCalledOnce();
     expect(handlers.skip).toHaveBeenCalledOnce();
-    expect(handlers.finish).toHaveBeenCalledOnce();
   });
 
   it('establishes and exactly restores the tutorial modal boundary', () => {

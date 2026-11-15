@@ -54,6 +54,19 @@ body {
   overflow-y: auto;
 }
 
+.app-layer {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+#tsparticles,
+#tsparticles canvas,
+canvas#tsparticles {
+  pointer-events: none !important;
+}
+
 *,
 *::before,
 *::after {
@@ -126,7 +139,7 @@ video {
   position: relative;
   background:
     radial-gradient(circle at 50% 35%, rgba(120,120,120,0.16), transparent 34rem),
-    linear-gradient(180deg, #151515 0%, #060606 72%);
+    linear-gradient(180deg, rgba(21, 21, 21, 0.68) 0%, rgba(6, 6, 6, 0.78) 72%);
   isolation: isolate;
   overflow: hidden;
 }
