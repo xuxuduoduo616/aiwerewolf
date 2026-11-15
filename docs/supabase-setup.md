@@ -1,117 +1,55 @@
-# Supabase 数据库设置
+# Supabase Setup
 
-## 1. 建表 SQL
+Supabase provides authentication, user profiles, and authenticated match records. Guest identity, guest records, and cosmetic presentation state remain local to the browser. Configuration instructions describe the implementation requirements; they do not prove that a particular production project has been configured or independently verified.
 
-在 Supabase Dashboard → SQL Editor 运行：
+## Schema and ownership
 
-```sql
--- 用户档案表
-create table if not exists profiles (
-  id uuid primary key references auth.users(id) on delete cascade,
-  email text not null,
-  username text not null unique
-    check (username = lower(btrim(username)) and username ~ '^[a-z0-9_]{3,40}$'),
-  display_name text not null
-    check (btrim(display_name) <> '' and char_length(display_name) <= 80),
-  created_at timestamptz default now()
-);
+For a new project, review [supabase-init.sql](supabase-init.sql). It defines:
 
--- 对局记录表
-create table if not exists game_records (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references auth.users(id) on delete cascade,
-  board_id text not null,
-  role text not null,
-  result text not null check (result in ('WIN', 'LOSE')),
-  rounds int not null check (rounds >= 0),
-  summary text not null,
-  created_at timestamptz default now()
-);
+- `profiles`, owned by the authentication UUID, with a unique normalized Username and a non-empty Nickname in `display_name`;
+- `game_records`, with an owner UUID, board, role, outcome, round count, and summary;
+- an index on the owner and record creation time;
+- row-level security and owner-scoped access policies.
 
--- 索引：按用户查询战绩
-create index if not exists idx_game_records_user on game_records(user_id, created_at desc);
-```
+For an existing profile table, review [profile-identity-migration.sql](profile-identity-migration.sql) instead of recreating it. The migration preserves valid unique usernames, backfills missing or invalid handles without deriving them from email, and adds explicit format, uniqueness, and access constraints. Historic SQL policy identifiers are intentionally retained where needed for compatibility.
 
-## 2. Row Level Security (RLS) 策略
+Applying any migration requires separate authorization, a review of the existing data, and post-migration access checks. Reading or sharing these files does not execute SQL or change a hosted project.
 
-**关键安全步骤** — 没有 RLS，任何人都能读写所有用户数据。
+## Authentication
 
-```sql
--- 启用 RLS
-alter table profiles enable row level security;
-alter table game_records enable row level security;
+Configure the Email provider to support the account flows used by the application. New accounts use email and password registration; returning accounts can use password or email-code login.
 
--- profiles: 用户只能读写自己的档案
-create policy "用户读取自己的档案"
-  on profiles for select
-  to authenticated
-  using ((select auth.uid()) = id);
+- Keep email confirmation enabled. New users verify ownership of the address before completing their profile.
+- Both the **Confirm signup** and **Magic Link** email templates must contain `{{ .Token }}`. The application accepts a typed verification code rather than depending on a callback link.
+- Match the configured code length to the client, which accepts 6-10 digits.
+- If CAPTCHA is enabled, configure Turnstile for the intended site. The client submits a one-time CAPTCHA token to registration, password login, and code-sending requests, then obtains a new token.
+- For public email delivery, configure and verify a custom SMTP service, sender domain, quotas, and delivery behavior. SMTP credentials remain server-side.
+- Passwords are sent only through the authentication service. They are not stored in profiles, public user metadata, or browser persistence.
 
-create policy "用户创建自己的档案"
-  on profiles for insert
-  to authenticated
-  with check ((select auth.uid()) = id);
+Existing email-code-only users can continue to use the Verification code option. The application does not include a password-reset or password-creation flow for those legacy accounts.
 
-create policy "用户更新自己的档案"
-  on profiles for update
-  to authenticated
-  using ((select auth.uid()) = id)
-  with check ((select auth.uid()) = id);
+## Browser and server configuration
 
-revoke all on table profiles from anon, authenticated;
-grant select, insert, update on table profiles to authenticated;
+The browser uses only the public project URL and anonymous/publishable client key. Row-level security must enforce ownership regardless of what the client submits. Service-role credentials and administrative operations remain on protected server boundaries.
 
--- game_records: 用户只能读写自己的战绩
-create policy "用户读取自己的战绩"
-  on game_records for select
-  using (auth.uid() = user_id);
+Local environment files must stay outside Git. The deployed frontend and server functions must use the intended project and approved origins. Never place a service-role key, provider key, SMTP credential, or authentication capture in the source distribution.
 
-create policy "用户创建自己的战绩"
-  on game_records for insert
-  with check (auth.uid() = user_id);
-```
+## Economy schema
 
-## 3. 邮箱验证码与密码配置
+The optional economy implementation is described by [economy-schema.sql](economy-schema.sql); legacy coin-escrow declarations are in [coin-escrow-schema.sql](coin-escrow-schema.sql). These are source artifacts, not evidence that real payments, rewards, or merchant services are available.
 
-Dashboard → Authentication → Providers → Email：
-- 启用 Email provider；新账号走邮箱 + 密码注册，现有账号可选择密码或验证码登录。
-- 建议保留 **Confirm email**，新用户通过邮箱验证码证明邮箱所有权后完成档案。不要为解决邮件问题而关闭邮箱验证。
-- Authentication → Email Templates：**Confirm signup** 和 **Magic Link** 两个模板都必须包含 `{{ .Token }}`。前端使用输入验证码流程，不依赖确认链接回调。
-- 前端支持 6–10 位数字验证码，验证码长度与项目设置保持一致。
-- 若启用了 Supabase CAPTCHA，确认 provider 为 Turnstile 且与当前站点配置匹配。前端会把一次性 `captchaToken` 交给注册、密码登录和验证码发送接口，每次请求后重新获取。
-- 公开用户邮件应使用已配置的自定义 SMTP（如 Resend），检查发信域名验证、发信配额和投递状态。不要把 SMTP 凭据放入前端或源码。
-- 密码仅通过 Supabase Auth 注册／登录接口发送，不写入 `profiles`、用户 metadata 或浏览器持久存储。
-- 旧的仅验证码账号继续选择 Verification code 登录；本次未新增密码重置／为旧账号设置密码的界面。
-- Guest Trial 不读取、不写入、不迁移游客战绩；旧浏览器战绩数据不删除，游客身份和本地装扮状态保持原机制。
+Payments remain disabled. Authenticated gameplay rewards require a separately approved trusted server-side eligibility writer; browser-authored match outcomes are not reward authority. Do not enable these services by trusting a client-supplied result or by changing access policies to make a test pass.
 
-上述内容是配置要求，不代表当前线上邮件模板或 SMTP 已验证。发布前使用受控测试邮箱确认注册验证码、验证码登录、密码登录、刷新恢复和账户战绩写入。
+## Verification
 
-## 4. Existing project identity migration
+Before relying on an authenticated deployment, use controlled test accounts to verify registration, email-code login, password login, refresh/session restoration, and ownership of saved records. Check that:
 
-For an existing `profiles` table, use `docs/profile-identity-migration.sql`
-instead of recreating the table. The artifact normalizes or deterministically
-backfills Username without using email, preserves every already-valid unique
-Username (including values shaped like `player_<32 hex>`), avoids collisions
-with preserved handles, keeps Nickname in `display_name`, adds unique/check
-constraints, and replaces owner policies with explicit `TO authenticated`,
-`USING`, and `WITH CHECK` clauses.
+- unauthenticated clients cannot read private profiles or match records;
+- one account cannot read or mutate another account's rows;
+- valid usernames remain unique after normalization;
+- invalid usernames and empty nicknames are rejected;
+- the frontend has no administrative credentials;
+- guest records are not silently imported into authenticated history;
+- email templates, CAPTCHA, SMTP delivery, and session refresh work in the target environment.
 
-Release order is schema first: apply the approved SQL, independently verify
-owner allow/deny behavior and case-equivalent Username collisions, then release
-the matching frontend. This repository file is declarative source and is not
-evidence that any Supabase project has been changed.
-
-## 5. 验证 RLS 生效
-
-```sql
--- 以匿名身份测试（应返回空，因为 auth.uid() 为 null）
-select * from game_records;
-```
-
-## 安全检查清单
-
-- [ ] 两张表都启用了 RLS
-- [ ] anon key 只能访问自己的数据（RLS 强制）
-- [ ] service_role key **绝不** 出现在前端代码或 git 中
-- [ ] `.env.local` 在 `.gitignore` 中
-- [ ] Netlify 环境变量已配置（不在代码里硬编码）
+A local unit test or successful schema declaration is not a substitute for these deployment checks.

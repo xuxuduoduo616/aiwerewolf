@@ -58,9 +58,9 @@ The browser layer lives in `e2e/` and is configured by `playwright.config.ts`.
 It is split into two Playwright projects so a long match can never hide a
 short-flow regression:
 
-- `smoke`: four short guest flows — guest match start, the first-day human
-  speech plus exile vote, the Settings language/audio toggles, and
-  click-to-toggle voice input;
+- `smoke`: guest match start, the six-step new-player guide and replay,
+  first-day human speech plus exile vote, Settings language/audio toggles,
+  and click-to-toggle voice input;
 - `deep`: two specs that play a full 9-player match — the post-game replay
   review and the share-card export. Their match is made reproducible by a
   test-only seeded `Math.random` (`e2e/helpers/seededRandom.ts`), so the
@@ -109,7 +109,7 @@ src/
   services/       provider, storage, and Supabase adapters
   gameEngine.ts   deterministic game rules
 netlify/functions/ server-side provider and data boundaries
-docs/              public architecture, roadmap, and setup documentation
+docs/              architecture, replay-format, and setup documentation
 scripts/           build guards and focused data audits
 ```
 
@@ -117,7 +117,7 @@ scripts/           build guards and focused data audits
 
 ### Logic-First Product Design
 
-> 一切设计的根基都是逻辑学，可视化的每一个事物都必须合逻辑。
+Every visible interface element should follow a coherent, explainable interaction model.
 
 Treat this as an executable review rule for every user-visible element:
 
@@ -129,7 +129,7 @@ Treat this as an executable review rule for every user-visible element:
 - Keep deterministic rules separate from language generation.
 - Add tests for rule, state-transition, authentication, or security-boundary changes.
 - Do not enable multiplayer controls without server-authoritative state and secret-data projection.
-- Do not enable purchase controls until the commerce requirements in the roadmap are complete.
+- Do not enable purchase controls until the server-verified commerce infrastructure is complete.
 - Preserve responsive behavior at 390x844, 768x1024, and 1440x900.
 - Never commit credentials, browser captures, local environment files, or generated diagnostics.
 
