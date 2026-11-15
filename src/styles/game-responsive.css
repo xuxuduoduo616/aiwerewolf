@@ -25,15 +25,99 @@
 
 .game-room-header {
   flex: 0 0 auto;
-  min-height: 64px;
+  min-height: 80px;
+  gap: 12px;
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 
-.game-room-audio-controls {
+.game-room-header-controls,
+.game-room-utility-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   min-width: 0;
 }
 
+.game-room-audio-controls {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  min-width: 0;
+  padding: 4px 10px;
+  border: 1px solid #3f3f46;
+  border-radius: 12px;
+  background: rgb(9 9 11 / 65%);
+}
+
+.game-audio-switch,
+.game-audio-field {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+
+.game-audio-switch {
+  min-width: 56px;
+  min-height: 56px;
+  gap: 8px;
+  align-items: center;
+  border-radius: 6px;
+}
+
+.game-audio-switch:hover { background: #27272a; }
+.game-audio-switch:focus-visible,
+.game-audio-slider:focus-visible { outline: 2px solid #e4e4e7; outline-offset: 3px; }
+
+.game-audio-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: #d4d4d8;
+  font-size: 11px;
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+.game-audio-value { color: #fafafa; font-variant-numeric: tabular-nums; }
+.game-audio-state { display: flex; align-items: center; gap: 5px; font-size: 11px; }
+.game-audio-state--on { color: #6ee7b7; }
+
+.game-audio-field { width: 112px; }
 .game-audio-slider {
+  width: 100%;
   min-height: 44px;
+  cursor: pointer;
+  accent-color: #e4e4e7;
+}
+
+.game-room-utility-controls {
+  padding-left: 8px;
+  border-left: 1px solid #3f3f46;
+}
+
+.game-room-utility-controls .icon-button {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 56px;
+  font-size: 10px;
+}
+
+@media (max-width: 1200px) {
+  .game-room-header { flex-wrap: wrap; }
+  .game-room-header-controls { display: contents; }
+  .game-room-phase-summary { order: 0; }
+  .game-room-utility-controls { order: 1; border-left: 0; padding-left: 0; }
+  .game-room-header .game-room-audio-controls {
+    order: 2;
+    flex: 1 0 100%;
+    max-width: 100%;
+    justify-content: center;
+    gap: 12px;
+  }
 }
 
 .game-quick-speech-button {
@@ -314,14 +398,15 @@
     height: 36px;
   }
 
-  .game-room-audio-controls {
-    max-width: 236px;
-    gap: 4px;
+  .game-room-header .game-room-audio-controls {
+    gap: 8px;
+    padding-right: 8px;
+    padding-left: 8px;
   }
 
-  .game-audio-slider {
-    width: 44px;
-  }
+  .game-audio-field { flex: 1 1 0; width: auto; }
+  .game-audio-switch { min-width: 48px; }
+  .game-audio-label { gap: 3px; font-size: 10px; }
 
   .game-room .seat-stage {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -348,16 +433,10 @@
     flex-wrap: wrap;
   }
 
-  .game-room-phase-summary,
-  .game-room-audio-controls {
-    width: 100%;
-    max-width: none;
-    flex-basis: 100%;
-  }
-
-  .game-room-audio-controls {
-    justify-content: flex-start;
-  }
+  .game-room-phase-summary { min-width: 0; }
+  .game-room-header .game-room-audio-controls { gap: 6px; }
+  .game-audio-label { flex-wrap: wrap; }
+  .game-audio-switch { min-width: 44px; }
 
   .game-room .seat-stage {
     grid-template-columns: repeat(2, minmax(0, 1fr));

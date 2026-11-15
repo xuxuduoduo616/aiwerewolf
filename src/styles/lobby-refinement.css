@@ -54,9 +54,30 @@
 .night-start > svg { width: 19px; height: 19px; }
 .night-match-note { margin-top: 20px; color: var(--night-muted); font-size: 11px; line-height: 1.7; }
 .night-match-note > span { margin-inline: 10px; color: #756365; }
-.night-village-art { color: #bbb4ab; text-align: center; opacity: .8; }
-.night-village-art svg { width: 100%; max-width: 360px; margin-inline: auto; }
+.night-village-art { color: #bbb4ab; text-align: center; width: 100%; min-width: 0; max-width: 360px; justify-self: center; pointer-events: none; user-select: none; }
+.night-village-art > svg { display: block; width: 100%; height: auto; margin-inline: auto; overflow: hidden; }
 .night-village-art > span { display: block; margin-top: 4px; font-size: 9px; letter-spacing: .24em; }
+/* Only loose fabric moves. The head, joints, weapons and grounded feet stay still. */
+.night-village-player .night-wind-cloth {
+  transform-box: view-box;
+  transform-origin: 120px 100px;
+  animation: night-cloth-wind 3.8s ease-in-out infinite;
+}
+.night-village-player .night-traveler-cape { transform-origin: 170px 280px; }
+@keyframes night-cloth-wind {
+  0%, 100% { transform: skewX(-2deg) skewY(.4deg); }
+  14% { transform: skewX(-7deg) skewY(-1deg); }
+  22% { transform: skewX(-4.5deg) skewY(.8deg); }
+  31% { transform: skewX(-8deg) skewY(-1.2deg); }
+  47% { transform: skewX(-3.5deg) skewY(.6deg); }
+  61% { transform: skewX(1.5deg) skewY(-.3deg); }
+  70% { transform: skewX(-.5deg) skewY(.7deg); }
+  80% { transform: skewX(2deg) skewY(-.4deg); }
+  89% { transform: skewX(-.5deg) skewY(.3deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .night-village-art .night-village-player g { animation: none; }
+}
 .night-lobby-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; padding-top: 24px; border-top: 1px solid var(--night-line); color: var(--night-muted); font-size: 11px; line-height: 1.7; }
 .night-lobby-footer p { display: flex; align-items: center; gap: 9px; }
 .night-lobby-footer p svg { flex-shrink: 0; }
@@ -90,8 +111,8 @@
 
 @media (min-width: 641px) and (max-width: 1100px) {
   .night-lobby { padding-inline: 32px; }
-  .night-hero { grid-template-columns: minmax(0, 1fr); position: relative; min-height: 620px; }
-  .night-village-art { position: absolute; width: 240px; right: 0; bottom: 38px; opacity: .18; pointer-events: none; }
+  .night-hero { grid-template-columns: minmax(0, 1fr); min-height: 0; padding-block: 48px 36px; }
+  .night-village-art { max-width: 300px; }
   .night-hero h1 { font-size: clamp(40px, 6vw, 62px); }
   .night-top-caption { display: none; }
   .wol-shell--refined .night-top-bar { grid-template-columns: minmax(0, 1fr) 44px; padding-inline: 32px; }
@@ -115,7 +136,7 @@
   .night-lobby { padding: 24px 24px 28px; }
   .night-lobby-identity { align-items: flex-start; flex-direction: column; gap: 2px; }
   .night-lobby-identity .night-text-button { margin-left: 31px; font-size: 11px; }
-  .night-hero { grid-template-columns: minmax(0, 1fr); min-height: 0; gap: 0; padding-block: 46px 36px; }
+  .night-hero { grid-template-columns: minmax(0, 1fr); min-height: 0; gap: 24px; padding-block: 46px 36px; }
   .night-hero-eyebrow { font-size: 9px; letter-spacing: .12em; margin-bottom: 20px; }
   .night-hero h1 { font-size: clamp(29px, 8.8vw, 54px); letter-spacing: -.045em; line-height: 1.25; }
   .night-hero-description { font-size: 14px; line-height: 1.8; margin-top: 22px; }
@@ -123,7 +144,7 @@
   .wol-shell--refined .night-start { width: 100%; min-width: 0; }
   .night-guide { align-self: center; }
   .night-match-note { margin-top: 12px; text-align: center; font-size: 10px; }
-  .night-village-art { display: none; }
+  .night-village-art { max-width: 260px; }
   .night-lobby-footer { padding-top: 20px; font-size: 10px; }
   .night-lobby-footer > span { display: none; }
 }

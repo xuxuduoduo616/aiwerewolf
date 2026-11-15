@@ -27,6 +27,24 @@ describe('shared wuxia character assets', () => {
     expect(html).not.toContain('<image');
     expect(html).not.toContain('<filter');
   });
+  it.each(SKIN_CATALOG)('preserves $id equipment in the seated lobby pose', product => {
+    const html = renderToStaticMarkup(<svg><WuxiaCharacter product={product} pose="seated" /></svg>);
+    for (const part of equipment[product.id]) expect(html).toContain(`data-equipment="${part}"`);
+    expect(html).toContain('data-part="seated-legs"');
+    expect(html).toContain('data-part="grounded-hips"');
+    expect(html).toContain('data-part="grounded-sword"');
+    expect(html).toContain('class="night-wind-cloth" data-equipment="wind-cape"');
+    expect(html).not.toContain('data-part="stick-limbs"');
+  });
+  it('keeps seated clip paths and paint references isolated from store instances', () => {
+    const html = renderToStaticMarkup(<>{SKIN_CATALOG.map(product => <React.Fragment key={product.id}>
+      <svg><WuxiaCharacter product={product} pose="seated" /></svg>
+      <SkinArtwork product={product} />
+    </React.Fragment>)}</>);
+    const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map(match => match[1]);
+    expect(new Set(ids).size).toBe(ids.length);
+    for (const ref of html.matchAll(/url\(#([^)]+)\)/g)) expect(ids).toContain(ref[1]);
+  });
   it('keeps defs and references unique with repeated card/dialog instances', () => {
     const html = renderToStaticMarkup(<>{SKIN_CATALOG.flatMap(product => [
       <SkinArtwork key={`${product.id}-card`} product={product} />,

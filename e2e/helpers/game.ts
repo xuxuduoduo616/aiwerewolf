@@ -63,7 +63,7 @@ async function dismissOnboardingIfPresent(page: Page): Promise<void> {
 }
 
 /** Lobby → Single-Player → 9-Player Standard → Start Game → game room. */
-export async function startNinePlayerGame(page: Page): Promise<void> {
+export async function startNinePlayerGame(page: Page, dismissControlsGuide = true): Promise<void> {
   await page.getByRole('button', { name: 'Start Game', exact: true }).click();
   await page.getByRole('button', { name: /Single-Player/ }).click();
   // First-time players see a configuration spotlight before editing the form.
@@ -76,13 +76,17 @@ export async function startNinePlayerGame(page: Page): Promise<void> {
   await expect(ninePlayerBoard).toBeChecked();
 
   await page.getByRole('button', { name: 'Start Game', exact: true }).click();
+  await expect(page.locator('.game-room')).toBeVisible();
+  if (dismissControlsGuide && await page.locator('.onboarding-panel').isVisible()) {
+    await dismissOnboardingIfPresent(page);
+  }
   await expect(page.getByText('Your role:')).toBeVisible();
   await expect(page.getByLabel('Werewolf seats and action console')).toBeVisible();
 }
 
 /** Leave the current match through the header and its confirmation dialog. */
 export async function leaveGameToLobby(page: Page): Promise<void> {
-  await page.getByRole('button', { name: 'Return to lobby' }).click();
+  await page.getByRole('button', { name: 'exit the game' }).click();
   const leaveButton = page.getByRole('button', { name: 'Leave game', exact: true });
   const dialogShown = await leaveButton
     .waitFor({ state: 'visible', timeout: 3_000 })

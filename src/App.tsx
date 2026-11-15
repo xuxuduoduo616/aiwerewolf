@@ -12,6 +12,8 @@ import RecordsPanel from './components/RecordsPanel';
 import WolfChannel from './components/WolfChannel';
 import SpeechInput from './components/SpeechInput';
 import GameRoom, { GamePlayerSeat } from './components/GameRoom';
+import GameAudioControls from './components/GameAudioControls';
+import GameControlsGuide from './components/GameControlsGuide';
 import GameLogDialog, { GameLogFeed } from './components/GameLogDialog';
 import ReplayReview from './components/ReplayReview';
 import GlobalShell from './components/GlobalShell';
@@ -49,8 +51,8 @@ import './styles/game-responsive.css';
 import './styles/economy.css';
 import {
   Clock3, History, KeyRound, Languages, Loader2,
-  LogOut, Mail, Moon, Pause, Play, Power, RefreshCw, ScrollText, Shield,
-  Skull, Trophy, User as UserIcon, Volume2, VolumeX,
+  LogOut, Mail, Moon, Pause, Play, ScrollText, Shield,
+  Skull, Trophy, User as UserIcon,
 } from 'lucide-react';
 
 export type TurnstileGuestGateEvent =
@@ -120,6 +122,7 @@ const App: React.FC = () => {
   const fullGuideRef = React.useRef(false);
   const setupGuidePrincipalRef = React.useRef<string | null>(null);
   const startGuideSeenRef = React.useRef(new Set<string>());
+  const gameControlsSeenRef = React.useRef(new Set<string>());
   const [isRouteReady, setIsRouteReady] = useState(false);
   const historyReturnRef = React.useRef<EconomyRoute>({ page: 'lobby' });
   const autoTutorialAttemptedRef = React.useRef(false);
@@ -398,49 +401,31 @@ const App: React.FC = () => {
             <p className="text-[10px] md:text-xs text-zinc-400">{getPhaseLabel(game.phase, 'en')}</p>
           </div>
         </div>
-        <div className="game-room-audio-controls flex items-center gap-1 md:gap-2">
-          <button
-            onClick={() => game.setTtsEnabled(!game.ttsEnabled)}
-            className="icon-button"
-            aria-pressed={game.ttsEnabled}
-            title="Toggle AI voice"
-            aria-label="Toggle AI voice"
-          >
-            <Power className={`w-3.5 h-3.5 md:w-4 md:h-4${game.ttsEnabled ? ' text-emerald-300' : ''}`} />
-          </button>
-          <input
-            type="range" min={0} max={1} step={0.05}
-            value={game.audioVolume}
-            onChange={e => game.setAudioVolume(Number(e.target.value))}
-            className="game-audio-slider w-10 md:w-16 cursor-pointer accent-zinc-200"
-            title="Volume"
-            aria-label="Volume"
+        <div className="game-room-header-controls">
+          <GameAudioControls
+            voiceEnabled={game.ttsEnabled} volume={game.audioVolume} rate={game.ttsRate} muted={game.isMuted}
+            onVoiceChange={game.setTtsEnabled} onVolumeChange={game.setAudioVolume}
+            onRateChange={game.setTtsRate} onMuteChange={game.setIsMuted}
           />
-          <input
-            type="range" min={0.5} max={2} step={0.1}
-            value={game.ttsRate}
-            onChange={e => game.setTtsRate(Number(e.target.value))}
-            className="game-audio-slider w-10 md:w-16 cursor-pointer accent-zinc-200"
-            title="Speech rate"
-            aria-label="Speech rate"
-          />
-          <button onClick={() => game.setIsMuted(!game.isMuted)} className="icon-button" title="Mute or unmute" aria-label="Mute or unmute">
-            {game.isMuted ? <VolumeX className="w-3.5 h-3.5 md:w-4 md:h-4" /> : <Volume2 className="w-3.5 h-3.5 md:w-4 md:h-4" />}
-          </button>
-          <button
-            ref={gameInfoTriggerRef}
-            type="button"
-            onClick={() => { if (!isLeaveGameOpen) setIsGameInfoOpen(true); }}
-            className="game-log-trigger icon-button"
-            title="Game log and records"
-            aria-label="Open game log and records"
-            aria-haspopup="dialog"
-          >
-            <ScrollText className="w-4 h-4" />
-          </button>
-          <button ref={leaveGameTriggerRef} type="button" onClick={requestReturnToLobby} className="icon-button" title="Return to lobby" aria-label="Return to lobby" aria-haspopup={game.phase === GamePhase.GAME_OVER ? undefined : 'dialog'}>
-            <RefreshCw className="w-3.5 h-3.5 md:w-4 md:h-4" />
-          </button>
+          <div className="game-room-utility-controls">
+            <button
+              ref={gameInfoTriggerRef}
+              type="button"
+              onClick={() => { if (!isLeaveGameOpen) setIsGameInfoOpen(true); }}
+              className="game-log-trigger icon-button"
+              data-tour-target="game-log"
+              title="Game log and records"
+              aria-label="Open game log and records"
+              aria-haspopup="dialog"
+            >
+              <ScrollText className="w-4 h-4" aria-hidden="true" />
+              <span>Log</span>
+            </button>
+            <button ref={leaveGameTriggerRef} type="button" onClick={requestReturnToLobby} className="icon-button" data-tour-target="game-exit" title="exit the game" aria-label="exit the game" aria-haspopup={game.phase === GamePhase.GAME_OVER ? undefined : 'dialog'}>
+              <LogOut className="w-4 h-4" aria-hidden="true" />
+              <span>Exit</span>
+            </button>
+          </div>
         </div>
       </header>
     );
@@ -603,6 +588,10 @@ const App: React.FC = () => {
           />
         </GameRoom>
 
+        {principalId && game.phase !== GamePhase.GAME_OVER && (
+          <GameControlsGuide key={principalId} principalId={principalId}
+            seenThisSession={gameControlsSeenRef.current} isPaused={game.isPaused} togglePause={game.togglePause} />
+        )}
         <GameLogDialog
           open={isGameInfoOpen && !isLeaveGameOpen}
           onClose={() => setIsGameInfoOpen(false)}
@@ -663,6 +652,7 @@ const App: React.FC = () => {
             onOpenDailyCheckIn={() => navigateEconomy({ page: 'daily-check-in' })}
             onOpenTutorial={() => { fullGuideRef.current = true; setTutorialStage('lobby'); setIsTutorialOpen(true); }}
             equippedSkinName={equippedSkinName}
+            equippedSkin={equippedSkinProduct}
             identityName={publicName}
             identityHandle={publicHandle}
             isGuest={auth.isGuest}

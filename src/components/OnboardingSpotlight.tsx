@@ -321,7 +321,8 @@ export const scrollOnboardingDocumentTo = (
 export const acquireOnboardingModalBoundary = (
   activeDocument: OnboardingModalDocument,
 ): (() => void) => {
-  const shell = activeDocument.querySelector<HTMLElement>('.wol-shell');
+  const shell = activeDocument.querySelector<HTMLElement>('.wol-shell')
+    ?? activeDocument.querySelector<HTMLElement>('.game-room');
   const activeElement = activeDocument.activeElement as (Element & {
     focus?: (options?: FocusOptions) => void;
     isConnected?: boolean;

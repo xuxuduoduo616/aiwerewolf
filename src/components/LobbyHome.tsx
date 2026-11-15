@@ -3,6 +3,7 @@ import LobbySideMenus from './LobbySideMenus';
 import LobbyActionButtons from './LobbyActionButtons';
 import ActivityBanner from './ActivityBanner';
 import RefinedLobby from './RefinedLobby';
+import type { SkinProduct } from '../economy/catalog';
 import { UI_PRESENTATION } from '../uiPresentation';
 import type { ShellView } from './GlobalShell';
 import type { LobbySubview } from '../lobbyFeatures';
@@ -18,6 +19,7 @@ interface Props {
   onOpenDailyCheckIn: () => void;
   onOpenTutorial: () => void;
   equippedSkinName?: string | null;
+  equippedSkin?: SkinProduct | null;
   identityName: string;
   identityHandle: string;
   isGuest: boolean;
@@ -65,13 +67,14 @@ const LobbyHome: React.FC<Props> = ({
   onOpenDailyCheckIn,
   onOpenTutorial,
   equippedSkinName,
+  equippedSkin,
   identityName,
   identityHandle,
   isGuest,
   onSignIn,
 }) => {
   if (!UI_PRESENTATION.showLegacyLobby) {
-    return <RefinedLobby onStartGame={onStartGame} onOpenTutorial={onOpenTutorial}
+    return <RefinedLobby equippedSkin={equippedSkin} onStartGame={onStartGame} onOpenTutorial={onOpenTutorial}
       identityName={identityName} identityHandle={identityHandle} isGuest={isGuest} onSignIn={onSignIn} />;
   }
   return (
