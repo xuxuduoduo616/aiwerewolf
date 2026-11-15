@@ -117,6 +117,7 @@ const App: React.FC = () => {
   const [skinStoreFilter, setSkinStoreFilter] = useState<SkinStoreFilter>('all');
   const [isTutorialOpen, setIsTutorialOpen] = useState(false);
   const [tutorialStage, setTutorialStage] = useState<'lobby' | 'single-player' | 'match-setup'>('lobby');
+  const fullGuideRef = React.useRef(false);
   const setupGuidePrincipalRef = React.useRef<string | null>(null);
   const startGuideSeenRef = React.useRef(new Set<string>());
   const [isRouteReady, setIsRouteReady] = useState(false);
@@ -209,6 +210,7 @@ const App: React.FC = () => {
       || economy.state.tutorialSeen
     ) return;
     autoTutorialAttemptedRef.current = true;
+    fullGuideRef.current = true;
     setIsTutorialOpen(true);
   }, [activeView, auth.isGuest, economy.mode, economy.state.tutorialSeen, isRouteReady, lobbySubview]);
 
@@ -236,7 +238,7 @@ const App: React.FC = () => {
     const key = `aiwerewolf:first-start-guide:v1:${principalId}`;
     let seen = startGuideSeenRef.current.has(principalId);
     try { seen ||= window.localStorage.getItem(key) === 'seen'; } catch { /* This tab still deduplicates. */ }
-    if (seen) return;
+    if (seen && !fullGuideRef.current) return;
     startGuideSeenRef.current.add(principalId);
     try { window.localStorage.setItem(key, 'seen'); } catch { /* Storage is optional. */ }
     setupGuidePrincipalRef.current = principalId;
@@ -659,7 +661,7 @@ const App: React.FC = () => {
             onOpenTidalStore={() => navigateEconomy({ page: 'skin-store', season: 'tidal', section: 'skins' })}
             onOpenQualifier={() => navigateEconomy({ page: 'online-qualifier' })}
             onOpenDailyCheckIn={() => navigateEconomy({ page: 'daily-check-in' })}
-            onOpenTutorial={() => { setTutorialStage('lobby'); setIsTutorialOpen(true); }}
+            onOpenTutorial={() => { fullGuideRef.current = true; setTutorialStage('lobby'); setIsTutorialOpen(true); }}
             equippedSkinName={equippedSkinName}
             identityName={publicName}
             identityHandle={publicHandle}
@@ -868,13 +870,19 @@ const App: React.FC = () => {
       <OnboardingSpotlight
         key={`${principalId}:${tutorialStage}`}
         steps={tutorialStage === 'single-player' ? SINGLE_PLAYER_GUIDE : tutorialStage === 'match-setup' ? MATCH_SETUP_GUIDE : undefined}
+        stepOffset={tutorialStage === 'lobby' ? 0 : tutorialStage === 'single-player' ? 4 : 5}
+        totalSteps={6}
         open={isTutorialOpen}
         onSkip={() => {
-          if (tutorialStage === 'lobby') economy.skipTutorial();
+          if (fullGuideRef.current) economy.skipTutorial();
+          fullGuideRef.current = false;
           setIsTutorialOpen(false);
         }}
         onFinish={() => {
-          if (tutorialStage === 'lobby') economy.finishTutorial();
+          if (tutorialStage === 'match-setup' && fullGuideRef.current) {
+            economy.finishTutorial();
+            fullGuideRef.current = false;
+          }
           setIsTutorialOpen(false);
         }}
       />

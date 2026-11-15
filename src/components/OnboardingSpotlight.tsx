@@ -61,6 +61,8 @@ interface Props {
   onSkip: () => void;
   onFinish: () => void;
   steps?: readonly OnboardingStep[];
+  stepOffset?: number;
+  totalSteps?: number;
 }
 
 export interface HighlightRect {
@@ -471,7 +473,7 @@ interface SpotlightLayout {
   arrow?: OnboardingArrowLayout;
 }
 
-const OnboardingSpotlight: React.FC<Props> = ({ open, onSkip, onFinish, steps = ONBOARDING_STEPS }) => {
+const OnboardingSpotlight: React.FC<Props> = ({ open, onSkip, onFinish, steps = ONBOARDING_STEPS, stepOffset = 0, totalSteps = steps.length }) => {
   const [stepIndex, setStepIndex] = useState(0);
   const [layout, setLayout] = useState<SpotlightLayout | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -639,7 +641,7 @@ const OnboardingSpotlight: React.FC<Props> = ({ open, onSkip, onFinish, steps = 
   return createPortal(
     <OnboardingSpotlightLayer
       step={step}
-      stepIndex={stepIndex}
+      stepIndex={stepIndex + stepOffset}
       rect={layout.rect}
       viewportWidth={layout.viewportWidth}
       viewportHeight={layout.viewportHeight}
@@ -648,7 +650,7 @@ const OnboardingSpotlight: React.FC<Props> = ({ open, onSkip, onFinish, steps = 
       highlightRect={layout.highlightRect}
       arrowLayout={layout.arrow}
       isFirst={isFirst}
-      stepCount={steps.length}
+      stepCount={totalSteps}
       panelRef={panelRef}
       onBack={actions.back}
       onNext={actions.next}

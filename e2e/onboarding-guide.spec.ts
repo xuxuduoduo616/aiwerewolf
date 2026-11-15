@@ -19,6 +19,8 @@ for (const viewport of [
       await expect(guide).toHaveAttribute('data-target-step', id);
       await expect(guide).toHaveAttribute('data-positioning', 'false');
       await expect(next).toBeEnabled();
+      const number = ['wallet', 'promotions', 'navigation', 'start-game', 'single-player', 'match-setup'].indexOf(id) + 1;
+      await expect(panel.locator('#onboarding-position')).toHaveText(`Step ${number} of 6`);
       await expect(panel.getByRole('button', { name: 'Finish', exact: true })).toHaveCount(0);
       const bounds = await panel.boundingBox();
       expect(bounds).not.toBeNull();
@@ -67,6 +69,15 @@ for (const viewport of [
     await expect(guide).toHaveCount(0);
     await page.getByRole('button', { name: /Single-Player/ }).click();
     await expect(page.getByRole('heading', { name: /Choose Board, Difficulty/ })).toBeVisible();
+    await expect(guide).toHaveCount(0);
+    // Replaying the guide must include steps 5 and 6 even after the first-start marker is saved.
+    await page.getByRole('button', { name: 'Go back one step' }).click();
+    await page.getByRole('button', { name: 'Go back one step' }).click();
+    await page.getByRole('button', { name: 'New-Player Guide', exact: true }).click();
+    for (const id of ['wallet', 'promotions', 'navigation', 'start-game', 'single-player', 'match-setup']) {
+      await checkStep(id);
+      await next.click();
+    }
     await expect(guide).toHaveCount(0);
     if (viewport.width === 1440) {
       await page.reload();

@@ -12,7 +12,7 @@ The project separates game rules from generated expression. A deterministic rule
 
 ## Current interface
 
-- The new-player guide introduces the lobby, Shop, and Start Game, then guides first-time players through Single-Player and match setup. Prompts share a consistent bottom position; Next advances and Skip dismisses the current guide.
+- The six-step new-player guide connects the lobby, Shop, Start Game, Single-Player, and match setup in one sequence, including when replayed. Prompts share a consistent bottom position; Next advances and Skip dismisses the current guide.
 - A responsive particle background supports pointer interaction and respects reduced-motion preferences.
 - Role knowledge badges distinguish Seer checks from the Witch's saved or attacked player information without revealing another role's private checks.
 - Voice input requires the server-side `QWEN_API_KEY`. iOS Safari real devices, noise conditions, and full 60-second human recordings remain unverified.
