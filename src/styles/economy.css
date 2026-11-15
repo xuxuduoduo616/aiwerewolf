@@ -537,3 +537,10 @@
   text-decoration: underline;
   text-underline-offset: 0.15em;
 }
+
+/* Keep the entire launch control inside the bounded final tutorial target. */
+.wol-shell[data-onboarding-step="match-setup"] [data-tour-target="match-setup"] > .app-primary-button {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+}

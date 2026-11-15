@@ -503,6 +503,7 @@ const OnboardingSpotlight: React.FC<Props> = ({ open, onSkip, onFinish, steps = 
       return undefined;
     }
 
+    const originalTargetStyle = { maxHeight: element.style.maxHeight, overflowY: element.style.overflowY, scrollTop: element.scrollTop };
     const beginPositioning = () => {
       const bounds = toHighlightRect(element.getBoundingClientRect());
       setLayout({
@@ -519,6 +520,9 @@ const OnboardingSpotlight: React.FC<Props> = ({ open, onSkip, onFinish, steps = 
     window.addEventListener('resize', beginPositioning);
     return () => {
       targetRef.current = null;
+      element.style.maxHeight = originalTargetStyle.maxHeight;
+      element.style.overflowY = originalTargetStyle.overflowY;
+      element.scrollTop = originalTargetStyle.scrollTop;
       shell?.removeAttribute('data-onboarding-step');
       shell?.style.removeProperty('--onboarding-panel-space');
       window.removeEventListener('resize', beginPositioning);
@@ -542,16 +546,15 @@ const OnboardingSpotlight: React.FC<Props> = ({ open, onSkip, onFinish, steps = 
       if (cancelled || !panelRef.current || !targetRef.current) return;
       const shell = document.querySelector<HTMLElement>('.wol-shell');
       shell?.style.setProperty('--onboarding-panel-space', `${window.innerHeight - panelRef.current.getBoundingClientRect().top + 18}px`);
-      const fullTargetRect = toHighlightRect(targetRef.current.getBoundingClientRect());
-      // The configuration panel can exceed the viewport. Frame its visible portion;
-      // Next dismisses the guide so the full form is available for editing/scrolling.
-      const panelTop = panelRef.current.getBoundingClientRect().top;
-      const targetRect = step.wholePanel ? {
-        ...fullTargetRect,
-        top: Math.max(62, fullTargetRect.top),
-        height: Math.max(0, Math.min(fullTargetRect.top + fullTargetRect.height, panelTop - 20) - Math.max(62, fullTargetRect.top)),
-      } : fullTargetRect;
       const panelRect = toHighlightRect(panelRef.current.getBoundingClientRect());
+      if (step.wholePanel) {
+        // Bound the actual form, rather than cutting its highlight through a control.
+        // The sticky launch button remains fully visible when the options need scrolling.
+        const arrowSpace = ARROW_HEIGHT + VIEWPORT_EDGE + 8;
+        targetRef.current.style.maxHeight = `${Math.max(44, panelRect.top - PANEL_GAP - HIGHLIGHT_PADDING - arrowSpace)}px`;
+        targetRef.current.style.overflowY = 'auto';
+      }
+      const targetRect = toHighlightRect(targetRef.current.getBoundingClientRect());
       const plan = planOnboardingViewport(
         targetRect,
         panelRect,

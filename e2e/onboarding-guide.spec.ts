@@ -32,6 +32,17 @@ for (const viewport of [
       expect(highlight.y + highlight.height).toBeLessThanOrEqual(bounds!.y);
       expect(highlight.x).toBeGreaterThanOrEqual(0);
       expect(highlight.x + highlight.width).toBeLessThanOrEqual(viewport.width);
+      if (id === 'match-setup') {
+        const target = (await page.locator('[data-tour-target="match-setup"]').boundingBox())!;
+        const start = (await page.locator('[data-tour-target="match-setup"] > .app-primary-button').boundingBox())!;
+        expect(highlight.y).toBeLessThanOrEqual(target.y);
+        expect(highlight.y + highlight.height).toBeGreaterThanOrEqual(target.y + target.height);
+        expect(highlight.x).toBeLessThanOrEqual(start.x);
+        expect(highlight.x + highlight.width).toBeGreaterThanOrEqual(start.x + start.width);
+        expect(highlight.y).toBeLessThanOrEqual(start.y);
+        expect(highlight.y + highlight.height).toBeGreaterThanOrEqual(start.y + start.height);
+        expect(start.y + start.height).toBeLessThan(bounds!.y);
+      }
       const arrow = (await page.locator('.onboarding-direction-arrow').boundingBox())!;
       expect(arrow.y).toBeGreaterThanOrEqual(0);
       expect(arrow.y + arrow.height).toBeLessThanOrEqual(bounds!.y);
@@ -60,6 +71,7 @@ for (const viewport of [
     if (viewport.width === 390) await page.keyboard.press('Escape');
     else await next.click();
     await expect(guide).toHaveCount(0);
+    expect(await page.locator('[data-tour-target="match-setup"]').evaluate(element => ({ maxHeight: element.style.maxHeight, overflowY: element.style.overflowY }))).toEqual({ maxHeight: '', overflowY: '' });
     await page.getByRole('radio', { name: /12-Player Standard/ }).check();
     await expect(page.getByRole('radio', { name: /12-Player Standard/ })).toBeChecked();
     // Subsequent launches do not replay either first-game prompt.
