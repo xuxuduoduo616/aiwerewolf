@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import type { UseEconomyResult } from '../hooks/useEconomy';
 import OutfitsPanel from './OutfitsPanel';
 import BackpackPanel from './BackpackPanel';
 import SkinCollectionPanel from './SkinCollectionPanel';
@@ -10,6 +11,8 @@ const PROFILE_TABS: readonly SubTab[] = ['outfits', 'decorations', 'runwolf', 's
 
 interface Props {
   onBack?: () => void;
+  economy?: UseEconomyResult;
+  onOpenStore?: () => void;
   identityName: string;
   identityHandle: string;
   isGuest: boolean;
@@ -17,17 +20,17 @@ interface Props {
   onSignOut?: () => void;
 }
 
-const ProfileView: React.FC<Props> = ({ identityName, identityHandle, isGuest, onSignIn, onSignOut }) => {
+const ProfileView: React.FC<Props> = ({ identityName, identityHandle, isGuest, onSignIn, onSignOut, economy, onOpenStore }) => {
   const [subTab, setSubTab] = useState<SubTab>('outfits');
 
   const renderPanel = () => {
     switch (subTab) {
       case 'outfits':
-        return <OutfitsPanel />;
+        return <OutfitsPanel economy={economy} onOpenStore={onOpenStore} />;
       case 'backpack':
         return <BackpackPanel />;
       case 'skins':
-        return <SkinCollectionPanel />;
+        return <SkinCollectionPanel economy={economy} onOpenStore={onOpenStore} />;
       default:
         return (
           <div style={{

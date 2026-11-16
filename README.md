@@ -13,6 +13,7 @@ The project separates game rules from generated expression. A deterministic rule
 ## Current interface
 
 - The six-step new-player guide connects the lobby, Shop, Start Game, Single-Player, and match setup in one sequence, including when replayed. Prompts share a consistent bottom position; Next advances and Skip dismisses the current guide.
+- Profile shows the verified skin inventory, including the permanent Default Outfit. Coins earned through Daily Check-In can unlock Basic skins; equip an owned skin from Shop or Profile to display it in the lobby.
 - A responsive particle background supports pointer interaction and respects reduced-motion preferences.
 - Role knowledge badges distinguish Seer checks from the Witch's saved or attacked player information without revealing another role's private checks.
 - Voice input requires the server-side `QWEN_API_KEY`. iOS Safari real devices, noise conditions, and full 60-second human recordings remain unverified.

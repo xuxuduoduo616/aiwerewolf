@@ -192,7 +192,7 @@ const SkinStore: React.FC<Props> = ({
 
       {hasCoinSkins && (
         <p className="skin-check-in-guide">
-          Earn Coins from <a href={economyRouteHash({ page: 'daily-check-in' })}>Daily Check-In</a>. Estimates assume consecutive check-ins and include
+          Unlock a skin with Coins, then choose Equip to display it in your lobby. Find all your owned skins in Profile. Earn Coins from <a href={economyRouteHash({ page: 'daily-check-in' })}>Daily Check-In</a>. Estimates assume consecutive check-ins and include
           unclaimed Coin milestones. The estimate from zero starts on Day 1 with no milestones claimed.
           {' '}Tutorial and match rewards are excluded.
           {!isGuest && ' Your balance estimate uses the latest verified account date.'}

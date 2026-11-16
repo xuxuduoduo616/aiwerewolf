@@ -822,6 +822,8 @@ const App: React.FC = () => {
       case 'profile':
         return (
           <ProfileView
+            economy={economy}
+            onOpenStore={() => navigateEconomy({ page: 'skin-store', season: 'all', section: 'skins' })}
             identityName={publicName}
             identityHandle={publicHandle}
             isGuest={auth.isGuest}

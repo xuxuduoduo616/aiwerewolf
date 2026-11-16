@@ -544,3 +544,12 @@
   bottom: 0;
   z-index: 1;
 }
+
+.skin-collection { padding: 16px 12px 28px; }
+.skin-collection-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+.skin-collection-heading h2 { font-size: 20px; margin: 0 0 6px; }
+.skin-collection-heading p, .skin-collection-note { color: #b9b8bc; font-size: 13px; line-height: 1.6; }
+.skin-collection .skin-card-heading h3 { font-size: 19px; margin: 6px 0; }
+.skin-collection-default { position: relative; overflow: hidden; }
+.skin-collection-default .night-village-art { width: 100%; height: 100%; min-height: 0; aspect-ratio: 4 / 5; }
+.skin-collection-default svg { width: 100%; height: 100%; max-height: 300px; }

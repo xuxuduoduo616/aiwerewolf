@@ -1,136 +1,61 @@
-import React, { useState } from 'react';
-import FilterChipBar from './FilterChipBar';
+import React from 'react';
+import { SKIN_CATALOG } from '../economy/catalog';
+import { resolveSkinPresentation } from './SkinStore';
+import SkinArtwork from './SkinArtwork';
+import LobbyVillageScene from './LobbyVillageScene';
+import type { UseEconomyResult } from '../hooks/useEconomy';
 
-/* ─── SVG icons ───────────────────────────────────────────────────────── */
-
-const ChevronRight = () => (
-  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 12, height: 12 }}>
-    <path d="M6 4l4 4-4 4" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-
-/* ─── Hardcoded skin collection data ──────────────────────────────────── */
-
-interface SkinSet {
-  id: string;
-  name: string;
-  category: 'classic' | 'season' | 'crossover';
-  owned: number;
-  total: number;
-  color: string;
+export interface SkinCollectionProps {
+  economy?: Pick<UseEconomyResult, 'phase' | 'ledgerCorrupt' | 'mode' | 'state' | 'statusMessage' | 'refresh' | 'feedback' | 'mutationsDisabled' | 'pendingAction' | 'equipSkin'>;
+  onOpenStore?: () => void;
 }
 
-const SKIN_SETS: SkinSet[] = [
-  { id: 's1', name: 'Village Legends', category: 'classic', owned: 0, total: 25, color: '#c9a44b' },
-  { id: 's2', name: 'Moonlit Phantoms', category: 'classic', owned: 0, total: 18, color: '#7b6fdf' },
-  { id: 's3', name: 'Tidal Season', category: 'season', owned: 0, total: 12, color: '#3b82f6' },
-  { id: 's4', name: 'Winter Season', category: 'season', owned: 0, total: 10, color: '#60a5fa' },
-  { id: 's5', name: 'Heritage Crossover', category: 'crossover', owned: 0, total: 20, color: '#f59e0b' },
-];
-
-type SkinTab = 'classic' | 'season' | 'crossover';
-
-const SKIN_TABS: { key: SkinTab; label: string }[] = [
-  { key: 'classic', label: 'Classic Skins' },
-  { key: 'season', label: 'Season Skins' },
-  { key: 'crossover', label: 'Crossover Skins' },
-];
-
-const SkinCollectionPanel: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<SkinTab>('classic');
-  const totalOwned = 0;
-  const totalSkins = 137;
-  const totalThemes = 8;
+/** The original outfit is inherent, never a purchasable inventory grant. */
+const SkinCollectionPanel: React.FC<SkinCollectionProps> = ({ economy, onOpenStore }) => {
+  const verified = economy?.phase === 'ready' && !economy.ledgerCorrupt;
+  const isGuest = economy?.mode === 'guest';
+  const owned = verified ? SKIN_CATALOG.filter(product =>
+    economy.state.inventory.includes(`skin:${product.id}`)
+    && (isGuest || economy.state.accountCatalog.some(item => item.id === product.id && item.itemKind === 'skin')),
+  ) : [];
+  const equippedId = verified ? economy.state.equippedSkinId : undefined;
 
   return (
-    <section className="wol-skins" aria-label="Skin collection">
-      {/* Progress header */}
-      <div className="wol-skin-progress-summary" style={{
-        padding: '12px 12px 10px',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        fontSize: 11, color: 'rgba(255,255,255,0.5)', fontWeight: 600,
-      }}>
-        <span>Completed themes: {totalOwned}/{totalThemes}</span>
-        <span>All skins: {totalOwned}/{totalSkins}</span>
+    <section className="skin-collection" aria-label="Skin collection">
+      <div className="skin-collection-heading">
+        <div><h2>Your Skins</h2><p>{verified ? `${owned.length + 1} owned · including Default Outfit` : 'Default Outfit is always yours.'}</p></div>
+        {onOpenStore && <button type="button" className="economy-secondary-action" onClick={onOpenStore}>Visit Skin Store</button>}
       </div>
-
-      {/* Progress bar */}
-      <div style={{ padding: '0 12px', marginBottom: 12 }}>
-        <div className="wol-progress-bar" style={{ height: 6 }}>
-          <div
-            className="wol-progress-bar-fill"
-            style={{ width: `${(totalOwned / totalSkins) * 100}%`, height: 6 }}
-          />
-        </div>
-      </div>
-
-      {/* Sub-category tabs */}
-      <FilterChipBar chips={SKIN_TABS} active={activeTab} onSelect={setActiveTab} />
-
-      {/* Banner stream */}
-      <div style={{ padding: '0 12px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {SKIN_SETS.map(set => {
-          const pct = Math.round((set.owned / set.total) * 100);
+      {!verified && <div className="economy-unavailable" role="status">
+        <p>{economy?.statusMessage || 'Loading verified skin collection…'}</p>
+        {economy && <button type="button" className="economy-secondary-action" onClick={() => { void economy.refresh(); }}>Refresh Collection</button>}
+      </div>}
+      <p className="economy-live-feedback" role="status" aria-live="polite">{economy?.feedback}</p>
+      <div className="skin-grid">
+        <article className={`skin-card${equippedId === null ? ' is-equipped' : ''}`} data-owned-skin="default">
+          <div className="skin-card-art skin-collection-default"><LobbyVillageScene /></div>
+          <div className="skin-card-heading"><span>Original · Permanent</span><h3>Default Outfit</h3><p>Your original village traveler. Always included in your collection.</p></div>
+          <div className="skin-card-state"><span className="skin-status">{equippedId === null ? 'Equipped' : 'Owned'}</span><strong>Free · Always owned</strong></div>
+        </article>
+        {owned.map(product => {
+          const presentation = resolveSkinPresentation(product, Boolean(isGuest), economy?.state.accountCatalog.find(item => item.id === product.id));
+          const equipped = equippedId === product.id;
           return (
-            <div
-              key={set.id}
-              className="wol-skin-card"
-              style={{
-                display: 'flex', gap: 12,
-                background: 'rgba(22,22,28,0.94)',
-                border: '1px solid rgba(255,255,255,0.06)',
-                borderRadius: 12,
-                padding: '12px',
-                alignItems: 'center',
-              }}
-            >
-              {/* Thumbnail placeholder */}
-              <div style={{
-                width: 64, height: 64, borderRadius: 10,
-                background: `linear-gradient(135deg, ${set.color}18, ${set.color}06)`,
-                border: `1px solid ${set.color}20`,
-                flexShrink: 0,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
-                <svg viewBox="0 0 24 24" fill="none" stroke={set.color} strokeWidth="1" style={{ width: 24, height: 24, opacity: 0.4 }}>
-                  <path d="M12 2l3 7h7l-5 4 2 7-7-4-7 4 2-7-5-4h7z" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+            <article key={product.id} className={`skin-card${equipped ? ' is-equipped' : ''}`} data-owned-skin={product.id}>
+              <div className="skin-card-art"><SkinArtwork product={{ ...product, name: presentation.name }} /></div>
+              <div className="skin-card-heading"><span>{presentation.tier} · {product.season === 'tidal' ? 'Tidal Season' : 'Core Collection'}</span><h3>{presentation.name}</h3><p>{product.description}</p></div>
+              <div className="skin-card-state"><span className="skin-status">{equipped ? 'Equipped' : 'Owned'}</span><strong>Permanent</strong></div>
+              <div className="skin-card-actions">
+                <button type="button" className="skin-primary-action" disabled={equipped || economy?.mutationsDisabled || economy?.pendingAction !== null}
+                  onClick={() => { void economy?.equipSkin(product.id); }} aria-label={`Equip ${presentation.name}`}>
+                  {equipped ? 'Equipped' : economy?.pendingAction === 'equip_skin' ? 'Verifying Equip…' : 'Equip in Lobby'}
+                </button>
               </div>
-
-              {/* Info */}
-              <div className="wol-skin-card-copy" style={{ flex: 1, minWidth: 0 }}>
-                <div className="wol-break-text" style={{ fontSize: 13, fontWeight: 700, color: '#fff', marginBottom: 6 }}>
-                  {set.name}
-                </div>
-                <div className="wol-progress-bar" style={{ marginBottom: 4 }}>
-                  <div
-                    className="wol-progress-bar-fill"
-                    style={{ width: `${pct}%` }}
-                  />
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>
-                    {set.owned}/{set.total}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => { /* Navigate to skin detail */ }}
-                    style={{
-                      fontSize: 10, fontWeight: 600,
-                      color: 'rgba(255,255,255,0.4)',
-                      display: 'inline-flex', alignItems: 'center', gap: 2,
-                      background: 'none', border: 'none', cursor: 'pointer', padding: 0,
-                    }}
-                    aria-label={`${set.name} details`}
-                  >
-                    Details<ChevronRight />
-                  </button>
-                </div>
-              </div>
-            </div>
+            </article>
           );
         })}
       </div>
+      {verified && owned.length === 0 && <p className="skin-collection-note">Earn Coins with Daily Check-In, then unlock a skin in the store. Your skins will appear here.</p>}
     </section>
   );
 };
