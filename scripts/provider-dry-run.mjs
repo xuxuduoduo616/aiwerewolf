@@ -1,7 +1,7 @@
 // Offline contract check: dry-run never claims that credentials or model access work.
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
-const { handler } = require('../netlify/functions/provider-adapter.cjs');
+const { handleEvent: handler } = require('../netlify/functions/provider-adapter.cjs');
 
 export const runProviderDryRun = async () => {
   const previous = process.env.ADAPTER_DRY_RUN;

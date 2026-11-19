@@ -15,7 +15,7 @@ const original = { API_KEY: process.env.API_KEY, GEMINI_API_KEY: process.env.GEM
 const load = () => {
   const module = { exports: {} };
   const context = vm.createContext({
-    Date, Map, JSON, process, Promise, Math, Number, Infinity, URL, setTimeout, clearTimeout, console: mocks.console,
+    Date, Map, JSON, process, Promise, Math, Number, Infinity, URL, String, Request, Response, Headers, setTimeout, clearTimeout, console: mocks.console,
     require: (id) => id === '@google/genai' ? { GoogleGenAI: mocks.GoogleGenAI, ThinkingLevel: { MINIMAL: 'MINIMAL' } } : (() => { throw new Error(`Unexpected require ${id}`); })(),
     module, exports: module.exports,
   });
@@ -46,7 +46,7 @@ describe('Gemini provider adapter', () => {
   ])('fails closed on %s before capability, model, counters, or billing work', async (_name, setup, origin) => {
     setup();
     const adapter = load();
-    const response = await adapter.handler(event({ prompt: 'hello' }, { headers: { origin } }));
+    const response = await adapter.handleEvent(event({ prompt: 'hello' }, { headers: { origin } }));
     expect(response.statusCode).toBe(403);
     expect(json(response)).toEqual({ error: 'Forbidden' });
     expect(response.headers).not.toHaveProperty('Access-Control-Allow-Origin');
@@ -56,7 +56,7 @@ describe('Gemini provider adapter', () => {
   });
   it('allows an Origin-less same-origin GET only with exact Host and Fetch Metadata evidence', async () => {
     const adapter = load();
-    const response = await adapter.handler(event({}, {
+    const response = await adapter.handleEvent(event({}, {
       httpMethod: 'GET', body: '', headers: { host: 'game.example', 'sec-fetch-site': 'same-origin' },
     }));
     expect(response.statusCode).toBe(200);
@@ -65,7 +65,7 @@ describe('Gemini provider adapter', () => {
   });
   it('rejects an Origin-less request without same-origin evidence before model work', async () => {
     const adapter = load();
-    const response = await adapter.handler(event({ prompt: 'hello' }, { headers: { host: 'game.example' } }));
+    const response = await adapter.handleEvent(event({ prompt: 'hello' }, { headers: { host: 'game.example' } }));
     expect(response.statusCode).toBe(403);
     expect(mocks.get).not.toHaveBeenCalled();
     expect(mocks.generateContent).not.toHaveBeenCalled();
@@ -73,7 +73,7 @@ describe('Gemini provider adapter', () => {
   });
   it('rejects an Origin-less cross-site request even when Host matches', async () => {
     const adapter = load();
-    const response = await adapter.handler(event({ prompt: 'hello' }, {
+    const response = await adapter.handleEvent(event({ prompt: 'hello' }, {
       headers: { host: 'game.example', 'sec-fetch-site': 'cross-site' },
     }));
     expect(response.statusCode).toBe(403);
@@ -83,8 +83,8 @@ describe('Gemini provider adapter', () => {
   });
   it('returns a no-store, exact successful capability catalog and warm-caches success', async () => {
     const adapter = load();
-    const first = await adapter.handler(event({}, { httpMethod: 'GET', body: '' }));
-    const second = await adapter.handler(event({}, { httpMethod: 'GET', body: '' }));
+    const first = await adapter.handleEvent(event({}, { httpMethod: 'GET', body: '' }));
+    const second = await adapter.handleEvent(event({}, { httpMethod: 'GET', body: '' }));
     expect(json(first)).toMatchObject({ default_model: 'gemini-3.6-flash', models: [{ id: 'gemini-3.6-flash' }, { id: 'gemini-2.5-flash' }] });
     expect(first.headers['Cache-Control']).toBe('no-store');
     expect(mocks.get).toHaveBeenCalledTimes(2);
@@ -97,7 +97,7 @@ describe('Gemini provider adapter', () => {
     ['5xx', () => { mocks.get.mockRejectedValue(Object.assign(new Error('bad upstream'), { status: 503 })); }],
     ['malformed metadata', () => { mocks.get.mockResolvedValue({ name: 'models/not-the-requested-model' }); }],
   ])('fails closed to 2.5 on %s', async (_name, setup) => {
-    setup(); const adapter = load(); const response = await adapter.handler(event({}, { httpMethod: 'GET', body: '' }));
+    setup(); const adapter = load(); const response = await adapter.handleEvent(event({}, { httpMethod: 'GET', body: '' }));
     expect(json(response)).toEqual({ default_model: 'gemini-2.5-flash', models: [{ id: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash' }] });
   });
   it('fails closed to 2.5 when read-only model lookup times out', async () => {
@@ -105,7 +105,7 @@ describe('Gemini provider adapter', () => {
     try {
       mocks.get.mockImplementation(() => new Promise(() => {}));
       const adapter = load();
-      const pending = adapter.handler(event({}, { httpMethod: 'GET', body: '' }));
+      const pending = adapter.handleEvent(event({}, { httpMethod: 'GET', body: '' }));
       await vi.advanceTimersByTimeAsync(5000);
       expect(json(await pending).default_model).toBe('gemini-2.5-flash');
     } finally {
@@ -113,7 +113,7 @@ describe('Gemini provider adapter', () => {
     }
   });
   it('uses 3.6 minimal thinking without sampling parameters and reports direct metadata', async () => {
-    const adapter = load(); const response = await adapter.handler(event({ model: 'gemini-3.6-flash', prompt: 'hello' }));
+    const adapter = load(); const response = await adapter.handleEvent(event({ model: 'gemini-3.6-flash', prompt: 'hello' }));
     expect(json(response)).toMatchObject({ model_used: 'gemini-3.6-flash', fallback_used: false, text: 'model text' });
     expect(mocks.generateContent).toHaveBeenCalledWith(expect.objectContaining({ model: 'gemini-3.6-flash', config: expect.objectContaining({ thinkingConfig: { thinkingLevel: 'MINIMAL' }, maxOutputTokens: 256 }) }));
     expect(mocks.generateContent.mock.calls[0][0].config).not.toHaveProperty('temperature');
@@ -123,15 +123,15 @@ describe('Gemini provider adapter', () => {
   it('truncates input sent to the SDK at the exported prompt bound', async () => {
     const adapter = load();
     const rawPrompt = 'x'.repeat(adapter.MAX_PROMPT_LEN + 40);
-    await adapter.handler(event({ model: 'gemini-3.6-flash', prompt: rawPrompt }));
+    await adapter.handleEvent(event({ model: 'gemini-3.6-flash', prompt: rawPrompt }));
     expect(mocks.generateContent.mock.calls[0][0].contents).toBe('x'.repeat(adapter.MAX_PROMPT_LEN));
   });
   it('falls 3.6 to 2.5 and never reverses an explicit 2.5 choice', async () => {
     mocks.generateContent.mockRejectedValueOnce(new Error('down')).mockResolvedValueOnce({ text: 'secondary' });
-    const adapter = load(); const fallback = await adapter.handler(event({ model: 'gemini-3.6-flash', prompt: 'hello' }));
+    const adapter = load(); const fallback = await adapter.handleEvent(event({ model: 'gemini-3.6-flash', prompt: 'hello' }));
     expect(json(fallback)).toMatchObject({ model_used: 'gemini-2.5-flash', fallback_used: true });
     adapter.resetAdapterState(); mocks.generateContent.mockReset().mockResolvedValue({ text: 'chosen' });
-    const explicit = await adapter.handler(event({ model: 'gemini-2.5-flash', prompt: 'hello' }));
+    const explicit = await adapter.handleEvent(event({ model: 'gemini-2.5-flash', prompt: 'hello' }));
     expect(json(explicit)).toMatchObject({ model_used: 'gemini-2.5-flash', fallback_used: false });
     expect(mocks.generateContent.mock.calls).toHaveLength(1);
   });
@@ -141,14 +141,14 @@ describe('Gemini provider adapter', () => {
   ])('returns truthful local fallback metadata when both models yield %s', async (_name, primaryResponse, secondaryResponse) => {
     mocks.generateContent.mockResolvedValueOnce(primaryResponse).mockResolvedValueOnce(secondaryResponse);
     const adapter = load();
-    const response = await adapter.handler(event({ model: 'gemini-3.6-flash', prompt: 'hello' }));
+    const response = await adapter.handleEvent(event({ model: 'gemini-3.6-flash', prompt: 'hello' }));
     expect(json(response)).toEqual({ text: '', model_used: 'local-fallback', cost_estimate: 0, fallback_used: true });
     expect(mocks.generateContent.mock.calls.map(([request]) => request.model)).toEqual(['gemini-3.6-flash', 'gemini-2.5-flash']);
   });
   it('does not retry a failed explicit 2.5 attempt when maxRetries is zero', async () => {
     mocks.generateContent.mockRejectedValue(new Error('unavailable'));
     const adapter = load();
-    const response = await adapter.handler(event({ model: 'gemini-2.5-flash', prompt: 'hello' }));
+    const response = await adapter.handleEvent(event({ model: 'gemini-2.5-flash', prompt: 'hello' }));
     expect(json(response)).toMatchObject({ model_used: 'local-fallback', fallback_used: true });
     expect(mocks.generateContent).toHaveBeenCalledTimes(1);
   });
@@ -156,20 +156,20 @@ describe('Gemini provider adapter', () => {
     process.env.ADAPTER_DAILY_BUDGET_USD = '1';
     const adapter = load();
     for (let count = 0; count < 30; count += 1) {
-      expect((await adapter.handler(event({ prompt: 'hello' }))).statusCode).toBe(200);
+      expect((await adapter.handleEvent(event({ prompt: 'hello' }))).statusCode).toBe(200);
     }
     expect(mocks.generateContent).toHaveBeenCalledTimes(30);
-    const response = await adapter.handler(event({ prompt: 'hello' }));
+    const response = await adapter.handleEvent(event({ prompt: 'hello' }));
     expect(response.statusCode).toBe(429);
     expect(json(response)).toEqual({ error: 'Rate limit exceeded' });
     expect(mocks.generateContent).toHaveBeenCalledTimes(30);
   });
   it('returns local fallback for all failures and applies bounded cost, budget, counters, circuit and generic errors', async () => {
     const adapter = load(); process.env.ADAPTER_DAILY_BUDGET_USD = '0.000001';
-    const budget = await adapter.handler(event({ prompt: 'hello' }));
+    const budget = await adapter.handleEvent(event({ prompt: 'hello' }));
     expect(json(budget)).toMatchObject({ model_used: 'local-fallback', fallback_used: true });
     adapter.resetAdapterState(); delete process.env.ADAPTER_DAILY_BUDGET_USD; mocks.generateContent.mockRejectedValue(new Error('failure'));
-    await adapter.handler(event({ prompt: 'hello' })); await adapter.handler(event({ prompt: 'hello' }));
+    await adapter.handleEvent(event({ prompt: 'hello' })); await adapter.handleEvent(event({ prompt: 'hello' }));
     expect(adapter.getCircuitState()['gemini-3.6-flash'].openUntil).toBeGreaterThan(0);
     expect(adapter.classifyError({ status: 429 })).toBe('rate-limit');
     expect(adapter.getRequestCounters()['gemini-3.6-flash']).toBeGreaterThan(0);
@@ -177,7 +177,7 @@ describe('Gemini provider adapter', () => {
   it('logs one enum-only line per failed model and the local fallback', async () => {
     mocks.generateContent.mockRejectedValue(Object.assign(new Error('limited'), { status: 429 }));
     const adapter = load();
-    const response = await adapter.handler(event({ model: 'gemini-3.6-flash', prompt: 'SECRET PROMPT TEXT' }));
+    const response = await adapter.handleEvent(event({ model: 'gemini-3.6-flash', prompt: 'SECRET PROMPT TEXT' }));
     expect(json(response)).toMatchObject({ model_used: 'local-fallback', fallback_used: true });
     const lines = mocks.console.warn.mock.calls.map(([line]) => JSON.parse(line));
     expect(lines).toEqual([
@@ -191,7 +191,7 @@ describe('Gemini provider adapter', () => {
   it('maps a primary timeout to provider_timeout before the secondary succeeds', async () => {
     mocks.generateContent.mockRejectedValueOnce(new Error('timeout')).mockResolvedValueOnce({ text: 'secondary' });
     const adapter = load();
-    const response = await adapter.handler(event({ model: 'gemini-3.6-flash', prompt: 'hello' }));
+    const response = await adapter.handleEvent(event({ model: 'gemini-3.6-flash', prompt: 'hello' }));
     expect(json(response)).toMatchObject({ model_used: 'gemini-2.5-flash', fallback_used: true });
     expect(mocks.console.warn.mock.calls.map(([line]) => JSON.parse(line))).toEqual([
       { event: 'provider_timeout', model: 'gemini-3.6-flash', cause: 'timeout', fallback: true },
@@ -199,8 +199,31 @@ describe('Gemini provider adapter', () => {
   });
   it('rejects invalid requests without leaking errors', async () => {
     const adapter = load();
-    expect((await adapter.handler(event({ model: 'unknown', prompt: 'x' }))).statusCode).toBe(400);
-    expect((await adapter.handler(event({}))).statusCode).toBe(400);
-    expect((await adapter.handler(event({}, { httpMethod: 'PATCH' }))).statusCode).toBe(405);
+    expect((await adapter.handleEvent(event({ model: 'unknown', prompt: 'x' }))).statusCode).toBe(400);
+    expect((await adapter.handleEvent(event({}))).statusCode).toBe(400);
+    expect((await adapter.handleEvent(event({}, { httpMethod: 'PATCH' }))).statusCode).toBe(405);
+  });
+
+  it('exposes a v2 Request/Response entry point with the same behavior', async () => {
+    const adapter = load();
+    expect(adapter.handler).toBeUndefined();
+    const post = await adapter.default(new Request('https://game.example/.netlify/functions/provider-adapter', {
+      method: 'POST',
+      headers: { Origin: 'https://game.example', 'Content-Type': 'application/json', 'x-nf-client-connection-ip': '198.51.100.12' },
+      body: JSON.stringify({ model: 'gemini-2.5-flash', prompt: 'hello' }),
+    }));
+    expect(post.status).toBe(200);
+    expect(post.headers.get('access-control-allow-origin')).toBe('https://game.example');
+    expect(await post.json()).toMatchObject({ text: 'model text', model_used: 'gemini-2.5-flash' });
+
+    const preflight = await adapter.default(new Request('https://game.example/.netlify/functions/provider-adapter', {
+      method: 'OPTIONS', headers: { Origin: 'https://game.example' },
+    }));
+    expect(preflight.status).toBe(204);
+
+    const forbidden = await adapter.default(new Request('https://game.example/.netlify/functions/provider-adapter', {
+      method: 'POST', headers: { Origin: 'https://evil.example' }, body: '{}',
+    }));
+    expect(forbidden.status).toBe(403);
   });
 });

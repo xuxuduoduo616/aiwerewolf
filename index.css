@@ -243,22 +243,6 @@ video {
   to   { box-shadow: 0 0 60px rgba(255,255,255,0.10), inset -6px -4px 0 rgba(0,0,0,0.30); }
 }
 
-/* Day/Night phase transition overlay */
-.phase-transition-night {
-  animation: fadeToNight 1.2s ease-in-out forwards;
-}
-.phase-transition-day {
-  animation: fadeToDaylight 1.2s ease-in-out forwards;
-}
-@keyframes fadeToNight {
-  from { filter: brightness(1); }
-  to   { filter: brightness(0.72) hue-rotate(20deg); }
-}
-@keyframes fadeToDaylight {
-  from { filter: brightness(0.72) hue-rotate(20deg); }
-  to   { filter: brightness(1); }
-}
-
 /* ─── Panels ──────────────────────────────────────────────────────────────── */
 .auth-panel,
 .mode-card,
@@ -457,7 +441,10 @@ video {
   box-shadow: 0 4px 16px rgba(var(--wolf-red-600), 0.25);
 }
 .action-button.danger::after {
+  /* Visual hint only: the empty alt text keeps it out of the accessible name
+     ("SHOOT", not "SHOOT Confirm?"). Older engines keep the first line. */
   content: " Confirm?";
+  content: " Confirm?" / "";
   font-size: 10px;
   opacity: 0.7;
 }
@@ -694,9 +681,6 @@ video {
   .sketch-scene::after { animation: none; }
   .sketch-tree::after  { animation: none; }
   .sketch-moon         { animation: none; }
-
-  .phase-transition-night,
-  .phase-transition-day { animation: none; }
 
   .speaking-ring     { animation: none; }
   .timer-pill.urgent { animation: none; }

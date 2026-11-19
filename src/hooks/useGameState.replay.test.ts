@@ -9,6 +9,9 @@ const hooks = vi.hoisted(() => ({
   effects: new Map<number, { deps?: readonly unknown[]; cleanup?: () => void }>(),
   pending: [] as (() => void)[],
 }));
+// These scenarios script each seat's role, so the deal is pinned to the
+// board's configured order instead of a random shuffle.
+vi.mock('../services/roleDeal', () => ({ shuffleRoles: <T,>(roles: readonly T[]) => [...roles] }));
 vi.mock('react', async importOriginal => {
   const actual = await importOriginal<typeof import('react')>();
   return {

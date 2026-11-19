@@ -34,6 +34,8 @@ import { DEFAULT_DISPLAY_LANGUAGE, pickTranslationSource, type DisplayLanguage }
 import * as speechAudio from '../services/speechAudio';
 import { endMatch, installPageLifecycleCapture, startMatch } from '../services/matchTelemetry';
 import { globalBeliefTracker } from '../ai/beliefTracker';
+import { preloadSpeechPools } from '../services/speechLibrary';
+import { shuffleRoles } from '../services/roleDeal';
 import { createReplayRecorder, saveReplay, type ReplayRecorder } from '../replay';
 
 const AI_STYLE_KEYS = Object.keys(CUSTOM_AI_STYLES);
@@ -239,6 +241,11 @@ interface PlayerClock {
   stop: () => void;
 }
 
+export interface StartGameOptions {
+  /** Hold the first phase until releaseIntro() is called. */
+  holdForIntro?: boolean;
+}
+
 export function useGameState(authContext: AuthContext) {
   const { session, isGuest, records, setRecords, setRecordError, guestPrincipalId, publicName } = authContext;
 
@@ -258,6 +265,9 @@ export function useGameState(authContext: AuthContext) {
   // Keep a fresh view state even if two toggles are batched into one render,
   // so a cancelled phase delay is always rearmed when running.
   const [pause, setPause] = useState({ isPaused: false });
+  // Opt-in hold so the opening ceremony can finish (and mask asset preloading)
+  // before the first night timer starts. Off unless startGame asks for it.
+  const [introPending, setIntroPending] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   // Audio prefs (browser-tts-mvp): restored from localStorage, synced to the
   // speechAudio service below. ttsEnabled defaults to OFF — flipping the
@@ -403,6 +413,7 @@ export function useGameState(authContext: AuthContext) {
   };
 
   const leaveGame = () => {
+    setIntroPending(false);
     if (!matchActiveRef.current) return;
     // H1-F/OBS-DENOM: only a match without a winner is an abandonment. A match
     // that already reached GAME_OVER was finalized by the effect below, and
@@ -561,7 +572,7 @@ export function useGameState(authContext: AuthContext) {
 
   // Phase transition driver
   useEffect(() => {
-    if (!canProgress() || winner || !players.length || processingScopeRef.current) return;
+    if (introPending || !canProgress() || winner || !players.length || processingScopeRef.current) return;
     const timer = window.setTimeout(() => {
       release();
       if (!canProgress() || processingScopeRef.current) return;
@@ -581,7 +592,7 @@ export function useGameState(authContext: AuthContext) {
     });
     phaseDelayRef.current = release;
     return release;
-  }, [phaseScope, generation, pause, players, isProcessingAI, winner, currentSpeaker, speakingQueue, deadThisRound, nightState]);
+  }, [phaseScope, generation, pause, players, isProcessingAI, winner, currentSpeaker, speakingQueue, deadThisRound, nightState, introPending]);
 
   // Game record saving
   useEffect(() => {
@@ -671,7 +682,7 @@ export function useGameState(authContext: AuthContext) {
     return id;
   };
 
-  const startGame = (nextConfig: GameConfig, language?: DisplayLanguage) => {
+  const startGame = (nextConfig: GameConfig, language?: DisplayLanguage, options: StartGameOptions = {}) => {
     const playerName = resolvePublicPlayerName(publicName);
     if (!playerName) {
       setRecordError('A public identity is required before starting a game.');
@@ -679,6 +690,7 @@ export function useGameState(authContext: AuthContext) {
     }
     invalidateMatch();
     matchActiveRef.current = true;
+    setIntroPending(Boolean(options.holdForIntro));
     const nextLanguage = resolveGameLanguage(language);
     startMatch({ boardId: nextConfig.id, difficulty, language: nextLanguage, isGuest });
     setPause({ isPaused: false });
@@ -690,7 +702,7 @@ export function useGameState(authContext: AuthContext) {
     speechAudio.reset(); // new game: cancel audio, clear play-once dedupe
     setGameLanguage(nextLanguage);
     setAIDifficulty(DIFFICULTY_CONFIGS[difficulty].actionAccuracy);
-    const shuffledRoles = [...nextConfig.roles].sort(() => Math.random() - 0.5);
+    const shuffledRoles = shuffleRoles(nextConfig.roles);
     const wolfIndices: number[] = [];
     const basePlayers: Player[] = shuffledRoles.map((role, index) => {
       const isHuman = index === 0;
@@ -747,6 +759,9 @@ export function useGameState(authContext: AuthContext) {
 
     setConfig(nextConfig);
     setPlayers(nextPlayers);
+    // Warm the speech pools during the first night so the first daytime
+    // speech never waits on a large JSON chunk download.
+    void preloadSpeechPools(nextPlayers.map(player => player.role));
     const localVitePorts = new Set(['5173', '4173', '4174', '4175']);
     const localProxyNotice = localVitePorts.has(window.location.port)
       ? [{
@@ -1318,6 +1333,8 @@ export function useGameState(authContext: AuthContext) {
     return 'Waiting for the system and AI players.';
   })();
 
+  const releaseIntro = (): void => setIntroPending(false);
+
   const skipCurrentSpeech = (): void => {
     if (!canProgress()) return;
     // Cancels the in-flight utterance; the awaited enqueue promise settles and
@@ -1350,5 +1367,6 @@ export function useGameState(authContext: AuthContext) {
     handleWitchSave, skipWitch,
     finishVote, handleHumanSpeechSubmit,
     skipCurrentSpeech, togglePause,
+    introPending, releaseIntro,
   };
 }

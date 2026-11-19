@@ -61,7 +61,8 @@ class ControlledAnimationFrames {
 
 const responsiveCss = readFileSync(new URL('../styles/game-responsive.css', import.meta.url), 'utf8');
 const legacyCss = readFileSync(new URL('../../index.css', import.meta.url), 'utf8');
-const appSource = readFileSync(new URL('../App.tsx', import.meta.url), 'utf8');
+// The in-game board moved from App into the lazy GameScreen.
+const appSource = readFileSync(new URL('../screens/GameScreen.tsx', import.meta.url), 'utf8');
 const renderedGameRoom = renderToStaticMarkup(
   <GameRoom header={<header>Round header</header>} sidebar={<aside>Game log</aside>} boardLabel="Game board">
     <div>Actions</div>

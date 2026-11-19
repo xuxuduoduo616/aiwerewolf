@@ -11,6 +11,9 @@ const hooks = vi.hoisted(() => ({
   effects: new Map<number, { deps?: readonly unknown[]; cleanup?: () => void }>(),
   pending: [] as (() => void)[],
 }));
+// These scenarios script each seat's role, so the deal is pinned to the
+// board's configured order instead of a random shuffle.
+vi.mock('../services/roleDeal', () => ({ shuffleRoles: <T,>(roles: readonly T[]) => [...roles] }));
 vi.mock('react', async importOriginal => {
   const actual = await importOriginal<typeof import('react')>();
   return {
@@ -557,5 +560,32 @@ describe('new-match public speech personas', () => {
     expect(game.players[0]).not.toHaveProperty('aiSpeechPersonaId');
     expect(game.players.slice(1).map(player => player.aiSpeechPersonaId))
       .toEqual(firstIds.map(() => 'analysis-confident'));
+  });
+});
+
+describe('opening ceremony hold', () => {
+  it('keeps the first night waiting until releaseIntro, then progresses normally', async () => {
+    leave();
+    game.startGame(fixture, 'en', { holdForIntro: true }); flush();
+    expect(game.introPending).toBe(true);
+    expect(game.phase).toBe(GamePhase.NIGHT_START);
+    await advance(5000);
+    expect(game.phase).toBe(GamePhase.NIGHT_START);
+    expect(game.roundCount).toBe(0);
+
+    game.releaseIntro(); flush();
+    expect(game.introPending).toBe(false);
+    await advance(700);
+    expect(game.phase).toBe(GamePhase.NIGHT_WEREWOLVES);
+    expect(game.roundCount).toBe(1);
+  });
+
+  it('never holds unless asked, and leaving clears a pending hold', async () => {
+    expect(game.introPending).toBe(false);
+    leave();
+    game.startGame(fixture, 'en', { holdForIntro: true }); flush();
+    leave();
+    expect(game.introPending).toBe(false);
+    expect(game.phase).toBe(GamePhase.LOBBY);
   });
 });

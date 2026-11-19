@@ -214,7 +214,10 @@ const tryModel = async (model, prompt, responseMimeType, cost) => {
 };
 const localResult = () => ({ text: '', model_used: LOCAL_FALLBACK, cost_estimate: 0, fallback_used: true });
 
-exports.handler = async (event) => {
+// Event-shaped core (method, lower-cased headers, raw body). Kept separate
+// from the v2 entry point so its behavior stays unit-testable without a
+// Request/Response runtime.
+const handleEvent = async (event) => {
   const allowedOrigin = getAllowedOrigin(event.headers);
   const headers = headersFor(allowedOrigin);
   if (!allowedOrigin) return { statusCode: 403, headers, body: JSON.stringify({ error: 'Forbidden' }) };
@@ -256,6 +259,23 @@ exports.handler = async (event) => {
   return { statusCode: 200, headers, body: JSON.stringify(localResult()) };
 };
 
+// Netlify Functions v2 entry point. AI Gateway credentials (GEMINI_API_KEY,
+// GOOGLE_GEMINI_BASE_URL) are injected only into the v2+ runtime. The route
+// stays /.netlify/functions/provider-adapter (and its genai-proxy /
+// model-adapter aliases, which re-export this module).
+const v2Handler = async (req) => {
+  const headers = {};
+  req.headers.forEach((value, key) => { headers[key.toLowerCase()] = value; });
+  const method = String(req.method || 'GET').toUpperCase();
+  const body = method === 'GET' || method === 'HEAD' || method === 'OPTIONS' ? '' : await req.text();
+  const result = await handleEvent({ httpMethod: method, headers, body });
+  const status = result.statusCode;
+  const hasBody = status !== 204 && result.body !== '';
+  return new Response(hasBody ? result.body : null, { status, headers: result.headers });
+};
+
+exports.default = v2Handler;
+exports.handleEvent = handleEvent;
 exports.MODEL_REGISTRY = MODEL_REGISTRY;
 exports.PRIMARY_MODEL = PRIMARY_MODEL;
 exports.SECONDARY_MODEL = SECONDARY_MODEL;
