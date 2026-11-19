@@ -9,7 +9,7 @@
  * Falls back gracefully: remote model → Library → hardcoded template.
  */
 
-import type { GameLog, GamePhase, NightState, Player, Role, VoteRecord, WolfChatMessage } from '../types';
+import type { Difficulty, GameLog, GamePhase, NightState, Player, Role, VoteRecord, WolfChatMessage } from '../types';
 import { DEFAULT_DISPLAY_LANGUAGE, pickLogText, type DisplayLanguage } from '../i18n';
 import { ROLE_LABELS, WEREWOLF_SLANG } from '../constants';
 import { CUSTOM_AI_STYLES, FALLBACK_STYLE, ROLE_PERSONAS } from '../services/aiStyles';
@@ -25,12 +25,16 @@ import { globalBeliefTracker } from './beliefTracker';
 import { selectAction } from './actionSelector';
 import type { ActionType } from './actionSelector';
 import { DEFAULT_EXPRESSION_MODEL, type AIExpressionModelId } from './modelCatalog';
+import { LOCAL_DIALOGUE_SOURCE, resolveSingleRoute, type DialogueSource, type RoutedModelId } from './modelRouting';
+import { conciseWolfText, humanWolfInstructions, wolfDayFallback, wolfNightFallback } from './wolfStrategy';
 
 // ─── helpers ───────────────────────────────────────────────────────────────
 
 interface ExpressionLifecycle {
   runWhenActive: <T>(work: () => T | Promise<T>) => Promise<T | undefined>;
   deferCommit: (commit: () => void) => void;
+  signal?: AbortSignal;
+  onSource?: (source: DialogueSource) => void;
 }
 
 const runExpression = <T,>(lifecycle: ExpressionLifecycle | undefined, work: () => Promise<T>) =>
@@ -59,14 +63,40 @@ const isSubstantiveEnglish = (text: string): boolean =>
 // Historical log lines are sanitized before entering any prompt (H2): prior
 // library picks can carry AIWolf entities, which must not recycle into new
 // model output.
-const fmtLogs = (logs: GameLog[], language: DisplayLanguage = DEFAULT_DISPLAY_LANGUAGE) =>
-  logs.slice(-16).map(l => {
+const fmtLogs = (logs: GameLog[], language: DisplayLanguage = DEFAULT_DISPLAY_LANGUAGE, maxChars = Infinity) => {
+  const lines = logs.filter(log => log.tone !== 'wolf').slice(-16).map(l => {
     const speaker = l.speakerId ? (language === 'en' ? `Player ${l.speakerId}` : `${l.speakerId}号`) : (language === 'en' ? 'System' : '系统');
     return `${speaker}: ${sanitizeForeignEntities(pickLogText(l, language), language)}`;
-  }).join('\n');
+  });
+  const selected: string[] = [];
+  let remaining = maxChars;
+  for (const line of lines.reverse()) {
+    if (line.length + 1 > remaining) continue;
+    selected.unshift(line);
+    remaining -= line.length + 1;
+  }
+  return selected.join('\n');
+};
 
 const fmtVotes = (vr: VoteRecord[], language: DisplayLanguage) =>
   vr.slice(-12).map(v => `R${v.round} ${v.voterId}→${v.targetId ?? (language === 'en' ? 'abstain' : '弃票')}`).join(', ') || (language === 'en' ? 'None' : '暂无');
+
+const formatWolfHistory = (history: WolfChatMessage[], players: Player[], language: DisplayLanguage): string => {
+  const human = humanWolfInstructions(history, players);
+  const latest = human[human.length - 1];
+  const entries = [latest, ...history.slice().reverse().filter(entry => entry !== latest)]
+    .filter((entry): entry is WolfChatMessage => Boolean(entry && players.some(player => player.id === entry.speakerId && player.role === 'Werewolf')));
+  const lines: string[] = [];
+  let remaining = 2600;
+  for (const entry of entries) {
+    const label = entry === latest ? 'LATEST HUMAN INSTRUCTION' : `Night ${entry.round}`;
+    const line = `${label} / Player ${entry.speakerId}: ${sanitizeForeignEntities(entry.message, language)}`;
+    if (line.length > remaining) continue;
+    lines.push(line);
+    remaining -= line.length;
+  }
+  return lines.join('\n');
+};
 
 const fmtPlayers = (viewer: Player, players: Player[], language: DisplayLanguage) =>
   players.map(p => {
@@ -88,10 +118,12 @@ const generateSpeechWithLLM = async (
   systemPrompt: string,
   userPrompt: string,
   lifecycle?: ExpressionLifecycle,
+  route: AIExpressionModelId = currentExpressionModel,
+  onSource?: (source: DialogueSource) => void,
 ): Promise<{ zh: string; en: string } | null> => {
   try {
     const { generateSpeechWithLLM: generate } = await import('./geminiAdapter');
-    return (await runExpression(lifecycle, () => generate(systemPrompt, userPrompt, currentExpressionModel))) ?? null;
+    return (await runExpression(lifecycle, () => generate(systemPrompt, userPrompt, route, currentExpressionDifficulty, lifecycle?.signal, onSource))) ?? null;
   } catch {
     return null;
   }
@@ -101,10 +133,12 @@ const generateNightMessagesWithLLM = async (
   systemPrompt: string,
   userPrompt: string,
   lifecycle?: ExpressionLifecycle,
+  route: AIExpressionModelId = currentExpressionModel,
+  onSource?: (source: DialogueSource) => void,
 ): Promise<unknown[]> => {
   try {
     const { generateWolfChatWithLLM } = await import('./geminiAdapter');
-    return (await runExpression(lifecycle, () => generateWolfChatWithLLM(systemPrompt, userPrompt, currentExpressionModel))) ?? [];
+    return (await runExpression(lifecycle, () => generateWolfChatWithLLM(systemPrompt, userPrompt, route, lifecycle?.signal, currentExpressionDifficulty, onSource))) ?? [];
   } catch {
     return [];
   }
@@ -115,14 +149,16 @@ const generateNightMessagesWithLLM = async (
 // Module-level difficulty config (set once per game via setAIDifficulty)
 let currentAccuracy = 0.85;
 let currentExpressionModel: AIExpressionModelId = DEFAULT_EXPRESSION_MODEL;
+let currentExpressionDifficulty: Difficulty = 'normal';
 
 export const setAIDifficulty = (actionAccuracy: number) => {
   currentAccuracy = actionAccuracy;
 };
 
 /** Capture the dialogue model once when a match starts; actions never read it. */
-export const setAIExpressionModel = (expressionModel: AIExpressionModelId) => {
+export const setAIExpressionModel = (expressionModel: AIExpressionModelId, difficulty: Difficulty = 'normal') => {
   currentExpressionModel = expressionModel;
+  currentExpressionDifficulty = difficulty;
 };
 
 export const resetAIMemory = () => {
@@ -143,13 +179,17 @@ export const generateAIDialogue = async (
   nightState: NightState = { wolfKillId: null, witchPoisonId: null, witchSaved: false },
   language: DisplayLanguage = DEFAULT_DISPLAY_LANGUAGE,
   lifecycle?: ExpressionLifecycle,
+  wolfHistory: WolfChatMessage[] = [],
 ): Promise<{ en: string; zh: string }> => {
 
   // Initialize beliefs if needed
   if (globalBeliefTracker.snapshot(player.id).length === 0) {
     globalBeliefTracker.init(players);
   }
+  const route = player.aiAssignedModel ?? resolveSingleRoute(currentExpressionModel, currentExpressionDifficulty);
+  let remoteSource: DialogueSource = { model: 'unknown', fallback: false };
   const commitSpeech = (text: string, meta: SpeechDiagnosticMeta) => commitExpression(lifecycle, () => {
+    lifecycle?.onSource?.(meta.source === 'remote-model' ? remoteSource : LOCAL_DIALOGUE_SOURCE);
     emitSpeechDiagnostic(meta);
     globalBeliefTracker.updateFromSpeech(player.id, text, players);
   });
@@ -163,7 +203,7 @@ export const generateAIDialogue = async (
     return [persona.tone.leadIn[language], persona.purpose.leadIn[language], speech].join(separator);
   };
 
-  const styleKey = Object.keys(CUSTOM_AI_STYLES).find(k => player.aiModelLabel?.includes(k)) || 'GPT-4o';
+  const styleKey = Object.keys(CUSTOM_AI_STYLES).find(k => (player.aiStyleId ?? player.traits[0])?.includes(k)) || 'GPT-4o';
   const style = CUSTOM_AI_STYLES[styleKey] || FALLBACK_STYLE;
   const slang = WEREWOLF_SLANG.slice(0, 6).join('、');
   const deathNote = deadThisRound.length ? `昨晚倒牌：${deadThisRound.map(id => `${id}号`).join('、')}` : '昨晚平安夜';
@@ -213,11 +253,14 @@ ${roleStrategies[player.role] || ''}
     ? `died last night: ${deadThisRound.map(id => `Player ${id}`).join(', ')}`
     : 'a peaceful night';
   const brief = persona?.id.startsWith('brief-');
-  const userPrompt = language === 'en'
+  const privatePlan = player.role === 'Werewolf' ? formatWolfHistory(wolfHistory, players, language) : '';
+  const userPrompt = `${privatePlan ? (language === 'en'
+    ? `Private team plan (for your own behavior only; never quote it, reveal teammates, or mention night coordination publicly):\n${privatePlan}\nFollow the latest human assignments over your default fake-claim role. Keep public reasoning plausible; this context does not authorize game actions.\n\n`
+    : `狼队私密安排（只影响你的表达，禁止公开引用或泄露队友与夜间配合）：\n${privatePlan}\n最新真人分工优先于默认悍跳身份，不改变游戏行动。\n\n`) : ''}${language === 'en'
     ? `Current situation: round ${round}, ${deathNoteEn}
 Players: ${fmtPlayers(player, players, language)}
 Recent speeches:
-${fmtLogs(logs, language)}
+${fmtLogs(logs, language, privatePlan ? 1200 : Infinity)}
 Votes: ${fmtVotes(voteRecords, language)}
 
 Write one full daytime speech in ENGLISH (${brief ? '20-60' : '60-160'} English words, must mention specific player numbers as "Player N").
@@ -225,24 +268,24 @@ Return JSON: {"en":"full English speech"}`
     : `当前局面：第${round}轮，${deathNote}
 玩家列表：${fmtPlayers(player, players, language)}
 近期发言：
-${fmtLogs(logs, language)}
+${fmtLogs(logs, language, privatePlan ? 1200 : Infinity)}
 票型：${fmtVotes(voteRecords, language)}
 
 请输出一段白天发言（${brief ? '30-80' : '80-180'}中文字符，必须提到具体玩家编号）。
-返回JSON：{"en":"short English summary","zh":"Chinese speech"}`;
+返回JSON：{"en":"short English summary","zh":"Chinese speech"}`}`;
 
   // Layer 3: Try the selected expression model first. Accepted text passes the roster guard
   // (H8): out-of-roster references are structurally repaired when
   // unambiguous, otherwise the response is discarded and the library layer
   // takes over — detected-bad text never reaches the display path.
-  const llmResult = await generateSpeechWithLLM(systemPrompt, userPrompt, lifecycle);
+  const llmResult = await generateSpeechWithLLM(systemPrompt, userPrompt, lifecycle, route, source => { remoteSource = source; });
   if (language === 'en') {
     if (llmResult?.en && isSubstantiveEnglish(llmResult.en)) {
       const guard = guardSpeechText(llmResult.en, players, 'en');
       if (guard.ok && isSubstantiveEnglish(guard.text)) {
         const zhGuard = guardSpeechText(llmResult.zh || '', players, 'zh');
         commitSpeech(guard.text, {
-          context: 'day-speech', source: 'remote-model', model: currentExpressionModel,
+          context: 'day-speech', source: 'remote-model', model: remoteSource.model,
           speakerId: player.id, repaired: guard.repaired,
         });
         return { en: guard.text, zh: zhGuard.ok ? zhGuard.text : '' };
@@ -253,10 +296,21 @@ ${fmtLogs(logs, language)}
     if (guard.ok && isChinese(guard.text)) {
       const enGuard = guardSpeechText(llmResult.en || '', players, 'en');
       commitSpeech(guard.text, {
-        context: 'day-speech', source: 'remote-model', model: currentExpressionModel,
+        context: 'day-speech', source: 'remote-model', model: remoteSource.model,
         speakerId: player.id, repaired: guard.repaired,
       });
       return { zh: guard.text, en: enGuard.ok ? enGuard.text : 'Speaks based on game situation.' };
+    }
+  }
+
+  // The private plan also survives provider failure. Corpus lines cannot
+  // blindly override a human's revised responsibilities.
+  const plannedFallback = player.role === 'Werewolf' ? wolfDayFallback(player, players, wolfHistory, language) : null;
+  if (plannedFallback) {
+    const guard = guardSpeechText(styleFallback(plannedFallback), players, language);
+    if (guard.ok) {
+      commitSpeech(guard.text, { context: 'day-speech', source: 'hardcoded-fallback', speakerId: player.id, repaired: guard.repaired, fallbackReason: 'llm-rejected' });
+      return language === 'en' ? { en: guard.text, zh: '' } : { en: '', zh: guard.text };
     }
   }
 
@@ -361,101 +415,138 @@ export const generateWolfChat = async (
   voteRecords: VoteRecord[] = [],
   language: DisplayLanguage = DEFAULT_DISPLAY_LANGUAGE,
   lifecycle?: ExpressionLifecycle,
+  context: { history: WolfChatMessage[]; confirmedTargetId?: number | null } = { history: [] },
 ): Promise<WolfChatMessage[]> => {
-  if (wolves.length === 0) return [];
+  const speakers = wolves.filter((wolf, index) => !wolf.isHuman && wolf.isAlive && wolf.role === 'Werewolf'
+    && wolves.findIndex(candidate => candidate.id === wolf.id) === index);
+  if (speakers.length === 0 || lifecycle?.signal?.aborted) return [];
 
+  const groups = new Map<RoutedModelId, Player[]>();
+  for (const speaker of speakers) {
+    const route = speaker.aiAssignedModel ?? resolveSingleRoute(currentExpressionModel, currentExpressionDifficulty);
+    groups.set(route, [...(groups.get(route) ?? []), speaker]);
+  }
+  if (groups.size > 1) {
+    const results: WolfChatMessage[] = [];
+    const commits: (() => void)[] = [];
+    for (const group of groups.values()) {
+      if (lifecycle?.signal?.aborted) return [];
+      const child = lifecycle ? { ...lifecycle, deferCommit: (commit: () => void) => { commits.push(commit); } } : undefined;
+      results.push(...await generateWolfChat(group, players, logs, round, voteRecords, language, child, context));
+    }
+    if (lifecycle) lifecycle.deferCommit(() => commits.forEach(commit => commit()));
+    return speakers.flatMap(speaker => results.filter(message => message.speakerId === speaker.id));
+  }
+  const route = groups.keys().next().value!;
+  let remoteSource: DialogueSource = { model: 'unknown', fallback: false };
   const aliveGood = players.filter(p => p.isAlive && p.role !== 'Werewolf');
+  const pack = players.filter(player => player.role === 'Werewolf' && player.isAlive);
   const strategyTags: WolfChatMessage['strategyTag'][] = ['刀口', '悍跳', '冲锋', '倒钩', '补位'];
+  const privateHistory = formatWolfHistory(context.history, players, language);
+  const personalities = speakers.map(wolf => {
+    const persona = ROLE_PERSONAS.find(candidate => candidate.id === wolf.aiSpeechPersonaId);
+    const styleKey = Object.keys(CUSTOM_AI_STYLES).find(key => (wolf.aiStyleId ?? wolf.traits[0])?.includes(key));
+    return `Player ${wolf.id}: ${persona ? `${persona.purpose.prompt[language]} ${persona.tone.prompt[language]}`
+      : (styleKey ? CUSTOM_AI_STYLES[styleKey] : FALLBACK_STYLE).personalityPrompt}`;
+  }).join('\n');
 
   // Try the selected expression model for wolf chat
   const systemPrompt = language === 'en'
-    ? `${englishOutputRule}\nYou are the werewolf night team. Discuss strategy concisely in English. The strategyTag field is a fixed internal enum; copy it exactly.`
-    : '你们是狼人夜间团队，用中文简洁商量策略。';
+    ? `${englishOutputRule}\nYou are the werewolf night team. Discuss strategy concisely in English. Write two or three complete sentences, at most 65 words per teammate. Keep each speaker's personality. React to the latest human instructions, acknowledge your assigned responsibility, and discuss a concrete trade-off without inventing agreement. Respond to earlier teammate messages and revise outdated plans. Never speak for the human. Kill suggestions are discussion only; the human's confirmed kill remains authoritative. The strategyTag field is a fixed internal enum; copy it exactly.`
+    : '你们是狼人夜间团队，用中文简洁商量策略。每人两到三个完整短句，根据最新真人指令回应分工和取舍，保持各自性格。不要代替真人发言，不能改变真人已确认的击杀。';
   const userPrompt = language === 'en'
-    ? `Wolf team: ${wolves.map(w => `Player ${w.id}`).join(', ')}
+    ? `${privateHistory ? `Private conversation, newest human instruction first:\n${privateHistory}\n` : ''}Wolf team: ${pack.map(w => `Player ${w.id}${w.isHuman ? ' (human)' : ''}`).join(', ')}
+Requested AI speakers only: ${speakers.map(wolf => `Player ${wolf.id}`).join(', ')}
+Personalities:\n${personalities}
+Confirmed night target: ${context.confirmedTargetId ? `Player ${context.confirmedTargetId}` : 'not yet chosen by the human'}
 Living villagers: ${aliveGood.map(p => `Player ${p.id}`).join(', ')}
-Recent speeches: ${fmtLogs(logs, language)}
+Recent speeches: ${fmtLogs(logs, language, 900)}
 Votes: ${fmtVotes(voteRecords, language)}
-Output ${Math.min(3, wolves.length)} night-chat strategy messages in English.
+Output exactly one night-chat strategy message for each requested AI speaker in English.
 JSON: {"messages":[{"speakerId":number,"message":"English","strategyTag":"刀口|悍跳|冲锋|倒钩|补位"}]}`
-    : `狼队：${wolves.map(w => `${w.id}号`).join('、')}
+    : `${privateHistory ? `私密对话，最新真人指令在前：\n${privateHistory}\n` : ''}狼队：${pack.map(w => `${w.id}号${w.isHuman ? '（真人）' : ''}`).join('、')}
+只为以下AI队友输出：${speakers.map(wolf => `${wolf.id}号`).join('、')}
+性格：${personalities}
+已确认击杀：${context.confirmedTargetId ?? '真人尚未选择'}
 存活好人：${aliveGood.map(p => `${p.id}号`).join('、')}
-近期发言：${fmtLogs(logs, language)}
+近期发言：${fmtLogs(logs, language, 900)}
 票型：${fmtVotes(voteRecords, language)}
-输出${Math.min(3, wolves.length)}条夜聊策略。
+为每名指定AI队友各输出一条夜聊策略。
 JSON：{"messages":[{"speakerId":number,"message":"中文","strategyTag":"刀口|悍跳|冲锋|倒钩|补位"}]}`;
 
-  const raw = await generateNightMessagesWithLLM(systemPrompt, userPrompt, lifecycle);
+  const raw = await generateNightMessagesWithLLM(systemPrompt, userPrompt, lifecycle, route, source => { remoteSource = source; });
+  if (lifecycle?.signal?.aborted) return [];
   const diagnostics: SpeechDiagnosticMeta[] = [];
   const report = lifecycle ? (meta: SpeechDiagnosticMeta) => { diagnostics.push(meta); } : emitSpeechDiagnostic;
   const finishChat = (messages: WolfChatMessage[]) => {
     lifecycle?.deferCommit(() => diagnostics.forEach(emitSpeechDiagnostic));
     return messages;
   };
-  const generated: WolfChatMessage[] = [];
+  const generated = new Map<number, WolfChatMessage>();
   for (const value of raw) {
     if (!value || typeof value !== 'object') continue;
     const item = value as { speakerId?: unknown; message?: unknown; strategyTag?: unknown };
     if (typeof item.speakerId !== 'number' || typeof item.message !== 'string'
-      || !wolves.some(w => w.id === item.speakerId)) continue;
-    const guard = guardSpeechText(item.message, players, language);
+      || !speakers.some(w => w.id === item.speakerId) || generated.has(item.speakerId)) continue;
+    const complete = conciseWolfText(item.message);
+    if (!complete) continue;
+    const guard = guardSpeechText(complete, players, language);
     if (!guard.ok || !(language === 'en' ? isEnglish(guard.text) : isChinese(guard.text))) continue;
     const strategyTag = strategyTags.find(tag => tag === item.strategyTag) || '补位';
-    generated.push({
-      id: `wolf-${round}-${Date.now()}-${generated.length}`,
+    generated.set(item.speakerId, {
+      id: `wolf-${round}-${Date.now()}-${item.speakerId}`,
       round,
       speakerId: item.speakerId,
       message: guard.text,
       strategyTag,
+      dialogueSource: remoteSource,
     });
     report({
-      context: 'wolf-chat', source: 'remote-model', model: currentExpressionModel,
+      context: 'wolf-chat', source: 'remote-model', model: remoteSource.model,
       speakerId: item.speakerId, repaired: guard.repaired,
     });
-    if (generated.length >= Math.min(3, wolves.length)) break;
   }
-  if (generated.length > 0) return finishChat(generated);
 
-  // Library fallback: pick wolf speeches from corpus
+  // Fill each missing speaker separately. A valid first speaker must not hide
+  // a missing teammate or let the model impersonate the human.
   const result: WolfChatMessage[] = [];
-  for (let i = 0; i < Math.min(3, wolves.length); i++) {
-    const wolf = wolves[i];
+  for (let i = 0; i < speakers.length; i++) {
+    const wolf = speakers[i];
+    const remote = generated.get(wolf.id);
+    if (remote) { result.push(remote); continue; }
     const libText = await runExpression(lifecycle, () => pickWolfNightSpeech(language));
-    if (libText === undefined) return [];
+    if (libText === undefined || lifecycle?.signal?.aborted) return [];
     const tag = strategyTags[i % strategyTags.length];
-    const target = aliveGood[i % aliveGood.length];
     // In EN mode a mixed-language corpus pick must actually be English,
     // otherwise the English hardcoded lines take over. The roster guard (H8)
     // repairs or rejects library picks the same way (rejected → hardcoded
     // line, which references only live roster seats).
-    const libGuard = guardSpeechText(libText.slice(0, 120), players, language);
+    const complete = conciseWolfText(libText);
+    const libGuard = guardSpeechText(complete || '', players, language);
     const libOk = Boolean(
-      libText && libText.length > 15 && libGuard.ok && (language === 'en' ? isEnglish(libGuard.text) : isChinese(libGuard.text)),
+      complete && libText.length > 15 && libGuard.ok && !context.history.length
+        && (language === 'en' ? isEnglish(libGuard.text) : isChinese(libGuard.text)),
     );
     const fallbackMsg = libOk
       ? libGuard.text
-      : language === 'en'
-        ? (i === 0
-          ? `I suggest we hit ${target ? `Player ${target.id}` : 'a power seat'} tonight.`
-          : i === 1
-            ? 'Tomorrow one of us needs to fake-claim seer — I can take that jump.'
-            : 'Do not charge during the day; hook back and cover the fake seer.')
-        : (i === 0
-          ? `我建议刀${target ? `${target.id}号` : '强神位'}。`
-          : i === 1
-            ? '明天需要一张牌悍跳预言家，我可以跳。'
-            : '白天别冲，倒钩配合悍跳狼。');
+      : wolfNightFallback(wolf, players, context.history, language, context.confirmedTargetId);
+    const persona = ROLE_PERSONAS.find(candidate => candidate.id === wolf.aiSpeechPersonaId);
+    const styled = !libOk && persona
+      ? `${persona.tone.leadIn[language].replace(/[.!。]+$/, language === 'en' ? ':' : '：')}${language === 'en' ? ' ' : ''}${fallbackMsg}`
+      : fallbackMsg;
+    const safe = guardSpeechText(conciseWolfText(styled) || fallbackMsg, players, language);
 
     report({
       context: 'wolf-chat', source: libOk ? 'library' : 'hardcoded-fallback',
       speakerId: wolf.id, repaired: libGuard.repaired, fallbackReason: 'llm-rejected',
     });
     result.push({
-      id: `wolf-${round}-${wolf.id}-${i}`,
+      id: `wolf-${round}-${Date.now()}-${wolf.id}`,
       round,
       speakerId: wolf.id,
-      message: fallbackMsg,
+      message: safe.ok ? safe.text : namelessFallbackLine(language),
       strategyTag: tag,
+      dialogueSource: LOCAL_DIALOGUE_SOURCE,
     });
   }
   return finishChat(result);

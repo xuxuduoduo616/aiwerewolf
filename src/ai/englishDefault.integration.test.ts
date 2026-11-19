@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { generateAIDialogue, generateWolfChat, setAIExpressionModel } from './aiOrchestrator';
+import { resolveSingleRoute } from './modelRouting';
 import { AI_EXPRESSION_MODEL_IDS, DEFAULT_EXPRESSION_MODEL } from './modelCatalog';
 import { makeAuditRoster } from '../diagnostics/fixtures';
 import { GamePhase, Role } from '../types';
@@ -39,7 +40,7 @@ describe('English default across the real expression pipeline', () => {
     const [endpoint, request] = fetchMock.mock.calls[0];
     expect(endpoint).toBe('/.netlify/functions/provider-adapter');
     const body = JSON.parse(request.body);
-    expect(body.model).toBe(model);
+    expect(body.model).toBe(resolveSingleRoute(model, 'normal'));
     expect(body.prompt).toContain('OUTPUT LANGUAGE: English only');
     expect(body.prompt).not.toMatch(/[\p{Script=Han}]/u);
     expect(body.prompt).not.toContain('Chinese summary');
@@ -49,11 +50,11 @@ describe('English default across the real expression pipeline', () => {
     setAIExpressionModel(model);
     respond({ messages: [{ speakerId: 2, message: nightEnglish, strategyTag: '刀口' }] });
     const result = await generateWolfChat(wolves, players, [], 1);
-    expect(result).toHaveLength(1);
+    expect(result).toHaveLength(wolves.length);
     expect(result[0].message).toBe(nightEnglish);
     expectEnglish(result[0].message);
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    expect(JSON.parse(fetchMock.mock.calls[0][1].body).model).toBe(model);
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body).model).toBe(resolveSingleRoute(model, 'normal'));
   });
 
   it.each([
@@ -98,5 +99,84 @@ describe('English default across the real expression pipeline', () => {
     expect((await dialogue('zh')).zh).toBe(zh);
     respond({ messages: [{ speakerId: 2, message: '今晚先刀五号，明天我们保持一致的说法。', strategyTag: '刀口' }] });
     expect((await generateWolfChat(wolves, players, [], 1, [], 'zh'))[0].message).toContain('今晚');
+  });
+});
+
+// These tests exercise real orchestrator + browser adapter, mocking HTTP only.
+describe('participating model requests and accepted provenance', () => {
+  const routes = ['gemini-3.6-flash', 'deepseek-flash', 'deepseek-v4-pro'] as const;
+  const routed = players.map((player, index) => ({ ...player, aiAssignedModel: routes[index % routes.length] }));
+  const makeLifecycle = (sources: unknown[]) => ({
+    runWhenActive: async <T,>(work: () => T | Promise<T>) => work(),
+    deferCommit: (commit: () => void) => commit(),
+    onSource: (source: unknown) => sources.push(source),
+  });
+  it.each(['easy', 'normal', 'hard'] as const)('calls each daytime seat route at %s and validates server provenance', async difficulty => {
+    setAIExpressionModel('multi-ai-model', difficulty);
+    fetchMock.mockImplementation(async (_url, options) => {
+      const body = JSON.parse(options.body);
+      return { ok: true, json: async () => ({ text: JSON.stringify({ en: english }), model_used: body.model, fallback_used: false }) };
+    });
+    for (const route of routes) {
+      const speaker = routed.find(player => player.aiAssignedModel === route && !player.isHuman)!;
+      const sources: unknown[] = [];
+      await generateAIDialogue(speaker, routed, [], GamePhase.DAY_DISCUSSION, [], 1, null, [], undefined, 'en', makeLifecycle(sources));
+      expect(sources).toEqual([{ model: route, fallback: false }]);
+    }
+    expect(fetchMock.mock.calls.map(([, options]) => JSON.parse(options.body))).toEqual(routes.map(model => expect.objectContaining({ model, difficulty })));
+  });
+  it('groups only identical night routes and never writes for a human or unrequested speaker', async () => {
+    const pack = routed.filter(player => player.role === Role.WEREWOLF).map((player, index) => ({ ...player, aiAssignedModel: routes[index % routes.length], isHuman: false }));
+    const roster = routed.map(player => pack.find(wolf => wolf.id === player.id) ?? player);
+    fetchMock.mockImplementation(async (_url, options) => {
+      const body = JSON.parse(options.body);
+      const requested = /Requested AI speakers only: ([^\n]+)/.exec(body.prompt)![1];
+      const ids = [...requested.matchAll(/Player (\d+)/g)].map(match => Number(match[1]));
+      return { ok: true, json: async () => ({ model_used: body.model, fallback_used: false,
+        text: JSON.stringify({ messages: [...ids.map(speakerId => ({ speakerId, message: nightEnglish, strategyTag: '刀口' })), { speakerId: 1, message: nightEnglish }] }) }) };
+    });
+    const result = await generateWolfChat(pack, roster, [], 1);
+    expect(result.map(message => message.speakerId)).toEqual(pack.map(player => player.id));
+    result.forEach(message => expect(message.dialogueSource).toEqual({ model: pack.find(player => player.id === message.speakerId)!.aiAssignedModel, fallback: false }));
+    expect(fetchMock).toHaveBeenCalledTimes(new Set(pack.map(player => player.aiAssignedModel)).size);
+    for (const [, options] of fetchMock.mock.calls) {
+      const body = JSON.parse(options.body);
+      const ids = [.../Requested AI speakers only: ([^\n]+)/.exec(body.prompt)![1].matchAll(/Player (\d+)/g)].map(match => Number(match[1]));
+      expect(ids.every(id => pack.find(player => player.id === id)!.aiAssignedModel === body.model)).toBe(true);
+    }
+  });
+  it('attributes accepted Gemini fallback, unknown metadata, and guard rejection separately', async () => {
+    const speaker = { ...players[7], aiAssignedModel: 'gemini-3.6-flash' as const };
+    for (const [metadata, text, expected] of [
+      [{ model_used: 'gemini-2.5-flash', fallback_used: true }, english, { model: 'gemini-2.5-flash', fallback: true }],
+      [{}, english, { model: 'unknown', fallback: false }],
+      [{ model_used: 'gemini-3.6-flash', fallback_used: false }, '中文不应通过英文发言', { model: 'local', fallback: true }],
+    ] as const) {
+      fetchMock.mockResolvedValue({ ok: true, json: async () => ({ text: JSON.stringify({ en: text }), ...metadata }) });
+      const sources: unknown[] = [];
+      await generateAIDialogue(speaker, routed, [], GamePhase.DAY_DISCUSSION, [], 1, null, [], undefined, 'en', makeLifecycle(sources));
+      expect(sources).toEqual([expected]);
+    }
+  });
+});
+
+describe('mixed-route night cancellation', () => {
+  it('does not start a second route or accept provenance after cancellation', async () => {
+    const pack = players.filter(player => player.role === Role.WEREWOLF).map((player, index) => ({ ...player, isHuman: false, aiAssignedModel: index === 0 ? 'gemini-3.6-flash' as const : 'deepseek-v4-pro' as const }));
+    const controller = new AbortController();
+    let release!: (value: unknown) => void;
+    fetchMock.mockImplementationOnce(() => new Promise(resolve => { release = resolve; }));
+    const commit = vi.fn();
+    const pending = generateWolfChat(pack, players, [], 1, [], 'en', {
+      signal: controller.signal,
+      runWhenActive: async <T,>(work: () => T | Promise<T>) => controller.signal.aborted ? undefined : work(),
+      deferCommit: commit,
+    });
+    await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
+    controller.abort();
+    release({ ok: true, json: async () => ({ text: JSON.stringify({ messages: [{ speakerId: pack[0].id, message: nightEnglish }] }), model_used: 'gemini-3.6-flash', fallback_used: false }) });
+    expect(await pending).toEqual([]);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(commit).not.toHaveBeenCalled();
   });
 });

@@ -13,11 +13,11 @@ Browser
   |     |-- action selector
   |     +-- AI expression pipeline
   |            |-- local role-specific speech library
-  |            +-- selected server-side expression model
+  |            +-- stable per-seat expression model
   |
   |-- Supabase client --> Auth / Postgres / row-level security
   +-- Netlify Functions
-         |-- Gemini expression adapter (3.6 → 2.5 → local fallback)
+         |-- Gemini / DeepSeek expression adapter (bounded fallback)
          |-- legacy Gemini-compatible proxy
          |-- payment fail-closed endpoint
          +-- protected Supabase administration endpoints
@@ -42,26 +42,20 @@ Browser
 - `src/ai/beliefTracker.ts` maintains explainable suspicions and observations.
 - `src/ai/actionSelector.ts` chooses legal actions from the current state.
 - `src/ai/aiOrchestrator.ts` is the public AI-expression entry point.
-- `src/ai/modelCatalog.ts` owns the typed expression-model catalog. Gemini 2.5
-  is always selectable; Gemini 3.6 is exposed only when the provider capability
-  response proves both exact Gemini IDs.
+- `src/ai/modelCatalog.ts` owns the typed catalog and participating pool. `modelRouting.ts` snapshots verified availability into stable per-seat round-robin assignments. A separate `aiStyleId` and speech persona control delivery. Gemini 2.5 remains a safe backup; offline capability data never claims remote availability.
 - `src/services/speechLibrary.ts` provides offline role- and situation-aware fallback dialogue.
-- The per-match language-model choice shapes daytime dialogue and wolf chat.
+- Each daytime speaker uses its assigned route. Night chat groups only speakers assigned to the same route, serializing groups and excluding the human. The per-match pool cannot change when delayed discovery completes.
   It does not decide game rules, legal targets, or actions; those paths remain
   deterministic.
 
 ### External services
 
-- `netlify/functions/provider-adapter.cjs` keeps the Gemini key on the server,
+- `netlify/functions/provider-adapter.cjs` keeps provider keys on the server,
   validates requested model IDs, and reports a no-store capability catalog.
   `netlify/functions/genai-proxy.cjs` remains a compatibility alias.
-- Capability discovery uses read-only SDK model lookups for both exact Gemini
-  IDs. Successful checks are briefly cached per warm instance; missing keys,
-  partial access, malformed metadata, timeouts, and offline clients fail closed
-  to Gemini 2.5 and never prevent a local-fallback match from starting.
-- Each live expression request is bounded by input/output limits, per-call and
-  daily cost guards, rate limiting, and per-model circuit breaking. It tries
-  Gemini 3.6, then Gemini 2.5, then returns the local-fallback signal.
+- Capability discovery independently checks exact Gemini and DeepSeek IDs, briefly caching successful results. `verified_models` distinguishes remotely verified access from the conservative selectable Gemini 2.5 backup. Supported partial pools remain usable; malformed envelopes unlock no remote routes.
+- Every request retains input/output bounds, per-call/daily cost guards, rate limits, timeouts and circuit breakers. Gemini 3.6 may fall back to 2.5; each DeepSeek route makes one upstream attempt then signals local fallback. No automatic paid retries are added.
+- The browser validates `model_used` / `fallback_used` against the assigned route and documented fallback. Accepted-output provenance is committed with the speech through existing lifecycle guards, stored on its log/private message and shown on the seat badge. Missing metadata remains unverified; language/roster/schema rejection uses local provenance. Cancelled or previous-match responses cannot update current labels.
 - Supabase provides email OTP authentication and Postgres-backed profiles and records. Account public identity uses a normalized unique `@username` plus Nickname (`display_name`); the internal auth UUID remains the ownership key and is not presented as a public handle.
 - Guest identity is a browser-profile-local `guest:<UUIDv4>` principal. Guest records, economy, and lobby presentation state are namespaced by that principal and are never merged into authenticated data automatically.
 - Payment endpoints fail closed with `PAYMENTS_NOT_CONFIGURED`; no real payment service provider is connected.

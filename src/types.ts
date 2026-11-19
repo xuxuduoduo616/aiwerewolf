@@ -1,3 +1,4 @@
+import type { DialogueSource, RoutedModelId } from './ai/modelRouting';
 import type { RolePersonaId } from './services/aiStyles';
 
 export enum Role {
@@ -40,6 +41,9 @@ export interface Player {
   aiPersonality: string;
   traits: string[];
   aiModelLabel: string;
+  aiStyleId?: string;
+  aiAssignedModel?: RoutedModelId;
+  aiDialogueSource?: DialogueSource;
   aiSpeechPersonaId?: RolePersonaId;
   isHuman: boolean;
   isWolfHopper?: boolean;
@@ -54,6 +58,7 @@ export interface GameLog {
   speakerId?: number;
   message: string;
   translation?: string;
+  dialogueSource?: DialogueSource;
   isSystem: boolean;
   tone?: 'system' | 'speech' | 'action' | 'wolf' | 'vote' | 'warning';
 }
@@ -180,6 +185,7 @@ export interface GameRecord {
 }
 
 export interface WolfChatMessage {
+  dialogueSource?: DialogueSource;
   id: string;
   round: number;
   speakerId: number;

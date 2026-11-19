@@ -10,6 +10,31 @@ beforeEach(() => { fetchMock = vi.fn(); vi.stubGlobal('fetch', fetchMock); reset
 afterEach(() => { vi.unstubAllGlobals(); reset(); });
 
 describe('browser expression adapter', () => {
+  it.each(['easy', 'normal', 'hard'] as const)('sends %s difficulty through day and night requests', async difficulty => {
+    fetchMock.mockResolvedValue(response({ text: '{"en":"Hello","messages":[]}' }));
+    await generateSpeechWithLLM('S', 'U', 'deepseek-auto', difficulty);
+    await generateWolfChatWithLLM('S', 'U', 'deepseek-flash', undefined, difficulty);
+    expect(fetchMock.mock.calls.map(([, request]) => JSON.parse(request.body))).toEqual([
+      { model: difficulty === 'hard' ? 'deepseek-v4-pro' : 'deepseek-flash', difficulty, prompt: 'S\n\n---\nU', responseMimeType: 'application/json' },
+      { model: 'deepseek-flash', difficulty, prompt: 'S\n\n---\nU', responseMimeType: 'application/json' },
+    ]);
+  });
+  it('keeps DeepSeek alive beyond the Gemini timeout, then aborts at 48 seconds', async () => {
+    vi.useFakeTimers();
+    try {
+      fetchMock.mockImplementation((_url, options) => new Promise((_resolve, reject) => {
+        options.signal.addEventListener('abort', () => reject(options.signal.reason), { once: true });
+      }));
+      const pending = generateWithGemini({ systemPrompt: 'S', userPrompt: 'U', difficulty: 'hard' }, 'deepseek-auto');
+      const signal = fetchMock.mock.calls[0][1].signal as AbortSignal;
+      await vi.advanceTimersByTimeAsync(12000);
+      expect(signal.aborted).toBe(false);
+      await vi.advanceTimersByTimeAsync(36000);
+      await expect(pending).resolves.toBe('');
+      expect(signal.aborted).toBe(true);
+      expect(vi.getTimerCount()).toBe(0);
+    } finally { vi.useRealTimers(); }
+  });
   it('makes one POST only and lets the server own fallback', async () => {
     fetchMock.mockResolvedValue(response({ text: 'one response', model_used: 'gemini-2.5-flash', fallback_used: true }));
     await expect(generateWithGemini({ systemPrompt: 'S', userPrompt: 'U' }, 'gemini-3.6-flash')).resolves.toBe('one response');
@@ -29,6 +54,24 @@ describe('browser expression adapter', () => {
     await expect(generateSpeechWithLLM('S', 'U')).resolves.toEqual({ zh: '你好', en: 'hello' });
     fetchMock.mockResolvedValueOnce(response({ text: '{"en":"only"}' }));
     await expect(generateSpeechWithLLM('S', 'U')).resolves.toEqual({ en: 'only', zh: '' });
+  });
+  it('forwards interruption to the request and discards a late night response', async () => {
+    const controller = new AbortController();
+    let release!: (value: unknown) => void;
+    fetchMock.mockImplementationOnce(() => new Promise(resolve => { release = resolve; }));
+    const pending = generateWolfChatWithLLM('S', 'U', 'gemini-2.5-flash', controller.signal);
+    const signal = fetchMock.mock.calls[0][1].signal as AbortSignal;
+    expect(signal.aborted).toBe(false);
+    controller.abort();
+    expect(signal.aborted).toBe(true);
+    release(response({ text: '{"messages":[{"speakerId":3,"message":"Late result."}]}' }));
+    await expect(pending).resolves.toEqual([]);
+  });
+  it('does not make a request for a signal that is already aborted', async () => {
+    const controller = new AbortController();
+    controller.abort();
+    await expect(generateWolfChatWithLLM('S', 'U', 'gemini-2.5-flash', controller.signal)).resolves.toEqual([]);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });
 

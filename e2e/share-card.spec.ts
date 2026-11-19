@@ -5,7 +5,6 @@ import {
   startNinePlayerGame,
   watchProviderRequests,
 } from './helpers/game';
-import { E2E_GAME_SEED, installSeededRandom } from './helpers/seededRandom';
 
 /**
  * H2-E: the "AI's view of you" share card is a purely local canvas export.
@@ -16,10 +15,9 @@ import { E2E_GAME_SEED, installSeededRandom } from './helpers/seededRandom';
  * Playwright download event, the suggested file name, the PNG signature and
  * the 1080x1350 dimensions. No network/Function request may be added.
  *
- * The same test-only seeded `Math.random` as the replay spec makes the first
- * match reproducible (the human stays in the final snapshot round, so the
- * primary stats path is the one under test), while the retry loop below stays
- * as a defensive guard only.
+ * A fixed random sample independent of call counts makes the primary final
+ * human-statistics scenario deterministic. Exactly one real match is played;
+ * its final human scores must exist, rather than selecting a later outcome.
  */
 
 const SEAT = '.game-player-seat';
@@ -106,7 +104,22 @@ const isOut = async (locator: Locator): Promise<boolean> => (
   locator.getByText('OUT', { exact: true }).isVisible().catch(() => false)
 );
 
+// Controls can disappear while a vote settles or the match ends. Every
+// phase-sensitive query is finite so the outer loop can observe GAME_OVER.
+const isPhaseCurrent = async (page: Page, expected: string): Promise<boolean> => (
+  Boolean(expected) && !(await isGameOver(page))
+  && (await page.locator(PHASE_LABEL).innerText({ timeout: 250 }).catch(() => '')).trim() === expected
+);
+
 async function completeNightAction(page: Page, seats: Locator): Promise<boolean> {
+  const expectedPhase = (await page.locator(PHASE_LABEL).innerText({ timeout: 250 }).catch(() => '')).trim();
+  const current = () => isPhaseCurrent(page, expectedPhase);
+  if (!(await current())) return false;
+  const skipChat = page.getByRole('button', { name: 'Skip night chat', exact: true });
+  if (await skipChat.isVisible().catch(() => false)) {
+    await skipChat.click({ timeout: 1_500 }).catch(() => undefined);
+    return true;
+  }
   const pass = page.getByRole('button', { name: 'PASS', exact: true });
   if (await pass.isVisible().catch(() => false)) {
     await pass.click({ timeout: 1_500 }).catch(() => undefined);
@@ -114,20 +127,25 @@ async function completeNightAction(page: Page, seats: Locator): Promise<boolean>
   }
 
   for (const actionName of ['KILL', 'CHECK', 'SHOOT'] as const) {
-    const action = page.getByRole('button', { name: actionName, exact: true });
+    if (!(await current())) return false;
+    // CSS generated confirmation text participates in Chromium's accessible name.
+    const action = page.getByRole('button', { name: new RegExp(`^${actionName}(?: Confirm\\?)?$`) });
     if (!(await action.isVisible().catch(() => false))) continue;
-    if (await action.isEnabled().catch(() => false)) {
+    if (await action.isEnabled({ timeout: 250 }).catch(() => false)) {
+      if (!(await current())) return false;
       await action.click({ timeout: 1_500 }).catch(() => undefined);
       return true;
     }
     const total = await seats.count();
     for (let index = 1; index < total; index += 1) {
+      if (!(await current())) return false;
       const seat = seats.nth(index);
       if (await isOut(seat)) continue;
       if (actionName === 'KILL'
         && (await seat.locator('[aria-label="Werewolf teammate"]').count()) > 0) continue;
       if (!(await seat.click({ timeout: 1_500 }).then(() => true).catch(() => false))) continue;
-      if (!(await action.isEnabled().catch(() => false))) continue;
+      if (!(await action.isEnabled({ timeout: 250 }).catch(() => false))) continue;
+      if (!(await current())) return false;
       await action.click({ timeout: 1_500 }).catch(() => undefined);
       return true;
     }
@@ -136,6 +154,8 @@ async function completeNightAction(page: Page, seats: Locator): Promise<boolean>
 }
 
 async function castExileVote(page: Page, seats: Locator): Promise<boolean> {
+  const current = () => isPhaseCurrent(page, 'Exile Vote');
+  if (!(await current())) return false;
   const noVote = page.getByRole('button', { name: 'NO VOTE', exact: true });
   if (await noVote.isVisible().catch(() => false)) {
     await noVote.click({ timeout: 1_500 }).catch(() => undefined);
@@ -144,17 +164,20 @@ async function castExileVote(page: Page, seats: Locator): Promise<boolean> {
 
   const vote = page.getByRole('button', { name: 'VOTE', exact: true });
   if (!(await vote.isVisible().catch(() => false))) return false;
-  if (!(await vote.isEnabled().catch(() => false))) {
+  if (!(await vote.isEnabled({ timeout: 250 }).catch(() => false))) {
     const total = await seats.count();
     for (let index = 1; index < total; index += 1) {
+      if (!(await current())) return false;
       const seat = seats.nth(index);
       if (await isOut(seat)) continue;
       if (!(await seat.click({ timeout: 1_500 }).then(() => true).catch(() => false))) continue;
-      if (!(await vote.isEnabled().catch(() => false))) continue;
+      if (!(await current())) return false;
+      if (!(await vote.isEnabled({ timeout: 250 }).catch(() => false))) continue;
       await vote.click({ timeout: 1_500 }).catch(() => undefined);
       return true;
     }
   }
+  if (!(await current())) return false;
   await vote.click({ timeout: 1_500 }).catch(() => undefined);
   return true;
 }
@@ -184,9 +207,11 @@ async function playMatchToGameOver(
       await onFirstDiscussion();
     }
 
-    if (await speechInput.isVisible().catch(() => false)) {
-      await speechInput.locator('input').fill('Pass');
-      await page.getByRole('button', { name: 'Send speech' }).click({ timeout: 2_000 }).catch(() => undefined);
+    if (label === 'Day Discussion' && await speechInput.isVisible().catch(() => false)) {
+      const filled = await speechInput.locator('input').fill('Pass', { timeout: 1_000 }).then(() => true).catch(() => false);
+      if (filled && await isPhaseCurrent(page, 'Day Discussion')) {
+        await page.getByRole('button', { name: 'Send speech' }).click({ timeout: 2_000 }).catch(() => undefined);
+      }
       continue;
     }
 
@@ -212,6 +237,7 @@ async function playMatchToGameOver(
     await page.waitForTimeout(80);
   }
 
+  if (await isGameOver(page)) return;
   throw new Error('The match did not reach GAME_OVER before the deadline.');
 }
 
@@ -284,9 +310,11 @@ const scrollShareCardIntoView = async (page: Page): Promise<void> => {
 test.describe('post-game share card', () => {
   test('exports a local 1080x1350 PNG at 1440x900 and 390x844 with no network', async ({ page }) => {
     test.setTimeout(600_000);
-    // Same deterministic match as the replay-review spec: the human is alive in
-    // the final snapshot round, which is the card's primary stats path.
-    await installSeededRandom(page);
+    // A fixed sample is independent of cosmetic RNG call counts. It preserves
+    // the standard deal (human Werewolf), while real AI difficulty-gate samples
+    // choose high-seat targets. Real UI play yields multiple human-score rounds.
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.addInitScript(() => { Math.random = () => 0.99; });
     // Another card may edit this shared worktree while the spec runs; mocking
     // the local Vite HMR socket keeps the guest session alive. Product code and
     // the network assertions below are unaffected.
@@ -312,41 +340,19 @@ test.describe('post-game share card', () => {
 
     await expect(page.getByRole('heading', { name: GAME_OVER_HEADING })).toBeVisible();
     await waitForStoredReplayCount(page, initialStoredCount + 1);
-    let replay = (await storedReplays(page))[0];
+    const replay = (await storedReplays(page))[0];
     expect(replay, 'the finished match wrote one replay').toBeTruthy();
     expect(replay.boardId).toBe('9-standard');
     expect(replay.players).toHaveLength(9);
     expect(replay.outcome.winner).toMatch(/^(VILLAGERS|WEREWOLVES)$/);
 
-    // The stats branch only exists when the latest snapshot round scored the
-    // human seat. A human who dies before the last vote produces the legitimate
-    // fallback card, so retry that match (up to three attempts) to also capture
-    // the primary stats path in a real browser. The fallback is still accepted
-    // after the last attempt rather than failing the spec.
-    const MAX_CARD_ATTEMPTS = 3;
-    for (let attempt = 1; attempt < MAX_CARD_ATTEMPTS; attempt += 1) {
-      if (hasFinalRoundHumanSuspicion(replay)) break;
-      test.info().annotations.push({
-        type: 'share-card-retry',
-        description: `attempt ${attempt}: final snapshot round has no human suspicion`,
-      });
-      const countBeforeRetry = (await storedReplays(page)).length;
-      await page.getByRole('button', { name: 'Return to Lobby', exact: true }).click();
-      await expect(page.getByRole('button', { name: 'Start Game', exact: true })).toBeVisible();
-      await startNinePlayerGame(page);
-      await playMatchToGameOver(page, preTerminalAudit);
-      await expect(page.getByRole('heading', { name: GAME_OVER_HEADING })).toBeVisible();
-      await waitForStoredReplayCount(page, countBeforeRetry + 1);
-      replay = (await storedReplays(page))[0];
-      expect(replay, 'the finished match wrote one replay').toBeTruthy();
-      expect(replay.boardId).toBe('9-standard');
-      expect(replay.players).toHaveLength(9);
-      expect(replay.outcome.winner).toMatch(/^(VILLAGERS|WEREWOLVES)$/);
-    }
+    expect(replay.outcome.rounds).toBeGreaterThanOrEqual(2);
+    expect((await storedReplays(page)).length).toBe(initialStoredCount + 1);
+    expect(hasFinalRoundHumanSuspicion(replay), 'first match exercises the primary statistics path').toBe(true);
 
     const expectedFileName = `ai-view-of-you-${replay.gameId}.png`;
     const suspicionAvailable = hasFinalRoundHumanSuspicion(replay);
-    console.log(`[H2-E] seeded match: seed ${E2E_GAME_SEED}, winner ${replay.outcome.winner}, rounds ${replay.outcome.rounds}, suspicionAvailable ${suspicionAvailable}`);
+    console.log(`[H2-E] first match: fixed random sample 0.99, winner ${replay.outcome.winner}, rounds ${replay.outcome.rounds}, suspicionAvailable ${suspicionAvailable}`);
 
     // The application itself loads pre-existing third-party assets. Record them
     // at GAME_OVER and prove the share card adds no external request of its own.

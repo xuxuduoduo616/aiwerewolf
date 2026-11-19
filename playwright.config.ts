@@ -28,6 +28,8 @@ const SMOKE_SPECS = [
   '**/first-day-speech-vote.spec.ts',
   '**/language-audio-toggle.spec.ts',
   '**/voice-input.spec.ts',
+  '**/night-chat.spec.ts',
+  '**/multi-model.spec.ts',
 ];
 const DEEP_SPECS = [
   '**/replay-review.spec.ts',
@@ -65,7 +67,7 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
   ],
-  webServer: {
+  webServer: [{
     // 5173 is one of the ports where src/ai/geminiAdapter.ts short-circuits to
     // the local, key-free provider fallback. --strictPort keeps the base URL
     // honest instead of silently moving to a port without that fallback.
@@ -75,5 +77,13 @@ export default defineConfig({
     timeout: 120_000,
     stdout: 'ignore',
     stderr: 'pipe',
-  },
+  }, {
+    // Isolated HTTP-mocked provider harness, outside the local-fallback ports.
+    command: 'npm run dev -- --port 5176 --strictPort --host 127.0.0.1',
+    url: 'http://127.0.0.1:5176',
+    reuseExistingServer: !process.env.CI,
+    timeout: 120_000,
+    stdout: 'ignore',
+    stderr: 'pipe',
+  }],
 });

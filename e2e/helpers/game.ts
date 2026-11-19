@@ -114,7 +114,7 @@ export async function advanceToHumanSpeech(page: Page, timeoutMs = 60_000): Prom
   let status: AdvanceStatus = 'human';
   await expect
     .poll(async () => {
-      if (await speechInput.isVisible()) return (status = 'human');
+      if ((await phaseLabel.innerText().catch(() => '')).trim() === 'Day Discussion' && await speechInput.isVisible()) return (status = 'human');
       if (await humanSeat.getByText('OUT', { exact: true }).isVisible()) return (status = 'dead');
 
       const label = (await phaseLabel.innerText().catch(() => '')).trim();
@@ -182,6 +182,9 @@ export async function castExileVote(page: Page): Promise<void> {
  * have no such button and simply advance after the fixed phase delay.
  */
 async function completeNightAction(page: Page): Promise<void> {
+  const skipChat = page.getByRole('button', { name: 'Skip night chat', exact: true });
+  if (await skipChat.isVisible()) { await skipChat.click({ timeout: 1_000 }).catch(() => undefined); return; }
+
   // The Witch always gets a PASS button; skipping potions keeps the flow short.
   const passButton = page.getByRole('button', { name: 'PASS', exact: true });
   if (await passButton.isVisible()) {

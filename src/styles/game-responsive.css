@@ -167,6 +167,47 @@
   overflow-wrap: anywhere;
 }
 
+.wolf-strategy-chips {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.wolf-strategy-chips button {
+  min-width: 0;
+  min-height: 44px;
+  overflow-wrap: anywhere;
+}
+
+.wolf-night-console > p {
+  margin-top: 8px;
+  min-height: 0;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.wolf-night-console .role-reveal {
+  margin-top: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.wolf-night-console .game-speech-input,
+.wolf-night-console .role-reveal + div { margin-top: 8px; }
+
+@media (min-width: 1024px) {
+  .game-room .center-console.wolf-night-console {
+    width: min(420px, 46vw);
+    min-height: 0;
+    max-height: min(420px, calc(100% - 280px));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+  }
+  .wolf-strategy-chips { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
 .game-log-trigger {
   display: none;
 }
@@ -465,3 +506,10 @@
 .leave-game-dialog__actions .wol-btn {
   flex: 1 1 120px;
 }
+
+/* Model details remain separate from the radio targets and setup guide. */
+.start-model-details { min-height: 44px; padding: 0.5rem 0.75rem; text-decoration: underline; color: #e4e4e7; }
+.participating-model-list { display: grid; gap: 0.75rem; padding: 0; list-style: none; }
+.participating-model-list li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.5rem; padding: 0.75rem; border: 1px solid #52525b; border-radius: 0.5rem; }
+[data-model-badge] { max-width: 100%; }
+[data-model-badge] span { text-transform: none; }

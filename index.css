@@ -61,6 +61,16 @@ body {
   min-height: 100dvh;
 }
 
+/* Reserve no document space, including before the particle engine initializes. */
+#tsparticles {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+}
+
 #tsparticles,
 #tsparticles canvas,
 canvas#tsparticles {

@@ -11,7 +11,7 @@ import { ROLE_PERSONAS, type RolePersonaId } from '../services/aiStyles';
 import * as rosterGuard from '../services/rosterGuard';
 import { namelessFallbackLine } from '../services/rosterGuard';
 import { getRoleCamp } from '../gameEngine';
-import { GamePhase, GameLog, Player, Role } from '../types';
+import { GamePhase, GameLog, Player, Role, WolfChatMessage } from '../types';
 import { pickSpeech, pickWolfNightSpeech } from '../services/speechLibrary';
 import { detectNameViolations } from '../diagnostics/nameDetector';
 import { generateSpeechWithLLM, generateWolfChatWithLLM } from './geminiAdapter';
@@ -76,6 +76,17 @@ beforeEach(() => {
 });
 
 describe('per-match expression model routing', () => {
+  it.each(['easy', 'normal', 'hard'] as const)('captures %s difficulty for both day and night without remote action selection', async difficulty => {
+    const players = makeBoard();
+    setAIExpressionModel('deepseek-auto', difficulty);
+    await dialogue(players[7], players, 'en');
+    await generateWolfChat(players.filter(player => player.role === Role.WEREWOLF), players, [], 1, []);
+    await generateAIAction(players[7], players, [], 'VOTE', []);
+    expect(mockLLM).toHaveBeenCalledTimes(1);
+    expect(mockLLM.mock.calls[0].slice(2, 4)).toEqual([difficulty === 'hard' ? 'deepseek-v4-pro' : 'deepseek-flash', difficulty]);
+    expect(mockWolfLLM.mock.calls[0][2]).toBe(difficulty === 'hard' ? 'deepseek-v4-pro' : 'deepseek-flash');
+    expect(mockWolfLLM.mock.calls[0][4]).toBe(difficulty);
+  });
   it('threads the selected model into dialogue while actions make zero remote calls', async () => {
     const players = makeBoard();
     setAIExpressionModel('gemini-3.6-flash');
@@ -310,18 +321,17 @@ describe('generateWolfChat — language threading', () => {
     }
   });
 
-  it('explicit zh keeps the existing Chinese prompt and hardcoded lines', async () => {
+  it('explicit zh keeps Chinese prompts and complete concise fallback lines', async () => {
     const players = makeBoard();
     const wolves = players.filter(p => p.role === Role.WEREWOLF);
 
     const chat = await generateWolfChat(wolves, players, [], 1, [], 'zh');
 
     const [systemPrompt] = mockWolfLLM.mock.calls[0];
-    expect(systemPrompt).toBe('你们是狼人夜间团队，用中文简洁商量策略。');
+    expect(systemPrompt).toContain('你们是狼人夜间团队，用中文简洁商量策略。');
     expect(mockPickWolfNightSpeech).toHaveBeenCalledWith('zh');
-    expect(chat[0].message).toBe('我建议刀1号。');
-    expect(chat[1].message).toBe('明天需要一张牌悍跳预言家，我可以跳。');
-    expect(chat[2].message).toBe('白天别冲，倒钩配合悍跳狼。');
+    expect(chat).toHaveLength(wolves.length);
+    chat.forEach(entry => expect(entry.message).toMatch(/[。！？]$/));
   });
 });
 
@@ -423,6 +433,69 @@ describe('generateWolfChat — roster guard on model messages (H8, invariant 6)'
       expect(detectNameViolations(message.message, players)).toHaveLength(0);
       expect(wolves.some(w => w.id === message.speakerId)).toBe(true);
     }
+  });
+});
+
+describe('wolf night conversation coordination', () => {
+  const humanHistory = (message: string): WolfChatMessage[] => [{ id: 'human', round: 1, speakerId: 2, message, strategyTag: '补位' }];
+  const packBoard = () => makeBoard().map(player => ({ ...player, isHuman: player.id === 2 }));
+
+  it('rejects impersonation, duplicates and fragments and fills every requested AI seat', async () => {
+    const players = packBoard();
+    const wolves = players.filter(player => player.role === Role.WEREWOLF);
+    mockWolfLLM.mockResolvedValue([
+      { speakerId: 2, message: 'I am the human. My voice was invented.', strategyTag: '刀口' },
+      { speakerId: 3, message: 'I will cover your claim. We should avoid using the same reasoning.', strategyTag: '补位' },
+      { speakerId: 3, message: 'A duplicate. Ignore it.', strategyTag: '补位' },
+      { speakerId: 4, message: 'Tomorrow I will follow the other playe', strategyTag: '补位' },
+    ]);
+    mockPickWolfNightSpeech.mockResolvedValue('Our plan is ready. Tomorrow I will follow the other playe');
+    const chat = await generateWolfChat(wolves, players, [], 1, [], 'en');
+    expect(chat.map(entry => entry.speakerId)).toEqual([3, 4]);
+    expect(chat[0].message).toContain('cover your claim');
+    expect(chat[1].message).not.toContain('other playe');
+    expect(chat[1].message).toMatch(/[.!?]$/);
+  });
+
+  it('provides full pack, latest human instructions first, previous context and distinct personas', async () => {
+    const players = packBoard();
+    players[2].aiSpeechPersonaId = 'analysis-hesitant';
+    const history = [...humanHistory('I will lead the push.'), { ...humanHistory('Player 3, please claim Seer.')[0], id: 'new' }];
+    await generateWolfChat([players[2]], players, [], 1, [], 'en', undefined, { history, confirmedTargetId: 5 });
+    const [system, prompt] = mockWolfLLM.mock.calls[0];
+    expect(system).toContain('two or three complete sentences');
+    expect(prompt).toContain('Wolf team: Player 2 (human), Player 3, Player 4');
+    expect(prompt).toContain('Requested AI speakers only: Player 3');
+    expect(prompt.indexOf('Player 3, please claim Seer.')).toBeLessThan(prompt.indexOf('I will lead the push.'));
+    expect(prompt).toContain('Separate observations from inferences');
+    expect(prompt).toContain('Confirmed night target: Player 5');
+  });
+
+  it('sends private instructions to daytime wolves only and filters private Game Log entries for all actors', async () => {
+    const players = packBoard();
+    const history = humanHistory('Player 3, please claim Seer. Code pineapple.');
+    const logs: GameLog[] = [{ id: 'private', phase: GamePhase.NIGHT_WEREWOLVES, isSystem: false, tone: 'wolf', speakerId: 2, message: 'PRIVATE LOG SECRET' }];
+    const wolf = await generateAIDialogue(players[2], players, logs, GamePhase.DAY_DISCUSSION, [], 1, null, [], emptyNight, 'en', undefined, history);
+    expect(mockLLM.mock.calls[0][1]).toContain('Code pineapple');
+    expect(mockLLM.mock.calls[0][1]).not.toContain('PRIVATE LOG SECRET');
+    expect(wolf.en).toContain('claiming Seer');
+    expect(wolf.en).not.toMatch(/pineapple|private team|night coordination/);
+    await generateAIDialogue(players[4], players, logs, GamePhase.DAY_DISCUSSION, [], 1, null, [], emptyNight, 'en', undefined, history);
+    expect(mockLLM.mock.calls[1][1]).not.toMatch(/pineapple|PRIVATE LOG SECRET/);
+  });
+
+  it('never falls back or commits results after an interrupted request', async () => {
+    const players = packBoard();
+    const controller = new AbortController();
+    mockWolfLLM.mockImplementationOnce(async () => { controller.abort(); return []; });
+    const deferCommit = vi.fn();
+    const chat = await generateWolfChat([players[2]], players, [], 1, [], 'en', {
+      runWhenActive: async work => work(), deferCommit, signal: controller.signal,
+    });
+    expect(chat).toEqual([]);
+    expect(mockWolfLLM.mock.calls[0][3]).toBe(controller.signal);
+    expect(mockPickWolfNightSpeech).not.toHaveBeenCalled();
+    expect(deferCommit).not.toHaveBeenCalled();
   });
 });
 

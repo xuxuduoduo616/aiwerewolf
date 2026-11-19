@@ -66,7 +66,7 @@ const flush = () => {
     for (const effect of hooks.pending.splice(0)) effect();
   }
 };
-const settle = async () => { for (let i = 0; i < 10; i++) { await Promise.resolve(); flush(); } };
+const settle = async () => { for (let i = 0; i < 40; i++) { await Promise.resolve(); flush(); } };
 const advance = async (ms: number) => { await vi.advanceTimersByTimeAsync(ms); await settle(); };
 const start = (config = fixture) => { game.startGame(config, 'en'); flush(); };
 const snapshot = () => JSON.stringify({ config:game.config,players:game.players,phase:game.phase,logs:game.logs,round:game.roundCount,winner:game.winner,votes:game.voteRecords,night:game.nightState,witch:game.witchStatus,wolfChat:game.wolfChat,seer:game.aiSeerLastCheck,speaker:game.currentSpeaker,processing:game.isProcessingAI,saved:game.savedRecordId,records:auth.records });
@@ -406,8 +406,8 @@ describe('pause and resume', () => {
   it('freezes the wolf clock and never repeats an empty wolf-chat result', async () => {
     start(wolfFixture);
     game.setPhase(GamePhase.NIGHT_WEREWOLVES); flush();
-    await advance(19_875);
-    expect(ai.generateWolfChat).toHaveBeenCalledOnce();
+    await advance(119_875);
+    expect(ai.generateWolfChat).toHaveBeenCalledTimes(2);
     togglePause();
     game.handlePlayerAction(2); flush();
     await advance(61_000);
@@ -419,7 +419,7 @@ describe('pause and resume', () => {
     await advance(1);
     expect(game.phase).toBe(GamePhase.NIGHT_SEER);
     expect(game.nightState.wolfKillId).toBe(2);
-    expect(ai.generateWolfChat).toHaveBeenCalledOnce();
+    expect(ai.generateWolfChat).toHaveBeenCalledTimes(2);
   });
 
   it('keeps early human-wolf targeting and discards a late chat for the old phase', async () => {
@@ -430,14 +430,17 @@ describe('pause and resume', () => {
       args[6].deferCommit(commit);
       return held.promise;
     });
-    game.setPhase(GamePhase.NIGHT_WEREWOLVES); flush(); await advance(700);
+    game.setPhase(GamePhase.NIGHT_WEREWOLVES); flush(); await advance(15_000);
     game.handlePlayerAction(2); flush();
+    expect(game.phase).toBe(GamePhase.NIGHT_WEREWOLVES);
+    expect(game.nightState.wolfKillId).toBe(2);
+    game.skipWolfChat(); flush();
     expect(game.phase).toBe(GamePhase.NIGHT_SEER);
     held.resolve([]);
     await settle();
     expect(game.wolfChat).toEqual([]);
     expect(commit).not.toHaveBeenCalled();
-    expect(ai.generateWolfChat).toHaveBeenCalledOnce();
+    expect(ai.generateWolfChat).toHaveBeenCalledTimes(2);
   });
 
   it('drops an old paused result and lets a fresh match start running', async () => {
@@ -557,5 +560,213 @@ describe('new-match public speech personas', () => {
     expect(game.players[0]).not.toHaveProperty('aiSpeechPersonaId');
     expect(game.players.slice(1).map(player => player.aiSpeechPersonaId))
       .toEqual(firstIds.map(() => 'analysis-confident'));
+  });
+});
+
+
+describe('human-first private wolf discussion', () => {
+  const wolfFixture = { ...fixture, roles: [Role.WEREWOLF, Role.VILLAGER, ...fixture.roles.slice(2)] };
+  const begin = () => { start(wolfFixture); game.setPhase(GamePhase.NIGHT_WEREWOLVES); flush(); };
+  const send = (text: string) => { game.setUserInput(text); flush(); game.handleWolfChatSubmit(); flush(); };
+  const entry = (speakerId: number, message = `Player ${speakerId} acknowledges the plan. I will keep our public reasoning independent.`) => ({ id: `reply-${speakerId}-${message}`, round: 1, speakerId, message, strategyTag: '补位' as const });
+  const respond = () => ai.generateWolfChat.mockImplementation(async ([wolf]) => [entry(wolf.id)]);
+
+  it('reserves 15 seconds for the human and keeps the full 120-second window', async () => {
+    begin(); respond();
+    expect(game.wolfCountdown).toBe(120);
+    await advance(14_999); expect(ai.generateWolfChat).not.toHaveBeenCalled();
+    await advance(1); expect(ai.generateWolfChat).toHaveBeenCalledTimes(2);
+    expect(game.phase).toBe(GamePhase.NIGHT_WEREWOLVES);
+    expect(game.wolfCountdown).toBe(105);
+    expect(game.wolfChat.map(item => item.speakerId)).toEqual([7, 9]);
+    expect(game.logs.filter(log => log.tone === 'wolf' && !log.isSystem)).toHaveLength(2);
+  });
+
+  it('sends the human instruction before either teammate reasons, with sequential context', async () => {
+    begin(); respond(); send('Player 7, please claim Seer. Player 9, stay under the radar.'); await settle();
+    expect(game.wolfChat.map(item => item.speakerId)).toEqual([1, 7, 9]);
+    expect(ai.generateWolfChat.mock.calls[0][0].map((p: { id: number }) => p.id)).toEqual([7]);
+    expect(ai.generateWolfChat.mock.calls[0][7].history.map((p: { speakerId: number }) => p.speakerId)).toEqual([1]);
+    expect(ai.generateWolfChat.mock.calls[1][7].history.map((p: { speakerId: number }) => p.speakerId)).toEqual([1, 7]);
+    expect(game.userInput).toBe('');
+    expect(game.phase).toBe(GamePhase.NIGHT_WEREWOLVES);
+  });
+
+  it('interrupts thinking and rejects late commits after a newer human instruction', async () => {
+    begin(); const old = deferred<ReturnType<typeof entry>[]>(); const commit = vi.fn();
+    ai.generateWolfChat.mockImplementationOnce((...args) => { args[6].deferCommit(commit); return old.promise; });
+    send('Player 7, claim Seer.'); await settle();
+    const signal = ai.generateWolfChat.mock.calls[0][6].signal as AbortSignal;
+    respond(); send('Change of plan. Player 7, stay quiet.'); await settle();
+    expect(signal.aborted).toBe(true);
+    old.resolve([entry(7, 'This is the obsolete instruction. I am claiming Seer.')]); await settle();
+    expect(commit).not.toHaveBeenCalled();
+    expect(game.wolfChat.map(item => item.speakerId)).toEqual([1, 1, 7, 9]);
+    expect(game.wolfChat.some(item => item.message.includes('obsolete'))).toBe(false);
+    expect(ai.generateWolfChat.mock.calls[1][7].history.at(-1).message).toContain('Change of plan');
+  });
+
+  it('interrupts spoken audio without dropping complete messages already logged', async () => {
+    begin(); respond(); const speaking = deferred<void>(); audio.enqueue.mockReturnValueOnce(speaking.promise);
+    send('Player 7, lead the push.'); await settle();
+    expect(game.wolfChat.map(item => item.speakerId)).toEqual([1, 7]);
+    const before = audio.cancel.mock.calls.length;
+    send('Player 7, stay under the radar instead.'); await settle();
+    expect(audio.cancel.mock.calls.length).toBeGreaterThan(before);
+    speaking.resolve(); await settle();
+    expect(game.wolfChat.map(item => item.speakerId)).toEqual([1, 7, 1, 7, 9]);
+    expect(game.wolfSpeakerId).toBeNull();
+  });
+
+  it('waits while a human composes and does not auto-generate over the draft', async () => {
+    begin(); game.interruptWolfChat(); flush(); await advance(30_000);
+    expect(ai.generateWolfChat).not.toHaveBeenCalled();
+    respond(); send('I will lead tomorrow.'); await settle();
+    expect(ai.generateWolfChat).toHaveBeenCalledTimes(2);
+  });
+
+  it('holds completed replies while paused and resumes exactly once', async () => {
+    begin(); const held = deferred<ReturnType<typeof entry>[]>(); ai.generateWolfChat.mockReturnValueOnce(held.promise);
+    send('Player 7, lead.'); await settle(); togglePause(); held.resolve([entry(7)]); await settle();
+    expect(game.wolfChat.map(item => item.speakerId)).toEqual([1]);
+    await advance(150_000); expect(game.wolfCountdown).toBe(120);
+    respond(); togglePause(); await settle();
+    expect(game.wolfChat.map(item => item.speakerId)).toEqual([1, 7, 9]);
+  });
+
+  it('cancels old replies when composing while paused, and keeps kill confirmation quiet during recording', async () => {
+    begin(); const held = deferred<ReturnType<typeof entry>[]>(); ai.generateWolfChat.mockReturnValueOnce(held.promise);
+    send('Player 7, lead.'); await settle();
+    const signal = ai.generateWolfChat.mock.calls[0][6].signal as AbortSignal;
+    togglePause(); game.interruptWolfChat(); game.setUserInput('A revised draft.'); flush();
+    expect(signal.aborted).toBe(true);
+    held.resolve([entry(7, 'This obsolete reply must never appear. I will lead.')]); await settle();
+    togglePause(); await settle();
+    game.handlePlayerAction(2); flush(); await settle();
+    expect(ai.generateWolfChat).toHaveBeenCalledOnce();
+    expect(game.wolfChat.map(item => item.speakerId)).toEqual([1]);
+    expect(game.nightState.wolfKillId).toBe(2);
+    respond(); game.handleWolfChatSubmit(); flush(); await settle();
+    expect(game.wolfChat.map(item => item.speakerId)).toEqual([1, 1, 7, 9]);
+    expect(ai.generateWolfChat.mock.calls[1][7].confirmedTargetId).toBe(2);
+  });
+
+  it('coordinates with all three AI teammates on the 12-player board', async () => {
+    start(MODE_12_PLAYER); game.setPhase(GamePhase.NIGHT_WEREWOLVES); flush(); respond();
+    send('I will lead. Keep your public reasoning independent.'); await settle();
+    expect(game.wolfChat.map(item => item.speakerId)).toEqual([1, 2, 3, 4]);
+    expect(ai.generateWolfChat).toHaveBeenCalledTimes(3);
+  });
+
+  it('keeps a confirmed kill and offers an explicit guarded skip', async () => {
+    begin(); game.skipWolfChat(); flush(); expect(game.phase).toBe(GamePhase.NIGHT_WEREWOLVES);
+    game.handlePlayerAction(2); flush();
+    game.handlePlayerAction(3); flush(); expect(game.nightState.wolfKillId).toBe(2);
+    expect(game.phase).toBe(GamePhase.NIGHT_WEREWOLVES);
+    expect(game.wolfCountdown).toBe(120);
+    game.skipWolfChat(); flush(); expect(game.phase).toBe(GamePhase.NIGHT_SEER);
+    game.skipWolfChat(); flush(); expect(game.nightState.wolfKillId).toBe(2);
+  });
+
+  it('finishes at 120 seconds with the human kill intact', async () => {
+    begin(); game.handlePlayerAction(3); flush(); await advance(119_999);
+    expect(game.phase).toBe(GamePhase.NIGHT_WEREWOLVES);
+    await advance(1); expect(game.phase).toBe(GamePhase.NIGHT_SEER);
+    expect(game.nightState.wolfKillId).toBe(3);
+    expect(ai.generateAIAction).not.toHaveBeenCalled();
+  });
+
+  it('uses the existing AI action selector when the human has not confirmed a kill', async () => {
+    begin(); ai.generateAIAction.mockResolvedValueOnce({ targetId: 4 });
+    await advance(120_000);
+    expect(ai.generateAIAction.mock.calls[0][3]).toBe('KILL');
+    expect(ai.generateAIAction.mock.calls[0][0].isHuman).toBe(false);
+    expect(game.nightState.wolfKillId).toBe(4);
+    expect(game.phase).toBe(GamePhase.NIGHT_SEER);
+  });
+
+  it('validates an illegal AI target at timeout and recovers from action failure', async () => {
+    begin(); ai.generateAIAction.mockResolvedValueOnce({ targetId: 7 }); await advance(120_000);
+    expect(game.nightState.wolfKillId).toBe(2);
+    begin(); ai.generateAIAction.mockRejectedValueOnce(new Error('action failed')); await advance(120_000);
+    expect(game.phase).toBe(GamePhase.NIGHT_SEER); expect(game.nightState.wolfKillId).toBe(2);
+    expect(game.isProcessingAI).toBe(false);
+  });
+
+  it('advances without hanging when no legal kill target remains', async () => {
+    start({ ...wolfFixture, playerCount: 3, roles: [Role.WEREWOLF, Role.WEREWOLF, Role.WEREWOLF] });
+    game.setPhase(GamePhase.NIGHT_WEREWOLVES); flush();
+    await advance(120_000);
+    expect(game.phase).toBe(GamePhase.NIGHT_SEER);
+    expect(game.nightState.wolfKillId).toBeNull();
+    expect(game.isProcessingAI).toBe(false);
+  });
+
+  it('does not let non-wolves speak or read generated private log entries', async () => {
+    game.setPhase(GamePhase.NIGHT_WEREWOLVES); flush(); respond();
+    send('Private instruction should not be sent.'); await advance(700);
+    expect(game.wolfChat.every(item => item.speakerId !== 1)).toBe(true);
+    expect(game.logs.some(log => log.tone === 'wolf')).toBe(false);
+  });
+
+  it('retains private context for wolf daytime expression and subsequent nights only', async () => {
+    begin(); respond(); send('Player 7, please claim Seer tomorrow.'); await settle();
+    game.handlePlayerAction(2); flush(); game.skipWolfChat(); flush();
+    game.setPhase(GamePhase.DAY_HUNTER_CHECK); flush(); await advance(700); await advance(700);
+    expect(game.currentSpeaker?.id).toBe(1);
+    game.setUserInput('I will listen.'); flush(); game.handleHumanSpeechSubmit(); flush();
+    for (let turn = 0; turn < 9; turn++) await advance(700);
+    const wolfCalls = ai.generateAIDialogue.mock.calls.filter(args => args[0].role === Role.WEREWOLF);
+    expect(wolfCalls.length).toBeGreaterThan(0);
+    expect(wolfCalls[0][11][0].message).toContain('claim Seer');
+    for (const args of ai.generateAIDialogue.mock.calls.filter(args => args[0].role !== Role.WEREWOLF)) expect(args[11]).toEqual([]);
+    const historyLength = game.wolfChat.length;
+    game.setPhase(GamePhase.NIGHT_START); flush(); await advance(700);
+    expect(game.wolfChat).toHaveLength(historyLength);
+    leave(); start(); expect(game.wolfChat).toEqual([]);
+  });
+
+  it('rejects overlong messages whole and discards in-flight replies on leave', async () => {
+    begin(); send('x'.repeat(1201)); await settle(); expect(game.wolfChat).toHaveLength(0);
+    const held = deferred<ReturnType<typeof entry>[]>(); ai.generateWolfChat.mockReturnValueOnce(held.promise);
+    send('Player 7, lead.'); await settle(); leave(); start(); const expected = snapshot();
+    held.resolve([entry(7)]); await settle(); expect(snapshot()).toBe(expected);
+  });
+});
+
+describe('stable model routes and provenance lifecycle', () => {
+  const models = [
+    { id: 'gemini-3.6-flash' as const, label: 'Gemini', description: '', available: true },
+    { id: 'deepseek-flash' as const, label: 'Flash', description: '', available: true },
+    { id: 'deepseek-v4-pro' as const, label: 'Pro', description: '', available: true },
+  ];
+  it.each([MODE_9_PLAYER, MODE_12_PLAYER])('assigns every model independently of style in $id and resets new games', config => {
+    game.startGame(config, 'en', { selection: 'multi-ai-model', models }); flush();
+    expect(game.players[0].aiAssignedModel).toBeUndefined();
+    expect(game.players.slice(1).map(player => player.aiAssignedModel)).toEqual(Array.from({ length: config.roles.length - 1 }, (_, i) => models[i % 3].id));
+    expect(game.players.slice(1).every(player => player.aiStyleId && player.aiSpeechPersonaId)).toBe(true);
+    game.startGame(config, 'en', { selection: 'deepseek-v4-pro', models }); flush();
+    expect(game.players.slice(1).every(player => player.aiAssignedModel === 'deepseek-v4-pro' && !player.aiDialogueSource)).toBe(true);
+  });
+  it('updates accepted provenance only on active commit and stores it on the speech log', async () => {
+    ai.generateAIDialogue.mockImplementationOnce(async (...args) => {
+      args[10].deferCommit(() => args[10].onSource({ model: 'gemini-2.5-flash', fallback: true }));
+      return { en: 'An accepted provider fallback statement.', zh: '' };
+    });
+    await enterAIStatement(); await settle();
+    const speaker = ai.generateAIDialogue.mock.calls[0][0];
+    expect(game.players.find(player => player.id === speaker.id)?.aiDialogueSource).toEqual({ model: 'gemini-2.5-flash', fallback: true });
+    expect(game.logs.find(log => log.message === 'An accepted provider fallback statement.')?.dialogueSource).toEqual({ model: 'gemini-2.5-flash', fallback: true });
+  });
+  it('discards old source commits after a new match starts', async () => {
+    const held = deferred<{ en: string; zh: string }>();
+    ai.generateAIDialogue.mockImplementationOnce((...args) => {
+      args[10].deferCommit(() => args[10].onSource({ model: 'deepseek-v4-pro', fallback: false }));
+      return held.promise;
+    });
+    await enterAIStatement(); leave(); start(); const expected = snapshot();
+    held.resolve({ en: 'Old source must not appear.', zh: '' }); await settle();
+    expect(snapshot()).toBe(expected);
+    expect(game.players.every(player => player.aiDialogueSource === undefined)).toBe(true);
   });
 });

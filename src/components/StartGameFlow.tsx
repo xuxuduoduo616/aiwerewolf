@@ -10,9 +10,11 @@ import {
 } from 'lucide-react';
 import { DIFFICULTY_CONFIGS, type Difficulty } from '../types';
 import {
-  AI_EXPRESSION_MODELS,
   DEFAULT_EXPRESSION_MODEL,
+  MIXED_POOL_MODEL_IDS,
+  getExpressionModel,
   getAvailableExpressionModels,
+  getRecommendedExpressionModel,
   type AIExpressionModel,
   type AIExpressionModelId,
 } from '../ai/modelCatalog';
@@ -22,6 +24,7 @@ import {
   type GameSetup,
   type LobbySubview,
 } from '../lobbyFeatures';
+import AccessibleDialog from './AccessibleDialog';
 import UnavailableNotice from './UnavailableNotice';
 
 export type { GameSetup } from '../lobbyFeatures';
@@ -60,7 +63,7 @@ interface StartGameFlowProps {
   initialSetup?: GameSetup;
   onSubviewChange?: (subview: LobbySubview) => void;
   onBackToLobby: () => void;
-  onConfirm: (setup: GameSetup) => void;
+  onConfirm: (setup: GameSetup, models?: readonly AIExpressionModel[]) => void;
 }
 
 const DEFAULT_SETUP: GameSetup = {
@@ -91,26 +94,23 @@ export const ExpressionModelSelector: React.FC<ExpressionModelSelectorProps> = (
   models,
   selectedModel,
   onSelect,
-}) => (
-  <fieldset className="start-game-fieldset">
+}) => {
+  const renderChoice = (model: AIExpressionModel) => (
+    <label className={selectedModel === model.id ? 'is-selected' : ''} key={model.id}>
+      <input type="radio" name="expression-model" value={model.id} checked={selectedModel === model.id} onChange={() => onSelect(model.id)} />
+      <strong>{model.label}</strong><span>{model.description}</span>
+    </label>
+  );
+  const singleModels = models.filter(model => model.id !== 'multi-ai-model' && model.id !== DEFAULT_EXPRESSION_MODEL);
+  return <fieldset className="start-game-fieldset">
     <legend>Dialogue Model</legend>
-    <div className="start-model-grid">
-      {models.map(model => (
-        <label className={selectedModel === model.id ? 'is-selected' : ''} key={model.id}>
-          <input
-            type="radio"
-            name="expression-model"
-            value={model.id}
-            checked={selectedModel === model.id}
-            onChange={() => onSelect(model.id)}
-          />
-          <strong>{model.label}</strong>
-          <span>{model.description}</span>
-        </label>
-      ))}
-    </div>
-  </fieldset>
-);
+    <div className="start-model-grid">{models.filter(model => model.id === 'multi-ai-model' || model.id === DEFAULT_EXPRESSION_MODEL).map(renderChoice)}</div>
+    {singleModels.length > 0 && <details className="start-single-models">
+      <summary>Single-model options</summary>
+      <div className="start-model-grid">{singleModels.map(renderChoice)}</div>
+    </details>}
+  </fieldset>;
+};
 
 const StartGameProgress: React.FC<{ step: StartGameFlowStep }> = ({ step }) => {
   const activeIndex = step === 'mode-choice' || step === 'multiplayer-unavailable'
@@ -136,6 +136,8 @@ const StartGameFlow: React.FC<StartGameFlowProps> = ({
 }) => {
   const [step, setStep] = useState<StartGameFlowStep>(initialStep);
   const [isStarting, setIsStarting] = useState(false);
+  const [showModels, setShowModels] = useState(false);
+  const modelsButtonRef = useRef<HTMLButtonElement>(null);
   const [setup, setSetup] = useState<GameSetup>(() => (
     initialSetup.expressionModel === DEFAULT_EXPRESSION_MODEL
       ? initialSetup
@@ -144,22 +146,26 @@ const StartGameFlow: React.FC<StartGameFlowProps> = ({
   const [availableExpressionModels, setAvailableExpressionModels] = useState<readonly AIExpressionModel[]>(
     getAvailableExpressionModels(null),
   );
+  const modelsRef = useRef(availableExpressionModels);
+  modelsRef.current = availableExpressionModels;
+  const startingRef = useRef(false);
   const onConfirmRef = useRef(onConfirm);
+  const modelWasSelected = useRef(false);
   onConfirmRef.current = onConfirm;
   const confirmOnceRef = useRef<((candidate: unknown) => boolean) | null>(null);
   if (!confirmOnceRef.current) {
-    confirmOnceRef.current = createSinglePlayerConfirmation(candidate => onConfirmRef.current(candidate));
+    confirmOnceRef.current = createSinglePlayerConfirmation(candidate => onConfirmRef.current(candidate, modelsRef.current));
   }
 
   useEffect(() => {
     let active = true;
     void fetchAvailableExpressionModels().then(models => {
-      if (!active) return;
+      if (!active || startingRef.current) return;
       setAvailableExpressionModels(models);
       setSetup(current => (
-        models.some(model => model.id === 'gemini-3.6-flash')
-          ? { ...current, expressionModel: 'gemini-3.6-flash' }
-          : { ...current, expressionModel: DEFAULT_EXPRESSION_MODEL }
+        modelWasSelected.current
+          ? current
+          : { ...current, expressionModel: getRecommendedExpressionModel(models) }
       ));
     });
     return () => {
@@ -228,7 +234,8 @@ const StartGameFlow: React.FC<StartGameFlowProps> = ({
               data-tour-target="single-player"
               type="button"
               onClick={() => {
-                setSetup(DEFAULT_SETUP);
+                modelWasSelected.current = false;
+                setSetup({ ...DEFAULT_SETUP, expressionModel: getRecommendedExpressionModel(availableExpressionModels) });
                 moveTo('match-setup');
               }}
             >
@@ -307,13 +314,29 @@ const StartGameFlow: React.FC<StartGameFlowProps> = ({
           <ExpressionModelSelector
             models={availableExpressionModels}
             selectedModel={setup.expressionModel}
-            onSelect={expressionModel => setSetup(current => ({ ...current, expressionModel }))}
+            onSelect={expressionModel => {
+              modelWasSelected.current = true;
+              setSetup(current => ({ ...current, expressionModel }));
+            }}
           />
+          <button ref={modelsButtonRef} className="start-model-details" type="button" onClick={() => setShowModels(true)}>
+            View participating AI models
+          </button>
           <p className="start-model-status" role="status">
-            {availableExpressionModels.length === AI_EXPRESSION_MODELS.length
-              ? 'Gemini 3.6 access verified. Your choice affects dialogue only.'
-              : 'Gemini 2.5 remains the safe default until server access is verified.'}
+            Models affect dialogue only. DeepSeek reasoning: Beginner · low, Intermediate · high, Expert · max.
+            Unavailable dialogue uses local fallback. Longer reasoning may take up to 45 seconds.
           </p>
+          <AccessibleDialog open={showModels} onClose={() => setShowModels(false)} title="Participating AI models"
+            description="Multi AI Model assigns each AI seat a stable model from the available pool for this match. Availability is verified at setup; generation can still fall back."
+            closeLabel="Close participating AI models" returnFocusRef={modelsButtonRef}>
+            <ul className="participating-model-list">
+              {MIXED_POOL_MODEL_IDS.map(id => <li key={id}>
+                <strong>{getExpressionModel(id).label}</strong>
+                <span>{availableExpressionModels.some(model => model.id === id && model.available) ? 'Available' : 'Unavailable'}</span>
+              </li>)}
+            </ul>
+            <p>Gemini 2.5 Flash is a backup and the safe single-model default. Local dialogue is used when remote output is unavailable or rejected. Neither counts as a participating model success.</p>
+          </AccessibleDialog>
 
           <section className="start-unavailable-routes" aria-label="Other matchmaking options">
             <button type="button" disabled><Lock aria-hidden="true" />Multi-Board Match · Unavailable</button>
@@ -326,7 +349,9 @@ const StartGameFlow: React.FC<StartGameFlowProps> = ({
             type="button"
             disabled={isStarting}
             onClick={event => {
+              startingRef.current = true;
               const accepted = confirmOnceRef.current?.(setup) ?? false;
+              if (!accepted) startingRef.current = false;
               if (accepted) {
                 event.currentTarget.disabled = true;
                 setIsStarting(true);

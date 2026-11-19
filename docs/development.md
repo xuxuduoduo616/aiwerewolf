@@ -22,19 +22,18 @@ The regular Vite server does not execute Netlify Functions. Matches still work t
 ## Environment Variables
 
 Only variables prefixed with `VITE_` are exposed to browser code. `API_KEY`,
-`GEMINI_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, and any future payment secret
+`GEMINI_API_KEY`, `DEEPSEEK_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, and any future payment secret
 must remain server-only. Never create a browser-exposed Gemini key variable.
 Production must set `ALLOWED_ORIGIN` to the exact browser origin(s) allowed to
 call the Netlify AI functions. Missing or mismatched origins fail closed with a
 generic response before capability lookup, generation, or cost accounting.
 
-`GEMINI_API_KEY` (or the compatible `API_KEY`) is optional for local/fallback
-play. The provider capability endpoint performs bounded read-only SDK model
-checks for exact Gemini 3.6 and 2.5 IDs. Gemini 3.6 appears only after both
-checks pass; every failure mode remains Gemini 2.5-only and playable.
-Selection affects expression, not rules or actions.
+`GEMINI_API_KEY` (or compatible `API_KEY`) and `DEEPSEEK_API_KEY` remain server-only. Read-only discovery independently verifies exact supported IDs; `verified_models` prevents an unavailable Gemini 2.5 backup from masquerading as verified. Partial pools are supported, and metadata access does not prove generation or balance.
 
-Live requests use a bounded Gemini 3.6 → Gemini 2.5 → local fallback chain.
+Multi AI Model is recommended when at least one participating route is verified. Its three-entry catalog pool assigns AI seats round-robin once per game; late discovery cannot change that snapshot or an explicit setup selection. Personas and legacy style IDs are separate from routing. Single-model options remain secondary. Each speaker's day/night request uses its seat route; night requests group identical routes only, run sequentially and never impersonate the human. Both DeepSeek models use low/high/max for easy/normal/hard. Automatic DeepSeek remains a compatibility mode (Flash for easy/normal, Pro for hard).
+
+The server owns Gemini 3.6 → 2.5 fallback; DeepSeek uses a single upstream attempt then local dialogue. Accepted source metadata is validated and committed through match/phase cancellation guards; output rejected by schema/language/roster guards becomes local dialogue. Full model names and assigned/actual/fallback distinctions are available in seat accessibility text.
+
 Cost admission assumes paid rates even when a free tier is available: Gemini 3.6
 uses `$0.0015` input / `$0.0075` output per 1K tokens; Gemini 2.5 uses
 `$0.0003` input / `$0.0025` output per 1K text tokens. Per-call and daily
@@ -154,6 +153,8 @@ Before proposing a release:
 2. Run `npm run build` with the required public build variables.
 3. Review the staged diff and scan it for credentials and browser artifacts.
 4. Confirm that documentation does not claim planned features are available.
-5. Verify both exact Gemini expression models with the server-only, read-only
-   capability preflight before authorizing the one consolidated release; without
-   that evidence, do not deploy.
+5. Verify the configured participating pool with server-only read-only capability checks and bounded generation checks before release. Distinguish an honestly unavailable subset from provider success; metadata access alone does not establish generation.
+
+### Multi-model browser verification
+
+`npx playwright test e2e/multi-model.spec.ts --project=smoke --workers=1` starts an isolated Vite harness on port 5176, outside the normal local-fallback ports. It intercepts the provider HTTP boundary with explicit capability and provenance fixtures, checks actual POST routes and accessible badges, and exercises desktop/mobile dialog focus/geometry. These mocks do not establish real vendor availability; bounded production checks are a separate release gate. No new dependencies are required.

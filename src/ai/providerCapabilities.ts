@@ -18,8 +18,8 @@ const timeoutSignal = (): AbortSignal | undefined =>
 
 /**
  * Fetch the server-verified model catalog. The parser intentionally treats any
- * partial or malformed response as Gemini-only so match setup remains usable
- * without accidentally exposing an unverified paid route.
+ * malformed response as a conservative default. Verified partial pools remain
+ * usable without accidentally unlocking an unverified route.
  */
 export const fetchAvailableExpressionModels = async (): Promise<readonly AIExpressionModel[]> => {
   if (isLocalVite()) return getAvailableExpressionModels(null);

@@ -27,7 +27,7 @@ The project separates game rules from generated expression. A deterministic rule
 - Post-game replay review with suspicion curves, vote reasons, and werewolf night chat
 - Client-side share card export for a finished match
 - Click-to-record voice input with editable transcription
-- Per-match dialogue refinement with server-verified Gemini 3.6 Flash, Gemini 2.5 Flash fallback, and local speech fallback
+- Multi AI Model matches with stable Gemini 3.6 Flash / DeepSeek V4.1 Flash / DeepSeek V4 Pro seat assignments and truthful fallback badges
 - Email OTP authentication, guest trial, local guest records, and player statistics
 - Responsive desktop, tablet, and mobile layouts with keyboard and safe-area support
 - English application interface with source-authored player and AI dialogue preserved
@@ -59,7 +59,7 @@ Multiplayer rooms, premium purchases, real rewards, and live payment processing 
 | --- | --- |
 | Frontend | React 18, TypeScript, Vite, Tailwind CSS |
 | Game and AI logic | TypeScript rules engine, belief tracker, action selector, local speech library |
-| AI provider | Server-verified Gemini 3.6 Flash, Gemini 2.5 Flash fallback, and local speech fallback |
+| AI provider | Gemini 3.6 Flash + DeepSeek V4.1 Flash / V4 Pro; Gemini 2.5 backup and local dialogue |
 | Authentication and data | Supabase Auth and Postgres |
 | Hosting | Netlify CDN and Functions |
 | Continuous integration | GitHub Actions production-build verification |
@@ -93,12 +93,12 @@ React interface
   +--> belief tracker + action selector   |-- complete match state
   +--> speech library + selected model ---+
 
-Browser --> Netlify CDN / Functions --> Gemini
+Browser --> Netlify CDN / Functions --> Gemini / DeepSeek
    |
    +--> Supabase Auth / Postgres
 ```
 
-The browser can run a full match without an AI API key. Setup safely starts with Gemini 2.5 Flash and shows Gemini 3.6 Flash only after the server atomically verifies both exact model IDs with read-only access. A request uses the server-owned Gemini 3.6 → Gemini 2.5 → local speech fallback chain. Model choice affects dialogue and wolf chat, never deterministic rules or action selection. Provider keys and Supabase service-role credentials must never be exposed to the frontend. See [Architecture](docs/architecture.md) for module boundaries and security constraints.
+The browser can run a full match without an AI API key. **Multi AI Model** uses the verified available subset of Gemini 3.6 Flash, DeepSeek V4.1 Flash and DeepSeek V4 Pro. Setup provides an accessible participating-model list; read-only discovery proves metadata access, not successful generation or account balance. At start, AI seats receive stable round-robin routes, independently of personality, role and difficulty. Daytime and private night chat use each speaker's assigned model. DeepSeek effort remains low/high/max for Beginner/Intermediate/Expert; it never changes a mixed-pool seat's model. Secondary single-model choices remain available. Gemini 3.6 can fall back to 2.5; DeepSeek makes one upstream attempt before local fallback, with existing budgets and cancellation. Badges distinguish assigned routes, accepted actual models, unverified sources and local dialogue. Rejected output counts as local dialogue. Rules and actions remain deterministic. Provider keys and Supabase service-role credentials remain server-only. See [Architecture](docs/architecture.md) and [DeepSeek integration](docs/deepseek-integration.md).
 
 ## Local Development
 

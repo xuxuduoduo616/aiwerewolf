@@ -1,4 +1,4 @@
-import React, { useId, useRef, useState } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import type { GameLog, GameRecord, Player, VoteRecord } from '../types';
 import type { DisplayLanguage } from '../i18n';
@@ -18,6 +18,7 @@ interface GameLogFeedProps {
   players: Player[];
   eliminatedPlayerId: number | null;
   isProcessingAI: boolean;
+  canViewWolfChat?: boolean;
   endRef?: React.RefObject<HTMLDivElement>;
 }
 
@@ -38,10 +39,11 @@ export const GameLogFeed: React.FC<GameLogFeedProps> = ({
   players,
   eliminatedPlayerId,
   isProcessingAI,
+  canViewWolfChat = false,
   endRef,
 }) => (
   <div className="game-log-feed">
-    {logs.map(log => (
+    {logs.filter(log => log.tone !== 'wolf' || canViewWolfChat).map(log => (
       <div
         key={log.id}
         className={`log-entry-in ${log.isSystem ? 'text-center' : log.speakerId === 1 ? 'text-right' : 'text-left'}`}
@@ -51,9 +53,11 @@ export const GameLogFeed: React.FC<GameLogFeedProps> = ({
             <LogMessage log={log} language={language} />
           </span>
         ) : (
-          <div className={`inline-block max-w-full rounded-lg border p-1.5 md:p-2 text-xs leading-relaxed ${log.speakerId === 1 ? 'bg-zinc-100 text-black border-zinc-200' : 'bg-zinc-900 border-zinc-700 text-zinc-200'}`}>
+          <div data-log-channel={log.tone === 'wolf' ? 'wolf' : 'public'} className={`inline-block max-w-full rounded-lg border p-1.5 md:p-2 text-xs leading-relaxed whitespace-pre-wrap break-words ${log.tone === 'wolf' ? 'border-red-900 bg-red-950/35 text-red-100' : log.speakerId === 1 ? 'bg-zinc-100 text-black border-zinc-200' : 'bg-zinc-900 border-zinc-700 text-zinc-200'}`}>
             <div className="text-[10px] font-bold opacity-70 mb-1">
-              {log.speakerId === 1
+              {log.tone === 'wolf'
+                ? `Player ${log.speakerId} · ${players.find(player => player.id === log.speakerId)?.name || 'Packmate'}${log.speakerId === 1 ? ' (You)' : ''} · Private`
+                : log.speakerId === 1
                 ? 'YOU'
                 : `PLAYER ${log.speakerId}`}
             </div>
@@ -90,6 +94,10 @@ const GameLogDialog: React.FC<GameLogDialogProps> = ({
   ...feedProps
 }) => {
   const [view, setView] = useState<GameInfoView>('log');
+  const logEndRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (open && view === 'log') logEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, [open, view, feedProps.logs.length]);
   const reactId = useId().replace(/:/g, '');
   const logTabRef = useRef<HTMLButtonElement>(null);
   const recordsTabRef = useRef<HTMLButtonElement>(null);
@@ -165,7 +173,7 @@ const GameLogDialog: React.FC<GameLogDialogProps> = ({
           aria-labelledby={logTabId}
           tabIndex={0}
         >
-          <GameLogFeed language={language} {...feedProps} />
+          <GameLogFeed language={language} {...feedProps} endRef={logEndRef} />
         </div>
       ) : (
         <div

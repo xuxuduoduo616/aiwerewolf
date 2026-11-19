@@ -1,3 +1,5 @@
+import { createSeatRoutes, LOCAL_DIALOGUE_SOURCE, type DialogueSource } from '../ai/modelRouting';
+import { DEFAULT_EXPRESSION_MODEL, getExpressionModel, type AIExpressionModel, type AIExpressionModelId } from '../ai/modelCatalog';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Difficulty,
@@ -15,7 +17,7 @@ import {
   Winner,
   WolfChatMessage,
 } from '../types';
-import { AI_NAMES, AVATAR_SEEDS } from '../constants';
+import { AI_NAMES, AVATAR_SEEDS, MAX_WOLF_CHAT_LENGTH } from '../constants';
 import { generateAIAction, generateAIDialogue, generateWolfChat, resetAIMemory, setAIDifficulty } from '../ai/aiOrchestrator';
 import { CUSTOM_AI_STYLES, pickRolePersona } from '../services/aiStyles';
 import {
@@ -107,6 +109,8 @@ export const shouldAutoResolveVote = (
 
 /** Vote-phase countdown duration in ms. Single definition — no scattered 10s. */
 export const VOTE_DURATION_MS = 10_000;
+export const WOLF_CHAT_DURATION_MS = 120_000;
+export const WOLF_HUMAN_FIRST_MS = 15_000;
 
 /** Module-level injectable clock. Tests override with vi.spyOn or direct assignment. */
 export let nowFn: () => number = () => Date.now();
@@ -231,6 +235,8 @@ export interface AuthContext {
 interface PhaseScope {
   phase: GamePhase;
   wolfChatStarted: boolean;
+  wolfResponseStarted?: boolean;
+  wolfComposing?: boolean;
 }
 
 interface PlayerClock {
@@ -274,6 +280,8 @@ export function useGameState(authContext: AuthContext) {
   const [voteRecords, setVoteRecords] = useState<VoteRecord[]>([]);
   const [wolfChat, setWolfChat] = useState<WolfChatMessage[]>([]);
   const [wolfCountdown, setWolfCountdown] = useState<number | null>(null);
+  const [wolfThinking, setWolfThinking] = useState(false);
+  const [wolfSpeakerId, setWolfSpeakerId] = useState<number | null>(null);
   const [pendingHunterId, setPendingHunterId] = useState<number | null>(null);
   const [hunterReturnPhase, setHunterReturnPhase] = useState<GamePhase.DAY_DISCUSSION | GamePhase.NIGHT_START>(GamePhase.DAY_DISCUSSION);
   const [savedRecordId, setSavedRecordId] = useState<string | null>(null);
@@ -301,6 +309,10 @@ export function useGameState(authContext: AuthContext) {
   const resumeWaitersRef = useRef(new Set<() => void>());
   const phaseDelayRef = useRef<(() => void) | null>(null);
   const playerClockRef = useRef<PlayerClock | null>(null);
+  const wolfHistoryRef = useRef<WolfChatMessage[]>([]);
+  const wolfRequestRef = useRef<AbortController | null>(null);
+  const wolfRevisionRef = useRef(0);
+  const wolfKillRef = useRef<number | null>(null);
   const saveStartedGenerationRef = useRef<number | null>(null);
   const timerCleanupsRef = useRef(new Set<() => void>());
   // H2-A: replay capture stays in memory for the whole match and is persisted
@@ -335,7 +347,17 @@ export function useGameState(authContext: AuthContext) {
     playerClockRef.current = null;
   };
 
+  const cancelWolfReply = () => {
+    wolfRevisionRef.current += 1;
+    if (wolfRequestRef.current) {
+      wolfRequestRef.current.abort();
+      wolfRequestRef.current = null;
+      speechAudio.cancel();
+    }
+  };
+
   const clearPhaseWork = () => {
+    cancelWolfReply();
     phaseDelayRef.current = null;
     for (const cleanup of timerCleanupsRef.current) cleanup();
     stopPlayerClock();
@@ -349,6 +371,8 @@ export function useGameState(authContext: AuthContext) {
     phaseScopeRef.current = nextScope;
     clearPhaseWork();
     setIsProcessingAI(false);
+    setWolfThinking(false);
+    setWolfSpeakerId(null);
     setPhaseScope(nextScope);
   };
 
@@ -519,7 +543,7 @@ export function useGameState(authContext: AuthContext) {
 
     const setRemaining = wolfPhase ? setWolfCountdown : humanVoting ? setVoteTimer : setSpeechTimer;
     const onTimeout = wolfPhase ? expireWolfChoice : humanVoting ? () => finishVote(null) : expireHumanSpeech;
-    let remainingMs = wolfPhase ? 20_000 : humanVoting ? VOTE_DURATION_MS : SPEECH_DURATION * 1000;
+    let remainingMs = wolfPhase ? WOLF_CHAT_DURATION_MS : humanVoting ? VOTE_DURATION_MS : SPEECH_DURATION * 1000;
     let deadline = 0;
     let timer: number;
     const stop = () => window.clearTimeout(timer);
@@ -558,6 +582,16 @@ export function useGameState(authContext: AuthContext) {
       if (playerClockRef.current === clock) playerClockRef.current = null;
     };
   }, [phaseScope, generation, roundCount, currentSpeaker, me?.isAlive, me?.canVote]);
+
+  // Give the human the opening move. Composing or recording keeps the pack
+  // waiting for the submitted instruction; an idle player gets a 15s head start.
+  useEffect(() => {
+    if (phase === GamePhase.NIGHT_WEREWOLVES && me?.isAlive && me.role === Role.WEREWOLF
+      && !phaseScope.wolfResponseStarted && wolfCountdown !== null && wolfCountdown > 0
+      && wolfCountdown <= (WOLF_CHAT_DURATION_MS - WOLF_HUMAN_FIRST_MS) / 1000 && canProgress()) {
+      void requestWolfResponses();
+    }
+  }, [phaseScope, wolfCountdown, pause]);
 
   // Phase transition driver
   useEffect(() => {
@@ -653,7 +687,8 @@ export function useGameState(authContext: AuthContext) {
     isSystem: boolean,
     speakerId?: number,
     translation?: string,
-    tone: GameLog['tone'] = isSystem ? 'system' : 'speech'
+    tone: GameLog['tone'] = isSystem ? 'system' : 'speech',
+    dialogueSource?: DialogueSource,
   ): string => {
     const id = `${Date.now()}-${Math.random()}`;
     setLogs(prev => [
@@ -666,12 +701,13 @@ export function useGameState(authContext: AuthContext) {
         isSystem,
         speakerId,
         tone,
+        ...(dialogueSource ? { dialogueSource } : {}),
       },
     ]);
     return id;
   };
 
-  const startGame = (nextConfig: GameConfig, language?: DisplayLanguage) => {
+  const startGame = (nextConfig: GameConfig, language?: DisplayLanguage, routing: { selection: AIExpressionModelId; models: readonly AIExpressionModel[] } = { selection: DEFAULT_EXPRESSION_MODEL, models: [] }) => {
     const playerName = resolvePublicPlayerName(publicName);
     if (!playerName) {
       setRecordError('A public identity is required before starting a game.');
@@ -692,6 +728,7 @@ export function useGameState(authContext: AuthContext) {
     setAIDifficulty(DIFFICULTY_CONFIGS[difficulty].actionAccuracy);
     const shuffledRoles = [...nextConfig.roles].sort(() => Math.random() - 0.5);
     const wolfIndices: number[] = [];
+    const seatRoutes = createSeatRoutes(nextConfig.roles.length - 1, routing.selection, difficulty, routing.models);
     const basePlayers: Player[] = shuffledRoles.map((role, index) => {
       const isHuman = index === 0;
       const styleKey = AI_STYLE_KEYS[Math.floor(Math.random() * AI_STYLE_KEYS.length)];
@@ -708,7 +745,9 @@ export function useGameState(authContext: AuthContext) {
         isRevealed: false,
         avatarUrl: `https://api.dicebear.com/7.x/notionists/svg?seed=${isHuman ? 'MySelf' : AVATAR_SEEDS[index % AVATAR_SEEDS.length]}&backgroundColor=transparent`,
         aiPersonality: isHuman ? 'Human' : styleConf.label,
-        aiModelLabel: isHuman ? 'HUMAN' : styleKey,
+        aiModelLabel: isHuman ? 'HUMAN' : getExpressionModel(seatRoutes[index - 1]).label,
+        aiStyleId: isHuman ? undefined : styleKey,
+        aiAssignedModel: isHuman ? undefined : seatRoutes[index - 1],
         traits: isHuman ? [] : [styleKey],
         isHuman,
         isWolfHopper: false,
@@ -796,6 +835,10 @@ export function useGameState(authContext: AuthContext) {
     setDeadThisRound([]);
     setVoteRecords([]);
     setWolfChat([]);
+    wolfHistoryRef.current = [];
+    wolfKillRef.current = null;
+    setWolfThinking(false);
+    setWolfSpeakerId(null);
     setSelectedPlayerId(null);
     setPendingHunterId(null);
     setSavedRecordId(null);
@@ -808,19 +851,131 @@ export function useGameState(authContext: AuthContext) {
     setNightState({ wolfKillId: null, witchPoisonId: null, witchSaved: false });
     setDeadThisRound([]);
     setSelectedPlayerId(null);
-    setWolfChat([]);
+    wolfKillRef.current = null;
+    setUserInput('');
     addLog('Night falls. Close your eyes.', true, undefined, 'Night falls. Close your eyes.', 'system');
     setPhase(GamePhase.NIGHT_WEREWOLVES);
   };
 
   const expireWolfChoice = () => {
-    if (!me?.isAlive || me.role !== Role.WEREWOLF || nightState.wolfKillId) return;
-    const fallbackTarget = players.find(player => player.isAlive && player.role !== Role.WEREWOLF);
-    if (fallbackTarget) {
-      addLog(`Wolf timer expired. Auto selected Player ${fallbackTarget.id}.`, true, undefined, `Wolf timer expired. Auto selected Player ${fallbackTarget.id}.`, 'wolf');
-      setNightState(prev => ({ ...prev, wolfKillId: fallbackTarget.id }));
+    if (!canProgress() || !me?.isAlive || me.role !== Role.WEREWOLF) return;
+    cancelWolfReply();
+    setWolfThinking(false);
+    setWolfSpeakerId(null);
+    setUserInput('');
+    if (wolfKillRef.current !== null) {
+      setPhase(GamePhase.NIGHT_SEER);
+      return;
     }
+    // The same action selector used by an AI-only pack owns the timeout kill.
+    void runCurrentAIPhase(async () => {
+      const leader = players.find(player => player.isAlive && player.role === Role.WEREWOLF && !player.isHuman);
+      const action = leader ? await generateAIAction(leader, players, logs, 'KILL', voteRecords) : null;
+      await runWhenActive(() => {
+        const valid = players.filter(player => player.isAlive && player.role !== Role.WEREWOLF);
+        const target = valid.find(player => player.id === action?.targetId) ?? valid[0];
+        wolfKillRef.current = target?.id ?? null;
+        setNightState(prev => ({ ...prev, wolfKillId: wolfKillRef.current }));
+        addLog(target ? `Time is up. Your pack chose Player ${target.id}.` : 'Time is up. No valid night target remains.', true, undefined, undefined, 'wolf');
+        setPhase(GamePhase.NIGHT_SEER);
+      });
+    }, () => {
+      const target = players.find(player => player.isAlive && player.role !== Role.WEREWOLF);
+      wolfKillRef.current = target?.id ?? null;
+      setNightState(prev => ({ ...prev, wolfKillId: wolfKillRef.current }));
+      addLog('Time is up. The pack used a fallback night target.', true, undefined, undefined, 'wolf');
+      setPhase(GamePhase.NIGHT_SEER);
+    });
+  };
+
+  const skipWolfChat = () => {
+    if (!canProgress() || phase !== GamePhase.NIGHT_WEREWOLVES || !me?.isAlive
+      || me.role !== Role.WEREWOLF || wolfKillRef.current === null) return;
+    setUserInput('');
     setPhase(GamePhase.NIGHT_SEER);
+  };
+
+  const appendWolfChat = (entry: WolfChatMessage): string | undefined => {
+    if (entry.speakerId !== MY_PLAYER_ID) setPlayers(previous => previous.map(player => player.id === entry.speakerId
+      ? { ...player, aiDialogueSource: entry.dialogueSource ?? LOCAL_DIALOGUE_SOURCE } : player));
+    wolfHistoryRef.current = [...wolfHistoryRef.current, entry];
+    setWolfChat(wolfHistoryRef.current);
+    replayRecorderRef.current?.recordWolfChat({ round: entry.round, speakerId: entry.speakerId, message: entry.message });
+    // Private entries never enter the non-wolf human's log, even as a spectator.
+    if (me?.role === Role.WEREWOLF) return addLog(entry.message, false, entry.speakerId, entry.message, 'wolf', entry.dialogueSource);
+    return undefined;
+  };
+
+  const interruptWolfChat = () => {
+    if (!isCurrentPhase() || phase !== GamePhase.NIGHT_WEREWOLVES || !me?.isAlive || me.role !== Role.WEREWOLF) return;
+    phaseScope.wolfResponseStarted = true;
+    phaseScope.wolfComposing = true;
+    cancelWolfReply();
+    setWolfThinking(false);
+    setWolfSpeakerId(null);
+  };
+
+  const requestWolfResponses = async () => {
+    if (!canProgress() || !playerClockRef.current || !me?.isAlive || me.role !== Role.WEREWOLF) return;
+    phaseScope.wolfResponseStarted = true;
+    cancelWolfReply();
+    const revision = wolfRevisionRef.current;
+    const request = new AbortController();
+    wolfRequestRef.current = request;
+    const active = () => isCurrentPhase() && revision === wolfRevisionRef.current && !request.signal.aborted;
+    const runForReply = async <T,>(work: () => T | Promise<T>): Promise<T | undefined> => {
+      if (!active()) return undefined;
+      return runWhenActive(() => active() ? work() : undefined);
+    };
+    try {
+      for (const teammate of players.filter(player => player.isAlive && player.role === Role.WEREWOLF && !player.isHuman)) {
+        if (!active()) return;
+        await runForReply(() => { setWolfThinking(true); setWolfSpeakerId(teammate.id); });
+        let commitChat: (() => void) | undefined;
+        let chat: WolfChatMessage[];
+        try {
+          chat = await generateWolfChat([teammate], players, logs, Math.max(1, roundCount), voteRecords, gameLanguage, {
+            signal: request.signal,
+            runWhenActive: runForReply,
+            deferCommit: commit => { commitChat = commit; },
+          }, { history: wolfHistoryRef.current, confirmedTargetId: wolfKillRef.current });
+        } catch {
+          chat = [{ id: `wolf-fallback-${revision}-${teammate.id}`, round: Math.max(1, roundCount), speakerId: teammate.id,
+            message: 'I heard your plan and will coordinate with the team. Let us check the risks before committing to our next move.', strategyTag: '补位' }];
+        }
+        await runForReply(async () => {
+          commitChat?.();
+          setWolfThinking(false);
+          for (const entry of chat.filter(entry => entry.speakerId === teammate.id).slice(0, 1)) {
+            const logId = appendWolfChat(entry);
+            if (logId && active()) {
+              try {
+                await speechAudio.enqueue(entry.message, speechAudio.speechLangTag(entry.message, gameLanguage), teammate.id, logId,
+                  isGuest ? undefined : session?.accessToken);
+              } catch { /* Audio failure cannot block the next teammate. */ }
+            }
+          }
+        });
+      }
+    } finally {
+      await runForReply(() => {
+        wolfRequestRef.current = null;
+        setWolfThinking(false);
+        setWolfSpeakerId(null);
+      });
+    }
+  };
+
+  const handleWolfChatSubmit = () => {
+    if (!canProgress() || phase !== GamePhase.NIGHT_WEREWOLVES || !playerClockRef.current
+      || !me?.isAlive || me.role !== Role.WEREWOLF) return;
+    const message = normalizeHumanSpeech(userInput);
+    if (!message || message.length > MAX_WOLF_CHAT_LENGTH) return;
+    phaseScope.wolfComposing = false;
+    appendWolfChat({ id: `wolf-human-${Date.now()}-${wolfRevisionRef.current}`, round: Math.max(1, roundCount),
+      speakerId: MY_PLAYER_ID, message, strategyTag: '补位' });
+    setUserInput('');
+    void requestWolfResponses();
   };
 
   const expireHumanSpeech = () => {
@@ -841,28 +996,11 @@ export function useGameState(authContext: AuthContext) {
         const chat = await generateWolfChat(wolves, players, logs, Math.max(1, roundCount), voteRecords, gameLanguage, {
           runWhenActive,
           deferCommit: commit => { commitChat = commit; },
-        });
-        await runWhenActive(() => {
-          commitChat?.();
-          setWolfChat(chat);
-          // H2-A: capture the committed night chat (already free of names).
-          for (const entry of chat) {
-            replayRecorderRef.current?.recordWolfChat({
-              round: entry.round,
-              speakerId: entry.speakerId,
-              message: entry.message,
-            });
-          }
-        });
-      } catch {
-        // Wolf chat is cosmetic — a failed AI call must never block the night.
-      }
+        }, { history: wolfHistoryRef.current, confirmedTargetId: wolfKillRef.current });
+        await runWhenActive(() => { commitChat?.(); chat.forEach(appendWolfChat); });
+      } catch { /* Expression failure never blocks the night action. */ }
     };
-    if (humanWolf) {
-      // A human wolf can choose a target before the cosmetic chat arrives.
-      void loadChat();
-      return;
-    }
+    if (humanWolf) return;
 
     void runCurrentAIPhase(async () => {
       await loadChat();
@@ -1041,6 +1179,7 @@ export function useGameState(authContext: AuthContext) {
     await runCurrentAIPhase(async () => {
       const seerInfo = nextSpeaker.role === Role.SEER ? aiSeerLastCheck : null;
       let commitSpeech: (() => void) | undefined;
+      let dialogueSource = LOCAL_DIALOGUE_SOURCE;
       const response = await generateAIDialogue(
         nextSpeaker,
         players,
@@ -1052,11 +1191,13 @@ export function useGameState(authContext: AuthContext) {
         voteRecords,
         nightState,
         gameLanguage,
-        { runWhenActive, deferCommit: commit => { commitSpeech = commit; } },
+        { runWhenActive, deferCommit: commit => { commitSpeech = commit; }, onSource: source => { dialogueSource = source; } },
+        nextSpeaker.role === Role.WEREWOLF ? wolfHistoryRef.current : [],
       );
       await runWhenActive(async () => {
         commitSpeech?.();
-        const ttsLogId = addLog(response.en, false, nextSpeaker.id, response.zh, 'speech');
+        setPlayers(previous => previous.map(player => player.id === nextSpeaker.id ? { ...player, aiDialogueSource: dialogueSource } : player));
+        const ttsLogId = addLog(response.en, false, nextSpeaker.id, response.zh, 'speech', dialogueSource);
         // H2-A: every AI public speech, as delivered in the match language.
         replayRecorderRef.current?.recordSpeech({
           round: Math.max(1, roundCount),
@@ -1257,10 +1398,11 @@ export function useGameState(authContext: AuthContext) {
     if (!me?.isAlive || !target) return;
 
     if (phase === GamePhase.NIGHT_WEREWOLVES && me.role === Role.WEREWOLF) {
-      if (!target.isAlive || target.role === Role.WEREWOLF) return;
+      if (!playerClockRef.current || wolfKillRef.current !== null || !target.isAlive || target.role === Role.WEREWOLF) return;
+      wolfKillRef.current = targetId;
       setNightState(prev => ({ ...prev, wolfKillId: targetId }));
       addLog(`Wolf target locked: Player ${targetId}.`, true, undefined, `Werewolf target locked: Player ${targetId}.`, 'wolf');
-      setPhase(GamePhase.NIGHT_SEER);
+      if (phaseScope.wolfResponseStarted && !phaseScope.wolfComposing) void requestWolfResponses();
     } else if (phase === GamePhase.NIGHT_SEER && me.role === Role.SEER) {
       if (!isTargetableAliveOther(players, MY_PLAYER_ID, targetId)) return;
       const isGood = target.role !== Role.WEREWOLF;
@@ -1309,7 +1451,9 @@ export function useGameState(authContext: AuthContext) {
 
   const phaseHint = (() => {
     if (!me) return '';
-    if (phase === GamePhase.NIGHT_WEREWOLVES && me.role === Role.WEREWOLF) return 'Choose a non-werewolf player as the night target.';
+    if (phase === GamePhase.NIGHT_WEREWOLVES && me.role === Role.WEREWOLF) return nightState.wolfKillId !== null
+      ? 'Night target confirmed. Keep coordinating with your pack, or skip night chat.'
+      : 'Share your plan first. Confirm a night target before time runs out, or let your pack choose.';
     if (phase === GamePhase.NIGHT_SEER && me.role === Role.SEER) return 'Choose a player to check.';
     if (phase === GamePhase.NIGHT_WITCH && me.role === Role.WITCH) return 'Choose to save, poison, or pass.';
     if (phase === GamePhase.DAY_DISCUSSION && currentSpeaker?.id === MY_PLAYER_ID) return 'It is your turn to speak publicly.';
@@ -1339,7 +1483,7 @@ export function useGameState(authContext: AuthContext) {
     translateEnabled, setTranslateEnabled,
     userInput, setUserInput,
     speakingQueue, currentSpeaker, spokenPlayerIds,
-    deadThisRound, voteRecords, wolfChat, wolfCountdown,
+    deadThisRound, voteRecords, wolfChat, wolfCountdown, wolfThinking, wolfSpeakerId,
     pendingHunterId, savedRecordId,
     speechTimer, voteTimer, aiSeerLastCheck,
     // derived
@@ -1349,6 +1493,6 @@ export function useGameState(authContext: AuthContext) {
     startGame, leaveGame, handlePlayerAction,
     handleWitchSave, skipWitch,
     finishVote, handleHumanSpeechSubmit,
-    skipCurrentSpeech, togglePause,
+    skipCurrentSpeech, togglePause, handleWolfChatSubmit, interruptWolfChat, skipWolfChat,
   };
 }

@@ -98,3 +98,5 @@ export const WEREWOLF_SLANG = [
   '金水', '查杀', '悍跳', '倒钩', '冲锋', '铁逻辑',
   '表水', '盘逻辑', '带节奏', '抗推位', '警徽流', '银水',
 ];
+/** Keep a complete human instruction within the private expression context. */
+export const MAX_WOLF_CHAT_LENGTH = 1200;

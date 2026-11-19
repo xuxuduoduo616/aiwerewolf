@@ -7,6 +7,7 @@ import {
   AI_EXPRESSION_MODELS,
   DEFAULT_EXPRESSION_MODEL,
   getAvailableExpressionModels,
+  getRecommendedExpressionModel,
 } from '../ai/modelCatalog';
 import { mapGameSetupToConfig, type GameSetup } from '../lobbyFeatures';
 import StartGameFlow, {
@@ -159,32 +160,43 @@ describe('StartGameFlow surfaces and navigation', () => {
 });
 
 describe('expression model capability gating', () => {
-  const fullCapabilities = {
-    default_model: 'gemini-3.6-flash',
+  const deepseekCapabilities = {
+    default_model: 'deepseek-auto',
     models: [
-      { id: 'gemini-3.6-flash', label: 'Gemini 3.6 Flash' },
-      { id: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash' },
+      { id: 'deepseek-auto', label: 'Automatic' },
+      { id: 'deepseek-flash', label: 'Flash' },
+      { id: 'deepseek-v4-pro', label: 'Pro' },
+      { id: 'gemini-2.5-flash', label: 'Gemini' },
     ],
   };
-
-  it('exposes 3.6 only when both exact Gemini IDs are verified', () => {
-    expect(getAvailableExpressionModels(fullCapabilities).map(model => model.id)).toEqual([
-      'gemini-3.6-flash',
-      'gemini-2.5-flash',
-    ]);
-
+  it('recommends Multi AI Model with the verified DeepSeek subset', () => {
+    const models = getAvailableExpressionModels(deepseekCapabilities);
+    expect(models.map(model => model.id)).toEqual(['multi-ai-model', 'deepseek-auto', 'deepseek-flash', 'deepseek-v4-pro', 'gemini-2.5-flash']);
+    expect(getRecommendedExpressionModel(models)).toBe('multi-ai-model');
+    const html = renderToStaticMarkup(<ExpressionModelSelector models={models} selectedModel="multi-ai-model" onSelect={() => undefined} />);
+    expect(html).toContain('Multi AI Model');
+    expect(html).toContain('Single-model options');
+    expect(html).toContain('DeepSeek V4.1 Flash');
+    expect(html).toContain('DeepSeek V4 Pro');
+  });
+  it('fails closed for duplicate, unknown, invalid and inconsistent capability envelopes', () => {
     for (const capabilities of [
-      null,
-      {},
-      { ...fullCapabilities, models: fullCapabilities.models.slice(0, 1) },
-      { ...fullCapabilities, models: fullCapabilities.models.slice(1) },
-      { ...fullCapabilities, default_model: 'gemini-2.5-flash' },
-      { ...fullCapabilities, models: [{ id: 'gemini-3.6-flash', label: 42 }] },
+      null, {},
+      { ...deepseekCapabilities, models: deepseekCapabilities.models.slice(1) },
+      { ...deepseekCapabilities, models: [...deepseekCapabilities.models, deepseekCapabilities.models[0]] },
+      { ...deepseekCapabilities, models: [...deepseekCapabilities.models, { id: 'deepseek-v4.1-flash', label: 'Wrong API ID' }] },
+      { ...deepseekCapabilities, verified_models: 'malformed' },
+      { ...deepseekCapabilities, verified_models: ['unimplemented-model'] },
     ]) {
-      expect(getAvailableExpressionModels(capabilities).map(model => model.id)).toEqual([
-        DEFAULT_EXPRESSION_MODEL,
-      ]);
+      const models = getAvailableExpressionModels(capabilities);
+      expect(models.map(model => model.id)).toEqual(['multi-ai-model', DEFAULT_EXPRESSION_MODEL]);
+      expect(models.every(model => model.available === false)).toBe(true);
     }
+  });
+  it('accepts a single verified participating model and keeps backup availability truthful', () => {
+    const models = getAvailableExpressionModels({ default_model: 'deepseek-flash', models: [{ id: 'deepseek-flash', label: 'Flash' }, { id: DEFAULT_EXPRESSION_MODEL, label: 'Backup' }], verified_models: ['deepseek-flash'] });
+    expect(models.filter(model => model.available).map(model => model.id)).toEqual(['multi-ai-model', 'deepseek-flash']);
+    expect(getRecommendedExpressionModel(models)).toBe('multi-ai-model');
   });
 
   it('renders both Gemini choices together and preserves an explicit selection', () => {

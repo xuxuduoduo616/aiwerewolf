@@ -1,7 +1,7 @@
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
-import { GamePhase } from '../types';
+import { GamePhase, type GameLog } from '../types';
 import GameLogDialog, { GameLogFeed } from './GameLogDialog';
 
 const feedProps = {
@@ -71,5 +71,18 @@ describe('GameLogDialog', () => {
     );
 
     expect(markup).toBe('');
+  });
+
+  it('keeps private wolf entries out of non-wolf feeds and preserves chronological names and full text for wolves', () => {
+    const text = 'We will keep our stories independent. Player 3 will lead the push while I cover the claim.';
+    const logs: GameLog[] = [feedProps.logs[0], { id: 'private', phase: GamePhase.NIGHT_WEREWOLVES, message: text, speakerId: 3, isSystem: false, tone: 'wolf' }, { ...feedProps.logs[0], id: 'last', message: 'Dawn arrives.' }];
+    const hidden = renderToStaticMarkup(<GameLogFeed {...feedProps} logs={logs} />);
+    expect(hidden).not.toContain(text);
+    const visible = renderToStaticMarkup(<GameLogFeed {...feedProps} logs={logs} canViewWolfChat players={[{ id: 3, name: 'Elena', role: 'Werewolf', camp: 'WEREWOLF', isHuman: false, isAlive: true, canVote: true, isRevealed: false, avatarUrl: '', aiPersonality: '', traits: [], aiModelLabel: '', publicClaims: [], privateKnowledge: [], suspicionMap: {} } as import('../types').Player]} />);
+    expect(visible).toContain(text);
+    expect(visible).toContain('Player 3 · Elena · Private');
+    expect(visible).toContain('bg-red-950/35');
+    expect(visible.indexOf('Day begins')).toBeLessThan(visible.indexOf(text));
+    expect(visible.indexOf(text)).toBeLessThan(visible.indexOf('Dawn arrives.'));
   });
 });

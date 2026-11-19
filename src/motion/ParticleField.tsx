@@ -54,7 +54,7 @@ const ParticleField = () => {
       id="tsparticles"
       options={options}
       particlesLoaded={onLoaded}
-      style={{ pointerEvents: 'none' }}
+      style={{ position: 'fixed', inset: 0, pointerEvents: 'none' }}
     />
   );
 };

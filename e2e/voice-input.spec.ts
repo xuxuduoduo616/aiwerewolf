@@ -11,7 +11,8 @@ import {
  * V-C: Chromium fake-media smoke test for the click-to-toggle voice input.
  *
  * What this spec proves:
- * - the microphone button only exists on the human's own day-discussion turn;
+ * - this spec exercises the microphone on the human's day-discussion turn;
+ *   private wolf-night input is covered by night-chat.spec.ts;
  * - first click → `recording` (`aria-pressed="true"`, dimmed), second click →
  *   `transcribing` and then back to `idle`;
  * - the recording is POSTed exactly once to the same-origin

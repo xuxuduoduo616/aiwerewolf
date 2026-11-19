@@ -8,14 +8,15 @@ const mocks = vi.hoisted(() => ({
   GoogleGenAI: vi.fn(),
   get: vi.fn(),
   generateContent: vi.fn(),
+  fetch: vi.fn(),
   console: { warn: vi.fn(), log: vi.fn(), error: vi.fn() },
 }));
 const source = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '../functions/provider-adapter.cjs'), 'utf8');
-const original = { API_KEY: process.env.API_KEY, GEMINI_API_KEY: process.env.GEMINI_API_KEY, ALLOWED_ORIGIN: process.env.ALLOWED_ORIGIN, ADAPTER_DRY_RUN: process.env.ADAPTER_DRY_RUN, ADAPTER_DAILY_BUDGET_USD: process.env.ADAPTER_DAILY_BUDGET_USD };
+const original = { API_KEY: process.env.API_KEY, GEMINI_API_KEY: process.env.GEMINI_API_KEY, DEEPSEEK_API_KEY: process.env.DEEPSEEK_API_KEY, ALLOWED_ORIGIN: process.env.ALLOWED_ORIGIN, ADAPTER_DRY_RUN: process.env.ADAPTER_DRY_RUN, ADAPTER_DAILY_BUDGET_USD: process.env.ADAPTER_DAILY_BUDGET_USD };
 const load = () => {
   const module = { exports: {} };
   const context = vm.createContext({
-    Date, Map, JSON, process, Promise, Math, Number, Infinity, URL, setTimeout, clearTimeout, console: mocks.console,
+    Date, Map, JSON, process, Promise, Math, Number, Infinity, URL, Buffer, AbortController, fetch: mocks.fetch, setTimeout, clearTimeout, console: mocks.console,
     require: (id) => id === '@google/genai' ? { GoogleGenAI: mocks.GoogleGenAI, ThinkingLevel: { MINIMAL: 'MINIMAL' } } : (() => { throw new Error(`Unexpected require ${id}`); })(),
     module, exports: module.exports,
   });
@@ -27,6 +28,7 @@ const json = (response) => JSON.parse(response.body);
 
 describe('Gemini provider adapter', () => {
   beforeEach(() => {
+    delete process.env.DEEPSEEK_API_KEY;
     process.env.API_KEY = 'test-key'; process.env.ALLOWED_ORIGIN = 'https://game.example'; delete process.env.GEMINI_API_KEY; delete process.env.ADAPTER_DRY_RUN; delete process.env.ADAPTER_DAILY_BUDGET_USD;
     mocks.get.mockReset().mockImplementation(({ model }) => Promise.resolve({ name: `models/${model}` }));
     mocks.generateContent.mockReset().mockResolvedValue({ text: 'model text' });
@@ -34,9 +36,9 @@ describe('Gemini provider adapter', () => {
   });
   afterEach(() => { for (const [key, value] of Object.entries(original)) value === undefined ? delete process.env[key] : process.env[key] = value; vi.clearAllMocks(); });
 
-  it('has only the two Gemini expression models and local fallback', () => {
+  it('whitelists the exact Gemini and DeepSeek model IDs plus local fallback', () => {
     const { MODEL_REGISTRY } = load();
-    expect(Object.keys(MODEL_REGISTRY)).toEqual(['gemini-3.6-flash', 'gemini-2.5-flash', 'local-fallback']);
+    expect(Object.keys(MODEL_REGISTRY)).toEqual(['gemini-3.6-flash', 'gemini-2.5-flash', 'deepseek-flash', 'deepseek-v4-pro', 'local-fallback']);
     expect(MODEL_REGISTRY['gemini-3.6-flash'].maxRetries).toBe(0);
     expect(MODEL_REGISTRY['gemini-2.5-flash'].maxRetries).toBe(0);
   });
@@ -98,7 +100,7 @@ describe('Gemini provider adapter', () => {
     ['malformed metadata', () => { mocks.get.mockResolvedValue({ name: 'models/not-the-requested-model' }); }],
   ])('fails closed to 2.5 on %s', async (_name, setup) => {
     setup(); const adapter = load(); const response = await adapter.handler(event({}, { httpMethod: 'GET', body: '' }));
-    expect(json(response)).toEqual({ default_model: 'gemini-2.5-flash', models: [{ id: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash' }] });
+    expect(json(response)).toEqual({ default_model: 'gemini-2.5-flash', verified_models: [], models: [{ id: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash' }] });
   });
   it('fails closed to 2.5 when read-only model lookup times out', async () => {
     vi.useFakeTimers();
@@ -152,6 +154,26 @@ describe('Gemini provider adapter', () => {
     expect(json(response)).toMatchObject({ model_used: 'local-fallback', fallback_used: true });
     expect(mocks.generateContent).toHaveBeenCalledTimes(1);
   });
+  it.each(['MAX_TOKENS', 'SAFETY', 'RECITATION', 'OTHER'])('rejects nonempty but incomplete %s output and uses the next model', async finishReason => {
+    mocks.generateContent.mockResolvedValueOnce({ text: '{"messages":[{"message":"Our unfinished plan"}]}', candidates: [{ finishReason }] })
+      .mockResolvedValueOnce({ text: '{"messages":[{"message":"A complete plan."}]}', candidates: [{ finishReason: 'STOP' }] });
+    const adapter = load();
+    const response = await adapter.handler(event({ prompt: 'night chat', responseMimeType: 'application/json' }));
+    expect(json(response)).toMatchObject({ model_used: 'gemini-2.5-flash', fallback_used: true });
+    expect(json(response).text).toContain('A complete plan.');
+    expect(mocks.generateContent).toHaveBeenCalledTimes(2);
+    expect(mocks.generateContent.mock.calls[0][0].config.maxOutputTokens).toBe(256);
+  });
+  it('preserves the cost ceiling and daily budget when a night response is incomplete', async () => {
+    process.env.ADAPTER_DAILY_BUDGET_USD = '0.000001';
+    const adapter = load();
+    await adapter.handler(event({ prompt: 'night chat', maxOutputTokens: 100000 }));
+    expect(mocks.generateContent).not.toHaveBeenCalled();
+    delete process.env.ADAPTER_DAILY_BUDGET_USD;
+    adapter.resetAdapterState();
+    await adapter.handler(event({ prompt: 'x'.repeat(100000), maxOutputTokens: 100000 }));
+    expect(mocks.generateContent).not.toHaveBeenCalled();
+  });
   it('rejects the thirty-first request from one client without a generation call', async () => {
     process.env.ADAPTER_DAILY_BUDGET_USD = '1';
     const adapter = load();
@@ -202,5 +224,206 @@ describe('Gemini provider adapter', () => {
     expect((await adapter.handler(event({ model: 'unknown', prompt: 'x' }))).statusCode).toBe(400);
     expect((await adapter.handler(event({}))).statusCode).toBe(400);
     expect((await adapter.handler(event({}, { httpMethod: 'PATCH' }))).statusCode).toBe(405);
+  });
+});
+
+const deepseekResponse = (overrides = {}) => ({
+  choices: [{ finish_reason: 'stop', message: { content: '{"en":"Complete dialogue"}', reasoning_content: 'PRIVATE REASONING' } }],
+  usage: { prompt_tokens: 100, completion_tokens: 200 },
+  ...overrides,
+});
+const httpResponse = payload => ({ ok: true, status: 200, json: async () => payload });
+
+describe('DeepSeek expression routing', () => {
+  beforeEach(() => {
+    process.env.DEEPSEEK_API_KEY = 'test-deepseek-key';
+    process.env.ALLOWED_ORIGIN = 'https://game.example';
+    delete process.env.API_KEY; delete process.env.GEMINI_API_KEY;
+    delete process.env.ADAPTER_DRY_RUN; delete process.env.ADAPTER_DAILY_BUDGET_USD;
+    mocks.fetch.mockReset().mockResolvedValue(httpResponse(deepseekResponse()));
+    mocks.generateContent.mockReset(); mocks.get.mockReset();
+    mocks.console.warn.mockClear();
+  });
+  afterEach(() => {
+    for (const [key, value] of Object.entries(original)) value === undefined ? delete process.env[key] : process.env[key] = value;
+    vi.useRealTimers();
+  });
+  it.each([
+    ['easy', 'deepseek-flash', 'low', 2048],
+    ['normal', 'deepseek-flash', 'high', 4096],
+    ['hard', 'deepseek-v4-pro', 'max', 8192],
+  ])('routes %s automatically with the actual reasoning parameter', async (difficulty, model, effort, maxTokens) => {
+    const result = await load().handler(event({ model: 'deepseek-auto', difficulty, prompt: 'Return JSON dialogue', responseMimeType: 'application/json', reasoning_effort: 'ultra', max_tokens: 999999 }));
+    expect(result.statusCode).toBe(200);
+    expect(json(result)).toMatchObject({ model_used: model, reasoning_effort: effort, fallback_used: false, text: '{"en":"Complete dialogue"}' });
+    const [url, options] = mocks.fetch.mock.calls[0];
+    expect(url).toBe('https://api.deepseek.com/chat/completions');
+    expect(options.headers.Authorization).toBe('Bearer test-deepseek-key');
+    expect(options.redirect).toBe('error');
+    expect(JSON.parse(options.body)).toMatchObject({ model, reasoning_effort: effort, thinking: { type: 'enabled' }, max_tokens: maxTokens, response_format: { type: 'json_object' } });
+    expect(JSON.parse(options.body)).not.toHaveProperty('temperature');
+    expect(JSON.stringify(result)).not.toMatch(/PRIVATE REASONING|test-deepseek-key|reasoning_content/);
+    expect(mocks.generateContent).not.toHaveBeenCalled();
+    expect(mocks.fetch).toHaveBeenCalledTimes(1);
+  });
+  it.each(['deepseek-flash', 'deepseek-v4-pro'])('keeps an explicit %s choice at Expert while using max effort', async model => {
+    const result = await load().handler(event({ model, difficulty: 'hard', prompt: 'hello' }));
+    expect(json(result)).toMatchObject({ model_used: model, reasoning_effort: 'max' });
+    expect(JSON.parse(mocks.fetch.mock.calls[0][1].body).model).toBe(model);
+  });
+  it.each(['deepseek-flash', 'deepseek-v4-pro'].flatMap(model => [['easy', 'low'], ['normal', 'high'], ['hard', 'max']].map(([difficulty, effort]) => [model, difficulty, effort])))('preserves assigned %s at %s with %s effort for day and night JSON', async (model, difficulty, effort) => {
+    for (const prompt of ['Return daytime JSON speech', 'Return night messages JSON']) {
+      mocks.fetch.mockClear();
+      const response = await load().handler(event({ model, difficulty, prompt, responseMimeType: 'application/json' }));
+      expect(json(response)).toMatchObject({ model_used: model, reasoning_effort: effort, fallback_used: false });
+      expect(JSON.parse(mocks.fetch.mock.calls[0][1].body)).toMatchObject({ model, reasoning_effort: effort });
+      expect(mocks.fetch).toHaveBeenCalledTimes(1);
+    }
+  });
+  it.each(['deepseek-flash', 'deepseek-v4-pro'])('exposes only verified partial model %s, leaving backup unverified', async id => {
+    mocks.fetch.mockResolvedValue(httpResponse({ data: [{ id }, { id: 'future-unimplemented' }] }));
+    const result = json(await load().handler(event({}, { httpMethod: 'GET' })));
+    expect(result.verified_models).toEqual([id]);
+    expect(result.models.map(model => model.id)).toEqual([id, 'gemini-2.5-flash']);
+    expect(result.default_model).toBe(id);
+  });
+  it('discovers both exact models without Gemini credentials or paid generation and caches the catalog', async () => {
+    mocks.fetch.mockResolvedValue(httpResponse({ data: [{ id: 'deepseek-flash' }, { id: 'deepseek-v4-pro' }] }));
+    const adapter = load();
+    const first = await adapter.handler(event({}, { httpMethod: 'GET' }));
+    const second = await adapter.handler(event({}, { httpMethod: 'GET' }));
+    expect(json(first)).toEqual({ default_model: 'deepseek-auto', verified_models: ['deepseek-flash', 'deepseek-v4-pro'], models: [
+      { id: 'deepseek-auto', label: 'Automatic · DeepSeek by difficulty' },
+      { id: 'deepseek-flash', label: 'DeepSeek V4.1 Flash' },
+      { id: 'deepseek-v4-pro', label: 'DeepSeek V4 Pro' },
+      { id: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash' },
+    ] });
+    expect(json(second)).toEqual(json(first));
+    expect(mocks.fetch).toHaveBeenCalledTimes(1);
+    expect(mocks.fetch.mock.calls[0][0]).toBe('https://api.deepseek.com/models');
+    expect(mocks.fetch.mock.calls[0][1].method).toBe('GET');
+    expect(mocks.generateContent).not.toHaveBeenCalled();
+  });
+  it.each([{}, { data: null }, { data: [{ id: 'deepseek-v4.1-flash' }] }])('does not expose malformed or guessed models from metadata %j', async payload => {
+    mocks.fetch.mockResolvedValue(httpResponse(payload));
+    const result = await load().handler(event({}, { httpMethod: 'GET' }));
+    expect(json(result).models.map(model => model.id)).toEqual(['gemini-2.5-flash']);
+  });
+  it.each([401, 403, 429, 503])('fails closed on HTTP %s without leaking response data or retrying', async status => {
+    mocks.fetch.mockResolvedValue({ ok: false, status, json: async () => ({ error: 'PRIVATE PROVIDER ERROR' }) });
+    const adapter = load();
+    const discovery = await adapter.handler(event({}, { httpMethod: 'GET' }));
+    expect(json(discovery).models.map(model => model.id)).toEqual(['gemini-2.5-flash']);
+    mocks.fetch.mockClear();
+    const result = await adapter.handler(event({ model: 'deepseek-auto', prompt: 'PRIVATE PROMPT' }));
+    expect(json(result)).toEqual({ text: '', model_used: 'local-fallback', fallback_used: true, cost_estimate: 0 });
+    expect(mocks.fetch).toHaveBeenCalledTimes(1);
+    expect(JSON.stringify(mocks.console.warn.mock.calls)).not.toMatch(/PRIVATE|test-deepseek-key/);
+  });
+  it('requires a DeepSeek key even when the Gemini key exists', async () => {
+    delete process.env.DEEPSEEK_API_KEY; process.env.API_KEY = 'test-gemini';
+    const result = await load().handler(event({ model: 'deepseek-auto', prompt: 'hello' }));
+    expect(json(result).model_used).toBe('local-fallback');
+    expect(mocks.fetch).not.toHaveBeenCalled();
+    expect(mocks.generateContent).not.toHaveBeenCalled();
+  });
+  it('validates origin, model and difficulty before any DeepSeek work', async () => {
+    const adapter = load();
+    expect((await adapter.handler(event({ model: 'deepseek-auto', prompt: 'hello' }, { headers: { origin: 'https://evil.example' } }))).statusCode).toBe(403);
+    for (const difficulty of ['max', '__proto__', null, {}, []]) {
+      expect((await adapter.handler(event({ model: 'deepseek-auto', difficulty, prompt: 'hello' }))).statusCode).toBe(400);
+    }
+    expect((await adapter.handler(event({ model: 'deepseek-v4.1-flash', prompt: 'hello' }))).statusCode).toBe(400);
+    expect((await adapter.handler(event({}, { body: 'null' }))).statusCode).toBe(400);
+    expect(mocks.fetch).not.toHaveBeenCalled();
+  });
+  it.each([
+    { choices: [{ finish_reason: 'length', message: { content: '{"en":"partial"}' } }] },
+    { choices: [{ finish_reason: 'content_filter', message: { content: '{}' } }] },
+    { choices: [{ finish_reason: 'stop', message: { content: '', reasoning_content: 'PRIVATE REASONING' } }] },
+    { choices: [{ finish_reason: 'stop', message: { content: 'broken json' } }] },
+    { choices: [{ finish_reason: 'stop', message: { content: 'null' } }] },
+    { choices: [{ finish_reason: 'stop', message: { content: '[]' } }] },
+  ])('rejects incomplete, empty and invalid JSON outputs', async payload => {
+    mocks.fetch.mockResolvedValue(httpResponse(payload));
+    const result = await load().handler(event({ model: 'deepseek-auto', prompt: 'hello', responseMimeType: 'application/json' }));
+    expect(json(result).model_used).toBe('local-fallback');
+    expect(mocks.fetch).toHaveBeenCalledTimes(1);
+  });
+  it('aborts a hung generation after 45 seconds and returns local fallback', async () => {
+    vi.useFakeTimers();
+    mocks.fetch.mockImplementation(() => new Promise(() => {}));
+    const pending = load().handler(event({ model: 'deepseek-auto', prompt: 'hello' }));
+    const signal = mocks.fetch.mock.calls[0][1].signal;
+    await vi.advanceTimersByTimeAsync(45000);
+    expect(json(await pending).model_used).toBe('local-fallback');
+    expect(signal.aborted).toBe(true);
+    expect(mocks.console.warn.mock.calls.map(([line]) => JSON.parse(line).cause)).toContain('timeout');
+    expect(vi.getTimerCount()).toBe(0);
+  });
+  it('bounds read-only discovery to 5 seconds', async () => {
+    vi.useFakeTimers();
+    mocks.fetch.mockImplementation(() => new Promise(() => {}));
+    const pending = load().handler(event({}, { httpMethod: 'GET' }));
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(json(await pending).default_model).toBe('gemini-2.5-flash');
+    expect(mocks.fetch.mock.calls[0][1].signal.aborted).toBe(true);
+  });
+  it('retains budget and circuit guards, including full reasoning and UTF-8 input', async () => {
+    const adapter = load();
+    process.env.ADAPTER_DAILY_BUDGET_USD = '0.000001';
+    await adapter.handler(event({ model: 'deepseek-auto', difficulty: 'hard', prompt: 'hello' }));
+    expect(mocks.fetch).not.toHaveBeenCalled();
+    delete process.env.ADAPTER_DAILY_BUDGET_USD;
+    adapter.resetAdapterState();
+    await adapter.handler(event({ model: 'deepseek-auto', difficulty: 'hard', prompt: '汉'.repeat(6000) }));
+    expect(mocks.fetch).not.toHaveBeenCalled(); // conservative input + 8192 output exceeds $0.05
+    process.env.ADAPTER_DAILY_BUDGET_USD = '1';
+    mocks.fetch.mockRejectedValue(new Error('offline'));
+    await adapter.handler(event({ model: 'deepseek-flash', prompt: 'hello' }));
+    await adapter.handler(event({ model: 'deepseek-flash', prompt: 'hello' }));
+    await adapter.handler(event({ model: 'deepseek-flash', prompt: 'hello' }));
+    expect(mocks.fetch).toHaveBeenCalledTimes(2);
+    expect(adapter.getCircuitState()['deepseek-flash'].openUntil).toBeGreaterThan(0);
+  });
+  it('reserves concurrent worst-case costs and settles validated usage', async () => {
+    const adapter = load();
+    let release;
+    mocks.fetch.mockImplementationOnce(() => new Promise(resolve => { release = resolve; }));
+    const first = adapter.handler(event({ model: 'deepseek-v4-pro', difficulty: 'hard', prompt: 'hello' }));
+    const second = await adapter.handler(event({ model: 'deepseek-v4-pro', difficulty: 'hard', prompt: 'hello' }));
+    expect(json(second).model_used).toBe('local-fallback');
+    expect(mocks.fetch).toHaveBeenCalledTimes(1);
+    release(httpResponse(deepseekResponse()));
+    expect(json(await first).cost_estimate).toBeCloseTo(0.000924);
+    mocks.fetch.mockResolvedValue(httpResponse(deepseekResponse()));
+    const next = await adapter.handler(event({ model: 'deepseek-v4-pro', difficulty: 'hard', prompt: 'hello' }));
+    expect(json(next).model_used).toBe('deepseek-v4-pro');
+  });
+  it.each([undefined, { prompt_tokens: -1, completion_tokens: 1 }, { prompt_tokens: 100, completion_tokens: 999999 }])('keeps the reservation for missing or invalid usage %j', async usage => {
+    mocks.fetch.mockResolvedValue(httpResponse(deepseekResponse({ usage })));
+    const adapter = load();
+    const first = await adapter.handler(event({ model: 'deepseek-v4-pro', difficulty: 'hard', prompt: 'hello' }));
+    expect(json(first).cost_estimate).toBeGreaterThan(0.032);
+    const second = await adapter.handler(event({ model: 'deepseek-v4-pro', difficulty: 'hard', prompt: 'hello' }));
+    expect(json(second).model_used).toBe('local-fallback');
+    expect(mocks.fetch).toHaveBeenCalledTimes(1);
+  });
+  it('does not refund a previous-day request into the next day’s active reservation', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-11-18T23:59:59Z'));
+    const releases = [];
+    mocks.fetch.mockImplementation(() => new Promise(resolve => { releases.push(resolve); }));
+    const adapter = load();
+    const request = () => adapter.handler(event({ model: 'deepseek-v4-pro', difficulty: 'hard', prompt: 'hello' }));
+    const previousDay = request();
+    vi.setSystemTime(new Date('2026-11-19T00:00:01Z'));
+    const currentDay = request();
+    releases[0](httpResponse(deepseekResponse()));
+    expect(json(await previousDay).model_used).toBe('deepseek-v4-pro');
+    expect(json(await request()).model_used).toBe('local-fallback');
+    expect(mocks.fetch).toHaveBeenCalledTimes(2);
+    releases[1](httpResponse(deepseekResponse()));
+    expect(json(await currentDay).model_used).toBe('deepseek-v4-pro');
   });
 });

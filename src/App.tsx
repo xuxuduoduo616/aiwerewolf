@@ -1,3 +1,4 @@
+import type { AIExpressionModel } from './ai/modelCatalog';
 import React, { useState } from 'react';
 import { GamePhase, Role } from './types';
 import { getPhaseLabel } from './constants';
@@ -9,7 +10,6 @@ import { PlayerCard } from './components/PlayerCard';
 import { PlayerKnowledgeBadge, WitchVictimNotice } from './components/PlayerKnowledgeBadge';
 import ActionBar from './components/ActionBar';
 import RecordsPanel from './components/RecordsPanel';
-import WolfChannel from './components/WolfChannel';
 import SpeechInput from './components/SpeechInput';
 import GameRoom, { GamePlayerSeat } from './components/GameRoom';
 import GameAudioControls from './components/GameAudioControls';
@@ -157,7 +157,7 @@ const App: React.FC = () => {
     setRecordError: rec.setRecordError,
   });
   const startRequestLockedRef = React.useRef(false);
-  const pendingStartRef = React.useRef<{ setup: GameSetup; config: NonNullable<ReturnType<typeof mapGameSetupToConfig>> } | null>(null);
+  const pendingStartRef = React.useRef<{ setup: GameSetup; models: readonly AIExpressionModel[]; config: NonNullable<ReturnType<typeof mapGameSetupToConfig>> } | null>(null);
 
   const applyEconomyRoute = React.useCallback((route: EconomyRoute) => {
     setUtilityView(null);
@@ -258,13 +258,13 @@ const App: React.FC = () => {
     }
   };
 
-  const finishStartRequest = React.useCallback((setup: GameSetup) => {
+  const finishStartRequest = React.useCallback((setup: GameSetup, models: readonly AIExpressionModel[] = []) => {
     const config = mapGameSetupToConfig(setup);
     if (!config || startRequestLockedRef.current) return;
 
     startRequestLockedRef.current = true;
     leaveRequestLockedRef.current = false;
-    pendingStartRef.current = { setup, config };
+    pendingStartRef.current = { setup, config, models: [...models] };
     if (game.difficulty === setup.difficulty) {
       setStartRequestRevision(revision => revision + 1);
     } else {
@@ -277,8 +277,8 @@ const App: React.FC = () => {
     if (!pending || game.difficulty !== pending.setup.difficulty) return;
 
     pendingStartRef.current = null;
-    setAIExpressionModel(pending.setup.expressionModel);
-    game.startGame(pending.config, displayLanguage);
+    setAIExpressionModel(pending.setup.expressionModel, pending.setup.difficulty);
+    game.startGame(pending.config, displayLanguage, { selection: pending.setup.expressionModel, models: pending.models });
     rec.setShowRecords(false);
   }, [displayLanguage, game.difficulty, game.startGame, rec.setShowRecords, startRequestRevision]);
 
@@ -356,6 +356,7 @@ const App: React.FC = () => {
   const isInGame = game.phase !== GamePhase.LOBBY && game.phase !== GamePhase.LOGIN;
 
   if (isInGame) {
+    const humanWolfNight = game.phase === GamePhase.NIGHT_WEREWOLVES && game.me?.role === Role.WEREWOLF && game.me.isAlive;
     const returnToLobby = () => {
       if (leaveRequestLockedRef.current) return;
       leaveRequestLockedRef.current = true;
@@ -387,7 +388,8 @@ const App: React.FC = () => {
       voteRecords: game.voteRecords,
       players: game.players,
       eliminatedPlayerId: voteSummaryEliminatedId,
-      isProcessingAI: game.isProcessingAI && !game.isPaused,
+      isProcessingAI: (game.isProcessingAI || game.wolfThinking) && !game.isPaused,
+      canViewWolfChat: game.me?.role === Role.WEREWOLF,
     };
 
     const gameHeader = (
@@ -473,7 +475,7 @@ const App: React.FC = () => {
                     equippedSkin={player.id === MY_PLAYER_ID ? equippedSkinProduct : null}
                     revealRole={game.phase === GamePhase.GAME_OVER}
                     isSelected={game.selectedPlayerId === player.id}
-                    isSpeaking={game.currentSpeaker?.id === player.id}
+                    isSpeaking={game.currentSpeaker?.id === player.id || game.wolfSpeakerId === player.id}
                     hasSpoken={game.phase === GamePhase.DAY_DISCUSSION && game.spokenPlayerIds.has(player.id)}
                     compact onClick={() => game.setSelectedPlayerId(player.id)}
                     isWolfTeammate={isWolfTeammate}
@@ -493,7 +495,7 @@ const App: React.FC = () => {
               );
             })}
 
-            <div className={`center-console game-action-console${game.winner ? (game.winner === 'WEREWOLVES' ? ' victory-wolves' : ' victory-village') : ''}`}>
+            <div className={`center-console game-action-console${humanWolfNight ? ' wolf-night-console' : ''}${game.winner ? (game.winner === 'WEREWOLVES' ? ' victory-wolves' : ' victory-village') : ''}`}>
               {game.winner ? (
                 <div className={`text-center ${game.winner === 'WEREWOLVES' ? 'game-over-wolves' : 'game-over-village'}`}>
                   <Trophy className="w-10 h-10 mx-auto mb-3 text-zinc-100" />
@@ -556,7 +558,8 @@ const App: React.FC = () => {
                       <UserIcon className="w-4 h-4" />
                       Your role: {game.me ? ROLE_LABELS_EN[game.me.role] : 'Unknown'}
                     </div>
-                    <p className="mt-2 text-zinc-400">{game.me ? ROLE_DESCRIPTIONS_EN[game.me.role] : ''}</p>
+                    {!humanWolfNight && <p className="mt-2 text-zinc-400">{game.me ? ROLE_DESCRIPTIONS_EN[game.me.role] : ''}</p>}
+                    {humanWolfNight && game.nightState.wolfKillId !== null && <p className="mt-2 text-red-200">Confirmed target: Player {game.nightState.wolfKillId}</p>}
                     {game.selectedPlayer && <p className="mt-2 text-zinc-300">Selected: Player {game.selectedPlayer.id} <span data-ui-copy-category="USER_AUTHORED" data-ui-copy-allow="USER_APP_SELECTED_PLAYER">{game.selectedPlayer.name}</span></p>}
                     <WitchVictimNotice viewer={game.me} phase={game.phase} nightState={game.nightState} />
                   </div>
@@ -568,12 +571,16 @@ const App: React.FC = () => {
                     onVoteSkip={() => game.finishVote(null)}
                     onWitchSave={game.handleWitchSave}
                     onWitchSkip={game.skipWitch}
+                    onSkipWolfChat={game.skipWolfChat}
                   />
                   <SpeechInput
-                    value={game.userInput} onChange={game.setUserInput}
-                    onSubmit={game.handleHumanSpeechSubmit}
+                    key={`speech-${game.phase}-${game.roundCount}`}
+                    value={game.userInput} onChange={value => { if (humanWolfNight) game.interruptWolfChat(); game.setUserInput(value); }}
+                    onSubmit={humanWolfNight ? () => { rec.setShowRecords(false); game.handleWolfChatSubmit(); } : game.handleHumanSpeechSubmit}
+                    onCompose={humanWolfNight ? game.interruptWolfChat : undefined}
+                    wolfPlayers={humanWolfNight ? game.players : undefined}
                     submitDisabled={game.isPaused}
-                    visible={game.phase === GamePhase.DAY_DISCUSSION && game.currentSpeaker?.id === MY_PLAYER_ID}
+                    visible={humanWolfNight || (game.phase === GamePhase.DAY_DISCUSSION && game.currentSpeaker?.id === MY_PLAYER_ID)}
                     selectedPlayer={game.selectedPlayer}
                     language={displayLanguage}
                   />
@@ -582,10 +589,6 @@ const App: React.FC = () => {
             </div>
           </div>
 
-          <WolfChannel
-            wolfChat={game.wolfChat}
-            isVisible={game.me?.role === Role.WEREWOLF && game.phase === GamePhase.NIGHT_WEREWOLVES}
-          />
         </GameRoom>
 
         {principalId && game.phase !== GamePhase.GAME_OVER && (

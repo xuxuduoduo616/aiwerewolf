@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Mic, Send } from 'lucide-react';
 import type { DisplayLanguage } from '../i18n';
+import type { Player } from '../types';
+import { MAX_WOLF_CHAT_LENGTH } from '../constants';
+import WolfStrategyChips from './WolfStrategyChips';
 import {
   MAX_RECORDING_MS,
   SttError,
@@ -480,6 +483,7 @@ export interface VoiceControlProps extends VoiceControlHandlers {
   status: VoiceStatus;
   message: string | null;
   disabled?: boolean;
+  compact?: boolean;
 }
 
 export const VoiceControl: React.FC<VoiceControlProps> = ({
@@ -487,6 +491,7 @@ export const VoiceControl: React.FC<VoiceControlProps> = ({
   status,
   message,
   disabled = false,
+  compact = false,
   onClick,
   onKeyDown,
 }) => {
@@ -497,7 +502,7 @@ export const VoiceControl: React.FC<VoiceControlProps> = ({
     : transcribing ? 'Transcribing' : 'Record speech';
 
   return (
-    <div className="game-voice-input flex w-full min-w-0 flex-wrap items-center gap-2" data-voice-status={status}>
+    <div className={`game-voice-input flex ${compact ? 'flex-1' : 'w-full'} min-w-0 flex-wrap items-center gap-2`} data-voice-status={status}>
       <button
         type="button"
         className={`action-button voice-input-button shrink-0 px-3 ${recording ? 'opacity-50' : ''}`}
@@ -517,7 +522,7 @@ export const VoiceControl: React.FC<VoiceControlProps> = ({
       {transcribing && <span role="status" className="text-xs text-zinc-300">{VOICE_MESSAGES.transcribing}</span>}
       {!supported && <span className="text-xs text-zinc-400">{VOICE_MESSAGES.unsupported}</span>}
       {message && <span role="status" aria-live="polite" className="text-xs text-amber-400">{message}</span>}
-      {supported && !message && !recording && !transcribing && (
+      {supported && !message && !recording && !transcribing && !compact && (
         <span className="text-[10px] text-zinc-500">
           Voice audio is sent to our speech service for transcription.
         </span>
@@ -536,6 +541,8 @@ const SpeechInput = ({
   visible,
   selectedPlayer,
   language = 'en',
+  wolfPlayers,
+  onCompose,
 }: {
   value: string;
   onChange: (v: string) => void;
@@ -544,6 +551,8 @@ const SpeechInput = ({
   visible: boolean;
   selectedPlayer?: { id: number; isAlive: boolean } | null;
   language?: DisplayLanguage;
+  wolfPlayers?: Player[];
+  onCompose?: () => void;
 }) => {
   const [pendingTemplate, setPendingTemplate] = useState<QuickSpeechPreset | null>(null);
   const [voice, setVoice] = useState<VoiceViewState>({ status: 'idle', message: null });
@@ -635,7 +644,7 @@ const SpeechInput = ({
 
   const handleVoiceClick = () => {
     if (controller.getStatus() === 'recording') controller.stop();
-    else if (controller.getStatus() === 'idle') void controller.start();
+    else if (controller.getStatus() === 'idle') { onCompose?.(); void controller.start(); }
   };
 
   const handleVoiceKeyDown: React.KeyboardEventHandler<HTMLButtonElement> = event => {
@@ -644,11 +653,13 @@ const SpeechInput = ({
       controller.cancel();
     }
   };
+  const voiceControl = <VoiceControl supported={voiceSupported} status={voice.status} message={voice.message}
+    compact={Boolean(wolfPlayers)} onClick={handleVoiceClick} onKeyDown={handleVoiceKeyDown} />;
 
   return (
     <div className="game-speech-input mt-4 flex flex-col gap-2">
       {/* Quick speech buttons */}
-      <div className="game-speech-presets flex flex-wrap gap-1.5">
+      {wolfPlayers ? <WolfStrategyChips players={wolfPlayers} selectedPlayer={selectedPlayer} value={value} onChange={onChange} /> : <div className="game-speech-presets flex flex-wrap gap-1.5">
         {speeches.map((preset, i) => (
           <button
             key={i}
@@ -664,7 +675,7 @@ const SpeechInput = ({
             {preset.text}
           </button>
         ))}
-      </div>
+      </div>}
 
       {/* Pending-target hint */}
       {showPendingHint && (
@@ -675,7 +686,14 @@ const SpeechInput = ({
 
       {/* Free-text input row */}
       <div className="flex w-full min-w-0 flex-wrap gap-2" data-speech-input-row>
-        <input
+        {wolfPlayers ? <textarea
+          className="w-full min-w-0 resize-y rounded border border-red-900/70 bg-black/70 px-3 py-2 text-sm outline-none focus:border-red-300"
+          value={value} onChange={event => onChange(event.target.value)} rows={2}
+          aria-label="Message your pack" placeholder="Share a plan with your pack..."
+          maxLength={MAX_WOLF_CHAT_LENGTH}
+          data-ui-copy-category="USER_AUTHORED" data-ui-copy-allow="USER_SPEECH_INPUT"
+          onKeyDown={event => { if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing && !submitDisabled && value.length <= MAX_WOLF_CHAT_LENGTH) { event.preventDefault(); onSubmit(); } }}
+        /> : <input
           className="min-w-0 flex-[1_1_8rem] bg-black/70 border border-zinc-700 rounded px-3 py-2 text-sm outline-none focus:border-zinc-200"
           value={value}
           data-ui-copy-category="USER_AUTHORED"
@@ -683,17 +701,15 @@ const SpeechInput = ({
           onChange={e => onChange(e.target.value)}
           placeholder={speechPlaceholder(language)}
           onKeyDown={e => { if (e.key === 'Enter' && !submitDisabled) onSubmit(); }}
-        />
-        <button onClick={onSubmit} disabled={submitDisabled} className="action-button shrink-0 px-3" aria-label="Send speech"><Send className="w-4 h-4" /></button>
+        />}
+        <button onClick={onSubmit} disabled={submitDisabled || Boolean(wolfPlayers && (!value.trim() || value.length > MAX_WOLF_CHAT_LENGTH))} className="action-button shrink-0 px-3" aria-label={wolfPlayers ? 'Send to pack' : 'Send speech'}><Send className="w-4 h-4" />{wolfPlayers && 'Send'}</button>
+        {wolfPlayers && voiceControl}
       </div>
+      {wolfPlayers && <span className={`text-[10px] ${value.length > MAX_WOLF_CHAT_LENGTH ? 'text-amber-400' : 'text-zinc-500'}`} role="status">
+        {value.length > MAX_WOLF_CHAT_LENGTH ? 'Shorten your draft before sending. ' : ''}{value.length}/{MAX_WOLF_CHAT_LENGTH} · Enter to send, Shift+Enter for a new line
+      </span>}
 
-      <VoiceControl
-        supported={voiceSupported}
-        status={voice.status}
-        message={voice.message}
-        onClick={handleVoiceClick}
-        onKeyDown={handleVoiceKeyDown}
-      />
+      {wolfPlayers ? <span className="text-[10px] text-zinc-500">Voice audio is sent to our speech service for transcription.</span> : voiceControl}
     </div>
   );
 };

@@ -40,6 +40,7 @@ const ActionBar = ({
   onVoteSkip,
   onWitchSave,
   onWitchSkip,
+  onSkipWolfChat,
 }: {
   phase: GamePhase;
   me?: Player;
@@ -51,6 +52,7 @@ const ActionBar = ({
   onVoteSkip: () => void;
   onWitchSave: () => void;
   onWitchSkip: () => void;
+  onSkipWolfChat?: () => void;
 }) => {
   const language: DisplayLanguage = 'en';
   const selectedAlive = Boolean(selectedPlayer?.isAlive && selectedPlayer.id !== MY_PLAYER_ID);
@@ -58,7 +60,9 @@ const ActionBar = ({
   return (
     <div className="mt-4 flex flex-wrap gap-2">
       {phase === GamePhase.NIGHT_WEREWOLVES && me?.role === Role.WEREWOLF && (
-        <button onClick={onAction} disabled={isProcessingAI || !selectedAlive || selectedPlayer?.role === Role.WEREWOLF} className="action-button danger"><Skull className="w-4 h-4" />{actionLabel('KILL', language)}</button>
+        nightState.wolfKillId === null
+          ? <button aria-label="KILL" onClick={onAction} disabled={!me.isAlive || isProcessingAI || !selectedAlive || selectedPlayer?.role === Role.WEREWOLF} className="action-button danger"><Skull className="w-4 h-4" />{actionLabel('KILL', language)}</button>
+          : <button type="button" onClick={onSkipWolfChat} disabled={!me.isAlive || isProcessingAI} className="action-button muted">Skip night chat</button>
       )}
       {phase === GamePhase.NIGHT_SEER && me?.role === Role.SEER && (
         <button onClick={onAction} disabled={isProcessingAI || !selectedAlive} className="action-button"><Eye className="w-4 h-4" />{actionLabel('CHECK', language)}</button>
