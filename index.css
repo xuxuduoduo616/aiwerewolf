@@ -253,22 +253,6 @@ video {
   to   { box-shadow: 0 0 60px rgba(255,255,255,0.10), inset -6px -4px 0 rgba(0,0,0,0.30); }
 }
 
-/* Day/Night phase transition overlay */
-.phase-transition-night {
-  animation: fadeToNight 1.2s ease-in-out forwards;
-}
-.phase-transition-day {
-  animation: fadeToDaylight 1.2s ease-in-out forwards;
-}
-@keyframes fadeToNight {
-  from { filter: brightness(1); }
-  to   { filter: brightness(0.72) hue-rotate(20deg); }
-}
-@keyframes fadeToDaylight {
-  from { filter: brightness(0.72) hue-rotate(20deg); }
-  to   { filter: brightness(1); }
-}
-
 /* ─── Panels ──────────────────────────────────────────────────────────────── */
 .auth-panel,
 .mode-card,
@@ -364,7 +348,7 @@ video {
   transform: translate(-50%, -50%);
   border: 1px solid rgba(var(--ink-300), 0.28);
   border-radius: 8px;
-  background: rgba(5,5,5,0.80);
+  background: rgb(5 5 5 / var(--phase-panel-opacity, 90%));
   backdrop-filter: blur(var(--blur-panel));
   padding: 22px;
   z-index: 10;
@@ -467,7 +451,10 @@ video {
   box-shadow: 0 4px 16px rgba(var(--wolf-red-600), 0.25);
 }
 .action-button.danger::after {
+  /* Visual hint only: the empty alt text keeps it out of the accessible name
+     ("SHOOT", not "SHOOT Confirm?"). Older engines keep the first line. */
   content: " Confirm?";
+  content: " Confirm?" / "";
   font-size: 10px;
   opacity: 0.7;
 }
@@ -586,12 +573,12 @@ video {
 .victory-wolves {
   background:
     radial-gradient(ellipse at 50% 30%, rgba(var(--wolf-red-900), 0.30), transparent 70%),
-    rgba(5, 5, 5, 0.80);
+    rgb(5 5 5 / var(--phase-panel-opacity, 90%));
 }
 .victory-village {
   background:
     radial-gradient(ellipse at 50% 30%, rgba(217, 160, 60, 0.14), transparent 70%),
-    rgba(5, 5, 5, 0.80);
+    rgb(5 5 5 / var(--phase-panel-opacity, 90%));
 }
 
 /* ─── Responsive ────────────────────────────────────────────────────────── */
@@ -704,9 +691,6 @@ video {
   .sketch-scene::after { animation: none; }
   .sketch-tree::after  { animation: none; }
   .sketch-moon         { animation: none; }
-
-  .phase-transition-night,
-  .phase-transition-day { animation: none; }
 
   .speaking-ring     { animation: none; }
   .timer-pill.urgent { animation: none; }

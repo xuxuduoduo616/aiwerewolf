@@ -93,12 +93,12 @@ React interface
   +--> belief tracker + action selector   |-- complete match state
   +--> speech library + selected model ---+
 
-Browser --> Netlify CDN / Functions --> Gemini / DeepSeek
+Browser --> Netlify CDN / Functions --> Gemini / DeepSeek / Doubao
    |
    +--> Supabase Auth / Postgres
 ```
 
-The browser can run a full match without an AI API key. **Multi AI Model** uses the verified available subset of Gemini 3.6 Flash, DeepSeek V4.1 Flash and DeepSeek V4 Pro. Setup provides an accessible participating-model list; read-only discovery proves metadata access, not successful generation or account balance. At start, AI seats receive stable round-robin routes, independently of personality, role and difficulty. Daytime and private night chat use each speaker's assigned model. DeepSeek effort remains low/high/max for Beginner/Intermediate/Expert; it never changes a mixed-pool seat's model. Secondary single-model choices remain available. Gemini 3.6 can fall back to 2.5; DeepSeek makes one upstream attempt before local fallback, with existing budgets and cancellation. Badges distinguish assigned routes, accepted actual models, unverified sources and local dialogue. Rejected output counts as local dialogue. Rules and actions remain deterministic. Provider keys and Supabase service-role credentials remain server-only. See [Architecture](docs/architecture.md) and [DeepSeek integration](docs/deepseek-integration.md).
+The browser can run a full match without an AI API key. **Multi AI Model** uses the discovered subset of Gemini 3.6 Flash, DeepSeek V4.1 Flash, DeepSeek V4 Pro, Doubao Seed 1.6 Flash, Doubao Seed Character and Doubao Seed 2.1 Lite. Setup provides an accessible participating-model list; read-only discovery proves metadata access, not successful generation or account balance. At start, AI seats receive stable round-robin routes, independently of personality, role and difficulty. Daytime and private night chat use each speaker's assigned model. DeepSeek effort remains low/high/max for Beginner/Intermediate/Expert; it never changes a mixed-pool seat's model. Secondary single-model choices remain available. Gemini 3.6 can fall back to 2.5; DeepSeek makes one upstream attempt before local fallback, with existing budgets and cancellation. Badges distinguish assigned routes, accepted actual models, unverified sources and local dialogue. When a mixed-model turn has no usable reply after trying verified alternatives, that turn is skipped. Single-model turns can use local dialogue. Rules and actions remain deterministic. Provider keys and Supabase service-role credentials remain server-only. See [Architecture](docs/architecture.md), [DeepSeek integration](docs/deepseek-integration.md), and [Doubao integration](docs/doubao-integration.md).
 
 ## Local Development
 

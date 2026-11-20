@@ -12,6 +12,12 @@ const STEPS: readonly OnboardingStep[] = [
     description: 'Silence AI voices and countdown sounds without changing your volume or speech rate.' },
   { id: 'game-log', selector: '[data-tour-target="game-log"]', title: 'Game log and records',
     description: 'Open the match conversation and your past records here.' },
+  { id: 'game-phase-layout', selector: '[data-tour-target="game-phase-layout"]', title: 'Move the Phase panel',
+    description: 'On desktop, drag the six-dot grip to move the panel. Drag an edge to resize it, or drop it against the left, right, or bottom edge to dock. Use the reset icon to restore the original layout.',
+    allowUnhighlighted: true },
+  { id: 'game-phase-opacity', selector: '[data-tour-target="game-phase-opacity"]', title: 'Phase panel opacity',
+    description: 'On desktop, click the percentage next to Reset. Drag the slider from 50% to 100% to adjust the background. The default is 90%.',
+    allowUnhighlighted: true },
   { id: 'game-exit', selector: '[data-tour-target="game-exit"]', title: 'Exit the game',
     description: 'Leave this match and return to the lobby. During a match, you will be asked to confirm.' },
 ];
@@ -25,7 +31,7 @@ interface Props {
 
 /** Mounted only after Start Game; the lobby guide and its rewards stay separate. */
 export default function GameControlsGuide({ principalId, seenThisSession, isPaused, togglePause }: Props) {
-  const storageKey = `aiwerewolf:game-controls-guide:v1:${principalId}`;
+  const storageKey = `aiwerewolf:game-controls-guide:v2:${principalId}`;
   const [open, setOpen] = useState(() => {
     if (seenThisSession.has(principalId)) return false;
     try { return window.localStorage.getItem(storageKey) !== 'seen'; }

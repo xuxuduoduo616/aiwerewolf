@@ -53,7 +53,9 @@ describe('human seat skin presentation', () => {
   });
   it('wires resolved equipment only to the actual human seat in App', () => {
     const source = readFileSync(new URL('../App.tsx', import.meta.url), 'utf8');
+    const gameScreen = readFileSync(new URL('../screens/GameScreen.tsx', import.meta.url), 'utf8');
     expect(source).toContain('useEquippedSkinProduct(economy, auth.isGuest ? guestPrincipalId : auth.session?.user.id ?? null)');
-    expect(source).toContain('equippedSkin={player.id === MY_PLAYER_ID ? equippedSkinProduct : null}');
+    expect(source).toContain('equippedSkinProduct={equippedSkinProduct}');
+    expect(gameScreen).toContain('equippedSkin={player.id === MY_PLAYER_ID ? equippedSkinProduct : null}');
   });
 });

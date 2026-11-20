@@ -180,3 +180,128 @@ describe('mixed-route night cancellation', () => {
     expect(commit).not.toHaveBeenCalled();
   });
 });
+
+describe('verified remote-only mixed dialogue', () => {
+  const primary = 'gemini-3.6-flash';
+  const alternate = 'deepseek-flash';
+  const backup = 'gemini-2.5-flash';
+  const speaker = { ...players[7], aiAssignedModel: primary } as const;
+  const sources: unknown[] = [];
+  const commit = vi.fn((publish: () => void) => publish());
+  const life = (mixedModels: readonly (typeof primary | typeof alternate | typeof backup)[], signal?: AbortSignal) => ({
+    mixedModels,
+    signal,
+    runWhenActive: async <T,>(work: () => T | Promise<T>) => work(),
+    deferCommit: commit,
+    onSource: (source: unknown) => sources.push(source),
+  });
+  const speak = (lifecycle: ReturnType<typeof life>) => generateAIDialogue(
+    speaker, players, [], GamePhase.DAY_DISCUSSION, [], 1, null, [], undefined, 'en', lifecycle,
+  );
+  const response = (payload: unknown, model_used: unknown, fallback_used: unknown = false) =>
+    ({ ok: true, json: async () => ({ text: JSON.stringify(payload), model_used, fallback_used }) });
+  const bodies = () => fetchMock.mock.calls.map(([, options]) => JSON.parse(options.body));
+
+  beforeEach(() => {
+    sources.length = 0;
+    commit.mockClear();
+    setAIExpressionModel('multi-ai-model', 'hard');
+  });
+
+  it.each([
+    ['HTTP failure', { ok: false, status: 503 }],
+    ['network failure', new Error('offline')],
+    ['fake source', response({ en: english }, alternate)],
+    ['local source', response({ en: english }, 'local-fallback', true)],
+    ['unverified proxy backup', response({ en: english }, backup, true)],
+    ['invalid content', response({ en: '中文不应通过英文发言' }, primary)],
+  ])('uses a verified alternate after %s with the same speaker and difficulty', async (_label, failed) => {
+    if (failed instanceof Error) fetchMock.mockRejectedValueOnce(failed);
+    else fetchMock.mockResolvedValueOnce(failed);
+    fetchMock.mockResolvedValueOnce(response({ en: english }, alternate));
+    expect(await speak(life([primary, alternate]))).toEqual({ en: english, zh: '' });
+    expect(bodies().map(body => body.model)).toEqual([primary, alternate]);
+    expect(bodies()[0].prompt).toBe(bodies()[1].prompt);
+    expect(bodies().every(body => body.difficulty === 'hard')).toBe(true);
+    expect(sources).toEqual([{ model: alternate, fallback: true }]);
+    expect(commit).toHaveBeenCalledOnce();
+  });
+
+  it('accepts a verified proxy backup exactly once and does not repeat it after rejection', async () => {
+    fetchMock.mockResolvedValueOnce(response({ en: english }, backup, true));
+    expect(await speak(life([primary, alternate, backup]))).toEqual({ en: english, zh: '' });
+    expect(bodies().map(body => body.model)).toEqual([primary]);
+    expect(sources).toEqual([{ model: backup, fallback: true }]);
+
+    fetchMock.mockClear().mockResolvedValueOnce(response({ en: 'Invalid' }, backup, true))
+      .mockResolvedValueOnce({ ok: false });
+    expect(await speak(life([primary, alternate, backup]))).toBeNull();
+    expect(bodies().map(body => body.model)).toEqual([primary, alternate]);
+    expect(commit).toHaveBeenCalledOnce();
+  });
+
+  it('returns no speech or commit after exhausting a single route or an empty pool', async () => {
+    fetchMock.mockResolvedValue({ ok: true, json: async () => ({ text: '', model_used: 'local-fallback', fallback_used: true }) });
+    expect(await speak(life([primary]))).toBeNull();
+    expect(await speak(life([]))).toBeNull();
+    expect(bodies().map(body => body.model)).toEqual([primary]);
+    expect(commit).not.toHaveBeenCalled();
+    expect(sources).toEqual([]);
+  });
+
+  it('interrupts a timed-out primary and leaves time for its alternate', async () => {
+    vi.useFakeTimers();
+    try {
+      fetchMock.mockImplementationOnce((_url, options) => new Promise((_resolve, reject) => {
+        options.signal.addEventListener('abort', () => reject(options.signal.reason), { once: true });
+      }));
+      fetchMock.mockResolvedValueOnce(response({ en: english }, alternate));
+      const result = speak(life([primary, alternate]));
+      await vi.advanceTimersByTimeAsync(0);
+      expect(bodies().map(body => body.model)).toEqual([primary]);
+      await vi.advanceTimersByTimeAsync(12_000);
+      expect(await result).toEqual({ en: english, zh: '' });
+      expect(bodies().map(body => body.model)).toEqual([primary, alternate]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('cancels an in-flight candidate without a retry or stale commit', async () => {
+    const controller = new AbortController();
+    let reject!: (reason: unknown) => void;
+    let start!: () => void;
+    const started = new Promise<void>(resolve => { start = resolve; });
+    fetchMock.mockImplementationOnce(() => new Promise((_resolve, fail) => {
+      reject = fail;
+      start();
+    }));
+    const result = speak(life([primary, alternate], controller.signal));
+    await started;
+    controller.abort();
+    reject(controller.signal.reason);
+    expect(await result).toBeNull();
+    expect(fetchMock).toHaveBeenCalledOnce();
+    expect(commit).not.toHaveBeenCalled();
+  });
+
+  it('retries only missing or rejected night speakers and preserves original order and provenance', async () => {
+    const pack = wolves.map((wolf): typeof wolf => ({ ...wolf, aiAssignedModel: primary }));
+    const [first, second, third] = pack.map(wolf => wolf.id);
+    const line = (speakerId: number, message = nightEnglish) => ({ speakerId, message, strategyTag: '刀口' });
+    fetchMock.mockResolvedValueOnce(response({ messages: [
+      line(first), line(second), line(second), line(1),
+    ] }, primary));
+    fetchMock.mockResolvedValueOnce(response({ messages: [
+      line(third, '中文不应通过英文发言'), line(second), line(first), line(1),
+    ] }, alternate));
+    const result = await generateWolfChat(pack, players, [], 1, [], 'en', life([primary, alternate]));
+    expect(bodies().map(body => body.model)).toEqual([primary, alternate]);
+    expect(bodies()[0].prompt).toContain(`Requested AI speakers only: Player ${first}, Player ${second}, Player ${third}\n`);
+    expect(bodies()[1].prompt).toContain(`Requested AI speakers only: Player ${second}, Player ${third}\n`);
+    expect(result.map(message => [message.speakerId, message.dialogueSource])).toEqual([
+      [first, { model: primary, fallback: false }],
+      [second, { model: alternate, fallback: true }],
+    ]);
+  });
+});

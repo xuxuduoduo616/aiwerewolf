@@ -8,11 +8,11 @@ const wolfEntries = '.game-room-sidebar [data-log-channel="wolf"]';
 const INSTRUCTION = 'Player 2, please claim Seer tomorrow. Player 3, stay under the radar.';
 
 const prepare = async (page: Page, wolf = true) => {
-  // Stable role deal; this changes test randomness only, never application state.
+  // Fisher–Yates: retain the listed wolf seats, or deal a villager to seat 1.
   await page.addInitScript((value: number) => {
     Math.random = () => value;
     localStorage.setItem('werewolf_audio_prefs', JSON.stringify({ volume: 0, rate: 1, enabled: false }));
-  }, wolf ? 0.5 : 0.1);
+  }, wolf ? 0.9999 : 0.49);
   await page.route('**/*', async route => {
     if (new URL(route.request().url()).hostname !== '127.0.0.1') await route.abort();
     else await route.continue();

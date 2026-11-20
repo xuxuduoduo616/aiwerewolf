@@ -77,11 +77,25 @@ export async function startNinePlayerGame(page: Page, dismissControlsGuide = tru
 
   await page.getByRole('button', { name: 'Start Game', exact: true }).click();
   await expect(page.locator('.game-room')).toBeVisible();
+  await skipMatchIntro(page);
   if (dismissControlsGuide && await page.locator('.onboarding-panel').isVisible()) {
     await dismissOnboardingIfPresent(page);
   }
   await expect(page.getByText('Your role:')).toBeVisible();
   await expect(page.getByLabel('Werewolf seats and action console')).toBeVisible();
+}
+
+/**
+ * The opening ceremony holds the first night (and covers the room) until it
+ * finishes or is tapped. Skip it through the UI so the in-game controls
+ * guide, which mounts right after it, is present for the caller to inspect.
+ */
+export async function skipMatchIntro(page: Page): Promise<void> {
+  const intro = page.locator('.match-intro');
+  if (await intro.isVisible().catch(() => false)) {
+    await intro.click({ timeout: 2_000 }).catch(() => undefined);
+  }
+  await expect(intro).toHaveCount(0);
 }
 
 /** Leave the current match through the header and its confirmation dialog. */

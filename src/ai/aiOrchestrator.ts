@@ -25,7 +25,7 @@ import { globalBeliefTracker } from './beliefTracker';
 import { selectAction } from './actionSelector';
 import type { ActionType } from './actionSelector';
 import { DEFAULT_EXPRESSION_MODEL, type AIExpressionModelId } from './modelCatalog';
-import { LOCAL_DIALOGUE_SOURCE, resolveSingleRoute, type DialogueSource, type RoutedModelId } from './modelRouting';
+import { getMixedRouteCandidates, isVerifiedRemoteSource, LOCAL_DIALOGUE_SOURCE, resolveSingleRoute, type DialogueSource, type RoutedModelId } from './modelRouting';
 import { conciseWolfText, humanWolfInstructions, wolfDayFallback, wolfNightFallback } from './wolfStrategy';
 
 // ─── helpers ───────────────────────────────────────────────────────────────
@@ -35,6 +35,7 @@ interface ExpressionLifecycle {
   deferCommit: (commit: () => void) => void;
   signal?: AbortSignal;
   onSource?: (source: DialogueSource) => void;
+  mixedModels?: readonly RoutedModelId[];
 }
 
 const runExpression = <T,>(lifecycle: ExpressionLifecycle | undefined, work: () => Promise<T>) =>
@@ -43,6 +44,30 @@ const runExpression = <T,>(lifecycle: ExpressionLifecycle | undefined, work: () 
 const commitExpression = (lifecycle: ExpressionLifecycle | undefined, commit: () => void) => {
   if (lifecycle) lifecycle.deferCommit(commit);
   else commit();
+};
+
+// Stay within the existing longest client wait, reserving time for each
+// alternative. Fast failures leave the remaining time to the next candidate.
+const runMixedAttempts = async (
+  candidates: readonly RoutedModelId[],
+  lifecycle: ExpressionLifecycle | undefined,
+  attempt: (route: RoutedModelId, timeoutMs: number, attempted: Set<RoutedModelId>) => Promise<boolean>,
+) => {
+  let remainingMs = 48_000;
+  const attempted = new Set<RoutedModelId>();
+  for (const [index, route] of candidates.entries()) {
+    if (attempted.has(route)) continue;
+    const done = await runExpression(lifecycle, async () => {
+      if (lifecycle?.signal?.aborted || remainingMs < 1) return true;
+      attempted.add(route);
+      const reserveMs = 6_000 * candidates.slice(index + 1).filter(model => !attempted.has(model)).length;
+      const started = performance.now();
+      const accepted = await attempt(route, Math.max(1, Math.floor(remainingMs - reserveMs)), attempted);
+      remainingMs -= performance.now() - started;
+      return accepted;
+    });
+    if (done !== false || lifecycle?.signal?.aborted) return;
+  }
 };
 
 const isChinese = (text: string): boolean => {
@@ -120,10 +145,11 @@ const generateSpeechWithLLM = async (
   lifecycle?: ExpressionLifecycle,
   route: AIExpressionModelId = currentExpressionModel,
   onSource?: (source: DialogueSource) => void,
+  timeoutMs?: number,
 ): Promise<{ zh: string; en: string } | null> => {
   try {
     const { generateSpeechWithLLM: generate } = await import('./geminiAdapter');
-    return (await runExpression(lifecycle, () => generate(systemPrompt, userPrompt, route, currentExpressionDifficulty, lifecycle?.signal, onSource))) ?? null;
+    return (await runExpression(lifecycle, () => generate(systemPrompt, userPrompt, route, currentExpressionDifficulty, lifecycle?.signal, onSource, timeoutMs))) ?? null;
   } catch {
     return null;
   }
@@ -135,10 +161,11 @@ const generateNightMessagesWithLLM = async (
   lifecycle?: ExpressionLifecycle,
   route: AIExpressionModelId = currentExpressionModel,
   onSource?: (source: DialogueSource) => void,
+  timeoutMs?: number,
 ): Promise<unknown[]> => {
   try {
     const { generateWolfChatWithLLM } = await import('./geminiAdapter');
-    return (await runExpression(lifecycle, () => generateWolfChatWithLLM(systemPrompt, userPrompt, route, lifecycle?.signal, currentExpressionDifficulty, onSource))) ?? [];
+    return (await runExpression(lifecycle, () => generateWolfChatWithLLM(systemPrompt, userPrompt, route, lifecycle?.signal, currentExpressionDifficulty, onSource, timeoutMs))) ?? [];
   } catch {
     return [];
   }
@@ -167,7 +194,20 @@ export const resetAIMemory = () => {
 
 // ─── Main speech generation ─────────────────────────────────────────────────
 
-export const generateAIDialogue = async (
+type DaySpeech = { en: string; zh: string };
+type DaySpeechContext = [
+  player: Player, players: Player[], logs: GameLog[], phase: GamePhase,
+  deadThisRound: number[], round: number, seerInfo: { targetId: number; isGood: boolean } | null,
+  voteRecords?: VoteRecord[], nightState?: NightState, language?: DisplayLanguage,
+];
+
+export function generateAIDialogue(...args: [
+  ...DaySpeechContext, lifecycle?: ExpressionLifecycle & { mixedModels?: undefined }, wolfHistory?: WolfChatMessage[],
+]): Promise<DaySpeech>;
+export function generateAIDialogue(...args: [
+  ...DaySpeechContext, lifecycle?: ExpressionLifecycle, wolfHistory?: WolfChatMessage[],
+]): Promise<DaySpeech | null>;
+export async function generateAIDialogue(
   player: Player,
   players: Player[],
   logs: GameLog[],
@@ -180,16 +220,17 @@ export const generateAIDialogue = async (
   language: DisplayLanguage = DEFAULT_DISPLAY_LANGUAGE,
   lifecycle?: ExpressionLifecycle,
   wolfHistory: WolfChatMessage[] = [],
-): Promise<{ en: string; zh: string }> => {
+): Promise<DaySpeech | null> {
 
   // Initialize beliefs if needed
   if (globalBeliefTracker.snapshot(player.id).length === 0) {
     globalBeliefTracker.init(players);
   }
   const route = player.aiAssignedModel ?? resolveSingleRoute(currentExpressionModel, currentExpressionDifficulty);
-  let remoteSource: DialogueSource = { model: 'unknown', fallback: false };
-  const commitSpeech = (text: string, meta: SpeechDiagnosticMeta) => commitExpression(lifecycle, () => {
-    lifecycle?.onSource?.(meta.source === 'remote-model' ? remoteSource : LOCAL_DIALOGUE_SOURCE);
+  const mixedModels = lifecycle?.mixedModels;
+  const commitSpeech = (text: string, meta: SpeechDiagnosticMeta, source = LOCAL_DIALOGUE_SOURCE) => commitExpression(lifecycle, () => {
+    if (lifecycle?.signal?.aborted) return;
+    lifecycle?.onSource?.(source);
     emitSpeechDiagnostic(meta);
     globalBeliefTracker.updateFromSpeech(player.id, text, players);
   });
@@ -274,34 +315,42 @@ ${fmtLogs(logs, language, privatePlan ? 1200 : Infinity)}
 请输出一段白天发言（${brief ? '30-80' : '80-180'}中文字符，必须提到具体玩家编号）。
 返回JSON：{"en":"short English summary","zh":"Chinese speech"}`}`;
 
-  // Layer 3: Try the selected expression model first. Accepted text passes the roster guard
-  // (H8): out-of-roster references are structurally repaired when
-  // unambiguous, otherwise the response is discarded and the library layer
-  // takes over — detected-bad text never reaches the display path.
-  const llmResult = await generateSpeechWithLLM(systemPrompt, userPrompt, lifecycle, route, source => { remoteSource = source; });
-  if (language === 'en') {
-    if (llmResult?.en && isSubstantiveEnglish(llmResult.en)) {
-      const guard = guardSpeechText(llmResult.en, players, 'en');
-      if (guard.ok && isSubstantiveEnglish(guard.text)) {
-        const zhGuard = guardSpeechText(llmResult.zh || '', players, 'zh');
-        commitSpeech(guard.text, {
-          context: 'day-speech', source: 'remote-model', model: remoteSource.model,
-          speakerId: player.id, repaired: guard.repaired,
-        });
-        return { en: guard.text, zh: zhGuard.ok ? zhGuard.text : '' };
-      }
+  const attemptSpeech = async (candidate: RoutedModelId, timeoutMs?: number, attempted?: Set<RoutedModelId>) => {
+    let source: DialogueSource = { model: 'unknown', fallback: false };
+    const response = await generateSpeechWithLLM(systemPrompt, userPrompt, lifecycle, candidate, actual => { source = actual; }, timeoutMs);
+    if (lifecycle?.signal?.aborted) return null;
+    if (mixedModels) {
+      if (!isVerifiedRemoteSource(source, mixedModels)) return null;
+      // Gemini can already have called its verified backup inside one request.
+      attempted?.add(source.model);
     }
-  } else if (llmResult?.zh && isChinese(llmResult.zh)) {
-    const guard = guardSpeechText(llmResult.zh, players, 'zh');
-    if (guard.ok && isChinese(guard.text)) {
-      const enGuard = guardSpeechText(llmResult.en || '', players, 'en');
-      commitSpeech(guard.text, {
-        context: 'day-speech', source: 'remote-model', model: remoteSource.model,
-        speakerId: player.id, repaired: guard.repaired,
-      });
-      return { zh: guard.text, en: enGuard.ok ? enGuard.text : 'Speaks based on game situation.' };
-    }
+    if (!response) return null;
+    const matchesLanguage = language === 'en' ? isSubstantiveEnglish : isChinese;
+    if (!matchesLanguage(response[language])) return null;
+    const guard = guardSpeechText(response[language], players, language);
+    if (!guard.ok || !matchesLanguage(guard.text)) return null;
+    const alternate = language === 'en' ? 'zh' : 'en';
+    const translation = guardSpeechText(response[alternate], players, alternate);
+    if (candidate !== player.aiAssignedModel && mixedModels) source = { ...source, fallback: true };
+    commitSpeech(guard.text, {
+      context: 'day-speech', source: 'remote-model', model: source.model,
+      speakerId: player.id, repaired: guard.repaired,
+    }, source);
+    return {
+      en: language === 'en' ? guard.text : (translation.ok ? translation.text : mixedModels ? '' : 'Speaks based on game situation.'),
+      zh: language === 'zh' ? guard.text : (translation.ok ? translation.text : ''),
+    };
+  };
+  if (mixedModels) {
+    let speech: Awaited<ReturnType<typeof attemptSpeech>> = null;
+    await runMixedAttempts(getMixedRouteCandidates(player.aiAssignedModel, mixedModels), lifecycle, async (candidate, timeoutMs, attempted) => {
+      speech = await attemptSpeech(candidate, timeoutMs, attempted);
+      return speech !== null;
+    });
+    return lifecycle?.signal?.aborted ? null : speech;
   }
+  const remoteSpeech = await attemptSpeech(route);
+  if (remoteSpeech) return remoteSpeech;
 
   // The private plan also survives provider failure. Corpus lines cannot
   // blindly override a human's revised responsibilities.
@@ -361,7 +410,7 @@ ${fmtLogs(logs, language, privatePlan ? 1200 : Infinity)}
     speakerId: player.id, fallbackReason: 'llm-and-library-rejected',
   });
   return safe;
-};
+}
 
 // ─── Action selection ───────────────────────────────────────────────────────
 
@@ -419,31 +468,40 @@ export const generateWolfChat = async (
 ): Promise<WolfChatMessage[]> => {
   const speakers = wolves.filter((wolf, index) => !wolf.isHuman && wolf.isAlive && wolf.role === 'Werewolf'
     && wolves.findIndex(candidate => candidate.id === wolf.id) === index);
-  if (speakers.length === 0 || lifecycle?.signal?.aborted) return [];
+  const mixedModels = lifecycle?.mixedModels;
+  if (speakers.length === 0 || lifecycle?.signal?.aborted || mixedModels?.length === 0) return [];
 
   const groups = new Map<RoutedModelId, Player[]>();
   for (const speaker of speakers) {
-    const route = speaker.aiAssignedModel ?? resolveSingleRoute(currentExpressionModel, currentExpressionDifficulty);
+    const route = mixedModels
+      ? getMixedRouteCandidates(speaker.aiAssignedModel, mixedModels)[0]
+      : speaker.aiAssignedModel ?? resolveSingleRoute(currentExpressionModel, currentExpressionDifficulty);
     groups.set(route, [...(groups.get(route) ?? []), speaker]);
   }
   if (groups.size > 1) {
-    const results: WolfChatMessage[] = [];
-    const commits: (() => void)[] = [];
-    for (const group of groups.values()) {
+    const requestGroup = async (group: Player[]) => {
+      let commit: (() => void) | undefined;
+      const child = lifecycle ? { ...lifecycle, deferCommit: (value: () => void) => { commit = value; } } : undefined;
+      const messages = await generateWolfChat(group, players, logs, round, voteRecords, language, child, context);
+      return { messages, commit };
+    };
+    const grouped: Awaited<ReturnType<typeof requestGroup>>[] = [];
+    if (mixedModels) grouped.push(...await Promise.all([...groups.values()].map(requestGroup)));
+    else for (const group of groups.values()) {
       if (lifecycle?.signal?.aborted) return [];
-      const child = lifecycle ? { ...lifecycle, deferCommit: (commit: () => void) => { commits.push(commit); } } : undefined;
-      results.push(...await generateWolfChat(group, players, logs, round, voteRecords, language, child, context));
+      grouped.push(await requestGroup(group));
     }
-    if (lifecycle) lifecycle.deferCommit(() => commits.forEach(commit => commit()));
-    return speakers.flatMap(speaker => results.filter(message => message.speakerId === speaker.id));
+    if (lifecycle?.signal?.aborted) return [];
+    lifecycle?.deferCommit(() => grouped.forEach(result => result.commit?.()));
+    const messages = grouped.flatMap(result => result.messages);
+    return speakers.flatMap(speaker => messages.filter(message => message.speakerId === speaker.id));
   }
   const route = groups.keys().next().value!;
-  let remoteSource: DialogueSource = { model: 'unknown', fallback: false };
   const aliveGood = players.filter(p => p.isAlive && p.role !== 'Werewolf');
   const pack = players.filter(player => player.role === 'Werewolf' && player.isAlive);
   const strategyTags: WolfChatMessage['strategyTag'][] = ['刀口', '悍跳', '冲锋', '倒钩', '补位'];
   const privateHistory = formatWolfHistory(context.history, players, language);
-  const personalities = speakers.map(wolf => {
+  const personalities = (requested: Player[]) => requested.map(wolf => {
     const persona = ROLE_PERSONAS.find(candidate => candidate.id === wolf.aiSpeechPersonaId);
     const styleKey = Object.keys(CUSTOM_AI_STYLES).find(key => (wolf.aiStyleId ?? wolf.traits[0])?.includes(key));
     return `Player ${wolf.id}: ${persona ? `${persona.purpose.prompt[language]} ${persona.tone.prompt[language]}`
@@ -454,10 +512,10 @@ export const generateWolfChat = async (
   const systemPrompt = language === 'en'
     ? `${englishOutputRule}\nYou are the werewolf night team. Discuss strategy concisely in English. Write two or three complete sentences, at most 65 words per teammate. Keep each speaker's personality. React to the latest human instructions, acknowledge your assigned responsibility, and discuss a concrete trade-off without inventing agreement. Respond to earlier teammate messages and revise outdated plans. Never speak for the human. Kill suggestions are discussion only; the human's confirmed kill remains authoritative. The strategyTag field is a fixed internal enum; copy it exactly.`
     : '你们是狼人夜间团队，用中文简洁商量策略。每人两到三个完整短句，根据最新真人指令回应分工和取舍，保持各自性格。不要代替真人发言，不能改变真人已确认的击杀。';
-  const userPrompt = language === 'en'
+  const userPrompt = (requested: Player[]) => language === 'en'
     ? `${privateHistory ? `Private conversation, newest human instruction first:\n${privateHistory}\n` : ''}Wolf team: ${pack.map(w => `Player ${w.id}${w.isHuman ? ' (human)' : ''}`).join(', ')}
-Requested AI speakers only: ${speakers.map(wolf => `Player ${wolf.id}`).join(', ')}
-Personalities:\n${personalities}
+Requested AI speakers only: ${requested.map(wolf => `Player ${wolf.id}`).join(', ')}
+Personalities:\n${personalities(requested)}
 Confirmed night target: ${context.confirmedTargetId ? `Player ${context.confirmedTargetId}` : 'not yet chosen by the human'}
 Living villagers: ${aliveGood.map(p => `Player ${p.id}`).join(', ')}
 Recent speeches: ${fmtLogs(logs, language, 900)}
@@ -465,8 +523,8 @@ Votes: ${fmtVotes(voteRecords, language)}
 Output exactly one night-chat strategy message for each requested AI speaker in English.
 JSON: {"messages":[{"speakerId":number,"message":"English","strategyTag":"刀口|悍跳|冲锋|倒钩|补位"}]}`
     : `${privateHistory ? `私密对话，最新真人指令在前：\n${privateHistory}\n` : ''}狼队：${pack.map(w => `${w.id}号${w.isHuman ? '（真人）' : ''}`).join('、')}
-只为以下AI队友输出：${speakers.map(wolf => `${wolf.id}号`).join('、')}
-性格：${personalities}
+只为以下AI队友输出：${requested.map(wolf => `${wolf.id}号`).join('、')}
+性格：${personalities(requested)}
 已确认击杀：${context.confirmedTargetId ?? '真人尚未选择'}
 存活好人：${aliveGood.map(p => `${p.id}号`).join('、')}
 近期发言：${fmtLogs(logs, language, 900)}
@@ -474,38 +532,61 @@ JSON: {"messages":[{"speakerId":number,"message":"English","strategyTag":"刀口
 为每名指定AI队友各输出一条夜聊策略。
 JSON：{"messages":[{"speakerId":number,"message":"中文","strategyTag":"刀口|悍跳|冲锋|倒钩|补位"}]}`;
 
-  const raw = await generateNightMessagesWithLLM(systemPrompt, userPrompt, lifecycle, route, source => { remoteSource = source; });
-  if (lifecycle?.signal?.aborted) return [];
   const diagnostics: SpeechDiagnosticMeta[] = [];
   const report = lifecycle ? (meta: SpeechDiagnosticMeta) => { diagnostics.push(meta); } : emitSpeechDiagnostic;
   const finishChat = (messages: WolfChatMessage[]) => {
-    lifecycle?.deferCommit(() => diagnostics.forEach(emitSpeechDiagnostic));
+    lifecycle?.deferCommit(() => {
+      if (!lifecycle.signal?.aborted) diagnostics.forEach(emitSpeechDiagnostic);
+    });
     return messages;
   };
   const generated = new Map<number, WolfChatMessage>();
-  for (const value of raw) {
-    if (!value || typeof value !== 'object') continue;
-    const item = value as { speakerId?: unknown; message?: unknown; strategyTag?: unknown };
-    if (typeof item.speakerId !== 'number' || typeof item.message !== 'string'
-      || !speakers.some(w => w.id === item.speakerId) || generated.has(item.speakerId)) continue;
-    const complete = conciseWolfText(item.message);
-    if (!complete) continue;
-    const guard = guardSpeechText(complete, players, language);
-    if (!guard.ok || !(language === 'en' ? isEnglish(guard.text) : isChinese(guard.text))) continue;
-    const strategyTag = strategyTags.find(tag => tag === item.strategyTag) || '补位';
-    generated.set(item.speakerId, {
-      id: `wolf-${round}-${Date.now()}-${item.speakerId}`,
-      round,
-      speakerId: item.speakerId,
-      message: guard.text,
-      strategyTag,
-      dialogueSource: remoteSource,
-    });
-    report({
-      context: 'wolf-chat', source: 'remote-model', model: remoteSource.model,
-      speakerId: item.speakerId, repaired: guard.repaired,
-    });
+  const attemptChat = async (candidate: RoutedModelId, timeoutMs?: number, attempted?: Set<RoutedModelId>) => {
+    const requested = speakers.filter(wolf => !generated.has(wolf.id));
+    let source: DialogueSource = { model: 'unknown', fallback: false };
+    const raw = await generateNightMessagesWithLLM(systemPrompt, userPrompt(requested), lifecycle, candidate, actual => { source = actual; }, timeoutMs);
+    if (lifecycle?.signal?.aborted) return false;
+    if (mixedModels) {
+      if (!isVerifiedRemoteSource(source, mixedModels)) return false;
+      attempted?.add(source.model);
+    }
+    const entries = raw.filter(value => value && typeof value === 'object') as { speakerId?: unknown; message?: unknown; strategyTag?: unknown }[];
+    for (const wolf of requested) {
+      const matches = entries.filter(value => value.speakerId === wolf.id);
+      if (mixedModels && matches.length !== 1) continue;
+      for (const item of matches) {
+        if (typeof item.message !== 'string') continue;
+        const complete = conciseWolfText(item.message);
+        if (!complete) continue;
+        const guard = guardSpeechText(complete, players, language);
+        if (!guard.ok || !(language === 'en' ? isEnglish(guard.text) : isChinese(guard.text))) continue;
+        generated.set(wolf.id, {
+          id: `wolf-${round}-${Date.now()}-${wolf.id}`,
+          round,
+          speakerId: wolf.id,
+          message: guard.text,
+          strategyTag: strategyTags.find(tag => tag === item.strategyTag) || '补位',
+          dialogueSource: mixedModels && candidate !== wolf.aiAssignedModel ? { ...source, fallback: true } : source,
+        });
+        report({
+          context: 'wolf-chat', source: 'remote-model', model: source.model,
+          speakerId: wolf.id, repaired: guard.repaired,
+        });
+        break;
+      }
+    }
+    return generated.size === speakers.length;
+  };
+  if (mixedModels) {
+    await runMixedAttempts(getMixedRouteCandidates(route, mixedModels), lifecycle, attemptChat);
+    if (lifecycle?.signal?.aborted) return [];
+    return finishChat(speakers.flatMap(wolf => {
+      const message = generated.get(wolf.id);
+      return message ? [message] : [];
+    }));
   }
+  await attemptChat(route);
+  if (lifecycle?.signal?.aborted) return [];
 
   // Fill each missing speaker separately. A valid first speaker must not hide
   // a missing teammate or let the model impersonate the human.

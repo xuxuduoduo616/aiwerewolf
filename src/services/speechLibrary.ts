@@ -78,6 +78,16 @@ async function loadPool(role: string): Promise<SpeechEntry[]> {
   return pools[key]!;
 }
 
+/**
+ * Warm every pool a match can draw from (each seat's role plus the wolf night
+ * chat pool). Safe to call repeatedly: loaded pools are cached and failed
+ * loads resolve to an empty pool instead of rejecting.
+ */
+export async function preloadSpeechPools(roles: readonly string[]): Promise<void> {
+  const needed = new Set<string>([...roles, Role.WEREWOLF]);
+  await Promise.all([...needed].map(role => loadPool(role)));
+}
+
 export interface PickSpeechOptions {
   /** Preferred display language for the pick. Defaults to English. */
   language?: DisplayLanguage;

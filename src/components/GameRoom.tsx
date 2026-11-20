@@ -5,11 +5,14 @@ interface GameRoomProps {
   children: React.ReactNode;
   sidebar: React.ReactNode;
   boardLabel: string;
+  /** Drives the day/night atmosphere styles. */
+  timeOfDay?: 'day' | 'night';
 }
 
 interface GamePlayerSeatProps {
   children: React.ReactNode;
   desktopStyle: React.CSSProperties;
+  className?: string;
 }
 
 interface ResponsiveMediaQuery {
@@ -58,7 +61,7 @@ export const bindResponsiveRoomScrollReset = (
  * Presentation-only game shell. Responsive behavior lives in
  * game-responsive.css so game state and callbacks remain owned by App.
  */
-const GameRoom: React.FC<GameRoomProps> = ({ header, children, sidebar, boardLabel }) => {
+const GameRoom: React.FC<GameRoomProps> = ({ header, children, sidebar, boardLabel, timeOfDay }) => {
   const roomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -74,7 +77,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ header, children, sidebar, boardLab
   }, []);
 
   return (
-    <div ref={roomRef} className="game-room sketch-scene text-zinc-200 font-sans">
+    <div ref={roomRef} className="game-room sketch-scene text-zinc-200 font-sans" data-time={timeOfDay}>
       <div className="game-room-layout">
         <main className="game-room-main">
           {header}
@@ -88,8 +91,8 @@ const GameRoom: React.FC<GameRoomProps> = ({ header, children, sidebar, boardLab
   );
 };
 
-export const GamePlayerSeat: React.FC<GamePlayerSeatProps> = ({ children, desktopStyle }) => (
-  <div className="game-player-seat" style={desktopStyle}>
+export const GamePlayerSeat: React.FC<GamePlayerSeatProps> = ({ children, desktopStyle, className }) => (
+  <div className={className ? `game-player-seat ${className}` : 'game-player-seat'} style={desktopStyle}>
     {children}
   </div>
 );

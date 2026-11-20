@@ -1,0 +1,299 @@
+/* ─── Screen & phase transitions ────────────────────────────────────────────
+   Compositor-only motion: every animation here touches opacity and/or
+   transform. No filter or backdrop-filter is animated, because the game room
+   already stacks blurred panels and repainting them per frame drops
+   low-end mobile below 30fps. Every effect has a reduced-motion fallback. */
+
+:root {
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Lazy screen placeholder — dark, on-theme, never a white flash. */
+.screen-fallback {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: #050505;
+  color: #a1a1aa;
+  font-size: 0.875rem;
+  letter-spacing: 0.04em;
+}
+.screen-fallback--inline {
+  min-height: 40vh;
+  background: transparent;
+}
+.screen-fallback-spinner {
+  width: 28px;
+  height: 28px;
+}
+
+/* Mount-only unveil after login, sign-out and returning from a match. */
+.screen-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  pointer-events: none;
+  background: #050505;
+  animation: screenCurtainLift 420ms var(--ease-out-soft) forwards;
+}
+@keyframes screenCurtainLift {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* Lobby subview swap. The wrapper is layout-neutral (display: contents), so
+   only its children fade. Opacity only: a transform would make every
+   position:fixed descendant relative to the child for the duration. */
+.view-swap { display: contents; }
+.view-swap > * {
+  animation: viewSwapIn 240ms ease-out;
+}
+@keyframes viewSwapIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ─── Match opening ceremony ───────────────────────────────────────────── */
+.match-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 24px;
+  text-align: center;
+  color: #f4f4f5;
+  cursor: pointer;
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(76, 29, 149, 0.28), transparent 60%),
+    radial-gradient(ellipse at 50% 110%, rgba(127, 29, 29, 0.22), transparent 55%),
+    #030305;
+  animation: matchIntroIn 380ms ease-out;
+}
+.match-intro.is-leaving {
+  animation: matchIntroOut 450ms ease-in forwards;
+  pointer-events: none;
+}
+@keyframes matchIntroIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes matchIntroOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+.match-intro-moon {
+  color: #e4e4e7;
+  opacity: 0;
+  animation: matchIntroMoon 900ms var(--ease-out-soft) 80ms forwards;
+}
+@keyframes matchIntroMoon {
+  from { opacity: 0; transform: translateY(18px) scale(0.85); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.match-intro-kicker,
+.match-intro-title,
+.match-intro-subtitle,
+.match-intro-role,
+.match-intro-skip {
+  opacity: 0;
+  animation: matchIntroRise 600ms var(--ease-out-soft) forwards;
+}
+.match-intro-kicker {
+  font-size: 0.75rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #a1a1aa;
+  animation-delay: 220ms;
+}
+.match-intro-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(2.25rem, 8vw, 3.75rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  animation-delay: 320ms;
+}
+.match-intro-subtitle {
+  color: #a1a1aa;
+  font-size: 0.95rem;
+  animation-delay: 460ms;
+}
+.match-intro-role {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 28px;
+  border: 1px solid rgba(244, 244, 245, 0.18);
+  border-radius: 10px;
+  background: rgba(10, 10, 12, 0.72);
+  animation-name: matchIntroCard;
+  animation-duration: 700ms;
+  animation-delay: 700ms;
+}
+.match-intro-role span {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #a1a1aa;
+}
+.match-intro-role strong {
+  font-family: 'Cinzel', serif;
+  font-size: 1.35rem;
+}
+.match-intro-skip {
+  position: absolute;
+  bottom: max(24px, env(safe-area-inset-bottom));
+  font-size: 0.75rem;
+  color: #71717a;
+  animation-delay: 900ms;
+}
+@keyframes matchIntroRise {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes matchIntroCard {
+  from { opacity: 0; transform: perspective(600px) rotateY(80deg); }
+  to   { opacity: 1; transform: perspective(600px) rotateY(0deg); }
+}
+
+/* ─── Day / night atmosphere ──────────────────────────────────────────── */
+/* A single fixed veil whose opacity crossfades. The centre stays clear so
+   the console and seats remain readable; only the edges deepen at night. */
+.phase-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(49, 46, 129, 0.32), transparent 55%),
+    radial-gradient(ellipse at 50% 50%, transparent 45%, rgba(0, 0, 0, 0.55) 100%);
+  opacity: 0;
+  transition: opacity 900ms ease;
+}
+.phase-veil[data-time='night'] { opacity: 1; }
+
+.phase-banner-region {
+  position: fixed;
+  top: max(100px, calc(env(safe-area-inset-top) + 88px));
+  left: 50%;
+  z-index: 60;
+  transform: translateX(-50%);
+  pointer-events: none;
+  width: min(92vw, 420px);
+  display: flex;
+  justify-content: center;
+}
+.phase-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 26px;
+  border-radius: 999px;
+  border: 1px solid rgba(244, 244, 245, 0.16);
+  background: rgba(6, 6, 8, 0.86);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  color: #f4f4f5;
+  text-align: center;
+  animation: phaseBanner 1900ms var(--ease-out-soft) forwards;
+}
+.phase-banner strong {
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.12em;
+}
+.phase-banner span {
+  font-size: 0.75rem;
+  color: #a1a1aa;
+}
+.phase-banner--nightfall { border-color: rgba(129, 140, 248, 0.35); }
+.phase-banner--daybreak  { border-color: rgba(251, 191, 36, 0.35); }
+.phase-banner--vote      { border-color: rgba(244, 63, 94, 0.4); }
+@keyframes phaseBanner {
+  0%   { opacity: 0; transform: translateY(-10px); }
+  14%  { opacity: 1; transform: translateY(0); }
+  82%  { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-6px); }
+}
+
+/* Phase label swaps softly instead of snapping. */
+.phase-label-in {
+  animation: phaseLabelIn 320ms ease-out;
+}
+@keyframes phaseLabelIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Death emphasis ──────────────────────────────────────────────────── */
+/* The seat itself is transform-locked on mobile, so the motion lives on an
+   inner stamp and a box-shadow ring on the card. */
+.game-player-seat.is-fallen > :first-child {
+  animation: seatFallenRing 1.1s ease-out 2;
+  border-radius: 12px;
+}
+@keyframes seatFallenRing {
+  0%   { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.7); }
+  100% { box-shadow: 0 0 0 12px rgba(225, 29, 72, 0); }
+}
+/* Responsive seats are forced static; relative keeps the same flow box but
+   anchors the stamp to its own seat. Desktop seats are already absolute. */
+@media (max-width: 1023px) {
+  .game-player-seat.is-fallen { position: relative !important; }
+}
+.seat-fallen-stamp {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 20;
+  margin: -22px 0 0 -22px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 2px solid rgba(225, 29, 72, 0.85);
+  background: rgba(20, 0, 4, 0.82);
+  color: #fda4af;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .screen-curtain { display: none; }
+  .view-swap > *,
+  .phase-label-in,
+  .match-intro,
+  .match-intro-moon,
+  .match-intro-kicker,
+  .match-intro-title,
+  .match-intro-subtitle,
+  .match-intro-role,
+  .match-intro-skip,
+  .game-player-seat.is-fallen > :first-child,
+  .seat-fallen-stamp {
+    animation: none;
+    opacity: 1;
+  }
+  .match-intro.is-leaving { animation: none; opacity: 0; }
+  .phase-veil { transition: none; }
+  /* Keep the banner as a static, timed notice. */
+  .phase-banner { animation: none; }
+}
+
+/* Deferred particle field eases in instead of popping on. */
+#tsparticles canvas {
+  animation: particleFieldIn 1.4s ease-out;
+}
+@keyframes particleFieldIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}

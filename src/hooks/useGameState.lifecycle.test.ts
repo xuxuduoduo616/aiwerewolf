@@ -3,6 +3,7 @@ import { GamePhase, Role, type GameConfig, type GameRecord } from '../types';
 import { MODE_9_PLAYER, MODE_12_PLAYER } from '../constants';
 import { getTerminalRewardRequest } from '../economy/gameRewards';
 import * as aiStyles from '../services/aiStyles';
+import * as replay from '../replay';
 
 // A dependency-aware hook runner: executes the real hook, effects, timer
 // callbacks and async continuations without requiring an installed DOM library.
@@ -11,6 +12,9 @@ const hooks = vi.hoisted(() => ({
   effects: new Map<number, { deps?: readonly unknown[]; cleanup?: () => void }>(),
   pending: [] as (() => void)[],
 }));
+// These scenarios script each seat's role, so the deal is pinned to the
+// board's configured order instead of a random shuffle.
+vi.mock('../services/roleDeal', () => ({ shuffleRoles: <T,>(roles: readonly T[]) => [...roles] }));
 vi.mock('react', async importOriginal => {
   const actual = await importOriginal<typeof import('react')>();
   return {
@@ -768,5 +772,82 @@ describe('stable model routes and provenance lifecycle', () => {
     held.resolve({ en: 'Old source must not appear.', zh: '' }); await settle();
     expect(snapshot()).toBe(expected);
     expect(game.players.every(player => player.aiDialogueSource === undefined)).toBe(true);
+  });
+  it('advances an empty mixed pool without adding AI dialogue to logs, replay or audio', async () => {
+    const realCreate = replay.createReplayRecorder;
+    const recordSpeech = vi.fn();
+    const recordWolfChat = vi.fn();
+    vi.spyOn(replay, 'createReplayRecorder').mockImplementation(options => ({
+      ...realCreate(options), recordSpeech, recordWolfChat,
+    }));
+    game.startGame(fixture, 'en', { selection: 'multi-ai-model', models: [] }); flush();
+    await enterAIStatement();
+    for (let turn = 0; turn < 9; turn++) await advance(700);
+    expect(game.phase).toBe(GamePhase.DAY_VOTING);
+    expect(game.currentSpeaker).toBeNull();
+    expect(game.isProcessingAI).toBe(false);
+    expect(game.logs.filter(log => log.speakerId && !log.isSystem).map(log => log.speakerId)).toEqual([1]);
+    expect(game.logs.some(log => log.isSystem && log.message.includes('speech was skipped'))).toBe(true);
+    expect(game.players.slice(1).every(player => player.aiDialogueSource?.model === 'unavailable')).toBe(true);
+    expect(recordSpeech.mock.calls.map(([speech]) => speech.speakerId)).toEqual([1]);
+    expect(recordWolfChat).not.toHaveBeenCalled();
+    expect(audio.enqueue).not.toHaveBeenCalled();
+  });
+  it('keeps non-wolves’ seat badges and logs private when a night model takes over', async () => {
+    game.startGame(fixture, 'en', { selection: 'multi-ai-model', models }); flush();
+    ai.generateWolfChat.mockImplementationOnce(async ([wolf]) => [{
+      id: 'night-reply', round: 1, speakerId: wolf.id, message: 'An accepted simulated reply.',
+      strategyTag: '刀口', dialogueSource: { model: 'deepseek-flash', fallback: true },
+    }]);
+    game.setPhase(GamePhase.NIGHT_WEREWOLVES); flush(); await advance(700);
+    expect(game.wolfChat).toHaveLength(1);
+    expect(game.logs.some(log => log.tone === 'wolf')).toBe(false);
+    expect(game.players.every(player => player.aiDialogueSource === undefined)).toBe(true);
+    expect(game.phase).toBe(GamePhase.NIGHT_SEER);
+    expect(audio.enqueue).not.toHaveBeenCalled();
+  });
+  it('aborts mixed day generation on a new match before any stale audio or source commit', async () => {
+    const held = deferred<{ en: string; zh: string }>();
+    const commit = vi.fn();
+    ai.generateAIDialogue.mockImplementationOnce((...args) => {
+      args[10].deferCommit(commit);
+      return held.promise;
+    });
+    game.startGame(fixture, 'en', { selection: 'multi-ai-model', models }); flush();
+    await enterAIStatement();
+    const signal: AbortSignal = ai.generateAIDialogue.mock.calls[0][10].signal;
+    game.startGame(fixture, 'en', { selection: 'multi-ai-model', models }); flush();
+    expect(signal.aborted).toBe(true);
+    held.resolve({ en: 'Stale mixed dialogue', zh: '' }); await settle();
+    expect(commit).not.toHaveBeenCalled();
+    expect(audio.enqueue).not.toHaveBeenCalled();
+    expect(game.players.every(player => player.aiDialogueSource === undefined)).toBe(true);
+  });
+});
+
+describe('opening ceremony hold', () => {
+  it('keeps the first night waiting until releaseIntro, then progresses normally', async () => {
+    leave();
+    game.startGame(fixture, 'en', { holdForIntro: true }); flush();
+    expect(game.introPending).toBe(true);
+    expect(game.phase).toBe(GamePhase.NIGHT_START);
+    await advance(5000);
+    expect(game.phase).toBe(GamePhase.NIGHT_START);
+    expect(game.roundCount).toBe(0);
+
+    game.releaseIntro(); flush();
+    expect(game.introPending).toBe(false);
+    await advance(700);
+    expect(game.phase).toBe(GamePhase.NIGHT_WEREWOLVES);
+    expect(game.roundCount).toBe(1);
+  });
+
+  it('never holds unless asked, and leaving clears a pending hold', async () => {
+    expect(game.introPending).toBe(false);
+    leave();
+    game.startGame(fixture, 'en', { holdForIntro: true }); flush();
+    leave();
+    expect(game.introPending).toBe(false);
+    expect(game.phase).toBe(GamePhase.LOBBY);
   });
 });

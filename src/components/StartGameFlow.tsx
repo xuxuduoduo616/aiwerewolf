@@ -324,10 +324,12 @@ const StartGameFlow: React.FC<StartGameFlowProps> = ({
           </button>
           <p className="start-model-status" role="status">
             Models affect dialogue only. DeepSeek reasoning: Beginner · low, Intermediate · high, Expert · max.
-            Unavailable dialogue uses local fallback. Longer reasoning may take up to 45 seconds.
+            {' '}{setup.expressionModel === 'multi-ai-model'
+              ? 'If no verified model gives a usable reply, that turn is skipped.'
+              : 'This single-model option uses local dialogue if the model cannot respond.'}
           </p>
           <AccessibleDialog open={showModels} onClose={() => setShowModels(false)} title="Participating AI models"
-            description="Multi AI Model assigns each AI seat a stable model from the available pool for this match. Availability is verified at setup; generation can still fall back."
+            description="Each AI seat starts with a preferred model. If a reply fails, another verified model can take over. The seat shows the model that produced the accepted reply."
             closeLabel="Close participating AI models" returnFocusRef={modelsButtonRef}>
             <ul className="participating-model-list">
               {MIXED_POOL_MODEL_IDS.map(id => <li key={id}>
@@ -335,7 +337,7 @@ const StartGameFlow: React.FC<StartGameFlowProps> = ({
                 <span>{availableExpressionModels.some(model => model.id === id && model.available) ? 'Available' : 'Unavailable'}</span>
               </li>)}
             </ul>
-            <p>Gemini 2.5 Flash is a backup and the safe single-model default. Local dialogue is used when remote output is unavailable or rejected. Neither counts as a participating model success.</p>
+            <p>Gemini 2.5 Flash can take over when verified and is also the default single-model option. If no verified model gives a usable reply, that turn is skipped.</p>
           </AccessibleDialog>
 
           <section className="start-unavailable-routes" aria-label="Other matchmaking options">

@@ -3,6 +3,9 @@ export const AI_EXPRESSION_MODEL_IDS = [
   'deepseek-auto',
   'deepseek-flash',
   'deepseek-v4-pro',
+  'doubao-seed-1.6-flash',
+  'doubao-seed-character',
+  'doubao-seed-2.1-lite',
   'gemini-3.6-flash',
   'gemini-2.5-flash',
 ] as const;
@@ -23,12 +26,19 @@ export interface ProviderCapabilities {
 }
 
 // The conservative client default is usable without a server capability proof.
-export const MIXED_POOL_MODEL_IDS = ['gemini-3.6-flash', 'deepseek-flash', 'deepseek-v4-pro'] as const;
+export const MIXED_POOL_MODEL_IDS = [
+  'gemini-3.6-flash',
+  'deepseek-flash',
+  'deepseek-v4-pro',
+  'doubao-seed-1.6-flash',
+  'doubao-seed-character',
+  'doubao-seed-2.1-lite',
+] as const;
 
 export const DEFAULT_EXPRESSION_MODEL: 'gemini-2.5-flash' = 'gemini-2.5-flash';
 
 export const AI_EXPRESSION_MODELS: readonly AIExpressionModel[] = [
-  { id: 'multi-ai-model', label: 'Multi AI Model', description: 'Stable seats across the available participating models. Local dialogue when offline.' },
+  { id: 'multi-ai-model', label: 'Multi AI Model', description: 'Stable seat assignments with verified remote alternatives when a model cannot respond.' },
   {
     id: 'deepseek-auto',
     label: 'Automatic · DeepSeek by difficulty',
@@ -43,6 +53,21 @@ export const AI_EXPRESSION_MODELS: readonly AIExpressionModel[] = [
     id: 'deepseek-v4-pro',
     label: 'DeepSeek V4 Pro',
     description: 'Pro dialogue with low, high, or max reasoning for your difficulty.',
+  },
+  {
+    id: 'doubao-seed-1.6-flash',
+    label: 'Doubao Seed 1.6 Flash',
+    description: 'ByteDance Doubao through Volcano Ark; expression only, no paid reasoning.',
+  },
+  {
+    id: 'doubao-seed-character',
+    label: 'Doubao Seed Character',
+    description: 'ByteDance Doubao through Volcano Ark; expression only, no paid reasoning.',
+  },
+  {
+    id: 'doubao-seed-2.1-lite',
+    label: 'Doubao Seed 2.1 Lite',
+    description: 'ByteDance Doubao through Volcano Ark; expression only, no paid reasoning.',
   },
   {
     id: 'gemini-3.6-flash',

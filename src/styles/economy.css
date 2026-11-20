@@ -370,6 +370,7 @@
 .skin-preview-content p { color: #97948d; font-size: .76rem; line-height: 1.5; }
 
 .onboarding-spotlight { position: fixed; inset: 0; z-index: 1000; pointer-events: auto; }
+.onboarding-spotlight--unhighlighted { background: rgba(0, 0, 0, 0.76); }
 .onboarding-spotlight--positioning .onboarding-highlight,
 .onboarding-spotlight--positioning .onboarding-direction-arrow { visibility: hidden; }
 .onboarding-highlight {

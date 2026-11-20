@@ -1,7 +1,7 @@
 import React from 'react';
 import { getPlayerModelBadge } from '../ai/modelRouting';
 import { Player, Role } from '../types';
-import { User, Eye, FlaskConical, Crosshair, Skull, Mic, Cpu, BadgeHelp, PawPrint, Moon, Check } from 'lucide-react';
+import { User, Eye, FlaskConical, Crosshair, Skull, Mic, BadgeHelp, PawPrint, Moon, Check } from 'lucide-react';
 import type { SkinProduct } from '../economy/catalog';
 import WuxiaCharacter, { isWuxiaSkinId } from './WuxiaCharacter';
 
@@ -42,10 +42,10 @@ const RoleIcon = ({ role }: { role: Role }) => {
 
 const AIModelBadge = ({ label }: { label: string }) => {
   return (
-    <div title={label} aria-label={label} data-model-badge className="flex items-center gap-1 text-[9px] px-1.5 py-0.5 rounded border border-zinc-600 bg-zinc-950/80 text-zinc-300 uppercase font-bold tracking-wide shadow-sm">
-      <Cpu className="w-2 h-2" />
-      <span className="truncate max-w-[58px]">{label}</span>
-    </div>
+    <span title={label} role="img" aria-label={label} data-model-badge
+      className="text-[10px] px-1 py-0.5 rounded border border-zinc-600 bg-zinc-950/80 text-zinc-300 font-semibold shadow-sm">
+      {label}
+    </span>
   );
 };
 
@@ -143,7 +143,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
           )}
         </div>
 
-        {!isMe && player.isAlive && <AIModelBadge label={getPlayerModelBadge(player)} />}
+        {!isMe && !player.isHuman && player.isAlive && <AIModelBadge label={getPlayerModelBadge(player)} />}
 
         {showRole && (
           <div className="mt-1 flex items-center justify-center gap-1 text-[9px] font-bold uppercase tracking-wide bg-black/55 px-2 py-0.5 rounded-full w-fit border border-white/10">

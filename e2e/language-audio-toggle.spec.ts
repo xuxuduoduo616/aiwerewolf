@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { enterGuestLobby, startNinePlayerGame, leaveGameToLobby, watchProviderRequests } from './helpers/game';
+import { GUEST_IDENTITY_STORAGE_KEY } from '../src/identity/publicIdentity';
 
 const LANGUAGE_STORAGE_KEY = 'werewolf_display_language';
 const AUDIO_PREFS_KEY = 'werewolf_audio_prefs';
@@ -54,8 +55,12 @@ for (const viewport of [
     await page.emulateMedia({ reducedMotion: 'reduce' });
     const providerRequests = watchProviderRequests(page);
     await enterGuestLobby(page);
-    // A different principal's completion cannot suppress this player's guide.
-    await page.evaluate(() => localStorage.setItem('aiwerewolf:game-controls-guide:v1:other-player', 'seen'));
+    // Neither the old guide nor another player's new guide suppresses this one.
+    await page.evaluate(guestKey => {
+      const { id } = JSON.parse(localStorage.getItem(guestKey)!);
+      localStorage.setItem(`aiwerewolf:game-controls-guide:v1:${id}`, 'seen');
+      localStorage.setItem('aiwerewolf:game-controls-guide:v2:other-player', 'seen');
+    }, GUEST_IDENTITY_STORAGE_KEY);
     if (viewport.width === 720) {
       await page.evaluate(() => {
         const read = Storage.prototype.getItem;
@@ -78,20 +83,34 @@ for (const viewport of [
     await expect(page.locator('.game-room')).toHaveAttribute('inert', '');
     await expect(page.locator('.game-pause-button')).toHaveText('Resume');
     const phase = await page.locator('.game-room-phase-summary p').innerText();
-    const stepIds = ['game-voice', 'game-volume', 'game-rate', 'game-mute', 'game-log', 'game-exit'];
+    const stepIds = ['game-voice', 'game-volume', 'game-rate', 'game-mute', 'game-log', 'game-phase-layout', 'game-phase-opacity', 'game-exit'];
     for (const [index, id] of stepIds.entries()) {
       await expect(guide).toHaveAttribute('data-target-step', id);
       await expect(guide).toHaveAttribute('data-positioning', 'false');
-      await expect(panel.locator('#onboarding-position')).toHaveText(`Step ${index + 1} of 6`);
-      const target = (await page.locator(`[data-tour-target="${id}"]`).boundingBox())!;
-      const highlight = (await page.locator('.onboarding-highlight').boundingBox())!;
-      const panelBounds = (await panel.boundingBox())!;
-      expect(highlight.x).toBeLessThanOrEqual(target.x);
-      expect(highlight.x + highlight.width).toBeGreaterThanOrEqual(target.x + target.width);
-      expect(highlight.y).toBeLessThanOrEqual(target.y);
-      expect(highlight.y + highlight.height).toBeGreaterThanOrEqual(target.y + target.height);
-      expect(highlight.y + highlight.height).toBeLessThanOrEqual(panelBounds.y);
-      await expect(page.locator('.onboarding-direction-arrow')).toBeVisible();
+      await expect(panel.locator('#onboarding-position')).toHaveText(`Step ${index + 1} of 8`);
+      if (id === 'game-phase-layout') {
+        await expect(panel.getByRole('heading')).toHaveText('Move the Phase panel');
+        await expect(panel).toContainText('left, right, or bottom edge');
+      } else if (id === 'game-phase-opacity') {
+        await expect(panel.getByRole('heading')).toHaveText('Phase panel opacity');
+        await expect(panel).toContainText('50% to 100%');
+      }
+      const target = page.locator(`[data-tour-target="${id}"]`);
+      if (viewport.width < 1024 && id.startsWith('game-phase-')) {
+        await expect(target).toBeHidden();
+        await expect(panel).toContainText('On desktop');
+        await expect(guide.locator('.onboarding-highlight, .onboarding-direction-arrow')).toHaveCount(0);
+      } else {
+        const targetBounds = (await target.boundingBox())!;
+        const highlight = (await page.locator('.onboarding-highlight').boundingBox())!;
+        const panelBounds = (await panel.boundingBox())!;
+        expect(highlight.x).toBeLessThanOrEqual(targetBounds.x);
+        expect(highlight.x + highlight.width).toBeGreaterThanOrEqual(targetBounds.x + targetBounds.width);
+        expect(highlight.y).toBeLessThanOrEqual(targetBounds.y);
+        expect(highlight.y + highlight.height).toBeGreaterThanOrEqual(targetBounds.y + targetBounds.height);
+        expect(highlight.y + highlight.height).toBeLessThanOrEqual(panelBounds.y);
+        await expect(page.locator('.onboarding-direction-arrow')).toBeVisible();
+      }
       await page.keyboard.press('Tab');
       expect(await page.evaluate(() => Boolean(document.activeElement?.closest('.onboarding-panel')))).toBe(true);
       if (index === 1) {
@@ -99,13 +118,19 @@ for (const viewport of [
         await expect(guide).toHaveAttribute('data-target-step', 'game-voice');
         await panel.getByRole('button', { name: 'Next', exact: true }).click();
       }
+      if (id === 'game-phase-opacity') {
+        await panel.getByRole('button', { name: 'Back', exact: true }).click();
+        await expect(panel.locator('#onboarding-position')).toHaveText('Step 6 of 8');
+        await panel.getByRole('button', { name: 'Next', exact: true }).click();
+        await expect(panel.locator('#onboarding-position')).toHaveText('Step 7 of 8');
+      }
       if (index === 0) await page.screenshot({ path: `output/playwright/game-controls-guide-${viewport.width}.png` });
       await panel.getByRole('button', { name: 'Next', exact: true }).click();
     }
     await expect(guide).toHaveCount(0);
     await expect(page.locator('.game-room')).not.toHaveAttribute('inert');
     await expect(page.locator('.game-pause-button')).toHaveText('Pause');
-    // No phase progression occurred while the player read all six hints.
+    // No phase progression occurred while the player read all eight hints.
     await expect(page.locator('.game-room-phase-summary p')).toHaveText(phase);
     const volume = page.getByRole('slider', { name: 'Volume', exact: true });
     const rate = page.getByRole('slider', { name: 'Speech rate', exact: true });

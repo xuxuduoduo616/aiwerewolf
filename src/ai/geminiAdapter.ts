@@ -1,4 +1,4 @@
-/** Browser adapter: exactly one server request; the server owns model fallback. */
+/** Browser adapter: one request for a specific model route. */
 import { DEFAULT_EXPRESSION_MODEL, type AIExpressionModelId } from './modelCatalog';
 import { recordProviderOutcome } from '../services/matchTelemetry';
 import type { Difficulty } from '../types';
@@ -12,6 +12,7 @@ export interface SpeechRequest {
   signal?: AbortSignal;
   difficulty?: Difficulty;
   onSource?: (source: DialogueSource) => void;
+  timeoutMs?: number;
 }
 
 const PROVIDER_ADAPTER_ENDPOINT = '/.netlify/functions/provider-adapter';
@@ -33,6 +34,14 @@ const isTimeoutError = (error: unknown): boolean => {
   return name === 'TimeoutError' || name === 'AbortError';
 };
 
+// Per-route client waits. Reasoning routes need a longer server allowance than
+// the fast Gemini chain, but every wait must still finish inside one request.
+const providerTimeoutMs = (route: string): number => {
+  if (route.startsWith('deepseek-')) return 48000;
+  if (route.startsWith('doubao-')) return 26000;
+  return FETCH_TIMEOUT_MS;
+};
+
 export const generateWithGemini = async (
   req: SpeechRequest,
   expressionModel: AIExpressionModelId = DEFAULT_EXPRESSION_MODEL,
@@ -40,8 +49,7 @@ export const generateWithGemini = async (
   if (isLocalVite() || req.signal?.aborted) return '';
   // Resolve virtual modes locally; pool IDs never leave the browser.
   const route = resolveSingleRoute(expressionModel, req.difficulty ?? 'normal');
-  const deepseek = route.startsWith('deepseek-');
-  const request = requestSignal(req.signal, deepseek ? 48000 : FETCH_TIMEOUT_MS);
+  const request = requestSignal(req.signal, Math.min(req.timeoutMs ?? Infinity, providerTimeoutMs(route)));
   try {
     const res = await fetch(PROVIDER_ADAPTER_ENDPOINT, {
       method: 'POST',
@@ -54,6 +62,7 @@ export const generateWithGemini = async (
       }),
       signal: request.signal,
     });
+    request.signal.throwIfAborted();
     if (!res.ok) {
       recordProviderOutcome('provider_failed');
       return '';
@@ -62,11 +71,12 @@ export const generateWithGemini = async (
     try {
       body = await res.json() as { text?: unknown; cost_estimate?: unknown; model_used?: unknown; fallback_used?: unknown } | null;
     } catch {
+      request.signal.throwIfAborted();
       recordProviderOutcome('provider_unparsable');
       return '';
     }
     const text = typeof body?.text === 'string' ? body.text : null;
-    if (req.signal?.aborted) return '';
+    request.signal.throwIfAborted();
     if (text === null) {
       recordProviderOutcome('provider_unparsable');
       return '';
@@ -105,8 +115,9 @@ export const generateSpeechWithLLM = async (
   difficulty?: Difficulty,
   signal?: AbortSignal,
   onSource?: (source: DialogueSource) => void,
+  timeoutMs?: number,
 ): Promise<{ zh: string; en: string } | null> => {
-  const parsed = extractJson<{ zh?: unknown; en?: unknown }>(await generateWithGemini({ systemPrompt, userPrompt: contextPrompt, difficulty, signal, onSource }, expressionModel));
+  const parsed = extractJson<{ zh?: unknown; en?: unknown }>(await generateWithGemini({ systemPrompt, userPrompt: contextPrompt, difficulty, signal, onSource, timeoutMs }, expressionModel));
   const zh = typeof parsed?.zh === 'string' ? parsed.zh.trim() : '';
   const en = typeof parsed?.en === 'string' ? parsed.en.trim() : '';
   return zh || en ? { zh, en } : null;
@@ -120,7 +131,8 @@ export const generateWolfChatWithLLM = async (
   signal?: AbortSignal,
   difficulty?: Difficulty,
   onSource?: (source: DialogueSource) => void,
+  timeoutMs?: number,
 ): Promise<unknown[]> => {
-  const parsed = extractJson<{ messages?: unknown }>(await generateWithGemini({ systemPrompt, userPrompt: contextPrompt, signal, difficulty, onSource }, expressionModel));
+  const parsed = extractJson<{ messages?: unknown }>(await generateWithGemini({ systemPrompt, userPrompt: contextPrompt, signal, difficulty, onSource, timeoutMs }, expressionModel));
   return Array.isArray(parsed?.messages) ? parsed.messages : [];
 };

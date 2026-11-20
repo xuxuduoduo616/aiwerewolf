@@ -134,3 +134,14 @@ describe('Integration: full game flow simulation', () => {
     expect(hardHits).toBeGreaterThan(30);
   });
 });
+
+import { shellViewKey } from './App';
+
+describe('shell view transitions', () => {
+  it('keeps the start flow mounted across its two steps so setup state survives', () => {
+    expect(shellViewKey(null, 'home', 'mode-choice')).toBe(shellViewKey(null, 'home', 'match-setup'));
+    expect(shellViewKey(null, 'home', 'home')).not.toBe(shellViewKey(null, 'home', 'activity'));
+    expect(shellViewKey('menu', 'home', 'home')).toBe('utility:menu');
+    expect(shellViewKey(null, 'shop', 'home')).toBe('shop');
+  });
+});

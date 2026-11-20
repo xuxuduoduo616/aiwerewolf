@@ -10,6 +10,8 @@ export interface OnboardingStep {
   description: string;
   actionLabel?: string;
   wholePanel?: boolean;
+  /** Keep the instruction when its control is hidden or cannot be highlighted. */
+  allowUnhighlighted?: boolean;
 }
 
 export const ONBOARDING_STEPS: readonly OnboardingStep[] = [
@@ -151,7 +153,7 @@ export const findAvailableOnboardingStep = (
   steps: readonly OnboardingStep[] = ONBOARDING_STEPS,
 ): number | null => {
   for (let index = startIndex; index >= 0 && index < steps.length; index += direction) {
-    if (hasTarget(steps[index].selector)) return index;
+    if (steps[index].allowUnhighlighted || hasTarget(steps[index].selector)) return index;
   }
   return null;
 };
@@ -381,6 +383,7 @@ interface LayerProps {
   panelPlacement?: OnboardingPanelPlacement;
   highlightRect?: HighlightRect;
   arrowLayout?: OnboardingArrowLayout;
+  showTarget?: boolean;
   positioning?: boolean;
   isFirst: boolean;
   stepCount?: number;
@@ -401,6 +404,7 @@ export const OnboardingSpotlightLayer: React.FC<LayerProps> = ({
   panelPlacement = getOnboardingPanelPlacement(rect, viewportHeight),
   highlightRect = getOnboardingHighlightRect(rect, viewportWidth, viewportHeight),
   arrowLayout = getOnboardingArrowLayout(rect, viewportHeight, { viewportWidth }),
+  showTarget = true,
   positioning = false,
   isFirst,
   stepCount = ONBOARDING_STEPS.length,
@@ -411,7 +415,7 @@ export const OnboardingSpotlightLayer: React.FC<LayerProps> = ({
   onTargetAction,
 }) => (
   <div
-    className={`onboarding-spotlight${positioning ? ' onboarding-spotlight--positioning' : ''}`}
+    className={`onboarding-spotlight${positioning ? ' onboarding-spotlight--positioning' : ''}${showTarget ? '' : ' onboarding-spotlight--unhighlighted'}`}
     role="dialog"
     aria-modal="true"
     aria-busy={positioning}
@@ -420,13 +424,13 @@ export const OnboardingSpotlightLayer: React.FC<LayerProps> = ({
     data-target-step={step.id}
     data-positioning={positioning ? 'true' : 'false'}
   >
-    <div
+    {showTarget && <div
       key={`highlight-${step.id}-${positioning ? 'positioning' : 'ready'}`}
       className="onboarding-highlight"
       style={highlightRect}
       aria-hidden="true"
-    />
-    {step.actionLabel && onTargetAction && !positioning && (
+    />}
+    {showTarget && step.actionLabel && onTargetAction && !positioning && (
       <button
         type="button"
         className="onboarding-target-action"
@@ -435,7 +439,7 @@ export const OnboardingSpotlightLayer: React.FC<LayerProps> = ({
         onClick={onTargetAction}
       />
     )}
-    <svg
+    {showTarget && <svg
       key={`arrow-${step.id}-${positioning ? 'positioning' : 'ready'}`}
       className={`onboarding-direction-arrow onboarding-direction-arrow--${arrowLayout.placement}`}
       style={{ top: arrowLayout.top, left: arrowLayout.left }}
@@ -447,7 +451,7 @@ export const OnboardingSpotlightLayer: React.FC<LayerProps> = ({
       <path className="onboarding-direction-arrow__stroke" d="M10 24l10 12 10-12" />
       <circle cx="7" cy="10" r="2" />
       <circle cx="33" cy="15" r="1.5" />
-    </svg>
+    </svg>}
     <div
       ref={panelRef}
       className={`onboarding-panel onboarding-panel--${panelPlacement}`}
@@ -470,6 +474,7 @@ interface SpotlightLayout {
   viewportHeight: number;
   panelPlacement: OnboardingPanelPlacement;
   positioning: boolean;
+  showTarget?: boolean;
   highlightRect?: HighlightRect;
   arrow?: OnboardingArrowLayout;
 }
@@ -497,22 +502,26 @@ const OnboardingSpotlight: React.FC<Props> = ({ open, onSkip, onFinish, steps = 
     setLayout(null);
     const element = document.querySelector<HTMLElement>(step.selector);
     targetRef.current = element;
-    if (!element) {
+    if (!element && !step.allowUnhighlighted) {
       const next = findAvailableOnboardingStep(stepIndex + 1, 1, selector => Boolean(document.querySelector(selector)), steps);
       if (next === null) onSkipRef.current();
       else setStepIndex(next);
       return undefined;
     }
 
-    const originalTargetStyle = { maxHeight: element.style.maxHeight, overflowY: element.style.overflowY, scrollTop: element.scrollTop };
+    const originalTargetStyle = element
+      ? { maxHeight: element.style.maxHeight, overflowY: element.style.overflowY, scrollTop: element.scrollTop }
+      : null;
     const beginPositioning = () => {
-      const bounds = toHighlightRect(element.getBoundingClientRect());
+      const bounds = element ? toHighlightRect(element.getBoundingClientRect()) : { top: 0, left: 0, width: 0, height: 0 };
+      const showTarget = bounds.width > 0 && bounds.height > 0;
       setLayout({
         rect: bounds,
         viewportWidth: window.innerWidth,
         viewportHeight: window.innerHeight,
         panelPlacement: getOnboardingPanelPlacement(bounds, window.innerHeight),
-        positioning: true,
+        positioning: showTarget || !step.allowUnhighlighted,
+        showTarget: showTarget || !step.allowUnhighlighted,
       });
     };
     const shell = document.querySelector<HTMLElement>('.wol-shell');
@@ -521,9 +530,11 @@ const OnboardingSpotlight: React.FC<Props> = ({ open, onSkip, onFinish, steps = 
     window.addEventListener('resize', beginPositioning);
     return () => {
       targetRef.current = null;
-      element.style.maxHeight = originalTargetStyle.maxHeight;
-      element.style.overflowY = originalTargetStyle.overflowY;
-      element.scrollTop = originalTargetStyle.scrollTop;
+      if (element && originalTargetStyle) {
+        element.style.maxHeight = originalTargetStyle.maxHeight;
+        element.style.overflowY = originalTargetStyle.overflowY;
+        element.scrollTop = originalTargetStyle.scrollTop;
+      }
       shell?.removeAttribute('data-onboarding-step');
       shell?.style.removeProperty('--onboarding-panel-space');
       window.removeEventListener('resize', beginPositioning);
@@ -574,6 +585,13 @@ const OnboardingSpotlight: React.FC<Props> = ({ open, onSkip, onFinish, steps = 
           highlightRect: plan.highlightRect,
           arrow: plan.arrow,
         });
+        return;
+      }
+
+      // Desktop-only tips still count on narrow or short boards. Avoid moving
+      // the entire match when the target cannot fit above the hint.
+      if (step.allowUnhighlighted) {
+        setLayout({ ...layout, rect: targetRect, positioning: false, showTarget: false });
         return;
       }
 
@@ -653,6 +671,7 @@ const OnboardingSpotlight: React.FC<Props> = ({ open, onSkip, onFinish, steps = 
       positioning={layout.positioning}
       highlightRect={layout.highlightRect}
       arrowLayout={layout.arrow}
+      showTarget={layout.showTarget}
       isFirst={isFirst}
       stepCount={totalSteps}
       panelRef={panelRef}

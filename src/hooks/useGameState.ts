@@ -1,4 +1,4 @@
-import { createSeatRoutes, LOCAL_DIALOGUE_SOURCE, type DialogueSource } from '../ai/modelRouting';
+import { createSeatRoutes, getVerifiedMixedRoutes, isVerifiedRemoteSource, LOCAL_DIALOGUE_SOURCE, UNAVAILABLE_DIALOGUE_SOURCE, type DialogueSource, type RoutedModelId } from '../ai/modelRouting';
 import { DEFAULT_EXPRESSION_MODEL, getExpressionModel, type AIExpressionModel, type AIExpressionModelId } from '../ai/modelCatalog';
 import React, { useEffect, useRef, useState } from 'react';
 import {
@@ -36,6 +36,8 @@ import { DEFAULT_DISPLAY_LANGUAGE, pickTranslationSource, type DisplayLanguage }
 import * as speechAudio from '../services/speechAudio';
 import { endMatch, installPageLifecycleCapture, startMatch } from '../services/matchTelemetry';
 import { globalBeliefTracker } from '../ai/beliefTracker';
+import { preloadSpeechPools } from '../services/speechLibrary';
+import { shuffleRoles } from '../services/roleDeal';
 import { createReplayRecorder, saveReplay, type ReplayRecorder } from '../replay';
 
 const AI_STYLE_KEYS = Object.keys(CUSTOM_AI_STYLES);
@@ -245,6 +247,13 @@ interface PlayerClock {
   stop: () => void;
 }
 
+export interface StartGameOptions {
+  selection?: AIExpressionModelId;
+  models?: readonly AIExpressionModel[];
+  /** Hold the first phase until releaseIntro() is called. */
+  holdForIntro?: boolean;
+}
+
 export function useGameState(authContext: AuthContext) {
   const { session, isGuest, records, setRecords, setRecordError, guestPrincipalId, publicName } = authContext;
 
@@ -264,6 +273,9 @@ export function useGameState(authContext: AuthContext) {
   // Keep a fresh view state even if two toggles are batched into one render,
   // so a cancelled phase delay is always rearmed when running.
   const [pause, setPause] = useState({ isPaused: false });
+  // Opt-in hold so the opening ceremony can finish (and mask asset preloading)
+  // before the first night timer starts. Off unless startGame asks for it.
+  const [introPending, setIntroPending] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   // Audio prefs (browser-tts-mvp): restored from localStorage, synced to the
   // speechAudio service below. ttsEnabled defaults to OFF — flipping the
@@ -311,6 +323,8 @@ export function useGameState(authContext: AuthContext) {
   const playerClockRef = useRef<PlayerClock | null>(null);
   const wolfHistoryRef = useRef<WolfChatMessage[]>([]);
   const wolfRequestRef = useRef<AbortController | null>(null);
+  const phaseExpressionRef = useRef<AbortController | null>(null);
+  const mixedModelsRef = useRef<readonly RoutedModelId[]>();
   const wolfRevisionRef = useRef(0);
   const wolfKillRef = useRef<number | null>(null);
   const saveStartedGenerationRef = useRef<number | null>(null);
@@ -358,6 +372,8 @@ export function useGameState(authContext: AuthContext) {
 
   const clearPhaseWork = () => {
     cancelWolfReply();
+    phaseExpressionRef.current?.abort();
+    phaseExpressionRef.current = null;
     phaseDelayRef.current = null;
     for (const cleanup of timerCleanupsRef.current) cleanup();
     stopPlayerClock();
@@ -427,6 +443,7 @@ export function useGameState(authContext: AuthContext) {
   };
 
   const leaveGame = () => {
+    setIntroPending(false);
     if (!matchActiveRef.current) return;
     // H1-F/OBS-DENOM: only a match without a winner is an abandonment. A match
     // that already reached GAME_OVER was finalized by the effect below, and
@@ -464,6 +481,8 @@ export function useGameState(authContext: AuthContext) {
   }), []);
 
   const me = players.find(player => player.id === MY_PLAYER_ID);
+  const mixedModels = mixedModelsRef.current;
+  const phaseExpressionSignal = () => (phaseExpressionRef.current ??= new AbortController()).signal;
 
   /**
    * H2-A: project the frozen belief tracker into replay snapshots for one
@@ -595,7 +614,7 @@ export function useGameState(authContext: AuthContext) {
 
   // Phase transition driver
   useEffect(() => {
-    if (!canProgress() || winner || !players.length || processingScopeRef.current) return;
+    if (introPending || !canProgress() || winner || !players.length || processingScopeRef.current) return;
     const timer = window.setTimeout(() => {
       release();
       if (!canProgress() || processingScopeRef.current) return;
@@ -615,7 +634,7 @@ export function useGameState(authContext: AuthContext) {
     });
     phaseDelayRef.current = release;
     return release;
-  }, [phaseScope, generation, pause, players, isProcessingAI, winner, currentSpeaker, speakingQueue, deadThisRound, nightState]);
+  }, [phaseScope, generation, pause, players, isProcessingAI, winner, currentSpeaker, speakingQueue, deadThisRound, nightState, introPending]);
 
   // Game record saving
   useEffect(() => {
@@ -707,7 +726,7 @@ export function useGameState(authContext: AuthContext) {
     return id;
   };
 
-  const startGame = (nextConfig: GameConfig, language?: DisplayLanguage, routing: { selection: AIExpressionModelId; models: readonly AIExpressionModel[] } = { selection: DEFAULT_EXPRESSION_MODEL, models: [] }) => {
+  const startGame = (nextConfig: GameConfig, language?: DisplayLanguage, options: StartGameOptions = {}) => {
     const playerName = resolvePublicPlayerName(publicName);
     if (!playerName) {
       setRecordError('A public identity is required before starting a game.');
@@ -715,6 +734,7 @@ export function useGameState(authContext: AuthContext) {
     }
     invalidateMatch();
     matchActiveRef.current = true;
+    setIntroPending(Boolean(options.holdForIntro));
     const nextLanguage = resolveGameLanguage(language);
     startMatch({ boardId: nextConfig.id, difficulty, language: nextLanguage, isGuest });
     setPause({ isPaused: false });
@@ -726,11 +746,14 @@ export function useGameState(authContext: AuthContext) {
     speechAudio.reset(); // new game: cancel audio, clear play-once dedupe
     setGameLanguage(nextLanguage);
     setAIDifficulty(DIFFICULTY_CONFIGS[difficulty].actionAccuracy);
-    const shuffledRoles = [...nextConfig.roles].sort(() => Math.random() - 0.5);
+    const shuffledRoles = shuffleRoles(nextConfig.roles);
     const wolfIndices: number[] = [];
-    const seatRoutes = createSeatRoutes(nextConfig.roles.length - 1, routing.selection, difficulty, routing.models);
+    const selection = options.selection ?? DEFAULT_EXPRESSION_MODEL;
+    const seatRoutes = createSeatRoutes(nextConfig.roles.length - 1, selection, difficulty, options.models);
+    mixedModelsRef.current = selection === 'multi-ai-model' ? getVerifiedMixedRoutes(options.models ?? []) : undefined;
     const basePlayers: Player[] = shuffledRoles.map((role, index) => {
       const isHuman = index === 0;
+      const assigned = seatRoutes[index - 1];
       const styleKey = AI_STYLE_KEYS[Math.floor(Math.random() * AI_STYLE_KEYS.length)];
       const styleConf = CUSTOM_AI_STYLES[styleKey];
       if (role === Role.WEREWOLF && !isHuman) wolfIndices.push(index);
@@ -745,9 +768,10 @@ export function useGameState(authContext: AuthContext) {
         isRevealed: false,
         avatarUrl: `https://api.dicebear.com/7.x/notionists/svg?seed=${isHuman ? 'MySelf' : AVATAR_SEEDS[index % AVATAR_SEEDS.length]}&backgroundColor=transparent`,
         aiPersonality: isHuman ? 'Human' : styleConf.label,
-        aiModelLabel: isHuman ? 'HUMAN' : getExpressionModel(seatRoutes[index - 1]).label,
+        aiModelLabel: isHuman ? 'HUMAN' : assigned ? getExpressionModel(assigned).label : '',
         aiStyleId: isHuman ? undefined : styleKey,
-        aiAssignedModel: isHuman ? undefined : seatRoutes[index - 1],
+        aiAssignedModel: assigned,
+        aiDialogueSource: !isHuman && !assigned ? UNAVAILABLE_DIALOGUE_SOURCE : undefined,
         traits: isHuman ? [] : [styleKey],
         isHuman,
         isWolfHopper: false,
@@ -786,8 +810,11 @@ export function useGameState(authContext: AuthContext) {
 
     setConfig(nextConfig);
     setPlayers(nextPlayers);
+    // Warm the speech pools during the first night so the first daytime
+    // speech never waits on a large JSON chunk download.
+    if (!mixedModelsRef.current) void preloadSpeechPools(nextPlayers.map(player => player.role));
     const localVitePorts = new Set(['5173', '4173', '4174', '4175']);
-    const localProxyNotice = localVitePorts.has(window.location.port)
+    const localProxyNotice = !mixedModelsRef.current && localVitePorts.has(window.location.port)
       ? [{
           id: `proxy-${Date.now()}`,
           phase: GamePhase.LOBBY,
@@ -895,9 +922,18 @@ export function useGameState(authContext: AuthContext) {
     setPhase(GamePhase.NIGHT_SEER);
   };
 
+  const updateDialogueSource = (speakerId: number, source: DialogueSource) =>
+    setPlayers(previous => previous.map(player => player.id === speakerId ? { ...player, aiDialogueSource: source } : player));
+
+  const acceptedWolfEntry = (entry: WolfChatMessage) => !mixedModels || Boolean(
+    entry.message.trim() && entry.dialogueSource && isVerifiedRemoteSource(entry.dialogueSource, mixedModels),
+  );
+
   const appendWolfChat = (entry: WolfChatMessage): string | undefined => {
-    if (entry.speakerId !== MY_PLAYER_ID) setPlayers(previous => previous.map(player => player.id === entry.speakerId
-      ? { ...player, aiDialogueSource: entry.dialogueSource ?? LOCAL_DIALOGUE_SOURCE } : player));
+    // A public badge change would reveal which seats spoke privately at night.
+    if ((!mixedModels || me?.role === Role.WEREWOLF) && entry.speakerId !== MY_PLAYER_ID) {
+      updateDialogueSource(entry.speakerId, entry.dialogueSource ?? LOCAL_DIALOGUE_SOURCE);
+    }
     wolfHistoryRef.current = [...wolfHistoryRef.current, entry];
     setWolfChat(wolfHistoryRef.current);
     replayRecorderRef.current?.recordWolfChat({ round: entry.round, speakerId: entry.speakerId, message: entry.message });
@@ -936,17 +972,23 @@ export function useGameState(authContext: AuthContext) {
         try {
           chat = await generateWolfChat([teammate], players, logs, Math.max(1, roundCount), voteRecords, gameLanguage, {
             signal: request.signal,
+            mixedModels,
             runWhenActive: runForReply,
             deferCommit: commit => { commitChat = commit; },
           }, { history: wolfHistoryRef.current, confirmedTargetId: wolfKillRef.current });
         } catch {
-          chat = [{ id: `wolf-fallback-${revision}-${teammate.id}`, round: Math.max(1, roundCount), speakerId: teammate.id,
+          chat = mixedModels ? [] : [{ id: `wolf-fallback-${revision}-${teammate.id}`, round: Math.max(1, roundCount), speakerId: teammate.id,
             message: 'I heard your plan and will coordinate with the team. Let us check the risks before committing to our next move.', strategyTag: '补位' }];
         }
         await runForReply(async () => {
           commitChat?.();
           setWolfThinking(false);
-          for (const entry of chat.filter(entry => entry.speakerId === teammate.id).slice(0, 1)) {
+          const entry = chat.find(entry => entry.speakerId === teammate.id && acceptedWolfEntry(entry));
+          if (mixedModels && !entry) {
+            updateDialogueSource(teammate.id, UNAVAILABLE_DIALOGUE_SOURCE);
+            addLog(`Player ${teammate.id}’s reply was skipped. No model responded with usable dialogue.`, true, undefined, undefined, 'wolf');
+          }
+          if (entry) {
             const logId = appendWolfChat(entry);
             if (logId && active()) {
               try {
@@ -994,10 +1036,12 @@ export function useGameState(authContext: AuthContext) {
       try {
         let commitChat: (() => void) | undefined;
         const chat = await generateWolfChat(wolves, players, logs, Math.max(1, roundCount), voteRecords, gameLanguage, {
+          signal: phaseExpressionSignal(),
+          mixedModels,
           runWhenActive,
           deferCommit: commit => { commitChat = commit; },
         }, { history: wolfHistoryRef.current, confirmedTargetId: wolfKillRef.current });
-        await runWhenActive(() => { commitChat?.(); chat.forEach(appendWolfChat); });
+        await runWhenActive(() => { commitChat?.(); chat.filter(acceptedWolfEntry).forEach(appendWolfChat); });
       } catch { /* Expression failure never blocks the night action. */ }
     };
     if (humanWolf) return;
@@ -1176,10 +1220,16 @@ export function useGameState(authContext: AuthContext) {
     }
     if (nextSpeaker.isHuman) return;
 
+    const skipUnavailableSpeech = () => {
+      updateDialogueSource(nextSpeaker.id, UNAVAILABLE_DIALOGUE_SOURCE);
+      addLog(`Player ${nextSpeaker.id}’s speech was skipped. No model responded with usable dialogue.`, true);
+      setSpokenPlayerIds(prev => new Set(prev).add(nextSpeaker.id));
+      setCurrentSpeaker(null);
+    };
     await runCurrentAIPhase(async () => {
       const seerInfo = nextSpeaker.role === Role.SEER ? aiSeerLastCheck : null;
       let commitSpeech: (() => void) | undefined;
-      let dialogueSource = LOCAL_DIALOGUE_SOURCE;
+      let dialogueSource = mixedModels ? UNAVAILABLE_DIALOGUE_SOURCE : LOCAL_DIALOGUE_SOURCE;
       const response = await generateAIDialogue(
         nextSpeaker,
         players,
@@ -1191,12 +1241,16 @@ export function useGameState(authContext: AuthContext) {
         voteRecords,
         nightState,
         gameLanguage,
-        { runWhenActive, deferCommit: commit => { commitSpeech = commit; }, onSource: source => { dialogueSource = source; } },
+        { signal: phaseExpressionSignal(), mixedModels, runWhenActive, deferCommit: commit => { commitSpeech = commit; }, onSource: source => { dialogueSource = source; } },
         nextSpeaker.role === Role.WEREWOLF ? wolfHistoryRef.current : [],
       );
       await runWhenActive(async () => {
         commitSpeech?.();
-        setPlayers(previous => previous.map(player => player.id === nextSpeaker.id ? { ...player, aiDialogueSource: dialogueSource } : player));
+        if (!response || (mixedModels && (!response[gameLanguage].trim() || !isVerifiedRemoteSource(dialogueSource, mixedModels)))) {
+          skipUnavailableSpeech();
+          return;
+        }
+        updateDialogueSource(nextSpeaker.id, dialogueSource);
         const ttsLogId = addLog(response.en, false, nextSpeaker.id, response.zh, 'speech', dialogueSource);
         // H2-A: every AI public speech, as delivered in the match language.
         replayRecorderRef.current?.recordSpeech({
@@ -1225,6 +1279,10 @@ export function useGameState(authContext: AuthContext) {
       });
       await runWhenActive(() => setCurrentSpeaker(null));
     }, () => {
+      if (mixedModels) {
+        skipUnavailableSpeech();
+        return;
+      }
       addLog(`Player ${nextSpeaker.id} speech skipped (AI error).`, true, undefined, `AI error. Player ${nextSpeaker.id}'s speech was skipped.`, 'system');
       setSpokenPlayerIds(prev => new Set(prev).add(nextSpeaker.id));
       setCurrentSpeaker(null);
@@ -1462,6 +1520,8 @@ export function useGameState(authContext: AuthContext) {
     return 'Waiting for the system and AI players.';
   })();
 
+  const releaseIntro = (): void => setIntroPending(false);
+
   const skipCurrentSpeech = (): void => {
     if (!canProgress()) return;
     // Cancels the in-flight utterance; the awaited enqueue promise settles and
@@ -1494,5 +1554,6 @@ export function useGameState(authContext: AuthContext) {
     handleWitchSave, skipWitch,
     finishVote, handleHumanSpeechSubmit,
     skipCurrentSpeech, togglePause, handleWolfChatSubmit, interruptWolfChat, skipWolfChat,
+    introPending, releaseIntro,
   };
 }

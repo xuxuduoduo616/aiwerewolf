@@ -34,6 +34,44 @@ const MODEL_REGISTRY = Object.freeze({
     timeout: 45000,
     maxRetries: 0,
   }),
+  'doubao-seed-1.6-flash': Object.freeze({
+    model: 'doubao-seed-1.6-flash',
+    label: 'Doubao Seed 1.6 Flash',
+    thinking: Object.freeze({ type: 'disabled' }),
+    // Volcano Ark model version id. ARK_DOUBAO_MODEL overrides it when the
+    // account exposes a different version label in the console.
+    upstreamModel: 'doubao-seed-1-6-flash-250615',
+    // Doubao Seed 1.6 Flash standard rates, 0-32K tier, checked 2026-11-20:
+    // CNY 0.15 input / CNY 1.5 output per 1M tokens, converted at 7.10 CNY/USD
+    // so the existing USD budget guard keeps one currency.
+    inputCostPer1kTokens: 0.000021127,
+    outputCostPer1kTokens: 0.000211268,
+    // Expression-only speech never needs the model's long-form budget.
+    maxOutputTokens: 512,
+    timeout: 20000,
+    maxRetries: 0,
+  }),
+  'doubao-seed-character': Object.freeze({
+    model: 'doubao-seed-character',
+    label: 'Doubao Seed Character',
+    upstreamModel: 'doubao-seed-character-260628',
+    inputCostPer1kTokens: 0.000112676,
+    outputCostPer1kTokens: 0.000281690,
+    maxOutputTokens: 512,
+    timeout: 20000,
+    maxRetries: 0,
+  }),
+  'doubao-seed-2.1-lite': Object.freeze({
+    model: 'doubao-seed-2.1-lite',
+    label: 'Doubao Seed 2.1 Lite',
+    upstreamModel: 'doubao-seed-2-1-lite-260915',
+    thinking: Object.freeze({ type: 'disabled' }),
+    inputCostPer1kTokens: 0.000112676,
+    outputCostPer1kTokens: 0.000380282,
+    maxOutputTokens: 512,
+    timeout: 20000,
+    maxRetries: 0,
+  }),
   'local-fallback': Object.freeze({ model: 'local-fallback', timeout: 0, maxRetries: 0 }),
 });
 
@@ -43,6 +81,10 @@ const LOCAL_FALLBACK = 'local-fallback';
 const DEEPSEEK_AUTO = 'deepseek-auto';
 const DEEPSEEK_MODELS = ['deepseek-flash', 'deepseek-v4-pro'];
 const DEEPSEEK_BASE_URL = 'https://api.deepseek.com';
+const DOUBAO_MODEL = 'doubao-seed-1.6-flash';
+const DOUBAO_MODEL_IDS = Object.freeze([DOUBAO_MODEL, 'doubao-seed-character', 'doubao-seed-2.1-lite']);
+const isDoubaoModel = id => DOUBAO_MODEL_IDS.includes(id);
+const ARK_BASE_URL = 'https://ark.cn-beijing.volces.com/api/v3';
 const DIFFICULTY_PROFILES = Object.freeze({
   easy: Object.freeze({ model: 'deepseek-flash', effort: 'low', maxTokens: 2048 }),
   normal: Object.freeze({ model: 'deepseek-flash', effort: 'high', maxTokens: 4096 }),
@@ -59,6 +101,7 @@ const CIRCUIT_FAILURE_THRESHOLD = 2;
 const CIRCUIT_COOLDOWN_MS = 60_000;
 let capabilityCache = null;
 let deepseekCapabilityCache = null;
+let doubaoCapabilityCache = null;
 let budgetState = { day: '', spent: 0 };
 const rateBuckets = new Map();
 const circuits = new Map();
@@ -194,6 +237,24 @@ const deepseekJson = async (path, options, timeout) => {
   } finally { controller.abort(); }
 };
 
+// Volcano Ark exposes the same OpenAI-compatible envelope as DeepSeek, so the
+// transport is shared and only the base URL, key and model id differ.
+const arkJson = async (path, options, timeout) => {
+  const controller = new AbortController();
+  try {
+    return await withTimeout((async () => {
+      const response = await fetch(`${ARK_BASE_URL}${path}`, {
+        ...options,
+        redirect: 'error',
+        headers: { Authorization: `Bearer ${process.env.ARK_API_KEY}`, 'Content-Type': 'application/json' },
+        signal: controller.signal,
+      });
+      if (!response.ok) throw Object.assign(new Error('provider-error'), { status: response.status });
+      return response.json();
+    })(), timeout, () => controller.abort());
+  } finally { controller.abort(); }
+};
+
 const verifiedCapabilities = async () => {
   const key = getApiKey();
   if (!key) return null;
@@ -237,19 +298,65 @@ const verifiedDeepseekModels = async () => {
   } catch { return []; }
 };
 
+const arkModelId = id => {
+  const override = id === DOUBAO_MODEL ? process.env.ARK_DOUBAO_MODEL : '';
+  return String(override || MODEL_REGISTRY[id].upstreamModel).trim();
+};
+
+const verifiedDoubaoModels = async () => {
+  if (!process.env.ARK_API_KEY) return [];
+  if (doubaoCapabilityCache && Date.now() - doubaoCapabilityCache.at < CAPABILITY_CACHE_MS) return doubaoCapabilityCache.models;
+  try {
+    // Match only the configured version or exact catalog ID for each route.
+    const result = await arkJson('/models', { method: 'GET' }, 5000);
+    if (!Array.isArray(result?.data)) return [];
+    const listed = new Set(result.data.map(model => model?.id));
+    const models = DOUBAO_MODEL_IDS.filter(id => listed.has(arkModelId(id)) || listed.has(id));
+    doubaoCapabilityCache = { at: Date.now(), models };
+    return models;
+  } catch { return []; }
+};
+
 const capabilities = async () => {
-  const [gemini, deepseek] = await Promise.all([verifiedCapabilities(), verifiedDeepseekModels()]);
+  const [gemini, deepseek, doubao] = await Promise.all([verifiedCapabilities(), verifiedDeepseekModels(), verifiedDoubaoModels()]);
   const base = gemini || fallbackCapabilities();
-  if (!deepseek.length) return base;
+  const doubaoEntries = doubao.map(id => ({ id, label: MODEL_REGISTRY[id].label }));
+  if (!deepseek.length) {
+    return doubao.length ? { ...base, verified_models: [...base.verified_models, ...doubao], models: [...base.models, ...doubaoEntries] } : base;
+  }
   return {
     default_model: deepseek.length === DEEPSEEK_MODELS.length ? DEEPSEEK_AUTO : deepseek[0],
-    verified_models: [...deepseek, ...base.verified_models],
+    verified_models: [...deepseek, ...doubao, ...base.verified_models],
     models: [
       ...(deepseek.length === DEEPSEEK_MODELS.length ? [{ id: DEEPSEEK_AUTO, label: 'Automatic · DeepSeek by difficulty' }] : []),
       ...deepseek.map(id => ({ id, label: id === 'deepseek-flash' ? 'DeepSeek V4.1 Flash' : 'DeepSeek V4 Pro' })),
+      ...doubaoEntries,
       ...base.models,
     ],
   };
+};
+
+// Provider replies occasionally arrive inside a fenced code block; the client
+// parser already tolerates that, so the server check must accept it too.
+const parseJsonObject = (text) => {
+  const cleaned = String(text).replace(/```json/gi, '').replace(/```/g, '').trim();
+  const start = cleaned.indexOf('{');
+  const end = cleaned.lastIndexOf('}');
+  const parsed = JSON.parse(start >= 0 && end >= start ? cleaned.slice(start, end + 1) : cleaned);
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('invalid-json');
+  return parsed;
+};
+
+// Reserve the full completion budget before the call, then settle only a
+// validated usage report. Missing or impossible usage keeps the reservation.
+const settleUsage = (model, usage, maxTokens, reservation, reservationDay, inputTokens) => {
+  let charged = reservation;
+  if (Number.isInteger(usage?.prompt_tokens) && usage.prompt_tokens >= 0 && usage.prompt_tokens <= inputTokens
+    && Number.isInteger(usage?.completion_tokens) && usage.completion_tokens >= 0 && usage.completion_tokens <= maxTokens) {
+    charged = estimateCost(model, usage.prompt_tokens, usage.completion_tokens);
+    if (budgetState.day === reservationDay) budgetState.spent = Math.max(0, budgetState.spent - reservation + charged);
+  }
+  return charged;
 };
 
 const tryDeepseek = async (model, prompt, responseMimeType, profile, cost, inputTokens) => {
@@ -282,13 +389,57 @@ const tryDeepseek = async (model, prompt, responseMimeType, profile, cost, input
     // Reserve the complete reasoning budget before the call, then settle only
     // valid usage. Reasoning tokens are included in completion_tokens. Missing
     // usage or failed calls retain the reservation (conservative accounting).
-    const usage = response?.usage;
-    let charged = cost;
-    if (Number.isInteger(usage?.prompt_tokens) && usage.prompt_tokens >= 0 && usage.prompt_tokens <= inputTokens
-      && Number.isInteger(usage?.completion_tokens) && usage.completion_tokens >= 0 && usage.completion_tokens <= profile.maxTokens) {
-      charged = estimateCost(model, usage.prompt_tokens, usage.completion_tokens);
-      if (budgetState.day === reservationDay) budgetState.spent = Math.max(0, budgetState.spent - cost + charged);
+    const charged = settleUsage(model, response?.usage, profile.maxTokens, cost, reservationDay, inputTokens);
+    recordCircuitSuccess(model);
+    return { text, cost: charged };
+  } catch (error) {
+    const cause = classifyError(error);
+    recordCircuitFailure(model, error);
+    logProviderEvent(PROVIDER_EVENT_BY_CAUSE[cause], model, cause, true);
+    return { text: null, cause };
+  }
+};
+
+// Doubao is an expression-only route: reasoning is disabled by default so the
+// seat answers inside the Netlify request budget. If Ark rejects an optional
+// parameter (HTTP 400) the request is retried once with the minimal body.
+const tryDoubao = async (model, prompt, responseMimeType, cost, inputTokens) => {
+  const cfg = MODEL_REGISTRY[model];
+  if (!process.env.ARK_API_KEY || !canSpend(cost) || !circuitAllows(model)) return { text: null };
+  const reservationDay = dayKey();
+  const messages = [
+    { role: 'system', content: responseMimeType === 'application/json' ? 'Return a complete JSON object matching the requested game dialogue schema. Do not include reasoning in the answer.' : 'Return only the requested game dialogue.' },
+    { role: 'user', content: prompt },
+  ];
+  const body = {
+    model: arkModelId(model),
+    messages,
+    max_tokens: cfg.maxOutputTokens,
+    ...(cfg.thinking ? { thinking: cfg.thinking } : {}),
+    ...(responseMimeType === 'application/json' ? { response_format: { type: 'json_object' } } : {}),
+  };
+  const minimalBody = {
+    model: body.model,
+    messages,
+    max_tokens: cfg.maxOutputTokens,
+    // Seed 2.1 Lite must disable thinking even on the compatibility retry.
+    ...(model === 'doubao-seed-2.1-lite' ? { thinking: cfg.thinking } : {}),
+  };
+  try {
+    recordSpend(cost);
+    incrementCounter(model);
+    let response;
+    try {
+      response = await arkJson('/chat/completions', { method: 'POST', body: JSON.stringify(body) }, cfg.timeout);
+    } catch (error) {
+      if (Number(error?.status) !== 400) throw error;
+      response = await arkJson('/chat/completions', { method: 'POST', body: JSON.stringify(minimalBody) }, cfg.timeout);
     }
+    const choice = response?.choices?.[0];
+    const text = choice?.message?.content;
+    if (choice?.finish_reason !== 'stop' || typeof text !== 'string' || !text.trim()) throw new Error('incomplete-response');
+    if (responseMimeType === 'application/json') parseJsonObject(text);
+    const charged = settleUsage(model, response?.usage, cfg.maxOutputTokens, cost, reservationDay, inputTokens);
     recordCircuitSuccess(model);
     return { text, cost: charged };
   } catch (error) {
@@ -342,7 +493,10 @@ const tryModel = async (model, prompt, responseMimeType, cost) => {
 };
 const localResult = () => ({ text: '', model_used: LOCAL_FALLBACK, cost_estimate: 0, fallback_used: true });
 
-exports.handler = async (event) => {
+// Event-shaped core (method, lower-cased headers, raw body). Kept separate
+// from the v2 entry point so its behavior stays unit-testable without a
+// Request/Response runtime.
+const handleEvent = async (event) => {
   const allowedOrigin = getAllowedOrigin(event.headers);
   const headers = headersFor(allowedOrigin);
   if (!allowedOrigin) return { statusCode: 403, headers, body: JSON.stringify({ error: 'Forbidden' }) };
@@ -362,7 +516,8 @@ exports.handler = async (event) => {
   const rawPrompt = typeof body.prompt === 'string' ? body.prompt : '';
   if (!rawPrompt) return { statusCode: 400, headers, body: JSON.stringify({ error: 'Missing prompt' }) };
   const requested = body.model || body.provider || PRIMARY_MODEL;
-  if (requested !== PRIMARY_MODEL && requested !== SECONDARY_MODEL && requested !== DEEPSEEK_AUTO && !DEEPSEEK_MODELS.includes(requested)) {
+  if (requested !== PRIMARY_MODEL && requested !== SECONDARY_MODEL && requested !== DEEPSEEK_AUTO
+    && !isDoubaoModel(requested) && !DEEPSEEK_MODELS.includes(requested)) {
     return { statusCode: 400, headers, body: JSON.stringify({ error: 'Model not in whitelist' }) };
   }
   const difficulty = body.difficulty === undefined ? 'normal' : body.difficulty;
@@ -383,6 +538,16 @@ exports.handler = async (event) => {
     logProviderEvent('provider_fallback', LOCAL_FALLBACK, outcome.cause || 'unavailable', true);
     return { statusCode: 200, headers, body: JSON.stringify(localResult()) };
   }
+  if (isDoubaoModel(requested)) {
+    const cfg = MODEL_REGISTRY[requested];
+    const inputTokens = Buffer.byteLength(rawPrompt, 'utf8') + 128;
+    const cost = estimateCost(requested, inputTokens, cfg.maxOutputTokens);
+    if (process.env.ADAPTER_DRY_RUN === 'true') return { statusCode: 200, headers, body: JSON.stringify({ text: '[dry-run] mock response', model_used: requested, cost_estimate: cost, fallback_used: false }) };
+    const outcome = await tryDoubao(requested, prompt, responseMimeType, cost, inputTokens);
+    if (outcome.text) return { statusCode: 200, headers, body: JSON.stringify({ text: outcome.text, model_used: requested, cost_estimate: outcome.cost, fallback_used: false }) };
+    logProviderEvent('provider_fallback', LOCAL_FALLBACK, outcome.cause || 'unavailable', true);
+    return { statusCode: 200, headers, body: JSON.stringify(localResult()) };
+  }
   const chain = requested === SECONDARY_MODEL ? [SECONDARY_MODEL] : [PRIMARY_MODEL, SECONDARY_MODEL];
   if (process.env.ADAPTER_DRY_RUN === 'true') {
     const model = chain[0];
@@ -399,6 +564,23 @@ exports.handler = async (event) => {
   return { statusCode: 200, headers, body: JSON.stringify(localResult()) };
 };
 
+// Netlify Functions v2 entry point. AI Gateway credentials (GEMINI_API_KEY,
+// GOOGLE_GEMINI_BASE_URL) are injected only into the v2+ runtime. The route
+// stays /.netlify/functions/provider-adapter (and its genai-proxy /
+// model-adapter aliases, which re-export this module).
+const v2Handler = async (req) => {
+  const headers = {};
+  req.headers.forEach((value, key) => { headers[key.toLowerCase()] = value; });
+  const method = String(req.method || 'GET').toUpperCase();
+  const body = method === 'GET' || method === 'HEAD' || method === 'OPTIONS' ? '' : await req.text();
+  const result = await handleEvent({ httpMethod: method, headers, body });
+  const status = result.statusCode;
+  const hasBody = status !== 204 && result.body !== '';
+  return new Response(hasBody ? result.body : null, { status, headers: result.headers });
+};
+
+exports.default = v2Handler;
+exports.handleEvent = handleEvent;
 exports.MODEL_REGISTRY = MODEL_REGISTRY;
 exports.PRIMARY_MODEL = PRIMARY_MODEL;
 exports.SECONDARY_MODEL = SECONDARY_MODEL;
@@ -406,11 +588,14 @@ exports.LOCAL_FALLBACK = LOCAL_FALLBACK;
 exports.COST_CEILING_PER_CALL = COST_CEILING_PER_CALL;
 exports.MAX_PROMPT_LEN = MAX_PROMPT_LEN;
 exports.classifyError = classifyError;
+exports.DOUBAO_MODEL = DOUBAO_MODEL;
+exports.DOUBAO_MODEL_IDS = DOUBAO_MODEL_IDS;
 exports.getRequestCounters = () => Object.fromEntries(requestCounters);
 exports.getCircuitState = () => Object.fromEntries(circuits);
 exports.resetAdapterState = () => {
   capabilityCache = null;
   deepseekCapabilityCache = null;
+  doubaoCapabilityCache = null;
   budgetState = { day: '', spent: 0 };
   rateBuckets.clear();
   circuits.clear();
