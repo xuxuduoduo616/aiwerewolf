@@ -142,12 +142,6 @@ The released game is single-player with AI opponents. Social interaction and hum
 
 Bug reports and focused improvements are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening an issue or pull request. Security concerns should follow [SECURITY.md](SECURITY.md) rather than a public issue.
 
-## Contributors
-
-- **Mingzhe Xu** ([@xuxuduoduo616](https://github.com/xuxuduoduo616)) — Creator and maintainer
-- **Codex** (OpenAI) — Engineering and coordination contributor
-- **Antigravity** (Google DeepMind) — Engineering and release-sync contributor
-
 ## License and Data Notice
 
 This repository is currently source-available under the terms in [LICENSE](LICENSE); it is not yet released under an OSI-approved open-source license.
