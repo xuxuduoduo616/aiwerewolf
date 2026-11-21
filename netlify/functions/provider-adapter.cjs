@@ -18,7 +18,7 @@ const MODEL_REGISTRY = Object.freeze({
     // USD 0.75 input / USD 3.75 output per 1M tokens.
     inputCostPer1kTokens: 0.00075,
     outputCostPer1kTokens: 0.00375,
-    maxOutputTokens: 256,
+    maxOutputTokens: 1024,
     timeout: 12000,
     maxRetries: 0,
   }),
@@ -507,8 +507,11 @@ const tryDoubao = async (model, prompt, responseMimeType, cost, inputTokens) => 
 
 const generationConfig = (model, responseMimeType) => {
   const config = { responseMimeType, maxOutputTokens: MODEL_REGISTRY[model].maxOutputTokens };
-  if (model === PRIMARY_MODEL || model === GEMINI_3_8_MODEL) {
+  if (model === PRIMARY_MODEL) {
     config.thinkingConfig = { thinkingLevel: ThinkingLevel?.MINIMAL || 'MINIMAL' };
+  } else if (model === GEMINI_3_8_MODEL) {
+    // Gemini 3.8 Flash rejects THINKING_LEVEL_MINIMAL; LOW keeps bounded thinking within maxOutputTokens: 1024.
+    config.thinkingConfig = { thinkingLevel: ThinkingLevel?.LOW || 'LOW' };
   }
   return config;
 };

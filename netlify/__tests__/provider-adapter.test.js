@@ -17,7 +17,7 @@ const load = () => {
   const module = { exports: {} };
   const context = vm.createContext({
     Date, Map, JSON, process, Promise, Math, Number, Infinity, URL, Request, Response, Headers, Buffer, AbortController, fetch: mocks.fetch, setTimeout, clearTimeout, console: mocks.console,
-    require: (id) => id === '@google/genai' ? { GoogleGenAI: mocks.GoogleGenAI, ThinkingLevel: { MINIMAL: 'MINIMAL' } } : (() => { throw new Error(`Unexpected require ${id}`); })(),
+    require: (id) => id === '@google/genai' ? { GoogleGenAI: mocks.GoogleGenAI, ThinkingLevel: { MINIMAL: 'MINIMAL', LOW: 'LOW' } } : (() => { throw new Error(`Unexpected require ${id}`); })(),
     module, exports: module.exports,
   });
   new vm.Script(source).runInContext(context);
@@ -137,10 +137,13 @@ describe('Gemini provider adapter', () => {
       vi.useRealTimers();
     }
   });
-  it.each(['gemini-3.6-flash', 'gemini-3.8-flash'])('uses %s minimal thinking without sampling parameters and reports direct metadata', async model => {
+  it.each([
+    ['gemini-3.6-flash', 'MINIMAL', 256],
+    ['gemini-3.8-flash', 'LOW', 1024],
+  ])('uses %s bounded thinking (%s, maxOutputTokens=%i) without sampling parameters and reports direct metadata', async (model, level, maxOutputTokens) => {
     const adapter = load(); const response = await adapter.handleEvent(event({ model, prompt: 'hello' }));
     expect(json(response)).toMatchObject({ model_used: model, fallback_used: false, text: 'model text' });
-    expect(mocks.generateContent).toHaveBeenCalledWith(expect.objectContaining({ model, config: expect.objectContaining({ thinkingConfig: { thinkingLevel: 'MINIMAL' }, maxOutputTokens: 256 }) }));
+    expect(mocks.generateContent).toHaveBeenCalledWith(expect.objectContaining({ model, config: expect.objectContaining({ thinkingConfig: { thinkingLevel: level }, maxOutputTokens }) }));
     expect(mocks.generateContent.mock.calls[0][0].config).not.toHaveProperty('temperature');
     expect(mocks.generateContent.mock.calls[0][0].config).not.toHaveProperty('topP');
     expect(mocks.generateContent.mock.calls[0][0].config).not.toHaveProperty('topK');
