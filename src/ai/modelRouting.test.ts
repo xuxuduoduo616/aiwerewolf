@@ -6,7 +6,7 @@ const available = getAvailableExpressionModels({ default_model: 'gemini-3.6-flas
 describe('stable per-seat routing', () => {
   it.each([8, 11])('covers all participating models for %s AI seats independently of difficulty', count => {
     expect(MIXED_POOL_MODEL_IDS).toEqual([
-      'gemini-3.6-flash', 'deepseek-flash', 'deepseek-v4-pro',
+      'gemini-3.6-flash', 'gemini-3.8-flash', 'deepseek-flash', 'deepseek-v4-pro',
       'doubao-seed-1.6-flash', 'doubao-seed-character', 'doubao-seed-2.1-lite',
     ]);
     for (const difficulty of ['easy', 'normal', 'hard'] as const) {
@@ -30,14 +30,14 @@ describe('stable per-seat routing', () => {
       verified_models: verified,
     });
     expect(createSeatRoutes(8, 'multi-ai-model', 'normal', subset)).toEqual([
-      ...verified, ...verified.slice(0, 3),
+      ...verified, ...verified.slice(0, 2),
     ]);
   });
   it('uses a verified backup as an alternative, or as the only seat model if it is the sole route', () => {
     const backup = { id: 'gemini-2.5-flash', label: 'Gemini backup', description: '', available: true } as const;
     const verified = getVerifiedMixedRoutes([...available, backup]);
     expect(getMixedRouteCandidates('deepseek-flash', verified)).toEqual([
-      'deepseek-flash', 'gemini-3.6-flash', 'deepseek-v4-pro', 'doubao-seed-1.6-flash', 'doubao-seed-character', 'doubao-seed-2.1-lite', 'gemini-2.5-flash',
+      'deepseek-flash', 'gemini-3.6-flash', 'gemini-3.8-flash', 'deepseek-v4-pro', 'doubao-seed-1.6-flash', 'doubao-seed-character', 'doubao-seed-2.1-lite', 'gemini-2.5-flash',
     ]);
     expect(createSeatRoutes(2, 'multi-ai-model', 'normal', [...available, backup])).toEqual(MIXED_POOL_MODEL_IDS.slice(0, 2));
     expect(createSeatRoutes(2, 'multi-ai-model', 'normal', [backup])).toEqual([backup.id, backup.id]);
@@ -52,12 +52,15 @@ describe('truthful source validation and badges', () => {
   it('validates direct and documented fallback only', () => {
     expect(validateDialogueSource('deepseek-flash', 'deepseek-flash', false)).toEqual({ model: 'deepseek-flash', fallback: false });
     expect(validateDialogueSource('gemini-3.6-flash', 'gemini-2.5-flash', true)).toEqual({ model: 'gemini-2.5-flash', fallback: true });
+    expect(validateDialogueSource('gemini-3.8-flash', 'gemini-2.5-flash', true)).toEqual({ model: 'gemini-2.5-flash', fallback: true });
     expect(validateDialogueSource('deepseek-v4-pro', 'local-fallback', true)).toEqual({ model: 'local', fallback: true });
     for (const [used, flag] of [[undefined, false], ['GPT-4o', false], ['deepseek-v4-pro', false], ['deepseek-flash', undefined], ['gemini-2.5-flash', true]]) {
       expect(validateDialogueSource('deepseek-flash', used, flag).model).toBe('unknown');
     }
   });
   it.each([
+    ['gemini-3.6-flash', 'Gemini 3.6 Flash'],
+    ['gemini-3.8-flash', 'Gemini 3.8 Flash'],
     ['doubao-seed-1.6-flash', 'Doubao Seed 1.6 Flash'],
     ['doubao-seed-character', 'Doubao Seed Character'],
     ['doubao-seed-2.1-lite', 'Doubao Seed 2.1 Lite'],

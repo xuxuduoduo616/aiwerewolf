@@ -17,7 +17,7 @@ export const runProviderDryRun = async () => {
     return response.statusCode === 200 && body.text === '[dry-run] mock response' && body.model_used === model;
   };
   try {
-    const results = await Promise.all(['gemini-3.6-flash', ...DOUBAO_MODEL_IDS].map(probe));
+    const results = await Promise.all(['gemini-3.6-flash', 'gemini-3.8-flash', ...DOUBAO_MODEL_IDS].map(probe));
     return results.every(Boolean);
   } finally {
     if (previous === undefined) delete process.env.ADAPTER_DRY_RUN;

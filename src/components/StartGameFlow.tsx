@@ -101,14 +101,26 @@ export const ExpressionModelSelector: React.FC<ExpressionModelSelectorProps> = (
       <strong>{model.label}</strong><span>{model.description}</span>
     </label>
   );
-  const singleModels = models.filter(model => model.id !== 'multi-ai-model' && model.id !== DEFAULT_EXPRESSION_MODEL);
+  const multiModel = models.find(model => model.id === 'multi-ai-model');
+  const singleModels = models.filter(model => model.id !== 'multi-ai-model');
+  const selectedSingleModel = singleModels.find(model => model.id === selectedModel)
+    ?? (selectedModel !== 'multi-ai-model' ? getExpressionModel(selectedModel) : undefined);
   return <fieldset className="start-game-fieldset">
     <legend>Dialogue Model</legend>
-    <div className="start-model-grid">{models.filter(model => model.id === 'multi-ai-model' || model.id === DEFAULT_EXPRESSION_MODEL).map(renderChoice)}</div>
-    {singleModels.length > 0 && <details className="start-single-models">
-      <summary>Single-model options</summary>
-      <div className="start-model-grid">{singleModels.map(renderChoice)}</div>
-    </details>}
+    <div className="start-model-top-grid">
+      {multiModel && renderChoice(multiModel)}
+      {singleModels.length > 0 && <details className={`start-single-models${selectedSingleModel ? ' is-selected' : ''}`}>
+        <summary className="start-single-models-summary">
+          <strong>Single-Model Options</strong>
+          <span>
+            {selectedSingleModel
+              ? `Selected: ${selectedSingleModel.label} · ${selectedSingleModel.description}`
+              : 'Choose one specific dialogue model for every AI seat.'}
+          </span>
+        </summary>
+        <div className="start-model-grid">{singleModels.map(renderChoice)}</div>
+      </details>}
+    </div>
   </fieldset>;
 };
 

@@ -12,7 +12,7 @@ stronger Werewolf play.
 | Expert (`hard`) | DeepSeek V4 Pro | `max` | 8,192 |
 
 Manual model choices keep the selected model and use the same difficulty-to-effort
-mapping. Multi AI Model is recommended when a participating route is verified. It assigns the available subset of Gemini 3.6 Flash and both DeepSeek models across stable seats. Difficulty changes effort, never a mixed-pool seat assignment. Automatic DeepSeek remains a secondary compatibility choice requiring both exact models. Explicit Gemini choices keep their existing behavior.
+mapping. In match setup, **Multi-AI Models** sits on the left as the recommended top-level mode when a participating route is verified, and **Single-Model Options** sits on the right as the disclosure entry for individual routes. **Multi-AI Models** assigns the available subset of Gemini 3.6 Flash, Gemini 3.8 Flash, both DeepSeek models, and the Doubao routes across stable seats. Difficulty changes DeepSeek effort, never a mixed-pool seat assignment. Automatic DeepSeek, both individual DeepSeek routes, and Gemini 2.5 Flash are selectable under **Single-Model Options**. Explicit Gemini choices keep their existing behavior.
 
 ## Configuration
 

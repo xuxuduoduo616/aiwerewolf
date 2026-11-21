@@ -37,7 +37,7 @@ export const isVerifiedRemoteSource = (source: DialogueSource, verified: readonl
 export const validateDialogueSource = (requested: RoutedModelId, used: unknown, fallback: unknown): DialogueSource => {
   if (used === 'local-fallback' && fallback === true) return LOCAL_DIALOGUE_SOURCE;
   if (used === requested && fallback === false) return { model: requested, fallback: false };
-  if (requested === 'gemini-3.6-flash' && used === 'gemini-2.5-flash' && fallback === true) {
+  if ((requested === 'gemini-3.6-flash' || requested === 'gemini-3.8-flash') && used === 'gemini-2.5-flash' && fallback === true) {
     return { model: 'gemini-2.5-flash', fallback: true };
   }
   return { model: 'unknown', fallback: false };

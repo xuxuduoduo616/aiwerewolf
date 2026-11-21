@@ -16,9 +16,9 @@ version IDs and billed rates against the Ark console. Each request has a
 512-token output cap, a 20-second server timeout per attempt and a 26-second
 browser timeout.
 
-Multi AI Model assigns stable seats from the verified subset of Gemini 3.6
-Flash, DeepSeek Flash, DeepSeek V4 Pro and the three Doubao routes. Each
-discovered Doubao route is also available individually. Difficulty does not
+Multi-AI Models assigns stable seats from the verified subset of Gemini 3.6
+Flash, Gemini 3.8 Flash, DeepSeek Flash, DeepSeek V4 Pro and the three Doubao routes. Each
+discovered Doubao route is also available individually under the **Single-Model Options** disclosure entry alongside Gemini 2.5 Flash. Difficulty does not
 change a Doubao request.
 
 ## Configuration
@@ -81,12 +81,17 @@ acceptance, exact-version discovery, non-listed version rejection, CORS,
 20-second timeout, and the offline dry-run contract. These prove routing and
 failure handling only.
 
-Actual generation, latency, quota, balance, and spending are **not verified**
-until a configured deployment performs a real call. A real call is a separate
-owner-approved step. Check Character's English dialogue quality and JSON
-compatibility, including JSON validation after a compatibility retry. Confirm
-Seed 2.1 Lite's billed rate in the console. A retry can make the total server
-time exceed the browser deadline or the deployed Netlify function limit.
+Production discovery verifies `doubao-seed-character` and `doubao-seed-2.1-lite`
+when `ARK_API_KEY` is configured; the legacy `doubao-seed-1.6-flash` default
+version (`doubao-seed-1-6-flash-250615`) is listed as retired upstream by Ark
+and remains `Unavailable` unless overridden. After owner-approved Ark service
+activation, one bounded production generation probe per active route returned
+non-empty JSON with requested-model attribution and no fallback:
+`doubao-seed-character` satisfied both bilingual text and player-reference checks
+(2,078 ms), while `doubao-seed-2.1-lite` returned remote text (2,902 ms) that
+missed those probe assertions. Full-match client acceptance of `doubao-seed-2.1-lite`,
+night chat, and long-term reliability remain unverified. A retry can make the
+total server time exceed the browser deadline or the deployed Netlify function limit.
 
 Sources: [Compatible with OpenAI SDK](https://ark.volcengine.com/region:cn-beijing/docs/compatible-with-openai-sdk),
 [Models API](https://docs.volcengine.com/docs/ark/models-api?lang=zh),

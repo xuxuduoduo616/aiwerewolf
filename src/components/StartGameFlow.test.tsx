@@ -169,13 +169,13 @@ describe('expression model capability gating', () => {
       { id: 'gemini-2.5-flash', label: 'Gemini' },
     ],
   };
-  it('recommends Multi AI Model with the verified DeepSeek subset', () => {
+  it('recommends Multi-AI Models with the verified DeepSeek subset', () => {
     const models = getAvailableExpressionModels(deepseekCapabilities);
     expect(models.map(model => model.id)).toEqual(['multi-ai-model', 'deepseek-auto', 'deepseek-flash', 'deepseek-v4-pro', 'gemini-2.5-flash']);
     expect(getRecommendedExpressionModel(models)).toBe('multi-ai-model');
     const html = renderToStaticMarkup(<ExpressionModelSelector models={models} selectedModel="multi-ai-model" onSelect={() => undefined} />);
-    expect(html).toContain('Multi AI Model');
-    expect(html).toContain('Single-model options');
+    expect(html).toContain('Multi-AI Models');
+    expect(html).toContain('Single-Model Options');
     expect(html).toContain('DeepSeek V4.1 Flash');
     expect(html).toContain('DeepSeek V4 Pro');
   });
@@ -199,17 +199,20 @@ describe('expression model capability gating', () => {
     expect(getRecommendedExpressionModel(models)).toBe('multi-ai-model');
   });
 
-  it('renders both Gemini choices together and preserves an explicit selection', () => {
+  it('renders Gemini 3.8, 3.6 and 2.5 inside the single-model disclosure and reflects the selected single model in the summary', () => {
     const html = renderToStaticMarkup(
       <ExpressionModelSelector
         models={AI_EXPRESSION_MODELS}
-        selectedModel="gemini-3.6-flash"
+        selectedModel="gemini-3.8-flash"
         onSelect={() => undefined}
       />,
     );
 
+    expect(html).toContain('Gemini 3.8 Flash');
     expect(html).toContain('Gemini 3.6 Flash');
     expect(html).toContain('Gemini 2.5 Flash');
-    expect(html).toMatch(/<input[^>]+checked=""[^>]+value="gemini-3\.6-flash"/);
+    expect(html).toContain('Selected: Gemini 3.8 Flash');
+    expect(html).toMatch(/class="start-single-models is-selected"/);
+    expect(html).toMatch(/<input[^>]+checked=""[^>]+value="gemini-3\.8-flash"/);
   });
 });

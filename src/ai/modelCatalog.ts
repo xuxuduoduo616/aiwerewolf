@@ -7,6 +7,7 @@ export const AI_EXPRESSION_MODEL_IDS = [
   'doubao-seed-character',
   'doubao-seed-2.1-lite',
   'gemini-3.6-flash',
+  'gemini-3.8-flash',
   'gemini-2.5-flash',
 ] as const;
 
@@ -28,6 +29,7 @@ export interface ProviderCapabilities {
 // The conservative client default is usable without a server capability proof.
 export const MIXED_POOL_MODEL_IDS = [
   'gemini-3.6-flash',
+  'gemini-3.8-flash',
   'deepseek-flash',
   'deepseek-v4-pro',
   'doubao-seed-1.6-flash',
@@ -38,7 +40,7 @@ export const MIXED_POOL_MODEL_IDS = [
 export const DEFAULT_EXPRESSION_MODEL: 'gemini-2.5-flash' = 'gemini-2.5-flash';
 
 export const AI_EXPRESSION_MODELS: readonly AIExpressionModel[] = [
-  { id: 'multi-ai-model', label: 'Multi AI Model', description: 'Stable seat assignments with verified remote alternatives when a model cannot respond.' },
+  { id: 'multi-ai-model', label: 'Multi-AI Models', description: 'Stable seat assignments with verified remote alternatives when a model cannot respond.' },
   {
     id: 'deepseek-auto',
     label: 'Automatic · DeepSeek by difficulty',
@@ -73,6 +75,11 @@ export const AI_EXPRESSION_MODELS: readonly AIExpressionModel[] = [
     id: 'gemini-3.6-flash',
     label: 'Gemini 3.6 Flash',
     description: 'Server-verified primary dialogue refinement.',
+  },
+  {
+    id: 'gemini-3.8-flash',
+    label: 'Gemini 3.8 Flash',
+    description: 'Server-verified Gemini 3.8 Flash dialogue refinement.',
   },
   {
     id: 'gemini-2.5-flash',

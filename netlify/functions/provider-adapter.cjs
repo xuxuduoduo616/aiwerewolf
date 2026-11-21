@@ -4,14 +4,27 @@ const { GoogleGenAI, ThinkingLevel } = require('@google/genai');
 const MODEL_REGISTRY = Object.freeze({
   'gemini-3.6-flash': Object.freeze({
     model: 'gemini-3.6-flash',
+    label: 'Gemini 3.6 Flash',
     inputCostPer1kTokens: 0.0015,
     outputCostPer1kTokens: 0.0075,
     maxOutputTokens: 256,
     timeout: 12000,
     maxRetries: 0,
   }),
+  'gemini-3.8-flash': Object.freeze({
+    model: 'gemini-3.8-flash',
+    label: 'Gemini 3.8 Flash',
+    // Netlify AI Gateway / Gemini published rates, checked 2026-11-21:
+    // USD 0.75 input / USD 3.75 output per 1M tokens.
+    inputCostPer1kTokens: 0.00075,
+    outputCostPer1kTokens: 0.00375,
+    maxOutputTokens: 256,
+    timeout: 12000,
+    maxRetries: 0,
+  }),
   'gemini-2.5-flash': Object.freeze({
     model: 'gemini-2.5-flash',
+    label: 'Gemini 2.5 Flash',
     // Google Gemini API standard paid text rates, checked 2026-08-06.
     inputCostPer1kTokens: 0.0003,
     outputCostPer1kTokens: 0.0025,
@@ -76,7 +89,11 @@ const MODEL_REGISTRY = Object.freeze({
 });
 
 const PRIMARY_MODEL = 'gemini-3.6-flash';
+const GEMINI_3_8_MODEL = 'gemini-3.8-flash';
 const SECONDARY_MODEL = 'gemini-2.5-flash';
+const GEMINI_MODEL_IDS = Object.freeze([PRIMARY_MODEL, GEMINI_3_8_MODEL, SECONDARY_MODEL]);
+const isGeminiModel = id => GEMINI_MODEL_IDS.includes(id);
+const AI_GATEWAY_PROVIDERS_URL = 'https://api.netlify.com/api/v1/ai-gateway/providers';
 const LOCAL_FALLBACK = 'local-fallback';
 const DEEPSEEK_AUTO = 'deepseek-auto';
 const DEEPSEEK_MODELS = ['deepseek-flash', 'deepseek-v4-pro'];
@@ -255,20 +272,58 @@ const arkJson = async (path, options, timeout) => {
   } finally { controller.abort(); }
 };
 
+// When GOOGLE_GEMINI_BASE_URL is injected by Netlify AI Gateway, the gateway's
+// Gemini inference proxy rejects GET /v1beta/models/{model} (HTTP 403) and
+// publishes its live model directory at the AI Gateway providers endpoint.
+const gatewayGeminiModels = async () => {
+  if (!process.env.GOOGLE_GEMINI_BASE_URL) return [];
+  const controller = new AbortController();
+  try {
+    const result = await withTimeout((async () => {
+      const response = await fetch(AI_GATEWAY_PROVIDERS_URL, {
+        method: 'GET',
+        redirect: 'error',
+        headers: { Accept: 'application/json' },
+        signal: controller.signal,
+      });
+      if (!response.ok) throw Object.assign(new Error('provider-error'), { status: response.status });
+      return response.json();
+    })(), 5000, () => controller.abort());
+    const models = result?.providers?.gemini?.models;
+    const listed = Array.isArray(models)
+      ? new Set(models)
+      : (models && typeof models === 'object' ? new Set(Object.keys(models)) : new Set());
+    return GEMINI_MODEL_IDS.filter(id => listed.has(id));
+  } catch {
+    return [];
+  } finally {
+    controller.abort();
+  }
+};
+
 const verifiedCapabilities = async () => {
   const key = getApiKey();
   if (!key) return null;
   if (capabilityCache && Date.now() - capabilityCache.at < CAPABILITY_CACHE_MS) return capabilityCache.value;
   try {
-    const client = new GoogleGenAI({ apiKey: key });
-    const results = await Promise.allSettled([PRIMARY_MODEL, SECONDARY_MODEL].map(model =>
-      withTimeout(client.models.get({ model }), 5000)));
-    const verified = [PRIMARY_MODEL, SECONDARY_MODEL].filter((id, index) =>
-      results[index].status === 'fulfilled' && modelNameMatches(results[index].value?.name, id));
+    let verified = await gatewayGeminiModels();
+    if (!verified.length && !process.env.GOOGLE_GEMINI_BASE_URL) {
+      const client = new GoogleGenAI({ apiKey: key });
+      const results = await Promise.allSettled(GEMINI_MODEL_IDS.map(model =>
+        withTimeout(client.models.get({ model }), 5000)));
+      verified = GEMINI_MODEL_IDS.filter((id, index) =>
+        results[index].status === 'fulfilled' && modelNameMatches(results[index].value?.name, id));
+    }
+    const defaultModel = verified.includes(PRIMARY_MODEL)
+      ? PRIMARY_MODEL
+      : verified.includes(GEMINI_3_8_MODEL)
+        ? GEMINI_3_8_MODEL
+        : SECONDARY_MODEL;
     const value = {
-      default_model: verified.includes(PRIMARY_MODEL) ? PRIMARY_MODEL : SECONDARY_MODEL,
+      default_model: defaultModel,
       models: [
         ...(verified.includes(PRIMARY_MODEL) ? [{ id: PRIMARY_MODEL, label: 'Gemini 3.6 Flash' }] : []),
+        ...(verified.includes(GEMINI_3_8_MODEL) ? [{ id: GEMINI_3_8_MODEL, label: 'Gemini 3.8 Flash' }] : []),
         { id: SECONDARY_MODEL, label: 'Gemini 2.5 Flash' },
       ],
       verified_models: verified,
@@ -452,7 +507,7 @@ const tryDoubao = async (model, prompt, responseMimeType, cost, inputTokens) => 
 
 const generationConfig = (model, responseMimeType) => {
   const config = { responseMimeType, maxOutputTokens: MODEL_REGISTRY[model].maxOutputTokens };
-  if (model === PRIMARY_MODEL) {
+  if (model === PRIMARY_MODEL || model === GEMINI_3_8_MODEL) {
     config.thinkingConfig = { thinkingLevel: ThinkingLevel?.MINIMAL || 'MINIMAL' };
   }
   return config;
@@ -516,7 +571,7 @@ const handleEvent = async (event) => {
   const rawPrompt = typeof body.prompt === 'string' ? body.prompt : '';
   if (!rawPrompt) return { statusCode: 400, headers, body: JSON.stringify({ error: 'Missing prompt' }) };
   const requested = body.model || body.provider || PRIMARY_MODEL;
-  if (requested !== PRIMARY_MODEL && requested !== SECONDARY_MODEL && requested !== DEEPSEEK_AUTO
+  if (!isGeminiModel(requested) && requested !== DEEPSEEK_AUTO
     && !isDoubaoModel(requested) && !DEEPSEEK_MODELS.includes(requested)) {
     return { statusCode: 400, headers, body: JSON.stringify({ error: 'Model not in whitelist' }) };
   }
@@ -548,7 +603,7 @@ const handleEvent = async (event) => {
     logProviderEvent('provider_fallback', LOCAL_FALLBACK, outcome.cause || 'unavailable', true);
     return { statusCode: 200, headers, body: JSON.stringify(localResult()) };
   }
-  const chain = requested === SECONDARY_MODEL ? [SECONDARY_MODEL] : [PRIMARY_MODEL, SECONDARY_MODEL];
+  const chain = requested === SECONDARY_MODEL ? [SECONDARY_MODEL] : [requested, SECONDARY_MODEL];
   if (process.env.ADAPTER_DRY_RUN === 'true') {
     const model = chain[0];
     return { statusCode: 200, headers, body: JSON.stringify({ text: '[dry-run] mock response', model_used: model, cost_estimate: estimateCost(model, tokens), fallback_used: false }) };
@@ -583,6 +638,8 @@ exports.default = v2Handler;
 exports.handleEvent = handleEvent;
 exports.MODEL_REGISTRY = MODEL_REGISTRY;
 exports.PRIMARY_MODEL = PRIMARY_MODEL;
+exports.GEMINI_3_8_MODEL = GEMINI_3_8_MODEL;
+exports.GEMINI_MODEL_IDS = GEMINI_MODEL_IDS;
 exports.SECONDARY_MODEL = SECONDARY_MODEL;
 exports.LOCAL_FALLBACK = LOCAL_FALLBACK;
 exports.COST_CEILING_PER_CALL = COST_CEILING_PER_CALL;

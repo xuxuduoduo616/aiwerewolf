@@ -17,7 +17,7 @@ Browser
   |
   |-- Supabase client --> Auth / Postgres / row-level security
   +-- Netlify Functions
-         |-- Gemini / DeepSeek expression adapter (bounded fallback)
+         |-- Gemini / DeepSeek / Doubao expression adapter (bounded fallback)
          |-- legacy Gemini-compatible proxy
          |-- payment fail-closed endpoint
          +-- protected Supabase administration endpoints
@@ -42,9 +42,9 @@ Browser
 - `src/ai/beliefTracker.ts` maintains explainable suspicions and observations.
 - `src/ai/actionSelector.ts` chooses legal actions from the current state.
 - `src/ai/aiOrchestrator.ts` is the public AI-expression entry point.
-- `src/ai/modelCatalog.ts` owns the typed catalog and participating pool. `modelRouting.ts` snapshots verified availability into stable per-seat round-robin assignments. A separate `aiStyleId` and speech persona control delivery. Gemini 2.5 remains a safe backup; offline capability data never claims remote availability.
+- `src/ai/modelCatalog.ts` owns the typed catalog and participating pool (`gemini-3.6-flash`, `gemini-3.8-flash`, `deepseek-flash`, `deepseek-v4-pro`, `doubao-seed-1.6-flash`, `doubao-seed-character`, `doubao-seed-2.1-lite`). `modelRouting.ts` snapshots verified availability into stable per-seat round-robin assignments. Match setup presents **Multi-AI Models** on the left and the **Single-Model Options** disclosure entry on the right, housing `Gemini 2.5 Flash` (the safe single-model default and Gemini fallback) alongside every discovered single model. A separate `aiStyleId` and speech persona control delivery; offline capability data never claims remote availability.
 - `src/services/speechLibrary.ts` provides offline role- and situation-aware fallback dialogue.
-- Each daytime speaker uses its assigned route. Night chat groups only speakers assigned to the same route, serializing groups and excluding the human. The per-match pool cannot change when delayed discovery completes.
+- Each daytime speaker uses its assigned route. Night chat groups only speakers assigned to the same route, excluding the human. When a mixed-model turn has no usable reply after trying verified alternatives, that turn is skipped; single-model turns can fall back to local dialogue. The per-match pool cannot change when delayed discovery completes.
   It does not decide game rules, legal targets, or actions; those paths remain
   deterministic.
 
@@ -52,9 +52,9 @@ Browser
 
 - `netlify/functions/provider-adapter.cjs` keeps provider keys on the server,
   validates requested model IDs, and reports a no-store capability catalog.
-  `netlify/functions/genai-proxy.cjs` remains a compatibility alias.
-- Capability discovery independently checks exact Gemini and DeepSeek IDs, briefly caching successful results. `verified_models` distinguishes remotely verified access from the conservative selectable Gemini 2.5 backup. Supported partial pools remain usable; malformed envelopes unlock no remote routes.
-- Every request retains input/output bounds, per-call/daily cost guards, rate limits, timeouts and circuit breakers. Gemini 3.6 may fall back to 2.5; each DeepSeek route makes one upstream attempt then signals local fallback. No automatic paid retries are added.
+  `netlify/functions/genai-proxy.cjs` and `netlify/functions/model-adapter.cjs` remain compatibility aliases.
+- Capability discovery independently checks exact Gemini (via direct model lookup or the Netlify AI Gateway provider catalog when `GOOGLE_GEMINI_BASE_URL` is injected), DeepSeek (`/models`), and Doubao (`/models`) IDs, briefly caching successful results. `verified_models` distinguishes remotely verified access from the conservative selectable Gemini 2.5 backup. Supported partial pools remain usable; malformed envelopes unlock no remote routes.
+- Every request retains input/output bounds, per-call/daily cost guards, rate limits, timeouts, and circuit breakers. Gemini 3.6 Flash and Gemini 3.8 Flash use minimal thinking and may fall back to Gemini 2.5 Flash; each DeepSeek or Doubao route makes one bounded upstream call (with Doubao's single HTTP 400 minimal-body compatibility retry) then signals local fallback.
 - The browser validates `model_used` / `fallback_used` against the assigned route and documented fallback. Accepted-output provenance is committed with the speech through existing lifecycle guards, stored on its log/private message and shown on the seat badge. Missing metadata remains unverified; language/roster/schema rejection uses local provenance. Cancelled or previous-match responses cannot update current labels.
 - Supabase provides email OTP authentication and Postgres-backed profiles and records. Account public identity uses a normalized unique `@username` plus Nickname (`display_name`); the internal auth UUID remains the ownership key and is not presented as a public handle.
 - Guest identity is a browser-profile-local `guest:<UUIDv4>` principal. Guest records, economy, and lobby presentation state are namespaced by that principal and are never merged into authenticated data automatically.
@@ -62,7 +62,7 @@ Browser
 
 ## Security Invariants
 
-1. `API_KEY`, `GEMINI_API_KEY`, and Supabase service-role credentials remain server-only.
+1. `API_KEY`, `GEMINI_API_KEY`, `DEEPSEEK_API_KEY`, `ARK_API_KEY`, and Supabase service-role credentials remain server-only.
 2. The browser submits intent, not trusted final state, for any future multiplayer command.
 3. Hidden roles and private actions must be projected per player before multiplayer data is delivered.
 4. Database access requires ownership-aware row-level security and production verification.

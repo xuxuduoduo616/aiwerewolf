@@ -71,18 +71,18 @@ for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: width === 390 ? 844 : 900 });
     const failover = width === 390;
     const posts = await prepare(page, true, undefined, failover);
-    await expect(page.getByRole('radio', { name: /^Multi AI Model/ })).toBeChecked();
+    await expect(page.getByRole('radio', { name: /^Multi-AI Models/ })).toBeChecked();
     const details = page.getByRole('button', { name: 'View participating AI models' });
     await details.focus(); await page.keyboard.press('Enter');
     const dialog = page.getByRole('dialog', { name: 'Participating AI models' });
     await expect(dialog).toBeVisible();
     for (const label of labels) await expect(dialog.getByText(label, { exact: true })).toBeVisible();
     await expect(dialog.getByText('Available', { exact: true })).toHaveCount(3);
-    await expect(dialog.getByRole('listitem')).toHaveCount(6);
-    for (const label of ['Doubao Seed 1.6 Flash', 'Doubao Seed Character', 'Doubao Seed 2.1 Lite']) {
+    await expect(dialog.getByRole('listitem')).toHaveCount(7);
+    for (const label of ['Gemini 3.8 Flash', 'Doubao Seed 1.6 Flash', 'Doubao Seed Character', 'Doubao Seed 2.1 Lite']) {
       await expect(dialog.getByText(label, { exact: true })).toBeVisible();
     }
-    await expect(dialog.getByText('Unavailable', { exact: true })).toHaveCount(3);
+    await expect(dialog.getByText('Unavailable', { exact: true })).toHaveCount(4);
     const close = dialog.getByRole('button', { name: 'Close participating AI models' });
     await expect(close).toBeFocused();
     await page.keyboard.press('Tab'); await expect(close).toBeFocused();
@@ -94,7 +94,7 @@ for (const width of [1440, 390]) {
     await page.keyboard.press('Escape'); await expect(dialog).toHaveCount(0); await expect(details).toBeFocused();
     await details.click(); await close.click(); await expect(details).toBeFocused();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    await expect(page.getByRole('radio', { name: /^Multi AI Model/ })).toBeChecked();
+    await expect(page.getByRole('radio', { name: /^Multi-AI Models/ })).toBeChecked();
     await page.screenshot({ path: path.join(evidence, `mock-model-setup-${width}.png`), fullPage: true });
     await page.getByRole('button', { name: 'Start Game', exact: true }).click();
     await expect(page.locator('.game-room')).toBeVisible();
@@ -159,20 +159,29 @@ test('twelve-player setup keeps the complete stable pool across all eleven seats
 test('offline capability list distinguishes backup from available participants', async ({ page }) => {
   await prepare(page, false);
   await page.getByRole('button', { name: 'View participating AI models' }).click();
-  await expect(page.getByRole('dialog').getByText('Unavailable', { exact: true })).toHaveCount(6);
+  await expect(page.getByRole('dialog').getByText('Unavailable', { exact: true })).toHaveCount(7);
   await expect(page.getByRole('dialog')).toContainText('that turn is skipped');
 });
 
-test('late discovery preserves an explicitly selected safe model', async ({ page }) => {
+test('late discovery preserves an explicitly selected safe model and expand/collapse keeps selection', async ({ page }) => {
   let release!: () => void;
   const gate = new Promise<void>(resolve => { release = resolve; });
   await prepare(page, true, gate);
-  const safe = page.getByRole('radio', { name: /^Gemini 2.5 Flash/ });
+  const singleEntry = page.locator('.start-single-models-summary');
+  await expect(singleEntry).toBeVisible();
+  await singleEntry.click();
+  const safe = page.getByRole('radio', { name: /^Gemini 2\.5 Flash/ });
   await safe.check();
   // A real change event requires selecting another choice before returning.
-  await page.getByRole('radio', { name: /^Multi AI Model/ }).check();
+  await page.getByRole('radio', { name: /^Multi-AI Models/ }).check();
   await safe.check();
   release();
-  await expect(page.getByText('Single-model options', { exact: true })).toBeVisible();
+  await expect(page.getByText('Single-Model Options', { exact: true })).toBeVisible();
+  await expect(safe).toBeChecked();
+  // Collapse and verify selection summary remains visible, then expand again.
+  await singleEntry.click();
+  await expect(page.locator('.start-single-models')).toHaveClass(/is-selected/);
+  await expect(singleEntry).toContainText('Selected: Gemini 2.5 Flash');
+  await singleEntry.click();
   await expect(safe).toBeChecked();
 });

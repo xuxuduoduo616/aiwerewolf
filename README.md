@@ -27,7 +27,7 @@ The project separates game rules from generated expression. A deterministic rule
 - Post-game replay review with suspicion curves, vote reasons, and werewolf night chat
 - Client-side share card export for a finished match
 - Click-to-record voice input with editable transcription
-- Multi AI Model matches with stable Gemini 3.6 Flash / DeepSeek V4.1 Flash / DeepSeek V4 Pro seat assignments and truthful fallback badges
+- Multi-AI Models matches with stable seat assignments across the verified pool (Gemini 3.6 Flash, Gemini 3.8 Flash, DeepSeek V4.1 Flash, DeepSeek V4 Pro, and Doubao Seed routes), a side-by-side Single-Model Options entry housing Gemini 2.5 Flash and discovered single models, and truthful fallback badges
 - Email OTP authentication, guest trial, local guest records, and player statistics
 - Responsive desktop, tablet, and mobile layouts with keyboard and safe-area support
 - English application interface with source-authored player and AI dialogue preserved
@@ -59,7 +59,7 @@ Multiplayer rooms, premium purchases, real rewards, and live payment processing 
 | --- | --- |
 | Frontend | React 18, TypeScript, Vite, Tailwind CSS |
 | Game and AI logic | TypeScript rules engine, belief tracker, action selector, local speech library |
-| AI provider | Gemini 3.6 Flash + DeepSeek V4.1 Flash / V4 Pro; Gemini 2.5 backup and local dialogue |
+| AI provider | Gemini 3.6 Flash / 3.8 Flash + DeepSeek V4.1 Flash / V4 Pro + Doubao Seed Character / 2.1 Lite (legacy 1.6 Flash route retained); Gemini 2.5 Flash backup and local dialogue |
 | Authentication and data | Supabase Auth and Postgres |
 | Hosting | Netlify CDN and Functions |
 | Continuous integration | GitHub Actions production-build verification |
@@ -98,7 +98,7 @@ Browser --> Netlify CDN / Functions --> Gemini / DeepSeek / Doubao
    +--> Supabase Auth / Postgres
 ```
 
-The browser can run a full match without an AI API key. **Multi AI Model** uses the discovered subset of Gemini 3.6 Flash, DeepSeek V4.1 Flash, DeepSeek V4 Pro, Doubao Seed 1.6 Flash, Doubao Seed Character and Doubao Seed 2.1 Lite. Setup provides an accessible participating-model list; read-only discovery proves metadata access, not successful generation or account balance. At start, AI seats receive stable round-robin routes, independently of personality, role and difficulty. Daytime and private night chat use each speaker's assigned model. DeepSeek effort remains low/high/max for Beginner/Intermediate/Expert; it never changes a mixed-pool seat's model. Secondary single-model choices remain available. Gemini 3.6 can fall back to 2.5; DeepSeek makes one upstream attempt before local fallback, with existing budgets and cancellation. Badges distinguish assigned routes, accepted actual models, unverified sources and local dialogue. When a mixed-model turn has no usable reply after trying verified alternatives, that turn is skipped. Single-model turns can use local dialogue. Rules and actions remain deterministic. Provider keys and Supabase service-role credentials remain server-only. See [Architecture](docs/architecture.md), [DeepSeek integration](docs/deepseek-integration.md), and [Doubao integration](docs/doubao-integration.md).
+The browser can run a full match without an AI API key. In match setup, **Dialogue Model** presents **Multi-AI Models** on the left as the only top-level directly selectable mode and **Single-Model Options** on the right as an expandable single-model disclosure entry. **Multi-AI Models** uses the discovered subset of Gemini 3.6 Flash, Gemini 3.8 Flash, DeepSeek V4.1 Flash, DeepSeek V4 Pro, Doubao Seed 1.6 Flash, Doubao Seed Character, and Doubao Seed 2.1 Lite. Expanding **Single-Model Options** lists Gemini 2.5 Flash (the safe single-model default and Gemini fallback) alongside Automatic · DeepSeek by difficulty and every discovered Gemini, DeepSeek, or Doubao model; expanding or collapsing the list preserves the current selection and displays the active single model on the summary card when collapsed. Setup also provides an accessible participating-model list; read-only discovery proves metadata access (via direct Gemini model lookup or the Netlify AI Gateway provider catalog when `GOOGLE_GEMINI_BASE_URL` is injected, plus DeepSeek and Volcano Ark `/models`), not successful generation, client acceptance, or account balance. At start, AI seats receive stable round-robin routes, independently of personality, role, and difficulty. Daytime and private night chat use each speaker's assigned model. DeepSeek effort remains low/high/max for Beginner/Intermediate/Expert; it never changes a mixed-pool seat's model. Gemini 3.6 Flash and Gemini 3.8 Flash use minimal thinking and can fall back to Gemini 2.5 Flash; DeepSeek and Doubao routes make one bounded upstream call (with Doubao's single HTTP 400 minimal-body compatibility retry) before local fallback, within existing budgets and cancellation. Badges distinguish assigned routes, accepted actual models, unverified sources, and local dialogue. When a mixed-model turn has no usable reply after trying verified alternatives, that turn is skipped. Single-model turns can use local dialogue. Rules and actions remain deterministic. Provider keys and Supabase service-role credentials remain server-only. See [Architecture](docs/architecture.md), [DeepSeek integration](docs/deepseek-integration.md), and [Doubao integration](docs/doubao-integration.md).
 
 ## Local Development
 
@@ -122,7 +122,9 @@ Copy `.env.example` to `.env.local` for local configuration. Never commit `.env.
 
 | Variable | Purpose |
 | --- | --- |
-| `API_KEY` | Server-side Gemini access |
+| `API_KEY` / `GEMINI_API_KEY` | Server-side Gemini access (or injected by Netlify AI Gateway alongside `GOOGLE_GEMINI_BASE_URL` in Functions v2) |
+| `DEEPSEEK_API_KEY` | Server-side DeepSeek access |
+| `ARK_API_KEY` | Server-side Volcano Ark (Doubao) access |
 | `VITE_SUPABASE_URL` | Public Supabase project URL |
 | `VITE_SUPABASE_ANON_KEY` | Public Supabase anonymous key |
 | `VITE_TURNSTILE_SITE_KEY` | Public Cloudflare Turnstile site key required by production builds |

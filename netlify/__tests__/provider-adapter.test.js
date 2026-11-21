@@ -12,7 +12,7 @@ const mocks = vi.hoisted(() => ({
   console: { warn: vi.fn(), log: vi.fn(), error: vi.fn() },
 }));
 const source = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '../functions/provider-adapter.cjs'), 'utf8');
-const original = { API_KEY: process.env.API_KEY, GEMINI_API_KEY: process.env.GEMINI_API_KEY, DEEPSEEK_API_KEY: process.env.DEEPSEEK_API_KEY, ARK_API_KEY: process.env.ARK_API_KEY, ARK_DOUBAO_MODEL: process.env.ARK_DOUBAO_MODEL, ALLOWED_ORIGIN: process.env.ALLOWED_ORIGIN, ADAPTER_DRY_RUN: process.env.ADAPTER_DRY_RUN, ADAPTER_DAILY_BUDGET_USD: process.env.ADAPTER_DAILY_BUDGET_USD };
+const original = { API_KEY: process.env.API_KEY, GEMINI_API_KEY: process.env.GEMINI_API_KEY, GOOGLE_GEMINI_BASE_URL: process.env.GOOGLE_GEMINI_BASE_URL, DEEPSEEK_API_KEY: process.env.DEEPSEEK_API_KEY, ARK_API_KEY: process.env.ARK_API_KEY, ARK_DOUBAO_MODEL: process.env.ARK_DOUBAO_MODEL, ALLOWED_ORIGIN: process.env.ALLOWED_ORIGIN, ADAPTER_DRY_RUN: process.env.ADAPTER_DRY_RUN, ADAPTER_DAILY_BUDGET_USD: process.env.ADAPTER_DAILY_BUDGET_USD };
 const load = () => {
   const module = { exports: {} };
   const context = vm.createContext({
@@ -28,7 +28,7 @@ const json = (response) => JSON.parse(response.body);
 
 describe('Gemini provider adapter', () => {
   beforeEach(() => {
-    delete process.env.DEEPSEEK_API_KEY; delete process.env.ARK_API_KEY;
+    delete process.env.DEEPSEEK_API_KEY; delete process.env.ARK_API_KEY; delete process.env.GOOGLE_GEMINI_BASE_URL;
     process.env.API_KEY = 'test-key'; process.env.ALLOWED_ORIGIN = 'https://game.example'; delete process.env.GEMINI_API_KEY; delete process.env.ADAPTER_DRY_RUN; delete process.env.ADAPTER_DAILY_BUDGET_USD;
     mocks.get.mockReset().mockImplementation(({ model }) => Promise.resolve({ name: `models/${model}` }));
     mocks.generateContent.mockReset().mockResolvedValue({ text: 'model text' });
@@ -38,8 +38,9 @@ describe('Gemini provider adapter', () => {
 
   it('whitelists the exact Gemini and DeepSeek model IDs plus local fallback', () => {
     const { MODEL_REGISTRY } = load();
-    expect(Object.keys(MODEL_REGISTRY)).toEqual(['gemini-3.6-flash', 'gemini-2.5-flash', 'deepseek-flash', 'deepseek-v4-pro', 'doubao-seed-1.6-flash', 'doubao-seed-character', 'doubao-seed-2.1-lite', 'local-fallback']);
+    expect(Object.keys(MODEL_REGISTRY)).toEqual(['gemini-3.6-flash', 'gemini-3.8-flash', 'gemini-2.5-flash', 'deepseek-flash', 'deepseek-v4-pro', 'doubao-seed-1.6-flash', 'doubao-seed-character', 'doubao-seed-2.1-lite', 'local-fallback']);
     expect(MODEL_REGISTRY['gemini-3.6-flash'].maxRetries).toBe(0);
+    expect(MODEL_REGISTRY['gemini-3.8-flash'].maxRetries).toBe(0);
     expect(MODEL_REGISTRY['gemini-2.5-flash'].maxRetries).toBe(0);
   });
   it.each([
@@ -63,7 +64,7 @@ describe('Gemini provider adapter', () => {
     }));
     expect(response.statusCode).toBe(200);
     expect(response.headers['Access-Control-Allow-Origin']).toBe('https://game.example');
-    expect(mocks.get).toHaveBeenCalledTimes(2);
+    expect(mocks.get).toHaveBeenCalledTimes(3);
   });
   it('rejects an Origin-less request without same-origin evidence before model work', async () => {
     const adapter = load();
@@ -87,10 +88,32 @@ describe('Gemini provider adapter', () => {
     const adapter = load();
     const first = await adapter.handleEvent(event({}, { httpMethod: 'GET', body: '' }));
     const second = await adapter.handleEvent(event({}, { httpMethod: 'GET', body: '' }));
-    expect(json(first)).toMatchObject({ default_model: 'gemini-3.6-flash', models: [{ id: 'gemini-3.6-flash' }, { id: 'gemini-2.5-flash' }] });
+    expect(json(first)).toMatchObject({ default_model: 'gemini-3.6-flash', models: [{ id: 'gemini-3.6-flash' }, { id: 'gemini-3.8-flash' }, { id: 'gemini-2.5-flash' }] });
     expect(first.headers['Cache-Control']).toBe('no-store');
-    expect(mocks.get).toHaveBeenCalledTimes(2);
+    expect(mocks.get).toHaveBeenCalledTimes(3);
     expect(json(second)).toEqual(json(first));
+  });
+  it('discovers Gemini 3.6 and 3.8 through Netlify AI Gateway providers catalog when GOOGLE_GEMINI_BASE_URL is injected', async () => {
+    process.env.GEMINI_API_KEY = 'gateway-token';
+    process.env.GOOGLE_GEMINI_BASE_URL = 'https://game.example/.netlify/ai/';
+    mocks.fetch.mockReset().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({ providers: { gemini: { models: ['gemini-3.6-flash', 'gemini-3.8-flash', 'gemini-4-argon'] } } }),
+    });
+    const adapter = load();
+    const response = await adapter.handleEvent(event({}, { httpMethod: 'GET', body: '' }));
+    expect(json(response)).toEqual({
+      default_model: 'gemini-3.6-flash',
+      verified_models: ['gemini-3.6-flash', 'gemini-3.8-flash'],
+      models: [
+        { id: 'gemini-3.6-flash', label: 'Gemini 3.6 Flash' },
+        { id: 'gemini-3.8-flash', label: 'Gemini 3.8 Flash' },
+        { id: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash' },
+      ],
+    });
+    expect(mocks.fetch).toHaveBeenCalledWith('https://api.netlify.com/api/v1/ai-gateway/providers', expect.objectContaining({ method: 'GET', redirect: 'error' }));
+    expect(mocks.get).not.toHaveBeenCalled();
   });
   it.each([
     ['missing key', () => { delete process.env.API_KEY; }],
@@ -114,10 +137,10 @@ describe('Gemini provider adapter', () => {
       vi.useRealTimers();
     }
   });
-  it('uses 3.6 minimal thinking without sampling parameters and reports direct metadata', async () => {
-    const adapter = load(); const response = await adapter.handleEvent(event({ model: 'gemini-3.6-flash', prompt: 'hello' }));
-    expect(json(response)).toMatchObject({ model_used: 'gemini-3.6-flash', fallback_used: false, text: 'model text' });
-    expect(mocks.generateContent).toHaveBeenCalledWith(expect.objectContaining({ model: 'gemini-3.6-flash', config: expect.objectContaining({ thinkingConfig: { thinkingLevel: 'MINIMAL' }, maxOutputTokens: 256 }) }));
+  it.each(['gemini-3.6-flash', 'gemini-3.8-flash'])('uses %s minimal thinking without sampling parameters and reports direct metadata', async model => {
+    const adapter = load(); const response = await adapter.handleEvent(event({ model, prompt: 'hello' }));
+    expect(json(response)).toMatchObject({ model_used: model, fallback_used: false, text: 'model text' });
+    expect(mocks.generateContent).toHaveBeenCalledWith(expect.objectContaining({ model, config: expect.objectContaining({ thinkingConfig: { thinkingLevel: 'MINIMAL' }, maxOutputTokens: 256 }) }));
     expect(mocks.generateContent.mock.calls[0][0].config).not.toHaveProperty('temperature');
     expect(mocks.generateContent.mock.calls[0][0].config).not.toHaveProperty('topP');
     expect(mocks.generateContent.mock.calls[0][0].config).not.toHaveProperty('topK');
@@ -128,9 +151,9 @@ describe('Gemini provider adapter', () => {
     await adapter.handleEvent(event({ model: 'gemini-3.6-flash', prompt: rawPrompt }));
     expect(mocks.generateContent.mock.calls[0][0].contents).toBe('x'.repeat(adapter.MAX_PROMPT_LEN));
   });
-  it('falls 3.6 to 2.5 and never reverses an explicit 2.5 choice', async () => {
+  it.each(['gemini-3.6-flash', 'gemini-3.8-flash'])('falls %s to 2.5 and never reverses an explicit 2.5 choice', async primary => {
     mocks.generateContent.mockRejectedValueOnce(new Error('down')).mockResolvedValueOnce({ text: 'secondary' });
-    const adapter = load(); const fallback = await adapter.handleEvent(event({ model: 'gemini-3.6-flash', prompt: 'hello' }));
+    const adapter = load(); const fallback = await adapter.handleEvent(event({ model: primary, prompt: 'hello' }));
     expect(json(fallback)).toMatchObject({ model_used: 'gemini-2.5-flash', fallback_used: true });
     adapter.resetAdapterState(); mocks.generateContent.mockReset().mockResolvedValue({ text: 'chosen' });
     const explicit = await adapter.handleEvent(event({ model: 'gemini-2.5-flash', prompt: 'hello' }));
