@@ -22,22 +22,27 @@ The regular Vite server does not execute Netlify Functions. Matches still work t
 ## Environment Variables
 
 Only variables prefixed with `VITE_` are exposed to browser code. `API_KEY`,
-`GEMINI_API_KEY`, `DEEPSEEK_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, and any future payment secret
-must remain server-only. Never create a browser-exposed Gemini key variable.
+`GEMINI_API_KEY`, `DEEPSEEK_API_KEY`, `ARK_API_KEY`, `QWEN_API_KEY`,
+`DASHSCOPE_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, and any future payment secret
+must remain server-only. Never create a browser-exposed provider key variable.
 Production must set `ALLOWED_ORIGIN` to the exact browser origin(s) allowed to
 call the Netlify AI functions. Missing or mismatched origins fail closed with a
 generic response before capability lookup, generation, or cost accounting.
 
-`GEMINI_API_KEY` (or compatible `API_KEY`) and `DEEPSEEK_API_KEY` remain server-only. Read-only discovery independently verifies exact supported IDs; `verified_models` prevents an unavailable Gemini 2.5 backup from masquerading as verified. Partial pools are supported, and metadata access does not prove generation or balance.
+`GEMINI_API_KEY` (or compatible `API_KEY`), `DEEPSEEK_API_KEY`, and `ARK_API_KEY` remain server-only. Read-only discovery independently verifies exact supported IDs (via direct Gemini lookup or the Netlify AI Gateway provider catalog when `GOOGLE_GEMINI_BASE_URL` is injected, plus DeepSeek and Volcano Ark `/models`); `verified_models` prevents an unavailable Gemini 2.5 backup from masquerading as verified. Partial pools are supported, and metadata access does not prove generation or balance.
 
-Multi AI Model is recommended when at least one participating route is verified. Its three-entry catalog pool assigns AI seats round-robin once per game; late discovery cannot change that snapshot or an explicit setup selection. Personas and legacy style IDs are separate from routing. Single-model options remain secondary. Each speaker's day/night request uses its seat route; night requests group identical routes only, run sequentially and never impersonate the human. Both DeepSeek models use low/high/max for easy/normal/hard. Automatic DeepSeek remains a compatibility mode (Flash for easy/normal, Pro for hard).
+**Multi-AI Models** sits on the left in match setup as the recommended top-level mode when at least one participating route is verified. Its seven-entry catalog pool (`gemini-3.6-flash`, `gemini-3.8-flash`, `deepseek-flash`, `deepseek-v4-pro`, `doubao-seed-1.6-flash`, `doubao-seed-character`, `doubao-seed-2.1-lite`) assigns discovered AI seats round-robin once per game; late discovery cannot change that snapshot or an explicit setup selection. Personas and legacy style IDs are separate from routing. **Single-Model Options** sits on the right as a disclosure entry housing `Gemini 2.5 Flash`, Automatic · DeepSeek by difficulty, and each discovered single model. Each speaker's day/night request uses its seat route; night requests group identical routes only, run sequentially and never impersonate the human. Both DeepSeek models use low/high/max for easy/normal/hard. Automatic DeepSeek remains selectable under Single-Model Options (Flash for easy/normal, Pro for hard).
 
-The server owns Gemini 3.6 → 2.5 fallback; DeepSeek uses a single upstream attempt then local dialogue. Accepted source metadata is validated and committed through match/phase cancellation guards; output rejected by schema/language/roster guards becomes local dialogue. Full model names and assigned/actual/fallback distinctions are available in seat accessibility text.
+Gemini 3.6 Flash (`minimal` thinking) and Gemini 3.8 Flash (`low` thinking) can fall back to Gemini 2.5 Flash on direct-key runtimes; DeepSeek and Doubao each make one bounded upstream attempt (with Doubao's single HTTP 400 minimal-body compatibility retry). Mixed-model turns try verified alternatives and skip the turn if no reply passes validation; single-model turns fall back to local dialogue. Accepted source metadata is validated and committed through match/phase cancellation guards; output rejected by schema/language/roster guards becomes local dialogue. Full model names and assigned/actual/fallback distinctions are available in seat accessibility text.
 
 Cost admission assumes paid rates even when a free tier is available: Gemini 3.6
-uses `$0.0015` input / `$0.0075` output per 1K tokens; Gemini 2.5 uses
-`$0.0003` input / `$0.0025` output per 1K text tokens. Per-call and daily
-budgets, rate limiting, timeout, and a circuit breaker remain enabled.
+uses `$0.0015` input / `$0.0075` output per 1K tokens; Gemini 3.8 uses
+`$0.00075` input / `$0.00375` output per 1K tokens; Gemini 2.5 uses
+`$0.0003` input / `$0.0025` output per 1K text tokens (see
+[DeepSeek integration](deepseek-integration.md) and
+[Doubao integration](doubao-integration.md) for DeepSeek and Ark rates).
+Per-call and daily budgets, rate limiting, timeout, and a circuit breaker remain
+enabled.
 
 The production build deliberately fails if `VITE_TURNSTILE_SITE_KEY` is missing or looks like a placeholder. Use a legitimate site key for production-like builds; do not commit it.
 

@@ -35,10 +35,10 @@ output), `fallback` (boolean; true when this failure triggers a fallback).
 
 | `event` | When it is emitted |
 | --- | --- |
-| `provider_timeout` | The 12 s per-model deadline (`cause: timeout`) fires |
-| `provider_rate_limited` | Gemini answers 429 (`cause: rate-limit`) |
-| `provider_auth_error` | Gemini answers 401/403 (`cause: authentication`) |
-| `provider_upstream_error` | Gemini answers 5xx (`cause: upstream`) |
+| `provider_timeout` | The configured per-model deadline (12 s Gemini, 45 s DeepSeek, 20 s Doubao; `cause: timeout`) fires |
+| `provider_rate_limited` | Upstream provider answers 429 (`cause: rate-limit`) |
+| `provider_auth_error` | Upstream provider answers 401/403 (`cause: authentication`) |
+| `provider_upstream_error` | Upstream provider answers 5xx (`cause: upstream`) |
 | `provider_fallback` | Any other failure (`cause: unavailable`), including an empty response, and the final local fallback where `model` is `local-fallback` |
 
 A request that exhausts its model chain emits one line per failed attempt plus a

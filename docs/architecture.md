@@ -56,13 +56,13 @@ Browser
 - Capability discovery independently checks exact Gemini (via direct model lookup or the Netlify AI Gateway provider catalog when `GOOGLE_GEMINI_BASE_URL` is injected), DeepSeek (`/models`), and Doubao (`/models`) IDs, briefly caching successful results. `verified_models` distinguishes remotely verified access from the conservative selectable Gemini 2.5 backup. Supported partial pools remain usable; malformed envelopes unlock no remote routes.
 - Every request retains input/output bounds, per-call/daily cost guards, rate limits, timeouts, and circuit breakers. Gemini 3.6 Flash uses minimal thinking and Gemini 3.8 Flash uses low thinking (and may fall back to Gemini 2.5 Flash on direct-key runtimes); each DeepSeek or Doubao route makes one bounded upstream call (with Doubao's single HTTP 400 minimal-body compatibility retry) then signals local fallback.
 - The browser validates `model_used` / `fallback_used` against the assigned route and documented fallback. Accepted-output provenance is committed with the speech through existing lifecycle guards, stored on its log/private message and shown on the seat badge. Missing metadata remains unverified; language/roster/schema rejection uses local provenance. Cancelled or previous-match responses cannot update current labels.
-- Supabase provides email OTP authentication and Postgres-backed profiles and records. Account public identity uses a normalized unique `@username` plus Nickname (`display_name`); the internal auth UUID remains the ownership key and is not presented as a public handle.
+- Supabase provides email-password and email-code authentication alongside Postgres-backed profiles and records. Account public identity uses a normalized unique `@username` plus Nickname (`display_name`); the internal auth UUID remains the ownership key and is not presented as a public handle.
 - Guest identity is a browser-profile-local `guest:<UUIDv4>` principal. Guest records, economy, and lobby presentation state are namespaced by that principal and are never merged into authenticated data automatically.
 - Payment endpoints fail closed with `PAYMENTS_NOT_CONFIGURED`; no real payment service provider is connected.
 
 ## Security Invariants
 
-1. `API_KEY`, `GEMINI_API_KEY`, `DEEPSEEK_API_KEY`, `ARK_API_KEY`, and Supabase service-role credentials remain server-only.
+1. `API_KEY`, `GEMINI_API_KEY`, `DEEPSEEK_API_KEY`, `ARK_API_KEY`, `QWEN_API_KEY`, `DASHSCOPE_API_KEY`, and Supabase service-role credentials remain server-only.
 2. The browser submits intent, not trusted final state, for any future multiplayer command.
 3. Hidden roles and private actions must be projected per player before multiplayer data is delivered.
 4. Database access requires ownership-aware row-level security and production verification.

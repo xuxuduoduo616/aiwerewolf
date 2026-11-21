@@ -73,12 +73,12 @@ Multiplayer rooms, premium purchases, real rewards, and live payment processing 
 | AI decision and dialogue pipeline | Complete |
 | Responsive desktop/mobile interface | Complete |
 | English application interface | Complete |
-| Guest trial and email OTP integration | Complete |
+| Guest trial, password, and email OTP authentication | Complete |
 | Player profile and game-record integration | Complete; production data policy verification remains owner-operated |
 | Social lobby surfaces | Preview only |
 | Real-player multiplayer | Planned |
 | Payment processing | Disabled; provider integration not configured |
-| Cloud text-to-speech | Complete for AI speech; browser fallback remains |
+| Cloud text-to-speech | Complete for eligible signed-in pilot; browser fallback remains |
 | Post-game replay review | Complete; local replay storage |
 | Share card export | Complete; client-side PNG |
 | Voice input | Complete; requires `QWEN_API_KEY` |
@@ -125,6 +125,7 @@ Copy `.env.example` to `.env.local` for local configuration. Never commit `.env.
 | `API_KEY` / `GEMINI_API_KEY` | Server-side Gemini access (or injected by Netlify AI Gateway alongside `GOOGLE_GEMINI_BASE_URL` in Functions v2) |
 | `DEEPSEEK_API_KEY` | Server-side DeepSeek access |
 | `ARK_API_KEY` | Server-side Volcano Ark (Doubao) access |
+| `QWEN_API_KEY` | Server-side Qwen ASR voice-input access |
 | `VITE_SUPABASE_URL` | Public Supabase project URL |
 | `VITE_SUPABASE_ANON_KEY` | Public Supabase anonymous key |
 | `VITE_TURNSTILE_SITE_KEY` | Public Cloudflare Turnstile site key required by production builds |

@@ -12,7 +12,7 @@ Status: complete and deployed.
 - Belief tracking, action selection, AI dialogue, and offline fallback speech
 - Responsive desktop, tablet, and mobile interface
 - English application chrome
-- Guest trial, email OTP integration, profiles, and game records
+- Guest trial, email/password and email-code authentication, profiles, and game records
 - Netlify production deployment and build verification
 
 ## v1.1 - AI Quality
@@ -30,7 +30,7 @@ Deferred / still pending (not shipped in this release):
 
 - Resolve residual generic player references in generated dialogue
 - Improve fallback-language consistency without changing user-authored content
-- Evaluate cloud text-to-speech behind a provider adapter and graceful fallback
+- Expand cloud text-to-speech beyond the eligible signed-in pilot behind the existing provider adapter and browser fallback
 - Continue speech-corpus provenance and licensing review
 
 Release gate: dialogue evaluation must preserve legal game knowledge, avoid invented facts, and degrade cleanly without an external provider.
