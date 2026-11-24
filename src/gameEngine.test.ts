@@ -3,6 +3,7 @@ import {
   computeWinner,
   applyElimination,
   applyNightResolution,
+  canWitchSelfSave,
   resolveVoteResult,
   getRoleCamp,
 } from './gameEngine';
@@ -78,6 +79,45 @@ describe('applyElimination', () => {
     const players = [...mk9(), mkPlayer(10, Role.IDIOT)];
     const result = applyElimination(players, 10, 'NIGHT');
     expect(result.players.find(p => p.id === 10)!.isAlive).toBe(false);
+    expect(result.players.find(p => p.id === 10)!.isRevealed).toBe(false);
+  });
+
+  it('standard dark-card exile keeps isRevealed false for all non-Idiot roles', () => {
+    const players = mk9();
+    for (const target of players) {
+      const result = applyElimination(players, target.id, 'VOTE');
+      const exiled = result.players.find(p => p.id === target.id)!;
+      expect(result.eliminated).toBe(true);
+      expect(result.sparedByIdiot).toBe(false);
+      expect(exiled.isAlive).toBe(false);
+      expect(exiled.isRevealed).toBe(false);
+    }
+  });
+
+  it.each(['NIGHT', 'POISON', 'HUNTER', 'VOTE'] as const)(
+    'killing an already-revealed Idiot via %s dies and preserves isRevealed=true',
+    reason => {
+      const players = [...mk9(), mkPlayer(10, Role.IDIOT)];
+      const afterFlip = applyElimination(players, 10, 'VOTE').players;
+      expect(afterFlip.find(p => p.id === 10)!.isRevealed).toBe(true);
+
+      const afterDeath = applyElimination(afterFlip, 10, reason);
+      const deadIdiot = afterDeath.players.find(p => p.id === 10)!;
+      expect(afterDeath.eliminated).toBe(true);
+      expect(afterDeath.sparedByIdiot).toBe(false);
+      expect(deadIdiot.isAlive).toBe(false);
+      expect(deadIdiot.isRevealed).toBe(true);
+    },
+  );
+});
+
+describe('canWitchSelfSave', () => {
+  it('allows self-save only on Night 1 and forbids self-save on Night 2+', () => {
+    expect(canWitchSelfSave(1, 5, 5)).toBe(true);
+    expect(canWitchSelfSave(2, 5, 5)).toBe(false);
+    expect(canWitchSelfSave(3, 5, 5)).toBe(false);
+    expect(canWitchSelfSave(2, 5, 7)).toBe(true);
+    expect(canWitchSelfSave(1, 5, null)).toBe(false);
   });
 });
 
@@ -103,5 +143,13 @@ describe('applyNightResolution', () => {
     const result = applyNightResolution(mk9(), { wolfKillId: 7, witchPoisonId: 8, witchSaved: false });
     expect(result.deadIds).toContain(7);
     expect(result.deadIds).toContain(8);
+  });
+  it('preserves isRevealed=true when an already-revealed Idiot dies at night', () => {
+    const players = [...mk9(), mkPlayer(10, Role.IDIOT)];
+    const revealed = applyElimination(players, 10, 'VOTE').players;
+    const result = applyNightResolution(revealed, { wolfKillId: 10, witchPoisonId: 7, witchSaved: false });
+    expect(result.deadIds).toEqual(expect.arrayContaining([10, 7]));
+    expect(result.players.find(p => p.id === 10)!.isRevealed).toBe(true);
+    expect(result.players.find(p => p.id === 7)!.isRevealed).toBe(false);
   });
 });

@@ -1,0 +1,367 @@
+{
+  "schemaVersion": 1,
+  "datasetVersion": "paired-evidence-v1",
+  "boardTemplates": {
+    "9-standard": [
+      { "seat": 1, "role": "Villager", "isHuman": true },
+      { "seat": 2, "role": "Villager", "isHuman": false },
+      { "seat": 3, "role": "Villager", "isHuman": false },
+      { "seat": 4, "role": "Werewolf", "isHuman": false, "isWolfHopper": false },
+      { "seat": 5, "role": "Seer", "isHuman": false },
+      { "seat": 6, "role": "Witch", "isHuman": false },
+      { "seat": 7, "role": "Hunter", "isHuman": false },
+      { "seat": 8, "role": "Werewolf", "isHuman": false, "isWolfHopper": false },
+      { "seat": 9, "role": "Werewolf", "isHuman": false, "isWolfHopper": true }
+    ]
+  },
+  "cases": [
+    {
+      "id": "P1",
+      "title": "Human speech accuse vs trust shifts AI listener suspicion, vote, and hunter shot",
+      "category": "evidence-swap",
+      "evidenceSwap": true,
+      "boardId": "9-standard",
+      "difficulty": "hard",
+      "actionAccuracy": 1.0,
+      "seed": 101,
+      "visibleState": {
+        "round": 1,
+        "speakerId": 1,
+        "listenerId": 2,
+        "hunterId": 7,
+        "targetId": 4,
+        "accuseSpeech": "4号是狼，逻辑漏洞太明显，今天必须投4号！",
+        "trustSpeech": "我信4号，4号是好人，大家别投4号。"
+      }
+    },
+    {
+      "id": "P2",
+      "title": "Multi-target bilingual speech lowers trusted seat and raises accused seat",
+      "category": "multi-target",
+      "evidenceSwap": true,
+      "boardId": "9-standard",
+      "difficulty": "hard",
+      "actionAccuracy": 1.0,
+      "seed": 202,
+      "visibleState": {
+        "round": 1,
+        "speakerId": 1,
+        "listenerId": 2,
+        "trustTargetId": 3,
+        "accuseTargetId": 7,
+        "zhSpeech": "我信3号，7号才是狼。",
+        "enSpeech": "I trust Player 3, Player 7 is the wolf.",
+        "zhSwappedSpeech": "我信7号，3号才是狼。",
+        "enSwappedSpeech": "I trust Player 7, Player 3 is the wolf."
+      }
+    },
+    {
+      "id": "P3",
+      "title": "Negation, quotation rebuttal, and hypothetical never raise suspicion vs affirmative accusation",
+      "category": "negation-quote",
+      "evidenceSwap": true,
+      "boardId": "9-standard",
+      "difficulty": "hard",
+      "actionAccuracy": 1.0,
+      "seed": 303,
+      "visibleState": {
+        "round": 1,
+        "speakerId": 1,
+        "listenerId": 6,
+        "targetA": 3,
+        "targetB": 2,
+        "affirmativeA": "3号是狼，今天投3号。",
+        "negationA": "3号不是狼",
+        "affirmativeB": "2号是狼，今天投2号。",
+        "quotationRebuttalB": "刚才有人说2号是狼，但我觉得2号不是狼",
+        "hypotheticalGoodA": "假设3号是好人",
+        "hypotheticalAccuseA": "如果3号是狼，那今天投3号"
+      }
+    },
+    {
+      "id": "P4",
+      "title": "Duplicate speech and eventId replay idempotency never double-weight over independent suspect",
+      "category": "dedupe-idempotency",
+      "evidenceSwap": false,
+      "boardId": "9-standard",
+      "difficulty": "hard",
+      "actionAccuracy": 1.0,
+      "seed": 404,
+      "visibleState": {
+        "round": 1,
+        "listenerId": 2,
+        "independentTargetId": 8,
+        "spamTargetId": 7,
+        "independentSpeeches": [
+          { "speakerId": 3, "eventId": "p4-ind-3", "text": "8号是狼，今天投8号。" },
+          { "speakerId": 5, "eventId": "p4-ind-5", "text": "8号像狼，大家投8号。" }
+        ],
+        "baseSpamSpeech": { "speakerId": 1, "eventId": "p4-spam-1", "text": "7号是狼，今天投7号。" },
+        "sameEventIdReplays": 4,
+        "paraphraseSpamSpeeches": [
+          "7号像狼，出7号。",
+          "7号逻辑漏洞太大，推7号。",
+          "我觉得7号是铁狼，票7号。"
+        ]
+      }
+    },
+    {
+      "id": "P5",
+      "title": "Tie-break candidate permutation eliminates Seat-1 lock with uniform seeded coverage",
+      "category": "tie-break",
+      "evidenceSwap": false,
+      "boardId": "9-standard",
+      "difficulty": "hard",
+      "actionAccuracy": 1.0,
+      "seed": 505,
+      "visibleState": {
+        "round": 1,
+        "actorId": 5,
+        "trials": 200,
+        "expectedCandidateCount": 8,
+        "maxSeatShare": 0.30,
+        "maxUniformDeviation": 0.12
+      }
+    },
+    {
+      "id": "P6",
+      "title": "Witch active hold vs high-suspicion poison via generateAIAction plus Night 1/2 save rules",
+      "category": "witch-policy",
+      "evidenceSwap": true,
+      "boardId": "9-standard",
+      "difficulty": "hard",
+      "actionAccuracy": 1.0,
+      "seed": 606,
+      "visibleState": {
+        "round": 2,
+        "witchId": 6,
+        "wolfKillId": 4,
+        "revealedSeatId": 3,
+        "highSuspectTargetId": 7,
+        "mildSpeeches": [
+          { "speakerId": 1, "round": 1, "eventId": "p6-mild-1", "text": "7号有点可疑，先观望。" }
+        ],
+        "highSuspicionSpeeches": [
+          { "speakerId": 1, "round": 1, "eventId": "p6-hi-1", "text": "7号是狼，今天必须投7号。" },
+          { "speakerId": 2, "round": 1, "eventId": "p6-hi-2", "text": "7号像狼，我也投7号。" },
+          { "speakerId": 5, "round": 1, "eventId": "p6-hi-5", "text": "我是预言家，昨晚验了7号是查杀。" },
+          { "speakerId": 1, "round": 1, "eventId": "p6-hi-rev-1", "text": "3号是狼，今天投3号。" },
+          { "speakerId": 2, "round": 1, "eventId": "p6-hi-rev-2", "text": "3号是铁狼，4号是铁狼。" },
+          { "speakerId": 5, "round": 2, "eventId": "p6-hi-rev-3", "text": "昨晚验了3号是查杀，4号是查杀。" }
+        ]
+      }
+    },
+    {
+      "id": "P7",
+      "title": "Seer checked-target exclusion across nights and private belief polarization invisible to others",
+      "category": "seer-policy",
+      "evidenceSwap": true,
+      "boardId": "9-standard",
+      "difficulty": "hard",
+      "actionAccuracy": 1.0,
+      "seed": 707,
+      "visibleState": {
+        "seerId": 5,
+        "observerId": 2,
+        "primaryTargetId": 4,
+        "secondaryTargetId": 3,
+        "publicDefenseOnWolf": "4号是好人，大家相信4号。"
+      }
+    },
+    {
+      "id": "P8",
+      "title": "Wolf bussing keeps teammate suspicion <= 0.05 and only votes teammate under doomed-heat bussing",
+      "category": "wolf-bussing",
+      "evidenceSwap": true,
+      "boardId": "9-standard",
+      "difficulty": "hard",
+      "actionAccuracy": 1.0,
+      "seed": 808,
+      "visibleState": {
+        "round": 1,
+        "wolfActorId": 4,
+        "teammateId": 8,
+        "otherTeammateId": 9,
+        "seerClaimerId": 5,
+        "villagerPushId": 3,
+        "bussingSpeeches": [
+          { "round": 1, "eventId": "p8-bus-1", "text": "8号是狼，逻辑有问题，今天投8号。" },
+          { "round": 2, "eventId": "p8-bus-2", "text": "8号发言很虚，继续出8号。" }
+        ],
+        "normalVillagePushSpeech": {
+          "speakerId": 1,
+          "round": 1,
+          "eventId": "p8-push-3",
+          "text": "3号很可疑，今天投3号。"
+        },
+        "publicSeerClaimSpeech": {
+          "speakerId": 5,
+          "round": 1,
+          "eventId": "p8-seer-5",
+          "text": "我是预言家，昨晚验了3号是金水。"
+        },
+        "doomedPileSpeakers": [1, 2, 3, 5, 6, 7],
+        "doomedPileText": "8号是铁狼，查杀8号，今天必须投8号。",
+        "doomedBussingSpeech": "8号逻辑确实有问题，我怀疑8号。"
+      }
+    },
+    {
+      "id": "P9",
+      "title": "Private-info visibility isolation and multilingual zh/en/ja leakage detection",
+      "category": "privacy-leakage",
+      "evidenceSwap": false,
+      "boardId": "9-standard",
+      "difficulty": "hard",
+      "actionAccuracy": 1.0,
+      "seed": 909,
+      "visibleState": {
+        "round": 1,
+        "seerId": 5,
+        "witchId": 6,
+        "wolfActorId": 4,
+        "observerId": 2,
+        "checkedTargetId": 4,
+        "savedTargetId": 3,
+        "wolfPlanText": "Kill seat 5 tonight",
+        "leakageProbes": [
+          {
+            "id": "zh-wolf-self",
+            "lang": "zh",
+            "role": "Werewolf",
+            "speech": "其实我就是狼，大家投我吧。",
+            "expectLeak": true,
+            "expectLegacyLeak": true
+          },
+          {
+            "id": "zh-wolf-teammate",
+            "lang": "zh",
+            "role": "Werewolf",
+            "speech": "我和8号是队友，别投我们。",
+            "expectLeak": true,
+            "expectLegacyLeak": true
+          },
+          {
+            "id": "zh-non-seer-check",
+            "lang": "zh",
+            "role": "Villager",
+            "speech": "我是预言家，昨晚验了4号是查杀。",
+            "expectLeak": true,
+            "expectLegacyLeak": true
+          },
+          {
+            "id": "zh-witch-potion",
+            "lang": "zh",
+            "role": "Witch",
+            "speech": "我昨晚用了解药救了3号。",
+            "expectLeak": true,
+            "expectLegacyLeak": true
+          },
+          {
+            "id": "en-wolf-self",
+            "lang": "en",
+            "role": "Werewolf",
+            "speech": "Honestly, I am a werewolf so vote me out.",
+            "expectLeak": true,
+            "expectLegacyLeak": false
+          },
+          {
+            "id": "en-wolf-teammate",
+            "lang": "en",
+            "role": "Werewolf",
+            "speech": "Player 8 is my wolf teammate, do not push him.",
+            "expectLeak": true,
+            "expectLegacyLeak": false
+          },
+          {
+            "id": "en-non-seer-check",
+            "lang": "en",
+            "role": "Villager",
+            "speech": "I am the seer and I checked Player 4 last night.",
+            "expectLeak": true,
+            "expectLegacyLeak": false
+          },
+          {
+            "id": "en-witch-potion",
+            "lang": "en",
+            "role": "Witch",
+            "speech": "I still have my antidote and I poisoned Player 4.",
+            "expectLeak": true,
+            "expectLegacyLeak": false
+          },
+          {
+            "id": "ja-wolf-self",
+            "lang": "ja",
+            "role": "Werewolf",
+            "speech": "実は人狼です、もう諦めます。",
+            "expectLeak": true,
+            "expectLegacyLeak": false
+          },
+          {
+            "id": "ja-wolf-attack",
+            "lang": "ja",
+            "role": "Werewolf",
+            "speech": "襲撃はアキでどうです？騙り、投票も相談を。",
+            "expectLeak": true,
+            "expectLegacyLeak": false
+          },
+          {
+            "id": "ja-non-seer-check",
+            "lang": "ja",
+            "role": "Witch",
+            "speech": "あの人を占って、人間だった！",
+            "expectLeak": true,
+            "expectLegacyLeak": false
+          },
+          {
+            "id": "zh-clean-villager",
+            "lang": "zh",
+            "role": "Villager",
+            "speech": "今天先盘票型，再看4号的逻辑。",
+            "expectLeak": false,
+            "expectLegacyLeak": false
+          },
+          {
+            "id": "en-clean-villager",
+            "lang": "en",
+            "role": "Villager",
+            "speech": "Player 4 contradicted earlier votes, I am voting Player 4.",
+            "expectLeak": false,
+            "expectLegacyLeak": false
+          },
+          {
+            "id": "en-clean-wolf-denial",
+            "lang": "en",
+            "role": "Werewolf",
+            "speech": "I am not a wolf, Player 3 looks suspicious to me.",
+            "expectLeak": false,
+            "expectLegacyLeak": false
+          },
+          {
+            "id": "zh-true-seer-report",
+            "lang": "zh",
+            "role": "Seer",
+            "speech": "我是预言家，昨晚验了4号，是查杀。",
+            "expectLeak": false,
+            "expectLegacyLeak": false
+          },
+          {
+            "id": "en-true-seer-report",
+            "lang": "en",
+            "role": "Seer",
+            "speech": "I am the seer and I checked Player 4 last night; Player 4 is a wolf.",
+            "expectLeak": false,
+            "expectLegacyLeak": false
+          },
+          {
+            "id": "ja-true-seer-report",
+            "lang": "ja",
+            "role": "Seer",
+            "speech": "私は自分が占い師だと知っている。昨夜の私の占いで人狼と確定しました。",
+            "expectLeak": false,
+            "expectLegacyLeak": false
+          }
+        ]
+      }
+    }
+  ]
+}

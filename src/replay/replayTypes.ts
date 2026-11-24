@@ -85,6 +85,55 @@ export interface ReplayOutcome {
   rounds: number;
 }
 
+export type ReplayDecisionActionType = 'KILL' | 'CHECK' | 'VOTE' | 'POISON' | 'SAVE' | 'SHOOT';
+export type ReplayDecisionOutcome = 'ACT' | 'HOLD' | 'NO_TARGET';
+
+export interface ReplayDecisionCandidate {
+  targetId: number;
+  score: number;
+}
+
+/** Structured explainable decision trace captured per AI decision (optional in schemaVersion 1). */
+export interface ReplayDecisionTrace {
+  round: number;
+  phase?: GamePhase;
+  actorId: number;
+  actionType: ReplayDecisionActionType;
+  outcome: ReplayDecisionOutcome;
+  targetId: number | null;
+  reason?: string;
+  candidates: ReplayDecisionCandidate[];
+  evidenceEventIds: string[];
+  tieBroken: boolean;
+  randomized: boolean;
+  fallback: boolean;
+  latencyMs: number;
+}
+
+export type ReplayNightActionType = 'KILL' | 'CHECK' | 'SAVE' | 'POISON' | 'HOLD';
+
+/** One night action record (optional in schemaVersion 1). */
+export interface ReplayNightAction {
+  round: number;
+  phase?: GamePhase;
+  actorId: number;
+  actionType: ReplayNightActionType;
+  targetId: number | null;
+  outcome?: ReplayDecisionOutcome;
+}
+
+export type ReplayEliminationCause = 'NIGHT' | 'POISON' | 'VOTE' | 'HUNTER' | 'IDIOT_FLIP';
+
+/** One elimination or Idiot reveal-and-survive event (optional in schemaVersion 1). */
+export interface ReplayElimination {
+  round: number;
+  phase?: GamePhase;
+  targetId: number;
+  cause: ReplayEliminationCause;
+  revealedRole: Role | null;
+  survived?: boolean;
+}
+
 /** The complete, versioned replay payload. */
 export interface ReplayRecord {
   schemaVersion: typeof REPLAY_SCHEMA_VERSION;
@@ -102,6 +151,14 @@ export interface ReplayRecord {
   wolfChat: ReplayWolfChatEntry[];
   checks: ReplayCheck[];
   outcome: ReplayOutcome;
+  /** Optional pre-vote suspicion snapshots captured before `updateFromVote` runs. */
+  preVoteBeliefSnapshots?: ReplayBeliefSnapshot[];
+  /** Optional structured per-action decision traces for post-game explainability. */
+  decisionTraces?: ReplayDecisionTrace[];
+  /** Optional night action records (kill, check, save, poison, hold). */
+  nightActions?: ReplayNightAction[];
+  /** Optional elimination and Idiot flip records. */
+  eliminations?: ReplayElimination[];
 }
 
 /** Input for the pure `buildReplay` / `createReplayRecorder` boundary. */
@@ -120,6 +177,10 @@ export interface ReplayDraft {
   wolfChat: readonly ReplayWolfChatEntry[];
   checks: readonly ReplayCheck[];
   outcome: ReplayOutcome;
+  preVoteBeliefSnapshots?: readonly ReplayBeliefSnapshot[];
+  decisionTraces?: readonly ReplayDecisionTrace[];
+  nightActions?: readonly ReplayNightAction[];
+  eliminations?: readonly ReplayElimination[];
 }
 
 /** Identity + roster input for `createReplayRecorder`. */

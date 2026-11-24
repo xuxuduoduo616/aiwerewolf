@@ -52,6 +52,8 @@ export interface Player {
   suspicionMap: Record<number, number>;
 }
 
+export type GameLogVisibility = 'public' | 'human-private' | 'wolf-private';
+
 export interface GameLog {
   id: string;
   phase: GamePhase;
@@ -61,6 +63,7 @@ export interface GameLog {
   dialogueSource?: DialogueSource;
   isSystem: boolean;
   tone?: 'system' | 'speech' | 'action' | 'wolf' | 'vote' | 'warning';
+  visibility?: GameLogVisibility;
 }
 
 export type Difficulty = 'easy' | 'normal' | 'hard';

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Crosshair, Eye, FlaskConical, Skull, Vote } from 'lucide-react';
 import { GamePhase, NightState, Player, Role } from '../types';
+import { canWitchSelfSave } from '../gameEngine';
 import type { DisplayLanguage } from '../i18n';
 
 const MY_PLAYER_ID = 1;
@@ -29,6 +30,25 @@ const ACTION_LABELS: Record<ActionLabelKey, string> = {
 export const actionLabel = (key: ActionLabelKey, _language: DisplayLanguage): string =>
   ACTION_LABELS[key];
 
+/**
+ * Single eligibility predicate for the human Witch SAVE button.
+ * Self-save is permitted ONLY on Night 1 (`roundCount <= 1`).
+ */
+export const canHumanWitchSave = ({
+  me,
+  witchStatus,
+  nightState,
+  roundCount = 1,
+}: {
+  me?: Pick<Player, 'id' | 'role' | 'isAlive'>;
+  witchStatus: { hasSave: boolean; hasPoison: boolean };
+  nightState: Pick<NightState, 'wolfKillId'>;
+  roundCount?: number;
+}): boolean => {
+  if (!me?.isAlive || me.role !== Role.WITCH || !witchStatus.hasSave) return false;
+  return canWitchSelfSave(Math.max(1, roundCount), me.id, nightState.wolfKillId);
+};
+
 const ActionBar = ({
   phase,
   me,
@@ -36,6 +56,7 @@ const ActionBar = ({
   isProcessingAI,
   witchStatus,
   nightState,
+  roundCount = 1,
   onAction,
   onVoteSkip,
   onWitchSave,
@@ -48,6 +69,7 @@ const ActionBar = ({
   isProcessingAI: boolean;
   witchStatus: { hasSave: boolean; hasPoison: boolean };
   nightState: NightState;
+  roundCount?: number;
   onAction: () => void;
   onVoteSkip: () => void;
   onWitchSave: () => void;
@@ -56,6 +78,7 @@ const ActionBar = ({
 }) => {
   const language: DisplayLanguage = 'en';
   const selectedAlive = Boolean(selectedPlayer?.isAlive && selectedPlayer.id !== MY_PLAYER_ID);
+  const canSave = canHumanWitchSave({ me, witchStatus, nightState, roundCount });
 
   return (
     <div className="mt-4 flex flex-wrap gap-2">
@@ -69,7 +92,7 @@ const ActionBar = ({
       )}
       {phase === GamePhase.NIGHT_WITCH && me?.role === Role.WITCH && (
         <>
-          <button onClick={onWitchSave} disabled={isProcessingAI || !witchStatus.hasSave || !nightState.wolfKillId} className="action-button"><FlaskConical className="w-4 h-4" />{actionLabel('SAVE', language)}</button>
+          <button onClick={onWitchSave} disabled={isProcessingAI || !canSave} className="action-button"><FlaskConical className="w-4 h-4" />{actionLabel('SAVE', language)}</button>
           <button onClick={onAction} disabled={isProcessingAI || !witchStatus.hasPoison || !selectedAlive} className="action-button danger"><Skull className="w-4 h-4" />{actionLabel('POISON', language)}</button>
           <button onClick={onWitchSkip} disabled={isProcessingAI} className="action-button muted">{actionLabel('PASS', language)}</button>
         </>

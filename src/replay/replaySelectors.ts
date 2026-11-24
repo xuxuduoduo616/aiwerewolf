@@ -19,11 +19,16 @@
 import type {
   ReplayBeliefScore,
   ReplayBeliefSnapshot,
+  ReplayDecisionActionType,
+  ReplayDecisionCandidate,
+  ReplayDecisionOutcome,
+  ReplayDecisionTrace,
   ReplayPlayerSeat,
   ReplayRecord,
   ReplayVote,
   ReplayWolfChatEntry,
 } from './replayTypes';
+import type { GamePhase } from '../types';
 
 export const SUSPICION_LEVELS = [0, 0.25, 0.5, 0.75, 1] as const;
 export const VOTE_REASON_PLACEHOLDER = 'No reason recorded.';
@@ -379,4 +384,176 @@ export const buildWolfChatGroups = (
   return [...byRound.entries()]
     .sort(([a], [b]) => a - b)
     .map(([round, rows]) => ({ round, rows }));
+};
+
+export interface ReplaySuspicionMatrixRow {
+  actorId: number;
+  scores: Record<number, number | null>;
+}
+
+export interface ReplaySuspicionMatrix {
+  round: number;
+  source: 'preVote' | 'postVote';
+  seats: number[];
+  rows: ReplaySuspicionMatrixRow[];
+}
+
+export interface ReplayDecisionExplanation {
+  round: number;
+  phase?: GamePhase;
+  actorId: number;
+  actionType: ReplayDecisionActionType;
+  outcome: ReplayDecisionOutcome;
+  targetId: number | null;
+  reason: string;
+  topCandidates: ReplayDecisionCandidate[];
+  evidenceEventIds: string[];
+  tieBroken: boolean;
+  randomized: boolean;
+  fallback: boolean;
+  latencyMs: number;
+}
+
+const readSnapshotArray = (raw: unknown): ReplayBeliefSnapshot[] => {
+  if (!Array.isArray(raw)) return [];
+  const seen = new Set<string>();
+  const snapshots: ReplayBeliefSnapshot[] = [];
+  for (const value of raw) {
+    const snapshot = asRecord(value);
+    if (!snapshot) continue;
+    const round = toRound(snapshot.round);
+    const actorId = toSeat(snapshot.actorId);
+    if (round === null || actorId === null) continue;
+    const key = `${round}:${actorId}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    const scores: ReplayBeliefScore[] = [];
+    if (Array.isArray(snapshot.scores)) {
+      for (const entryValue of snapshot.scores) {
+        const entry = asRecord(entryValue);
+        if (!entry) continue;
+        const targetId = toSeat(entry.targetId);
+        const score = toScore(entry.score);
+        if (targetId === null || score === null) continue;
+        scores.push({ targetId, score });
+      }
+    }
+    snapshots.push({ round, actorId, scores });
+  }
+  return snapshots;
+};
+
+/**
+ * Full `actor × target` suspicion grid for one round. Prefers uncontaminated
+ * `preVoteBeliefSnapshots` when present, falling back to `beliefSnapshots`.
+ */
+export const buildFullSuspicionMatrix = (
+  replay: ReplayRecord | null | undefined,
+  round?: number,
+): ReplaySuspicionMatrix | null => {
+  const preVote = readSnapshotArray(replay?.preVoteBeliefSnapshots);
+  const postVote = readSnapshotArray(replay?.beliefSnapshots);
+
+  const hasRequestedPreVote =
+    preVote.length > 0 && (round === undefined || preVote.some(s => s.round === round));
+  const chosenSnapshots = hasRequestedPreVote ? preVote : postVote;
+  if (chosenSnapshots.length === 0) return null;
+
+  const targetRound =
+    round !== undefined
+      ? round
+      : Math.max(...chosenSnapshots.map(snapshot => snapshot.round));
+  const roundSnapshots = chosenSnapshots
+    .filter(snapshot => snapshot.round === targetRound)
+    .sort((a, b) => a.actorId - b.actorId);
+  if (roundSnapshots.length === 0) return null;
+
+  const players = readPlayers(replay);
+  const seatSet = new Set<number>(players.map(player => player.seat));
+  for (const snapshot of roundSnapshots) {
+    seatSet.add(snapshot.actorId);
+    for (const entry of snapshot.scores) seatSet.add(entry.targetId);
+  }
+  const seats = [...seatSet].sort((a, b) => a - b);
+
+  const rows: ReplaySuspicionMatrixRow[] = roundSnapshots.map(snapshot => {
+    const scoreByTarget = new Map(snapshot.scores.map(entry => [entry.targetId, entry.score]));
+    const scores: Record<number, number | null> = {};
+    for (const seat of seats) {
+      scores[seat] = seat === snapshot.actorId ? null : (scoreByTarget.get(seat) ?? null);
+    }
+    return { actorId: snapshot.actorId, scores };
+  });
+
+  return {
+    round: targetRound,
+    source: hasRequestedPreVote ? 'preVote' : 'postVote',
+    seats,
+    rows,
+  };
+};
+
+/**
+ * Summarize structured per-action decision traces for post-game explainability.
+ * Optionally filters to a single `actorId`.
+ */
+export const buildDecisionExplanations = (
+  replay: ReplayRecord | null | undefined,
+  actorId?: number,
+): ReplayDecisionExplanation[] => {
+  const raw = replay?.decisionTraces;
+  if (!Array.isArray(raw)) return [];
+
+  const explanations: ReplayDecisionExplanation[] = [];
+  for (const value of raw) {
+    const trace = value as ReplayDecisionTrace | null;
+    if (!trace || typeof trace !== 'object') continue;
+    const round = toRound(trace.round);
+    const traceActorId = toSeat(trace.actorId);
+    if (round === null || traceActorId === null) continue;
+    if (actorId !== undefined && traceActorId !== actorId) continue;
+
+    let targetId: number | null = null;
+    if (trace.targetId !== null && trace.targetId !== undefined) {
+      targetId = toSeat(trace.targetId);
+    }
+
+    const candidates: ReplayDecisionCandidate[] = Array.isArray(trace.candidates)
+      ? trace.candidates
+          .filter(
+            (candidate): candidate is ReplayDecisionCandidate =>
+              Boolean(candidate && typeof candidate === 'object') &&
+              toSeat(candidate.targetId) !== null &&
+              typeof candidate.score === 'number' &&
+              Number.isFinite(candidate.score),
+          )
+          .sort((a, b) => (b.score - a.score) || (a.targetId - b.targetId))
+          .slice(0, 3)
+          .map(candidate => ({ targetId: candidate.targetId, score: candidate.score }))
+      : [];
+
+    const evidenceEventIds = Array.isArray(trace.evidenceEventIds)
+      ? trace.evidenceEventIds.filter((id): id is string => typeof id === 'string' && id.length > 0)
+      : [];
+
+    const trimmedReason = typeof trace.reason === 'string' ? trace.reason.trim() : '';
+
+    explanations.push({
+      round,
+      ...(trace.phase ? { phase: trace.phase } : {}),
+      actorId: traceActorId,
+      actionType: trace.actionType,
+      outcome: trace.outcome,
+      targetId,
+      reason: trimmedReason.length > 0 ? trimmedReason : VOTE_REASON_PLACEHOLDER,
+      topCandidates: candidates,
+      evidenceEventIds,
+      tieBroken: Boolean(trace.tieBroken),
+      randomized: Boolean(trace.randomized),
+      fallback: Boolean(trace.fallback),
+      latencyMs: typeof trace.latencyMs === 'number' && Number.isFinite(trace.latencyMs) ? trace.latencyMs : 0,
+    });
+  }
+
+  return explanations.sort((a, b) => a.round - b.round);
 };

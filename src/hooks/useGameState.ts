@@ -24,6 +24,7 @@ import {
   applyElimination,
   applyNightResolution,
   buildGameRecordSummary,
+  canWitchSelfSave,
   createSuspicionMap,
   createVoteRecords,
   getRoleCamp,
@@ -36,6 +37,7 @@ import { DEFAULT_DISPLAY_LANGUAGE, pickTranslationSource, type DisplayLanguage }
 import * as speechAudio from '../services/speechAudio';
 import { endMatch, installPageLifecycleCapture, startMatch } from '../services/matchTelemetry';
 import { globalBeliefTracker } from '../ai/beliefTracker';
+import { selectAction, type ActionDecision } from '../ai/actionSelector';
 import { preloadSpeechPools } from '../services/speechLibrary';
 import { shuffleRoles } from '../services/roleDeal';
 import { createReplayRecorder, saveReplay, type ReplayRecorder } from '../replay';
@@ -335,6 +337,7 @@ export function useGameState(authContext: AuthContext) {
   const replayRecorderRef = useRef<ReplayRecorder | null>(null);
   const replaySavedRef = useRef(false);
   const replayLastBeliefRoundRef = useRef<number | null>(null);
+  const replayLastPreVoteBeliefRoundRef = useRef<number | null>(null);
   const replayLastPhaseKeyRef = useRef<string | null>(null);
   const generation = matchGenerationRef.current;
   const isCurrentMatch = () => matchActiveRef.current && generation === matchGenerationRef.current;
@@ -451,6 +454,8 @@ export function useGameState(authContext: AuthContext) {
     // in-game leave from a page-lifecycle abandonment.
     if (!winner) endMatch({ completed: false, phase, rounds: roundCount, reason: 'leave-game' });
     invalidateMatch();
+    resetAIMemory();
+    globalBeliefTracker.reset();
     setPause({ isPaused: false });
     setIsProcessingAI(false);
     setCurrentSpeaker(null);
@@ -490,12 +495,9 @@ export function useGameState(authContext: AuthContext) {
    * seats that were alive at capture time, so `scores.length === alive - 1`.
    * This is a read-only `snapshot()` call — no belief state is modified.
    */
-  const recordReplayBeliefSnapshots = (round: number) => {
-    const recorder = replayRecorderRef.current;
-    if (!recorder || !matchActiveRef.current) return;
-    if (replayLastBeliefRoundRef.current === round) return;
+  const buildCurrentBeliefSnapshots = (round: number) => {
     const alive = players.filter(player => player.isAlive);
-    const snapshots = alive
+    return alive
       .filter(player => !player.isHuman)
       .map(player => ({
         round,
@@ -507,9 +509,35 @@ export function useGameState(authContext: AuthContext) {
       }))
       // A tracker that has not been initialized yet has no beliefs to record.
       .filter(snapshot => snapshot.scores.length > 0);
+  };
+
+  const recordReplayBeliefSnapshots = (round: number) => {
+    const recorder = replayRecorderRef.current;
+    if (!recorder || !matchActiveRef.current) return;
+    if (replayLastBeliefRoundRef.current === round) return;
+    const snapshots = buildCurrentBeliefSnapshots(round);
     if (snapshots.length === 0) return;
     replayLastBeliefRoundRef.current = round;
     recorder.recordBeliefSnapshots(snapshots);
+  };
+
+  const recordReplayPreVoteBeliefSnapshots = (round: number) => {
+    const recorder = replayRecorderRef.current;
+    if (!recorder || !matchActiveRef.current) return;
+    if (replayLastPreVoteBeliefRoundRef.current === round) return;
+    const snapshots = buildCurrentBeliefSnapshots(round);
+    if (snapshots.length === 0) return;
+    replayLastPreVoteBeliefRoundRef.current = round;
+    recorder.recordPreVoteBeliefSnapshots(snapshots);
+  };
+
+  const recordDecisionTrace = (decision: ActionDecision | null | undefined) => {
+    const recorder = replayRecorderRef.current;
+    if (!recorder || !matchActiveRef.current || !decision?.trace) return;
+    recorder.recordDecisionTrace({
+      ...decision.trace,
+      ...(decision.reason ? { reason: decision.reason } : {}),
+    });
   };
 
   // H2-A: capture the ordered phase sequence from state. setPhase() and the
@@ -551,7 +579,7 @@ export function useGameState(authContext: AuthContext) {
   // At most one player clock is active. Store milliseconds when paused,
   // including the fractional second hidden by the displayed timer.
   useEffect(() => {
-    const wolfPhase = phase === GamePhase.NIGHT_WEREWOLVES;
+    const wolfPhase = phase === GamePhase.NIGHT_WEREWOLVES && Boolean(me?.isAlive && me.role === Role.WEREWOLF);
     const humanVoting = phase === GamePhase.DAY_VOTING && me?.isAlive && me.canVote;
     const humanSpeaking = phase === GamePhase.DAY_DISCUSSION && currentSpeaker?.id === MY_PLAYER_ID;
     if (!wolfPhase) setWolfCountdown(null);
@@ -701,6 +729,13 @@ export function useGameState(authContext: AuthContext) {
     }
   }, [winner, phase, roundCount, players]);
 
+  const pickRandomPlayer = (candidates: Player[]): Player | undefined => {
+    if (candidates.length === 0) return undefined;
+    const raw = Math.random();
+    const clamped = Number.isFinite(raw) ? Math.min(Math.max(raw, 0), 1 - Number.EPSILON) : 0;
+    return candidates[Math.floor(clamped * candidates.length)];
+  };
+
   const addLog = (
     message: string,
     isSystem: boolean,
@@ -708,6 +743,7 @@ export function useGameState(authContext: AuthContext) {
     translation?: string,
     tone: GameLog['tone'] = isSystem ? 'system' : 'speech',
     dialogueSource?: DialogueSource,
+    visibility?: GameLog['visibility'],
   ): string => {
     const id = `${Date.now()}-${Math.random()}`;
     setLogs(prev => [
@@ -721,6 +757,7 @@ export function useGameState(authContext: AuthContext) {
         speakerId,
         tone,
         ...(dialogueSource ? { dialogueSource } : {}),
+        ...(visibility ? { visibility } : {}),
       },
     ]);
     return id;
@@ -793,6 +830,7 @@ export function useGameState(authContext: AuthContext) {
         ? [`狼队友：${basePlayers.filter(p => p.role === Role.WEREWOLF && p.id !== player.id).map(p => `${p.id}号`).join('、') || '无'}`]
         : [],
     }));
+    globalBeliefTracker.init(nextPlayers);
 
     // H2-A: a fresh in-memory recorder per match. It snapshots the roster as
     // seat + role + isHuman only (never the player name) and writes nothing
@@ -806,6 +844,7 @@ export function useGameState(authContext: AuthContext) {
     });
     replaySavedRef.current = false;
     replayLastBeliefRoundRef.current = null;
+    replayLastPreVoteBeliefRoundRef.current = null;
     replayLastPhaseKeyRef.current = null;
 
     setConfig(nextConfig);
@@ -833,6 +872,7 @@ export function useGameState(authContext: AuthContext) {
         translation: `Game start. Your role is ${ROLE_LABELS_EN[nextPlayers[0].role]}. ${ROLE_DESCRIPTIONS_EN[nextPlayers[0].role]}`,
         isSystem: true,
         tone: 'system',
+        visibility: 'human-private',
       },
       ...localProxyNotice,
     ]);
@@ -847,6 +887,7 @@ export function useGameState(authContext: AuthContext) {
           translation: `Your werewolf teammates: ${teammates.join(', ') || 'none'}. Open the werewolf channel at night.`,
           isSystem: true,
           tone: 'wolf',
+          visibility: 'wolf-private',
         },
       ]);
     }
@@ -896,21 +937,33 @@ export function useGameState(authContext: AuthContext) {
     }
     // The same action selector used by an AI-only pack owns the timeout kill.
     void runCurrentAIPhase(async () => {
+      const currentRound = Math.max(1, roundCount);
       const leader = players.find(player => player.isAlive && player.role === Role.WEREWOLF && !player.isHuman);
-      const action = leader ? await generateAIAction(leader, players, logs, 'KILL', voteRecords) : null;
+      const action = leader
+        ? await generateAIAction(leader, players, logs, 'KILL', voteRecords, currentRound, { phase: GamePhase.NIGHT_WEREWOLVES })
+        : null;
       await runWhenActive(() => {
         const valid = players.filter(player => player.isAlive && player.role !== Role.WEREWOLF);
-        const target = valid.find(player => player.id === action?.targetId) ?? valid[0];
+        const target = valid.find(player => player.id === action?.targetId) ?? pickRandomPlayer(valid);
         wolfKillRef.current = target?.id ?? null;
+        recordDecisionTrace(action);
+        replayRecorderRef.current?.recordNightAction({
+          round: currentRound,
+          phase: GamePhase.NIGHT_WEREWOLVES,
+          actorId: leader?.id ?? MY_PLAYER_ID,
+          actionType: 'KILL',
+          targetId: wolfKillRef.current,
+          outcome: wolfKillRef.current !== null ? 'ACT' : 'NO_TARGET',
+        });
         setNightState(prev => ({ ...prev, wolfKillId: wolfKillRef.current }));
-        addLog(target ? `Time is up. Your pack chose Player ${target.id}.` : 'Time is up. No valid night target remains.', true, undefined, undefined, 'wolf');
+        addLog(target ? `Time is up. Your pack chose Player ${target.id}.` : 'Time is up. No valid night target remains.', true, undefined, undefined, 'wolf', undefined, 'wolf-private');
         setPhase(GamePhase.NIGHT_SEER);
       });
     }, () => {
-      const target = players.find(player => player.isAlive && player.role !== Role.WEREWOLF);
+      const target = pickRandomPlayer(players.filter(player => player.isAlive && player.role !== Role.WEREWOLF));
       wolfKillRef.current = target?.id ?? null;
       setNightState(prev => ({ ...prev, wolfKillId: wolfKillRef.current }));
-      addLog('Time is up. The pack used a fallback night target.', true, undefined, undefined, 'wolf');
+      addLog('Time is up. The pack used a fallback night target.', true, undefined, undefined, 'wolf', undefined, 'wolf-private');
       setPhase(GamePhase.NIGHT_SEER);
     });
   };
@@ -931,14 +984,14 @@ export function useGameState(authContext: AuthContext) {
 
   const appendWolfChat = (entry: WolfChatMessage): string | undefined => {
     // A public badge change would reveal which seats spoke privately at night.
-    if ((!mixedModels || me?.role === Role.WEREWOLF) && entry.speakerId !== MY_PLAYER_ID) {
+    if (me?.role === Role.WEREWOLF && entry.speakerId !== MY_PLAYER_ID) {
       updateDialogueSource(entry.speakerId, entry.dialogueSource ?? LOCAL_DIALOGUE_SOURCE);
     }
     wolfHistoryRef.current = [...wolfHistoryRef.current, entry];
     setWolfChat(wolfHistoryRef.current);
     replayRecorderRef.current?.recordWolfChat({ round: entry.round, speakerId: entry.speakerId, message: entry.message });
     // Private entries never enter the non-wolf human's log, even as a spectator.
-    if (me?.role === Role.WEREWOLF) return addLog(entry.message, false, entry.speakerId, entry.message, 'wolf', entry.dialogueSource);
+    if (me?.role === Role.WEREWOLF) return addLog(entry.message, false, entry.speakerId, entry.message, 'wolf', entry.dialogueSource, 'wolf-private');
     return undefined;
   };
 
@@ -986,7 +1039,7 @@ export function useGameState(authContext: AuthContext) {
           const entry = chat.find(entry => entry.speakerId === teammate.id && acceptedWolfEntry(entry));
           if (mixedModels && !entry) {
             updateDialogueSource(teammate.id, UNAVAILABLE_DIALOGUE_SOURCE);
-            addLog(`Player ${teammate.id}’s reply was skipped. No model responded with usable dialogue.`, true, undefined, undefined, 'wolf');
+            addLog(`Player ${teammate.id}’s reply was skipped. No model responded with usable dialogue.`, true, undefined, undefined, 'wolf', undefined, 'wolf-private');
           }
           if (entry) {
             const logId = appendWolfChat(entry);
@@ -1049,16 +1102,32 @@ export function useGameState(authContext: AuthContext) {
     void runCurrentAIPhase(async () => {
       await loadChat();
       const leader = wolves[0];
-      const action = await runWhenActive(() => leader ? generateAIAction(leader, players, logs, 'KILL', voteRecords) : { targetId: null });
+      const currentRound = Math.max(1, roundCount);
+      const action = await runWhenActive(() =>
+        leader
+          ? generateAIAction(leader, players, logs, 'KILL', voteRecords, currentRound, { phase: GamePhase.NIGHT_WEREWOLVES })
+          : null,
+      );
       await runWhenActive(() => {
-        const fallback = players.find(player => player.isAlive && player.role !== Role.WEREWOLF);
+        const fallback = pickRandomPlayer(players.filter(player => player.isAlive && player.role !== Role.WEREWOLF));
         const targetId = action?.targetId || fallback?.id || null;
+        recordDecisionTrace(action);
+        if (leader) {
+          replayRecorderRef.current?.recordNightAction({
+            round: currentRound,
+            phase: GamePhase.NIGHT_WEREWOLVES,
+            actorId: leader.id,
+            actionType: 'KILL',
+            targetId,
+            outcome: targetId !== null ? 'ACT' : 'NO_TARGET',
+          });
+        }
         if (targetId) setNightState(prev => ({ ...prev, wolfKillId: targetId }));
         setPhase(GamePhase.NIGHT_SEER);
       });
     }, () => {
       addLog('AI error. Default wolf target used.', true, undefined, 'AI error. Default wolf target used.', 'system');
-      const fallback = players.find(player => player.isAlive && player.role !== Role.WEREWOLF);
+      const fallback = pickRandomPlayer(players.filter(player => player.isAlive && player.role !== Role.WEREWOLF));
       if (fallback) setNightState(prev => ({ ...prev, wolfKillId: fallback.id }));
       setPhase(GamePhase.NIGHT_SEER);
     });
@@ -1068,15 +1137,33 @@ export function useGameState(authContext: AuthContext) {
     if (me?.role === Role.SEER && me.isAlive) return;
     await runCurrentAIPhase(async () => {
       const seer = players.find(player => player.role === Role.SEER && player.isAlive);
-      const action = seer ? await generateAIAction(seer, players, logs, 'CHECK', voteRecords) : null;
+      const currentRound = Math.max(1, roundCount);
+      const action = seer
+        ? await generateAIAction(seer, players, logs, 'CHECK', voteRecords, currentRound, {
+            checkedTargetIds: globalBeliefTracker.getCheckedTargets(seer.id),
+            phase: GamePhase.NIGHT_SEER,
+          })
+        : null;
       await runWhenActive(() => {
+        recordDecisionTrace(action);
         const target = seer ? players.find(player => player.id === action?.targetId) : undefined;
+        if (seer) {
+          replayRecorderRef.current?.recordNightAction({
+            round: currentRound,
+            phase: GamePhase.NIGHT_SEER,
+            actorId: seer.id,
+            actionType: 'CHECK',
+            targetId: target?.id ?? null,
+            outcome: target ? 'ACT' : 'NO_TARGET',
+          });
+        }
         if (seer && target) {
           const isGood = target.role !== Role.WEREWOLF;
+          globalBeliefTracker.recordSeerCheck(seer.id, target.id, isGood);
           setAiSeerLastCheck({ targetId: target.id, isGood });
           // H2-A: AI seer path of the check chain.
           replayRecorderRef.current?.recordCheck({
-            round: Math.max(1, roundCount),
+            round: currentRound,
             actorId: seer.id,
             targetId: target.id,
             isGood,
@@ -1094,23 +1181,81 @@ export function useGameState(authContext: AuthContext) {
     if (me?.role === Role.WITCH && me.isAlive) return;
     await runCurrentAIPhase(async () => {
       const witch = players.find(player => player.role === Role.WITCH && player.isAlive);
+      const currentRound = Math.max(1, roundCount);
       let nextNight = { ...nightState };
       let nextWitch = { ...witchStatus };
+      const recordedDecisions: ActionDecision[] = [];
+      let nightActionType: 'SAVE' | 'POISON' | 'HOLD' = 'HOLD';
+      let nightActionTargetId: number | null = null;
+      // Unified Witch rule: once antidote is spent (!hasSave), the Witch cannot see tonight's wolf victim.
+      const visibleWolfKillId = witchStatus.hasSave ? nightState.wolfKillId : null;
+      let savedTonight = false;
       if (witch) {
-        const killedPlayer = players.find(player => player.id === nightState.wolfKillId);
-        if (nightState.wolfKillId && witchStatus.hasSave && killedPlayer?.role !== Role.WEREWOLF && Math.random() > 0.45) {
-          nextNight = { ...nextNight, witchSaved: true };
-          nextWitch = { ...nextWitch, hasSave: false };
-        } else if (witchStatus.hasPoison && Math.random() > 0.72) {
-          const action = await generateAIAction(witch, players, logs, 'POISON', voteRecords);
-          if (action.targetId && action.targetId !== nightState.wolfKillId) {
+        if (witchStatus.hasSave && visibleWolfKillId !== null) {
+          const saveDecision = selectAction(
+            witch,
+            players,
+            globalBeliefTracker,
+            'SAVE',
+            currentRound,
+            voteRecords,
+            DIFFICULTY_CONFIGS[difficulty].actionAccuracy,
+            { wolfKillId: visibleWolfKillId, hasSave: true, phase: GamePhase.NIGHT_WITCH },
+          );
+          recordedDecisions.push(saveDecision);
+          if (saveDecision.outcome === 'ACT' && saveDecision.targetId === visibleWolfKillId) {
+            savedTonight = true;
+            nightActionType = 'SAVE';
+            nightActionTargetId = visibleWolfKillId;
+            nextNight = { ...nextNight, witchSaved: true };
+            nextWitch = { ...nextWitch, hasSave: false };
+          }
+        }
+        if (!savedTonight && witchStatus.hasPoison) {
+          const excludedTargetIds = visibleWolfKillId !== null ? new Set([visibleWolfKillId]) : undefined;
+          const action = await generateAIAction(
+            witch,
+            players,
+            logs,
+            'POISON',
+            voteRecords,
+            currentRound,
+            { ...(excludedTargetIds ? { excludedTargetIds } : {}), phase: GamePhase.NIGHT_WITCH },
+          );
+          recordedDecisions.push(action);
+          if (action.outcome !== 'HOLD' && action.targetId && (visibleWolfKillId === null || action.targetId !== visibleWolfKillId)) {
+            nightActionType = 'POISON';
+            nightActionTargetId = action.targetId;
             nextNight = { ...nextNight, witchPoisonId: action.targetId };
             nextWitch = { ...nextWitch, hasPoison: false };
+          } else {
+            nightActionType = 'HOLD';
+            nightActionTargetId = null;
           }
         }
       }
       await runWhenActive(() => {
         if (witch) {
+          for (const decision of recordedDecisions) {
+            recordDecisionTrace(decision);
+          }
+          globalBeliefTracker.recordWitchInfo(
+            witch.id,
+            {
+              wolfKillId: visibleWolfKillId,
+              saved: savedTonight,
+              poisonTargetId: nightActionType === 'POISON' ? nightActionTargetId : null,
+            },
+            { round: currentRound },
+          );
+          replayRecorderRef.current?.recordNightAction({
+            round: currentRound,
+            phase: GamePhase.NIGHT_WITCH,
+            actorId: witch.id,
+            actionType: nightActionType,
+            targetId: nightActionTargetId,
+            outcome: nightActionType === 'HOLD' ? 'HOLD' : 'ACT',
+          });
           setNightState(nextNight);
           setWitchStatus(nextWitch);
         }
@@ -1135,8 +1280,21 @@ export function useGameState(authContext: AuthContext) {
 
   const handleDayAnnounce = () => {
     const outcome = applyNightResolution(players, nightState);
+    const currentRound = Math.max(1, roundCount);
     setPlayers(outcome.players);
     setDeadThisRound(outcome.deadIds);
+    for (const deadId of outcome.deadIds) {
+      const deadPlayer = outcome.players.find(player => player.id === deadId);
+      const revealedRole = deadPlayer?.isRevealed ? deadPlayer.role : null;
+      globalBeliefTracker.updateFromDeath(deadId, revealedRole, outcome.players, { round: currentRound });
+      replayRecorderRef.current?.recordElimination({
+        round: currentRound,
+        phase: GamePhase.DAY_ANNOUNCE,
+        targetId: deadId,
+        cause: deadId === nightState.witchPoisonId ? 'POISON' : 'NIGHT',
+        revealedRole,
+      });
+    }
     const msg = outcome.deadIds.length ? `Deaths: ${outcome.deadIds.join(', ')}` : 'Peaceful night.';
     const trans = outcome.deadIds.length
       ? `Eliminated last night: ${outcome.deadIds.map(id => `Player ${id}`).join(', ')}`
@@ -1182,11 +1340,34 @@ export function useGameState(authContext: AuthContext) {
         setPhase(GamePhase.DAY_HUNTER_SHOT);
         return;
       }
-      const targets = players.filter(player => player.isAlive && player.id !== hunter.id);
-      const target = targets[Math.floor(Math.random() * targets.length)];
+      const currentRound = Math.max(1, roundCount);
+      const shotDecision = selectAction(
+        hunter,
+        players,
+        globalBeliefTracker,
+        'SHOOT',
+        currentRound,
+        voteRecords,
+        DIFFICULTY_CONFIGS[difficulty].actionAccuracy,
+        { phase: GamePhase.DAY_HUNTER_CHECK },
+      );
+      recordDecisionTrace(shotDecision);
+      const target = shotDecision.targetId !== null
+        ? players.find(player => player.isAlive && player.id === shotDecision.targetId && player.id !== hunter.id)
+        : undefined;
       if (target) {
         addLog(`Hunter shoots Player ${target.id}.`, true, undefined, `Hunter shoots Player ${target.id}.`, 'action');
         const outcome = applyElimination(players, target.id, 'HUNTER');
+        const eliminatedTarget = outcome.players.find(player => player.id === target.id);
+        const revealedRole = eliminatedTarget?.isRevealed ? eliminatedTarget.role : null;
+        globalBeliefTracker.updateFromDeath(target.id, revealedRole, outcome.players, { round: currentRound });
+        replayRecorderRef.current?.recordElimination({
+          round: currentRound,
+          phase: GamePhase.DAY_HUNTER_CHECK,
+          targetId: target.id,
+          cause: 'HUNTER',
+          revealedRole,
+        });
         setPlayers(outcome.players);
         if (outcome.winner) {
           setWinner(outcome.winner);
@@ -1245,19 +1426,27 @@ export function useGameState(authContext: AuthContext) {
         nextSpeaker.role === Role.WEREWOLF ? wolfHistoryRef.current : [],
       );
       await runWhenActive(async () => {
+        const speechRound = Math.max(1, roundCount);
+        globalBeliefTracker.setRound(speechRound);
         commitSpeech?.();
         if (!response || (mixedModels && (!response[gameLanguage].trim() || !isVerifiedRemoteSource(dialogueSource, mixedModels)))) {
           skipUnavailableSpeech();
           return;
         }
         updateDialogueSource(nextSpeaker.id, dialogueSource);
+        const committedSpeechText = gameLanguage === 'zh' ? (response.zh || response.en) : (response.en || response.zh);
+        // Emit public speech VisibleEvent for AI speech commit (idempotent if commitSpeech already ingested it).
+        globalBeliefTracker.updateFromSpeech(nextSpeaker.id, committedSpeechText, players, {
+          round: speechRound,
+          phase: GamePhase.DAY_DISCUSSION,
+        });
         const ttsLogId = addLog(response.en, false, nextSpeaker.id, response.zh, 'speech', dialogueSource);
         // H2-A: every AI public speech, as delivered in the match language.
         replayRecorderRef.current?.recordSpeech({
-          round: Math.max(1, roundCount),
+          round: speechRound,
           phase: GamePhase.DAY_DISCUSSION,
           speakerId: nextSpeaker.id,
-          text: gameLanguage === 'zh' ? (response.zh || response.en) : (response.en || response.zh),
+          text: committedSpeechText,
         });
         setSpokenPlayerIds(prev => new Set(prev).add(nextSpeaker.id));
         const ttsText = pickTranslationSource(
@@ -1299,7 +1488,11 @@ export function useGameState(authContext: AuthContext) {
       const votesByVoter: Record<number, number | null> = {};
       // H2-A: AI reasons come from the same action object used for the tally.
       const voteReasons: Record<number, string | undefined> = {};
+      const currentRound = Math.max(1, roundCount);
       const humanCanVote = Boolean(me?.isAlive && me.canVote);
+
+      // P1B: capture uncontaminated pre-vote belief snapshots BEFORE any updateFromVote runs.
+      recordReplayPreVoteBeliefSnapshots(currentRound);
 
       if (humanCanVote && humanTargetId) {
         votes[humanTargetId] = (votes[humanTargetId] || 0) + 1;
@@ -1315,12 +1508,16 @@ export function useGameState(authContext: AuthContext) {
         await runWhenActive(() => waitForMatch(180));
         const action = await runWhenActive(async () => {
           try {
-            return await generateAIAction(voter, players, logs, 'VOTE', voteRecords);
+            return await generateAIAction(voter, players, logs, 'VOTE', voteRecords, currentRound, {
+              phase: GamePhase.DAY_VOTING,
+              deferVoteBeliefUpdate: true,
+            });
           } catch {
             // Failed AI vote counts as abstain — keep the tally moving.
             return null;
           }
         });
+        recordDecisionTrace(action);
         const targetId = action?.targetId ?? null;
         if (action?.reason) voteReasons[voter.id] = action.reason;
         const counted = await runWhenActive(() => {
@@ -1343,10 +1540,11 @@ export function useGameState(authContext: AuthContext) {
     votesByVoter: Record<number, number | null>,
     voteReasons: Record<number, string | undefined> = {},
   ) => {
-    const newVoteRecords = createVoteRecords(Math.max(1, roundCount), votesByVoter);
+    const settleRound = Math.max(1, roundCount);
+    const newVoteRecords = createVoteRecords(settleRound, votesByVoter);
     setVoteRecords(prev => [...prev, ...newVoteRecords]);
     // H2-A: one vote entry per voter (abstentions stay as `targetId: null`)
-    // plus a per-round belief snapshot after the tally is settled.
+    // plus simultaneous belief broadcast AFTER all ballots are cast and BEFORE post-vote snapshot.
     for (const vote of newVoteRecords) {
       const reason = voteReasons[vote.voterId];
       replayRecorderRef.current?.recordVote({
@@ -1355,8 +1553,14 @@ export function useGameState(authContext: AuthContext) {
         targetId: vote.targetId,
         ...(reason ? { reason } : {}),
       });
+      if (vote.targetId !== null) {
+        globalBeliefTracker.updateFromVote(vote.voterId, vote.targetId, {
+          players,
+          round: settleRound,
+        });
+      }
     }
-    recordReplayBeliefSnapshots(Math.max(1, roundCount));
+    recordReplayBeliefSnapshots(settleRound);
     addLog(
       `Vote record: ${newVoteRecords.map(v => `${v.voterId}->${v.targetId || 'skip'}`).join(', ')}`,
       true,
@@ -1372,15 +1576,35 @@ export function useGameState(authContext: AuthContext) {
       return;
     }
 
+    const currentRound = Math.max(1, roundCount);
     const target = players.find(player => player.id === eliminatedPlayerId);
     const outcome = applyElimination(players, eliminatedPlayerId, 'VOTE');
     setPlayers(outcome.players);
     if (outcome.sparedByIdiot) {
+      globalBeliefTracker.updateFromIdiotFlip(eliminatedPlayerId, outcome.players, { round: currentRound });
+      replayRecorderRef.current?.recordElimination({
+        round: currentRound,
+        phase: GamePhase.DAY_VOTING,
+        targetId: eliminatedPlayerId,
+        cause: 'IDIOT_FLIP',
+        revealedRole: Role.IDIOT,
+        survived: true,
+      });
       addLog(`Player ${eliminatedPlayerId} reveals Idiot and survives.`, true, undefined, `Player ${eliminatedPlayerId} reveals as the Idiot and survives, but loses their vote.`, 'action');
       setPhase(GamePhase.NIGHT_START);
       return;
     }
 
+    const eliminatedSeat = outcome.players.find(player => player.id === eliminatedPlayerId);
+    const revealedExileRole = eliminatedSeat?.isRevealed ? eliminatedSeat.role : null;
+    globalBeliefTracker.updateFromDeath(eliminatedPlayerId, revealedExileRole, outcome.players, { round: currentRound });
+    replayRecorderRef.current?.recordElimination({
+      round: currentRound,
+      phase: GamePhase.DAY_VOTING,
+      targetId: eliminatedPlayerId,
+      cause: 'VOTE',
+      revealedRole: revealedExileRole,
+    });
     addLog(`Player ${eliminatedPlayerId} was exiled.`, true, undefined, `Player ${eliminatedPlayerId} was exiled.`, 'vote');
     if (outcome.winner) {
       setWinner(outcome.winner);
@@ -1395,10 +1619,32 @@ export function useGameState(authContext: AuthContext) {
         setPhase(GamePhase.DAY_HUNTER_SHOT);
         return;
       }
-      const aliveTargets = outcome.players.filter(player => player.isAlive && player.id !== target.id);
-      const shot = aliveTargets[Math.floor(Math.random() * aliveTargets.length)];
+      const shotDecision = selectAction(
+        target,
+        outcome.players,
+        globalBeliefTracker,
+        'SHOOT',
+        currentRound,
+        voteRecords,
+        DIFFICULTY_CONFIGS[difficulty].actionAccuracy,
+        { phase: GamePhase.DAY_HUNTER_SHOT },
+      );
+      recordDecisionTrace(shotDecision);
+      const shot = shotDecision.targetId !== null
+        ? outcome.players.find(player => player.isAlive && player.id === shotDecision.targetId && player.id !== target.id)
+        : undefined;
       if (shot) {
         const shotOutcome = applyElimination(outcome.players, shot.id, 'HUNTER');
+        const shotSeat = shotOutcome.players.find(player => player.id === shot.id);
+        const revealedShotRole = shotSeat?.isRevealed ? shotSeat.role : null;
+        globalBeliefTracker.updateFromDeath(shot.id, revealedShotRole, shotOutcome.players, { round: currentRound });
+        replayRecorderRef.current?.recordElimination({
+          round: currentRound,
+          phase: GamePhase.DAY_HUNTER_SHOT,
+          targetId: shot.id,
+          cause: 'HUNTER',
+          revealedRole: revealedShotRole,
+        });
         addLog(`Hunter shoots Player ${shot.id}.`, true, undefined, `Hunter shoots Player ${shot.id}.`, 'action');
         setPlayers(shotOutcome.players);
         if (shotOutcome.winner) {
@@ -1417,10 +1663,17 @@ export function useGameState(authContext: AuthContext) {
     const nextSpeech = normalizeHumanSpeech(userInput);
     if (!nextSpeech) return;
     stopPlayerClock();
-    addLog(nextSpeech, false, MY_PLAYER_ID, nextSpeech, 'speech');
+    const speechRound = Math.max(1, roundCount);
+    const logId = addLog(nextSpeech, false, MY_PLAYER_ID, nextSpeech, 'speech');
+    globalBeliefTracker.setRound(speechRound);
+    globalBeliefTracker.updateFromSpeech(MY_PLAYER_ID, nextSpeech, players, {
+      round: speechRound,
+      phase: GamePhase.DAY_DISCUSSION,
+      eventId: `speech-human-r${speechRound}-s${MY_PLAYER_ID}-${logId}`,
+    });
     // H2-A: human speech verbatim (seat only, never the player name).
     replayRecorderRef.current?.recordSpeech({
-      round: Math.max(1, roundCount),
+      round: speechRound,
       phase: GamePhase.DAY_DISCUSSION,
       speakerId: MY_PLAYER_ID,
       text: nextSpeech,
@@ -1432,7 +1685,18 @@ export function useGameState(authContext: AuthContext) {
 
   const handleHunterShot = (targetId: number) => {
     if (!pendingHunterId || !isTargetableAliveOther(players, pendingHunterId, targetId)) return;
+    const currentRound = Math.max(1, roundCount);
     const outcome = applyElimination(players, targetId, 'HUNTER');
+    const shotSeat = outcome.players.find(player => player.id === targetId);
+    const revealedShotRole = shotSeat?.isRevealed ? shotSeat.role : null;
+    globalBeliefTracker.updateFromDeath(targetId, revealedShotRole, outcome.players, { round: currentRound });
+    replayRecorderRef.current?.recordElimination({
+      round: currentRound,
+      phase: GamePhase.DAY_HUNTER_SHOT,
+      targetId,
+      cause: 'HUNTER',
+      revealedRole: revealedShotRole,
+    });
     addLog(`Hunter shoots Player ${targetId}.`, true, undefined, `Hunter shoots Player ${targetId}.`, 'action');
     setPlayers(outcome.players);
     setPendingHunterId(null);
@@ -1459,47 +1723,111 @@ export function useGameState(authContext: AuthContext) {
       if (!playerClockRef.current || wolfKillRef.current !== null || !target.isAlive || target.role === Role.WEREWOLF) return;
       wolfKillRef.current = targetId;
       setNightState(prev => ({ ...prev, wolfKillId: targetId }));
-      addLog(`Wolf target locked: Player ${targetId}.`, true, undefined, `Werewolf target locked: Player ${targetId}.`, 'wolf');
+      replayRecorderRef.current?.recordNightAction({
+        round: Math.max(1, roundCount),
+        phase: GamePhase.NIGHT_WEREWOLVES,
+        actorId: MY_PLAYER_ID,
+        actionType: 'KILL',
+        targetId,
+        outcome: 'ACT',
+      });
+      addLog(`Wolf target locked: Player ${targetId}.`, true, undefined, `Werewolf target locked: Player ${targetId}.`, 'wolf', undefined, 'wolf-private');
       if (phaseScope.wolfResponseStarted && !phaseScope.wolfComposing) void requestWolfResponses();
     } else if (phase === GamePhase.NIGHT_SEER && me.role === Role.SEER) {
       if (!isTargetableAliveOther(players, MY_PLAYER_ID, targetId)) return;
       const isGood = target.role !== Role.WEREWOLF;
-      addLog(`Check Player ${targetId}: ${isGood ? 'GOOD' : 'WOLF'}.`, true, undefined, `Player ${targetId} check result: ${isGood ? 'GOOD' : 'WOLF'}.`, 'action');
+      const currentRound = Math.max(1, roundCount);
+      globalBeliefTracker.recordSeerCheck(MY_PLAYER_ID, targetId, isGood);
+      addLog(`Check Player ${targetId}: ${isGood ? 'GOOD' : 'WOLF'}.`, true, undefined, `Player ${targetId} check result: ${isGood ? 'GOOD' : 'WOLF'}.`, 'action', undefined, 'human-private');
       setAiSeerLastCheck({ targetId, isGood });
       // H2-A: human seer path of the check chain.
       replayRecorderRef.current?.recordCheck({
-        round: Math.max(1, roundCount),
+        round: currentRound,
         actorId: MY_PLAYER_ID,
         targetId,
         isGood,
       });
+      replayRecorderRef.current?.recordNightAction({
+        round: currentRound,
+        phase: GamePhase.NIGHT_SEER,
+        actorId: MY_PLAYER_ID,
+        actionType: 'CHECK',
+        targetId,
+        outcome: 'ACT',
+      });
       setPhase(GamePhase.NIGHT_WITCH);
     } else if (phase === GamePhase.NIGHT_WITCH && me.role === Role.WITCH) {
       if (!isTargetableAliveOther(players, MY_PLAYER_ID, targetId) || !witchStatus.hasPoison) return;
+      const currentRound = Math.max(1, roundCount);
+      const visibleWolfKillId = witchStatus.hasSave ? nightState.wolfKillId : null;
       setNightState(prev => ({ ...prev, witchPoisonId: targetId }));
       setWitchStatus(prev => ({ ...prev, hasPoison: false }));
-      addLog(`Poison Player ${targetId}.`, true, undefined, `You chose to poison Player ${targetId}.`, 'action');
+      globalBeliefTracker.recordWitchInfo(
+        MY_PLAYER_ID,
+        { wolfKillId: visibleWolfKillId, saved: false, poisonTargetId: targetId },
+        { round: currentRound },
+      );
+      replayRecorderRef.current?.recordNightAction({
+        round: currentRound,
+        phase: GamePhase.NIGHT_WITCH,
+        actorId: MY_PLAYER_ID,
+        actionType: 'POISON',
+        targetId,
+        outcome: 'ACT',
+      });
+      addLog(`Poison Player ${targetId}.`, true, undefined, `You chose to poison Player ${targetId}.`, 'action', undefined, 'human-private');
       setPhase(GamePhase.DAY_ANNOUNCE);
     } else if (phase === GamePhase.DAY_HUNTER_SHOT) {
       handleHunterShot(targetId);
     } else if (phase === GamePhase.DAY_VOTING) {
-      if (!target.isAlive || target.id === MY_PLAYER_ID) return;
+      if (!me.canVote || !target.isAlive || target.id === MY_PLAYER_ID) return;
       finishVote(targetId);
     }
   };
 
   const handleWitchSave = () => {
     if (!canProgress() || phase !== GamePhase.NIGHT_WITCH || processingScopeRef.current) return;
-    if (!witchStatus.hasSave || !nightState.wolfKillId) return;
+    if (!me?.isAlive || me.role !== Role.WITCH) return;
+    const currentRound = Math.max(1, roundCount);
+    if (!witchStatus.hasSave || !canWitchSelfSave(currentRound, MY_PLAYER_ID, nightState.wolfKillId)) return;
     setNightState(prev => ({ ...prev, witchSaved: true }));
     setWitchStatus(prev => ({ ...prev, hasSave: false }));
-    addLog('Witch used antidote.', true, undefined, `You used the antidote to save Player ${nightState.wolfKillId}.`, 'action');
+    globalBeliefTracker.recordWitchInfo(
+      MY_PLAYER_ID,
+      { wolfKillId: nightState.wolfKillId, saved: true, poisonTargetId: null },
+      { round: currentRound },
+    );
+    replayRecorderRef.current?.recordNightAction({
+      round: currentRound,
+      phase: GamePhase.NIGHT_WITCH,
+      actorId: MY_PLAYER_ID,
+      actionType: 'SAVE',
+      targetId: nightState.wolfKillId,
+      outcome: 'ACT',
+    });
+    addLog('Witch used antidote.', true, undefined, `You used the antidote to save Player ${nightState.wolfKillId}.`, 'action', undefined, 'human-private');
     setPhase(GamePhase.DAY_ANNOUNCE);
   };
 
   const skipWitch = () => {
     if (!canProgress() || phase !== GamePhase.NIGHT_WITCH || processingScopeRef.current) return;
-    addLog('Witch passed.', true, undefined, 'The Witch chose not to use a potion.', 'action');
+    if (!me?.isAlive || me.role !== Role.WITCH) return;
+    const currentRound = Math.max(1, roundCount);
+    const visibleWolfKillId = witchStatus.hasSave ? nightState.wolfKillId : null;
+    globalBeliefTracker.recordWitchInfo(
+      MY_PLAYER_ID,
+      { wolfKillId: visibleWolfKillId, saved: false, poisonTargetId: null },
+      { round: currentRound },
+    );
+    replayRecorderRef.current?.recordNightAction({
+      round: currentRound,
+      phase: GamePhase.NIGHT_WITCH,
+      actorId: MY_PLAYER_ID,
+      actionType: 'HOLD',
+      targetId: null,
+      outcome: 'HOLD',
+    });
+    addLog('Witch passed.', true, undefined, 'The Witch chose not to use a potion.', 'action', undefined, 'human-private');
     setPhase(GamePhase.DAY_ANNOUNCE);
   };
 

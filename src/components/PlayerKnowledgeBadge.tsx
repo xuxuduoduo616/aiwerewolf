@@ -6,6 +6,12 @@ type WitchKnowledgeProps = {
   viewer: Viewer;
   phase: GamePhase;
   nightState: NightState;
+  /**
+   * Unified Witch rule: once the antidote is spent on a previous night,
+   * the Witch cannot see subsequent werewolf targets. Defaults to `true`
+   * when omitted for backward compatibility with existing callers.
+   */
+  canSeeWitchVictim?: boolean;
 };
 
 const WITCH_KNOWLEDGE_PHASES = new Set([
@@ -17,8 +23,8 @@ const WITCH_KNOWLEDGE_PHASES = new Set([
   GamePhase.DAY_VOTING,
 ]);
 
-const witchVictim = ({ viewer, phase, nightState }: WitchKnowledgeProps) =>
-  viewer?.role === Role.WITCH && viewer.isAlive && WITCH_KNOWLEDGE_PHASES.has(phase)
+const witchVictim = ({ viewer, phase, nightState, canSeeWitchVictim = true }: WitchKnowledgeProps) =>
+  viewer?.role === Role.WITCH && viewer.isAlive && canSeeWitchVictim && WITCH_KNOWLEDGE_PHASES.has(phase)
     ? nightState.wolfKillId
     : null;
 

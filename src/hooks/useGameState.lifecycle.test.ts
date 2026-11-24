@@ -422,7 +422,7 @@ describe('pause and resume', () => {
     expect(game.phase).toBe(GamePhase.NIGHT_WEREWOLVES);
     await advance(1);
     expect(game.phase).toBe(GamePhase.NIGHT_SEER);
-    expect(game.nightState.wolfKillId).toBe(2);
+    expect(game.nightState.wolfKillId).toBe(5);
     expect(ai.generateWolfChat).toHaveBeenCalledTimes(2);
   });
 
@@ -691,9 +691,9 @@ describe('human-first private wolf discussion', () => {
 
   it('validates an illegal AI target at timeout and recovers from action failure', async () => {
     begin(); ai.generateAIAction.mockResolvedValueOnce({ targetId: 7 }); await advance(120_000);
-    expect(game.nightState.wolfKillId).toBe(2);
+    expect(game.nightState.wolfKillId).toBe(5);
     begin(); ai.generateAIAction.mockRejectedValueOnce(new Error('action failed')); await advance(120_000);
-    expect(game.phase).toBe(GamePhase.NIGHT_SEER); expect(game.nightState.wolfKillId).toBe(2);
+    expect(game.phase).toBe(GamePhase.NIGHT_SEER); expect(game.nightState.wolfKillId).toBe(5);
     expect(game.isProcessingAI).toBe(false);
   });
 

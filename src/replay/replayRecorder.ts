@@ -12,7 +12,15 @@ import {
   type ReplayBeliefScore,
   type ReplayBeliefSnapshot,
   type ReplayCheck,
+  type ReplayDecisionActionType,
+  type ReplayDecisionCandidate,
+  type ReplayDecisionOutcome,
+  type ReplayDecisionTrace,
   type ReplayDraft,
+  type ReplayElimination,
+  type ReplayEliminationCause,
+  type ReplayNightAction,
+  type ReplayNightActionType,
   type ReplayPhaseEntry,
   type ReplayPlayerSeat,
   type ReplayRecord,
@@ -24,6 +32,10 @@ import {
 
 const ROLE_VALUES = new Set<string>(Object.values(Role));
 const PHASE_VALUES = new Set<string>(Object.values(GamePhase));
+const DECISION_ACTION_VALUES = new Set<ReplayDecisionActionType>(['KILL', 'CHECK', 'VOTE', 'POISON', 'SAVE', 'SHOOT']);
+const DECISION_OUTCOME_VALUES = new Set<ReplayDecisionOutcome>(['ACT', 'HOLD', 'NO_TARGET']);
+const NIGHT_ACTION_VALUES = new Set<ReplayNightActionType>(['KILL', 'CHECK', 'SAVE', 'POISON', 'HOLD']);
+const ELIMINATION_CAUSE_VALUES = new Set<ReplayEliminationCause>(['NIGHT', 'POISON', 'VOTE', 'HUNTER', 'IDIOT_FLIP']);
 
 const isRole = (value: unknown): value is Role =>
   typeof value === 'string' && ROLE_VALUES.has(value);
@@ -136,6 +148,101 @@ const canonicalCheck = (value: ReplayCheck): ReplayCheck | null => {
   return { round, actorId, targetId, isGood: value.isGood };
 };
 
+const canonicalDecisionTrace = (value: ReplayDecisionTrace): ReplayDecisionTrace | null => {
+  if (!value || typeof value !== 'object') return null;
+  const round = toRound(value.round, 1);
+  const actorId = toSeat(value.actorId);
+  if (
+    round === null ||
+    actorId === null ||
+    !DECISION_ACTION_VALUES.has(value.actionType) ||
+    !DECISION_OUTCOME_VALUES.has(value.outcome)
+  ) {
+    return null;
+  }
+  let targetId: number | null = null;
+  if (value.targetId !== null && value.targetId !== undefined) {
+    targetId = toSeat(value.targetId);
+    if (targetId === null) return null;
+  }
+  const candidates: ReplayDecisionCandidate[] = [];
+  const seenTargets = new Set<number>();
+  for (const candidate of Array.isArray(value.candidates) ? value.candidates : []) {
+    if (!candidate || typeof candidate !== 'object') continue;
+    const candidateId = toSeat(candidate.targetId);
+    if (candidateId === null || seenTargets.has(candidateId)) continue;
+    if (typeof candidate.score !== 'number' || !Number.isFinite(candidate.score)) continue;
+    seenTargets.add(candidateId);
+    candidates.push({ targetId: candidateId, score: Math.round(candidate.score * 1e6) / 1e6 });
+  }
+  candidates.sort((a, b) => (b.score - a.score) || (a.targetId - b.targetId));
+
+  const evidenceEventIds: string[] = [];
+  const seenEvidence = new Set<string>();
+  for (const id of Array.isArray(value.evidenceEventIds) ? value.evidenceEventIds : []) {
+    if (typeof id !== 'string' || id.length === 0 || seenEvidence.has(id)) continue;
+    seenEvidence.add(id);
+    evidenceEventIds.push(id);
+  }
+
+  const latencyMs =
+    typeof value.latencyMs === 'number' && Number.isFinite(value.latencyMs) && value.latencyMs >= 0
+      ? Math.round(value.latencyMs * 1000) / 1000
+      : 0;
+
+  return {
+    round,
+    ...(value.phase && isPhase(value.phase) ? { phase: value.phase } : {}),
+    actorId,
+    actionType: value.actionType,
+    outcome: value.outcome,
+    targetId,
+    ...(typeof value.reason === 'string' && value.reason.length > 0 ? { reason: value.reason } : {}),
+    candidates,
+    evidenceEventIds,
+    tieBroken: Boolean(value.tieBroken),
+    randomized: Boolean(value.randomized),
+    fallback: Boolean(value.fallback),
+    latencyMs,
+  };
+};
+
+const canonicalNightAction = (value: ReplayNightAction): ReplayNightAction | null => {
+  if (!value || typeof value !== 'object') return null;
+  const round = toRound(value.round, 1);
+  const actorId = toSeat(value.actorId);
+  if (round === null || actorId === null || !NIGHT_ACTION_VALUES.has(value.actionType)) return null;
+  let targetId: number | null = null;
+  if (value.targetId !== null && value.targetId !== undefined) {
+    targetId = toSeat(value.targetId);
+    if (targetId === null) return null;
+  }
+  return {
+    round,
+    ...(value.phase && isPhase(value.phase) ? { phase: value.phase } : {}),
+    actorId,
+    actionType: value.actionType,
+    targetId,
+    ...(value.outcome && DECISION_OUTCOME_VALUES.has(value.outcome) ? { outcome: value.outcome } : {}),
+  };
+};
+
+const canonicalElimination = (value: ReplayElimination): ReplayElimination | null => {
+  if (!value || typeof value !== 'object') return null;
+  const round = toRound(value.round, 1);
+  const targetId = toSeat(value.targetId);
+  if (round === null || targetId === null || !ELIMINATION_CAUSE_VALUES.has(value.cause)) return null;
+  const revealedRole = value.revealedRole !== null && isRole(value.revealedRole) ? value.revealedRole : null;
+  return {
+    round,
+    ...(value.phase && isPhase(value.phase) ? { phase: value.phase } : {}),
+    targetId,
+    cause: value.cause,
+    revealedRole,
+    ...(typeof value.survived === 'boolean' ? { survived: value.survived } : {}),
+  };
+};
+
 const canonicalizeList = <T>(values: readonly T[], build: (value: T) => T | null): T[] => {
   const result: T[] = [];
   for (const value of Array.isArray(values) ? values : []) {
@@ -168,6 +275,8 @@ const createGameId = (): string => {
 /**
  * Pure builder: validates/coerces every entry, fixes key order and returns a
  * complete `ReplayRecord`. Invalid entries are dropped instead of stored.
+ * Optional P1B arrays are omitted when empty so existing schemaVersion 1
+ * fixtures retain their exact 15-key shape.
  */
 export const buildReplay = (draft: ReplayDraft): ReplayRecord => {
   const players = canonicalPlayers(draft.players);
@@ -179,6 +288,20 @@ export const buildReplay = (draft: ReplayDraft): ReplayRecord => {
   const wolfChat = canonicalizeList(draft.wolfChat, canonicalWolfChat);
   const checks = canonicalizeList(draft.checks, canonicalCheck);
   const rounds = toRound(draft.outcome?.rounds, 1);
+
+  const preVoteBeliefSnapshots = draft.preVoteBeliefSnapshots
+    ? canonicalizeList(draft.preVoteBeliefSnapshots, canonicalBeliefSnapshot)
+        .sort((a, b) => (a.round - b.round) || (a.actorId - b.actorId))
+    : [];
+  const decisionTraces = draft.decisionTraces
+    ? canonicalizeList(draft.decisionTraces, canonicalDecisionTrace)
+    : [];
+  const nightActions = draft.nightActions
+    ? canonicalizeList(draft.nightActions, canonicalNightAction)
+    : [];
+  const eliminations = draft.eliminations
+    ? canonicalizeList(draft.eliminations, canonicalElimination)
+    : [];
 
   return {
     schemaVersion: REPLAY_SCHEMA_VERSION,
@@ -199,6 +322,10 @@ export const buildReplay = (draft: ReplayDraft): ReplayRecord => {
       winner: draft.outcome.winner,
       rounds: rounds ?? 1,
     },
+    ...(preVoteBeliefSnapshots.length > 0 ? { preVoteBeliefSnapshots } : {}),
+    ...(decisionTraces.length > 0 ? { decisionTraces } : {}),
+    ...(nightActions.length > 0 ? { nightActions } : {}),
+    ...(eliminations.length > 0 ? { eliminations } : {}),
   };
 };
 
@@ -221,6 +348,10 @@ export const canonicalizeReplay = (record: ReplayRecord): ReplayRecord => buildR
   wolfChat: record.wolfChat,
   checks: record.checks,
   outcome: record.outcome,
+  ...(record.preVoteBeliefSnapshots ? { preVoteBeliefSnapshots: record.preVoteBeliefSnapshots } : {}),
+  ...(record.decisionTraces ? { decisionTraces: record.decisionTraces } : {}),
+  ...(record.nightActions ? { nightActions: record.nightActions } : {}),
+  ...(record.eliminations ? { eliminations: record.eliminations } : {}),
 });
 
 export interface ReplayRecorder {
@@ -231,6 +362,10 @@ export interface ReplayRecorder {
   recordCheck(check: ReplayCheck): void;
   recordWolfChat(entry: ReplayWolfChatEntry): void;
   recordBeliefSnapshots(snapshots: readonly ReplayBeliefSnapshot[]): void;
+  recordPreVoteBeliefSnapshots(snapshots: readonly ReplayBeliefSnapshot[]): void;
+  recordDecisionTrace(trace: ReplayDecisionTrace): void;
+  recordNightAction(action: ReplayNightAction): void;
+  recordElimination(elimination: ReplayElimination): void;
   /** Returns the replay once; later calls return `null` (idempotent). */
   finalize(outcome: { winner: 'VILLAGERS' | 'WEREWOLVES'; rounds: number }): ReplayRecord | null;
   isFinalized(): boolean;
@@ -255,10 +390,15 @@ export const createReplayRecorder = (input: ReplayRecorderInput): ReplayRecorder
   const checks: ReplayCheck[] = [];
   const wolfChat: ReplayWolfChatEntry[] = [];
   const beliefSnapshots: ReplayBeliefSnapshot[] = [];
+  const preVoteBeliefSnapshots: ReplayBeliefSnapshot[] = [];
+  const decisionTraces: ReplayDecisionTrace[] = [];
+  const nightActions: ReplayNightAction[] = [];
+  const eliminations: ReplayElimination[] = [];
   const phaseKeys = new Set<string>();
   const voteKeys = new Set<string>();
   const checkKeys = new Set<string>();
   const beliefKeys = new Set<string>();
+  const preVoteBeliefKeys = new Set<string>();
   let finalized = false;
 
   return {
@@ -311,6 +451,32 @@ export const createReplayRecorder = (input: ReplayRecorderInput): ReplayRecorder
         beliefSnapshots.push(entry);
       }
     },
+    recordPreVoteBeliefSnapshots(snapshots) {
+      if (finalized) return;
+      for (const snapshot of Array.isArray(snapshots) ? snapshots : []) {
+        const entry = canonicalBeliefSnapshot(snapshot);
+        if (!entry) continue;
+        const key = `${entry.round}:${entry.actorId}`;
+        if (preVoteBeliefKeys.has(key)) continue;
+        preVoteBeliefKeys.add(key);
+        preVoteBeliefSnapshots.push(entry);
+      }
+    },
+    recordDecisionTrace(trace) {
+      if (finalized) return;
+      const entry = canonicalDecisionTrace(trace);
+      if (entry) decisionTraces.push(entry);
+    },
+    recordNightAction(action) {
+      if (finalized) return;
+      const entry = canonicalNightAction(action);
+      if (entry) nightActions.push(entry);
+    },
+    recordElimination(elimination) {
+      if (finalized) return;
+      const entry = canonicalElimination(elimination);
+      if (entry) eliminations.push(entry);
+    },
     finalize(outcome) {
       if (finalized) return null;
       const winner = outcome?.winner;
@@ -333,6 +499,10 @@ export const createReplayRecorder = (input: ReplayRecorderInput): ReplayRecorder
         wolfChat,
         checks,
         outcome: { winner, rounds },
+        ...(preVoteBeliefSnapshots.length > 0 ? { preVoteBeliefSnapshots } : {}),
+        ...(decisionTraces.length > 0 ? { decisionTraces } : {}),
+        ...(nightActions.length > 0 ? { nightActions } : {}),
+        ...(eliminations.length > 0 ? { eliminations } : {}),
       });
     },
     isFinalized: () => finalized,

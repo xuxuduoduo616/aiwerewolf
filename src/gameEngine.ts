@@ -49,7 +49,7 @@ export const applyElimination = (
       ...player,
       isAlive: false,
       canVote: false,
-      isRevealed: reason !== 'NIGHT' && reason !== 'POISON' && reason !== 'HUNTER',
+      isRevealed: player.isRevealed,
     };
   });
 
@@ -61,12 +61,21 @@ export const applyElimination = (
   };
 };
 
+export const canWitchSelfSave = (
+  round: number,
+  witchId: number,
+  wolfKillId: number | null,
+): boolean => {
+  if (wolfKillId === null) return false;
+  return wolfKillId !== witchId || round <= 1;
+};
+
 export const applyNightResolution = (players: Player[], nightState: NightState) => {
   const wolfDeath = nightState.witchSaved ? null : nightState.wolfKillId;
   const deadIds = [...new Set([wolfDeath, nightState.witchPoisonId].filter((id): id is number => id !== null))];
   const nextPlayers = players.map(player =>
     deadIds.includes(player.id)
-      ? { ...player, isAlive: false, canVote: false, isRevealed: false }
+      ? { ...player, isAlive: false, canVote: false, isRevealed: player.isRevealed }
       : player
   );
 

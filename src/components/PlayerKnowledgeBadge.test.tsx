@@ -61,4 +61,32 @@ describe('role-private seat knowledge', () => {
     expect(saved).toContain('You saved Player 9');
     expect(saved).not.toContain('Player 4');
   });
+
+  it('hides Wolf Target badge and WitchVictimNotice once antidote is spent on a subsequent night', () => {
+    expect(badge({ playerId: 9, phase: GamePhase.NIGHT_WITCH, canSeeWitchVictim: false })).toBe('');
+    expect(badge({ playerId: 9, phase: GamePhase.DAY_DISCUSSION, canSeeWitchVictim: false })).toBe('');
+    expect(
+      renderToStaticMarkup(
+        <WitchVictimNotice {...props} phase={GamePhase.NIGHT_WITCH} canSeeWitchVictim={false} />,
+      ),
+    ).toBe('');
+    expect(
+      renderToStaticMarkup(
+        <WitchVictimNotice {...props} phase={GamePhase.DAY_DISCUSSION} canSeeWitchVictim={false} />,
+      ),
+    ).toBe('');
+
+    // When canSeeWitchVictim is true (antidote available or used tonight), notice and badge remain visible
+    expect(badge({ playerId: 9, phase: GamePhase.NIGHT_WITCH, canSeeWitchVictim: true })).toContain('Wolf Target');
+    expect(
+      renderToStaticMarkup(
+        <WitchVictimNotice
+          {...props}
+          phase={GamePhase.DAY_DISCUSSION}
+          nightState={{ ...props.nightState, witchSaved: true }}
+          canSeeWitchVictim={true}
+        />,
+      ),
+    ).toContain('You saved Player 9');
+  });
 });

@@ -221,3 +221,102 @@ done
 - **脚本输出不含时间戳/路径**：报告只描述样本集合，不记录捕获日期；捕获日期与批次
   见 `src/ai/__fixtures__/calibration/README.md` 与
   `memory/coordination/reports/H2-D.md`。
+
+---
+
+## P2B 确定性离线仿真校准报告（n=30 局/档，9人+12人）
+
+在保留上方 H2-D 历史基线报告不变的前提下，P2B 完成了三项工程补齐与离线实测：
+1. 将 `DIFFICULTY_CONFIGS` 中长期未消费的 `wolfCoordination`（`0.30 / 0.65 / 0.90`）与 `mistakeRate`（`0.55 / 0.25 / 0.08`）接入 `actionSelector.selectAction` 与 `aiOrchestrator.setAIDifficulty` / `setAIExpressionModel`（未修改 `DIFFICULTY_CONFIGS` 数值）。
+2. 通过 `node scripts/difficulty-calibration.mjs --simulate 30` 对三档难度运行**配对同种子确定性离线仿真**（每档 30 局 = 15 局 `9-standard` + 15 局 `12-standard`，共 90 局，基址 `baseSeed=20261124`），完整走过真实 `BeliefTracker`、`selectAction` 与 `gameEngine`。
+3. 新增默认关闭（`DEFAULT_LLM_EXTRACTOR_ENABLED = false`）的可选结构化发言抽取器 `src/ai/speechExtractorLLM.ts`，并在 14 条中英双语样本上完成与 P1A 规则解析器的离线 A/B 对比与回退安全验证。
+
+### 样本规模与板型覆盖
+
+| 维度 | H2-D 历史基线 | P2B 离线仿真 |
+| --- | --- | --- |
+| 每档局数 | 3 局/档（合计 9 局） | **30 局/档（合计 90 局）** |
+| 板型配比 | 9p ×2 + 12p ×1 / 档 | **9-standard ×15 + 12-standard ×15 / 档（50%/50%）** |
+| 跨档可比性 | normal 与 easy/hard 来自不同捕获批次 | **三档共享完全相同的 30 个随机种子局（配对控制）** |
+| 投票口径 | `ai-vote-hit-wolf-rate` 未拆阵营 | **拆分好人命中率、狼队护队友率、狼队票型集中度** |
+
+### P2B 接线后指标（`node scripts/difficulty-calibration.mjs --simulate 30` 实测）
+
+| 难度 | n（9p/12p） | `goodAiVoteHitWolfRate` | `wolfTeammateProtectionRate` | `wolfVoteConcentration` | `illegalActionRate` | `unauthorizedReadRate` | `fallbackRate` | 决策延迟 p50/p95 (ms) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| easy (Beginner) | 30 (15/15) | **53.40%** (306/573) | **89.32%** (276/309) | **50.56%** (105 rounds) | 0.000000 (0/1185) | 0.000000 (0/1185) | 0.000000 (0/1185) | 0.002 / 0.033 |
+| normal (Intermediate) | 30 (15/15) | **58.67%** (335/571) | **96.03%** (290/302) | **62.95%** (101 rounds) | 0.000000 (0/1178) | 0.000000 (0/1178) | 0.000000 (0/1178) | 0.002 / 0.014 |
+| hard (Expert) | 30 (15/15) | **63.40%** (369/582) | **99.38%** (320/322) | **87.77%** (109 rounds) | 0.000000 (0/1197) | 0.000000 (0/1197) | 0.000000 (0/1197) | 0.002 / 0.014 |
+
+单调性检验：
+- `goodAiVoteHitWolfRate`：`hard (63.40%) > normal (58.67%) > easy (53.40%)` — **PASS**（修复了 H2-D 3 局样本中 `hard < easy` 的倒挂现象）。
+- `wolfTeammateProtectionRate`：`hard (99.38%) > normal (96.03%) > easy (89.32%)` — **PASS**。
+- `wolfVoteConcentration`：`hard (87.77%) > normal (62.95%) > easy (50.56%)` — **PASS**。
+- 安全与合法性：全部 90 局合计 3,560 次 AI 决策中，非法行动率 `0/3560`、越权读信息率 `0/3560`、未初始化回退率 `0/3560`。
+
+### Before vs After 对比（同 30 种子基线未接线 vs P2B 接线后）
+
+| 难度 | H2-D 3局旧口径 `aiVoteHitWolf` | 同种子基线 `goodHit` | P2B `goodHit` | 同种子基线 `wolfProtect` | P2B `wolfProtect` | 同种子基线 `wolfConc` | P2B `wolfConc` |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| easy | 35.29% (24/68) | 54.50% | **53.40%** | 79.38% | **89.32%** | 55.90% | **50.56%** |
+| normal | 29.03% (18/62) | 52.49% | **58.67%** | 77.86% | **96.03%** | 69.17% | **62.95%** |
+| hard | 27.54% (19/69) | 61.82% | **63.40%** | 75.71% | **99.38%** | 78.92% | **87.77%** |
+
+角色动作分布（P2B 接线后 30 局/档合计）：
+
+| 难度 | KILL | CHECK | SAVE (ACT/HOLD) | POISON (ACT/HOLD) | SHOOT | VOTE |
+| --- | --- | --- | --- | --- | --- | --- |
+| easy | 136 | 70 | 30/0 | 19/29 | 19 | 882 |
+| normal | 129 | 59 | 30/0 | 12/55 | 20 | 873 |
+| hard | 133 | 54 | 30/0 | 3/58 | 15 | 904 |
+
+### 典型回放案例走查（3 例）
+
+1. **案例 1 — 9人局 Expert 档（`seed=20261124`，胜方 `VILLAGERS`，4 轮）**
+   - 指标：`goodAiVoteHitWolfRate=0.833 (15/18)`，`wolfTeammateProtectionRate=1.000`，`wolfVoteConcentration=0.667`。
+   - 关键转折：
+     - **R1 夜间/发言**：真预言家 `1号` 验出 `9号(Werewolf)` 查杀并公开报验；悍跳狼 `3号` 反跳预言家给 `1号` 发假查杀；女巫 `7号` 顺着公开发言指认 `9号`。
+     - **R1 投票**：6 名好人（`1/2/5/6/7/8`）全部集火投出 `9号(Werewolf)`；3 名狼人（`3/4/9`）通过 `wolfCoordination=0.90` 触发确定性共识冲票 `1号`（`狼队协同冲票 1号`），最终 `9号` 出局。
+     - **R2 投票**：真预言家 `1号` 在夜里验出 `3号` 查杀后倒牌；剩余好人借助公开票型区块推理（识别 R1 与被放逐狼人同票冲 `1号` 的 `3号/4号`），把票转向狼人阵营，最终锁定好人胜利。
+
+2. **案例 2 — 12人局 Expert 档（`seed=20410719`，胜方 `WEREWOLVES`，5 轮）**
+   - 指标：`goodAiVoteHitWolfRate=0.455 (10/22)`，`wolfTeammateProtectionRate=1.000`，`wolfVoteConcentration=0.833`。
+   - 关键转折：
+     - **R1 夜间/发言**：女巫 `3号` 救起 `8号(Seer)` 并报银水；悍跳狼 `5号` 给 `1号(Villager)` 发假查杀；真预言家 `8号` 发 `4号` 金水并点破 `5号` 对跳假预言家。
+     - **R1 投票**：4 名狼人（`5/6/10/12`）全部协同冲票 `1号`（`狼队协同冲票 1号`），与被误导的部分好人合力先推出 `1号(Villager)`。
+     - **R2 转向**：`8号` 夜验 `5号(Werewolf)` 查杀且女巫 `3号` 点出 `5号` 可疑后，5 名好人（`2/3/4/7/9`）立刻改票集火 `5号` 将其放逐；狼队 4 人同步把协同目标切换为 `9号`（`狼队协同冲票 9号`），展示跨轮目标切换与高集中度。
+
+3. **案例 3 — 同局配对对比（9人局 `seed=20271097`，`easy` vs `hard`）**
+   - 同一发牌局下，真预言家 `4号` 首夜均验出 `6号(Werewolf)` 查杀，悍跳狼 `1号` 均发 `2号` 金水。
+   - **Beginner (`easy`)**：`goodAiVoteHitWolfRate=66.7%`、`wolfVoteConcentration=66.7%`，因 `actionAccuracy=0.45 / mistakeRate=0.55` 导致好人与狼队均出现明显分散与随机失误。
+   - **Expert (`hard`)**：`goodAiVoteHitWolfRate=76.5%`（`+9.8pp`）、`wolfVoteConcentration=75.0%`（`+8.3pp`），在完全相同的局面起点上同时呈现更高的好人逻辑执行度与更紧密的狼队协同。
+
+### 可选 LLM 结构化证据抽取器离线 A/B 评估（默认 OFF）
+
+`src/ai/speechExtractorLLM.ts` 默认关闭（`DEFAULT_LLM_EXTRACTOR_ENABLED = false`），仅作为离线评估与未来可选扩展保留；所有决策权仍 100% 归属确定性 TypeScript 引擎。在 14 条中英双语标注样本（覆盖直白发言、否定反转、引用/假设抑制、反讽与隐晦表达）上，对比 P1A 规则解析器与离线 Mock 结构化抽取器：
+
+| 方案 | TP / FP / FN | Precision | Recall | F1 | Fallback Rate | 平均延迟 (ms) | 单局估算成本 (24 发言/局) |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| P1A 规则解析器 (`parseSpeechEvidence`) | 11 / 2 / 7 | 0.846154 | 0.611111 | **0.709677** | 0.000000 | 0.463 | \$0.000000 |
+| 可选 LLM 结构化抽取器 (离线 Mock) | 18 / 0 / 0 | 1.000000 | 1.000000 | **1.000000** | 0.000000 (0/14) | 0.042 (Mock) | **\$0.001752**（1,023 tokens / 14 条） |
+
+准入门槛判定（`LLM_EXTRACTOR_ADOPTION_GATE`）：
+- `f1Delta >= 0.10`：实测 `+0.290323`（PASS，主要增益来自反讽与隐晦表达，规则解析器在直白/否定/引用场景表现稳健）。
+- `fallbackRate < 0.05`：离线 Mock 实测 `0.000000`（PASS）；异常注入（非法 JSON、越界/非法极性 schema、provider 抛错、`timeoutMs` 超时）下 100% 安全回退至 P1A `parseSpeechEvidence`，零未捕获异常。
+- `estimatedCostPerMatchUSD <= $0.002`：按 `BENCHMARK_COST_PROXY_PER_1K_TOKENS_USD = 0.001` 与 24 条发言/局估算为 `\$0.001752`（PASS）。
+- **默认策略维持 OFF**：离线 Mock 的 `F1=1.0` 与 `0.042ms` 延迟代表架构上界，不代表真实远程模型在生产网络的延迟与 JSON 稳定率；在未完成真实线上模型采样实测前保持默认关闭。
+
+### P2B 复现命令与局限
+
+```bash
+# 1) 运行 30 局/档（90 局，9p+12p）确定性离线仿真校准
+node scripts/difficulty-calibration.mjs --simulate 30
+
+# 2) 运行 P2B 专项单测与 H2-D 既有校准单测
+npx vitest run src/ai/calibration.p2b.test.ts scripts/difficulty-calibration.test.mjs
+```
+
+局限说明：
+- **离线合成发言局限**：`--simulate 30` 使用严格座位可见的确定性中文模板发言驱动信念演化，不包含真实人类玩家的复杂语义、情绪博弈或远程 LLM 表达层波动；因此不能将其直接等同于生产环境真人对局胜率。
+- **LLM 抽取器为离线 Mock 评估**：`evaluateExtractorAB` 使用确定性离线 Mock 响应验证 schema 校验、回退安全、F1 潜在提升空间与 token 成本模型，未调用真实外部模型，真实网络延迟（预计 300–1200ms）与实网 fallback 率仍属 `未验证`。
+- **保持既有参数不变**：P2B 未改动 `DIFFICULTY_CONFIGS` 原始配置数值与冻结规则文件，仅让既有 `wolfCoordination` / `mistakeRate` 真正生效。

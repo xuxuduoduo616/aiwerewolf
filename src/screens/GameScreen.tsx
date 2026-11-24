@@ -76,6 +76,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
   const fallenIds = useFallenPlayers(game.players);
   const timeOfDay = getTimeOfDay(game.phase);
   const humanWolfNight = game.phase === GamePhase.NIGHT_WEREWOLVES && game.me?.role === Role.WEREWOLF && game.me.isAlive;
+  const canSeeWitchVictim = game.witchStatus.hasSave || game.nightState.witchSaved;
 
   useEffect(() => {
     if (game.phase === GamePhase.GAME_OVER || game.phase === GamePhase.LOBBY || game.phase === GamePhase.LOGIN) {
@@ -252,6 +253,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
                           phase={game.phase}
                           nightState={game.nightState}
                           seerCheck={game.aiSeerLastCheck}
+                          canSeeWitchVictim={canSeeWitchVictim}
                         />
                   }
                 />
@@ -330,12 +332,17 @@ const GameScreen: React.FC<GameScreenProps> = ({
                   {!humanWolfNight && <p className="mt-2 text-zinc-400">{game.me ? ROLE_DESCRIPTIONS_EN[game.me.role] : ''}</p>}
                   {humanWolfNight && game.nightState.wolfKillId !== null && <p className="mt-2 text-red-200">Confirmed target: Player {game.nightState.wolfKillId}</p>}
                   {game.selectedPlayer && <p className="mt-2 text-zinc-300">Selected: Player {game.selectedPlayer.id} <span data-ui-copy-category="USER_AUTHORED" data-ui-copy-allow="USER_APP_SELECTED_PLAYER">{game.selectedPlayer.name}</span></p>}
-                  <WitchVictimNotice viewer={game.me} phase={game.phase} nightState={game.nightState} />
+                  <WitchVictimNotice
+                    viewer={game.me}
+                    phase={game.phase}
+                    nightState={game.nightState}
+                    canSeeWitchVictim={canSeeWitchVictim}
+                  />
                 </div>
                 <ActionBar
                   phase={game.phase} me={game.me} selectedPlayer={game.selectedPlayer}
                   isProcessingAI={game.isPaused || game.isProcessingAI} witchStatus={game.witchStatus}
-                  nightState={game.nightState}
+                  nightState={game.nightState} roundCount={Math.max(1, game.roundCount)}
                   onAction={() => game.selectedPlayerId && game.handlePlayerAction(game.selectedPlayerId)}
                   onVoteSkip={() => game.finishVote(null)}
                   onWitchSave={game.handleWitchSave}
