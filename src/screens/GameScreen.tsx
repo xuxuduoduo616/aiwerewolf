@@ -18,7 +18,9 @@ import GameControlsGuide from '../components/GameControlsGuide';
 import GameLogDialog, { GameLogFeed } from '../components/GameLogDialog';
 import ReplayReview from '../components/ReplayReview';
 import LeaveGameDialog from '../components/LeaveGameDialog';
-import MatchIntroOverlay from '../components/MatchIntroOverlay';
+import RoleShowcaseModal from '../components/RoleShowcaseModal';
+import RoleIdentityBadge from '../components/RoleIdentityBadge';
+import NightSkillEffectOverlay from '../components/NightSkillEffectOverlay';
 import PhaseAtmosphere from '../components/PhaseAtmosphere';
 import PhaseWorkspace from '../components/PhaseWorkspace';
 import MatchFullscreenButton from '../components/MatchFullscreenButton';
@@ -69,9 +71,11 @@ const GameScreen: React.FC<GameScreenProps> = ({
 }) => {
   const [isGameInfoOpen, setIsGameInfoOpen] = useState(false);
   const [isLeaveGameOpen, setIsLeaveGameOpen] = useState(false);
+  const [replayShowcaseOpen, setReplayShowcaseOpen] = useState(false);
   const gameHeaderRef = useRef<HTMLElement>(null);
   const gameInfoTriggerRef = useRef<HTMLButtonElement>(null);
   const leaveGameTriggerRef = useRef<HTMLButtonElement>(null);
+  const roleBadgeRef = useRef<HTMLButtonElement>(null);
   const phaseCue = usePhaseCue(game.phase, game.roundCount);
   const fallenIds = useFallenPlayers(game.players);
   const timeOfDay = getTimeOfDay(game.phase);
@@ -82,7 +86,16 @@ const GameScreen: React.FC<GameScreenProps> = ({
     if (game.phase === GamePhase.GAME_OVER || game.phase === GamePhase.LOBBY || game.phase === GamePhase.LOGIN) {
       setIsLeaveGameOpen(false);
     }
-  }, [game.phase]);
+    if (game.phase === GamePhase.LOBBY || game.phase === GamePhase.LOGIN || game.introPending) {
+      setReplayShowcaseOpen(false);
+    }
+  }, [game.introPending, game.phase]);
+
+  useEffect(() => {
+    if (game.introPending && !game.me) {
+      game.releaseIntro();
+    }
+  }, [game.introPending, game.me, game.releaseIntro]);
 
   // Vote-countdown tick: one short beep per second during the final 3s of the
   // human vote countdown (browser-tts-mvp). The audio service enforces mute
@@ -365,15 +378,53 @@ const GameScreen: React.FC<GameScreenProps> = ({
         </PhaseWorkspace>
       </GameRoom>
 
+      {game.me && !game.introPending && (
+        <div className="game-room-role-dock" role="region" aria-label="Player role badge">
+          <RoleIdentityBadge
+            ref={roleBadgeRef}
+            role={game.me.role}
+            language={game.gameLanguage}
+            onOpenReplay={() => {
+              if (!isLeaveGameOpen && !isGameInfoOpen) setReplayShowcaseOpen(true);
+            }}
+          />
+        </div>
+      )}
+
       <PhaseAtmosphere timeOfDay={timeOfDay} cue={game.introPending ? null : phaseCue} />
 
-      {game.introPending && (
-        <MatchIntroOverlay
+      <NightSkillEffectOverlay
+        cue={game.introPending ? null : game.humanSkillCue}
+        onDismiss={game.dismissHumanSkillCue}
+      />
+
+      {game.introPending && game.me && (
+        <RoleShowcaseModal
+          mode="initial"
+          role={game.me.role}
           boardName={game.config?.name ?? 'AI Werewolf'}
-          roleLabel={game.me ? ROLE_LABELS_EN[game.me.role] : null}
+          language={game.gameLanguage}
           players={game.players}
+          isMuted={game.isMuted}
+          ttsEnabled={game.ttsEnabled}
+          audioVolume={game.audioVolume}
           returnFocusRef={gameHeaderRef}
           onDone={game.releaseIntro}
+        />
+      )}
+
+      {!game.introPending && replayShowcaseOpen && game.me && (
+        <RoleShowcaseModal
+          mode="replay"
+          role={game.me.role}
+          boardName={game.config?.name ?? 'AI Werewolf'}
+          language={game.gameLanguage}
+          players={game.players}
+          isMuted={game.isMuted}
+          ttsEnabled={game.ttsEnabled}
+          audioVolume={game.audioVolume}
+          returnFocusRef={roleBadgeRef}
+          onDone={() => setReplayShowcaseOpen(false)}
         />
       )}
 

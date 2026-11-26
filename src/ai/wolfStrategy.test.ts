@@ -47,7 +47,12 @@ describe('private plan continuity without changing actions', () => {
     const history = [say('I suggest we kill Player 5 tonight.')];
     expect(wolfNightFallback(players[2], players, history, 'en')).toContain('suggestion to target Player 5');
     expect(wolfNightFallback(players[2], players, history, 'en', 6)).toContain('confirmed night target remains Player 6');
-    expect(wolfNightFallback(players[2], players, [say('I suggest we kill Player 3 tonight.')], 'en')).not.toContain('target Player 3');
+    expect(wolfNightFallback(players[2], players, [say('I suggest we kill Player 3 tonight.')], 'en')).toContain('suggestion to target Player 3');
+    for (const confirmed of [2, 3]) {
+      const reply = wolfNightFallback(players[2], players, history, 'en', confirmed);
+      expect(reply).toContain(`confirmed night target remains Player ${confirmed}`);
+      expect(reply).not.toContain('target Player 5');
+    }
     expect(wolfNightFallback(players[2], players, [say('Do not make a second Seer claim. I suggest we kill Player 5 tonight.')], 'en')).toContain('suggestion to target Player 5');
   });
   it('does not bus a non-wolf or reveal private instructions in public fallback', () => {

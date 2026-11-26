@@ -1,0 +1,86 @@
+{
+  "Werewolf": {
+    "roleTitle": {
+      "en": "Werewolf",
+      "zh": "狼人"
+    },
+    "badgeLabel": {
+      "en": "Werewolf",
+      "zh": "狼人"
+    },
+    "subtitle": {
+      "en": "Walk among the lanterns by day; let the fangs speak at midnight.",
+      "zh": "白昼隐入灯火，子夜利爪封喉。"
+    }
+  },
+  "Villager": {
+    "roleTitle": {
+      "en": "Villager",
+      "zh": "村民"
+    },
+    "badgeLabel": {
+      "en": "Villager",
+      "zh": "村民"
+    },
+    "subtitle": {
+      "en": "No mystic art in hand, only clear eyes to pierce the fog.",
+      "zh": "手中虽无奇术，明眼亦能破雾寻狼。"
+    }
+  },
+  "Seer": {
+    "roleTitle": {
+      "en": "Seer",
+      "zh": "预言家"
+    },
+    "badgeLabel": {
+      "en": "Seer",
+      "zh": "预言家"
+    },
+    "subtitle": {
+      "en": "Beneath the ink-stained moon, no mask hides its true shadow.",
+      "zh": "水墨孤月之下，真假终见分晓。"
+    }
+  },
+  "Witch": {
+    "roleTitle": {
+      "en": "Witch",
+      "zh": "女巫"
+    },
+    "badgeLabel": {
+      "en": "Witch",
+      "zh": "女巫"
+    },
+    "subtitle": {
+      "en": "One drop mends the soul; another seals the night.",
+      "zh": "一滴回魂续命，一滴封喉断夜。"
+    }
+  },
+  "Hunter": {
+    "roleTitle": {
+      "en": "Hunter",
+      "zh": "猎人"
+    },
+    "badgeLabel": {
+      "en": "Hunter",
+      "zh": "猎人"
+    },
+    "subtitle": {
+      "en": "Even if I fall tonight, my final bolt never misses.",
+      "zh": "纵使今夜倒下，最后一箭也绝不落空。"
+    }
+  },
+  "Idiot": {
+    "roleTitle": {
+      "en": "Idiot",
+      "zh": "白痴"
+    },
+    "badgeLabel": {
+      "en": "Idiot",
+      "zh": "白痴"
+    },
+    "subtitle": {
+      "en": "Laugh at the fool if you wish—only the waking survive the crowd.",
+      "zh": "世人笑我痴狂，唯有清醒者死里逃生。"
+    }
+  }
+}

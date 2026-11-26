@@ -4,6 +4,7 @@ import { History, Moon, Vote } from 'lucide-react';
 import AccessibleDialog from './AccessibleDialog';
 import ShareCardPanel from './ShareCardPanel';
 import { listReplays } from '../replay/replayStore';
+import { englishVoteReason } from '../replay/voteReasonEnglish';
 import type { ReplayRecord } from '../replay/replayTypes';
 import {
   ABSTAIN_TARGET_LABEL,
@@ -318,7 +319,7 @@ const VoteReasonList: React.FC<{ replay: ReplayRecord; humanSeat: number }> = ({
                         row.hasReason ? 'text-zinc-300' : 'italic text-zinc-500'
                       }`}
                     >
-                      {row.reason}
+                      {englishVoteReason(row.reason)}
                     </p>
                   </li>
                 ))}

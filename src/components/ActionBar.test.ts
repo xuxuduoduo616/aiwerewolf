@@ -102,3 +102,24 @@ describe('ActionBar Witch Night-1-only self-save rule', () => {
     expect(saveButtonDisabled(1, null, true)).toBe(true);
   });
 });
+
+describe('human ballot eligibility', () => {
+  const selfVoteDisabled = (role: Role, isAlive: boolean, canVote: boolean) => {
+    const me = { ...witchPlayer, role, isAlive, canVote };
+    const html = renderToStaticMarkup(React.createElement(ActionBar, {
+      me, selectedPlayer: me, phase: GamePhase.DAY_VOTING, isProcessingAI: false,
+      witchStatus: { hasSave: true, hasPoison: true },
+      nightState: { wolfKillId: null, witchPoisonId: null, witchSaved: false },
+      onAction: () => {}, onVoteSkip: () => {}, onWitchSave: () => {}, onWitchSkip: () => {},
+    }));
+    const vote = html.match(/<button([^>]*)>[^]*?VOTE<\/button>/);
+    expect(vote).not.toBeNull();
+    return /\bdisabled\b/.test(vote![1]);
+  };
+
+  it.each(Object.values(Role))('permits living, enfranchised %s to select self', role => {
+    expect(selfVoteDisabled(role, true, true)).toBe(false);
+    expect(selfVoteDisabled(role, false, true)).toBe(true);
+    expect(selfVoteDisabled(role, true, false)).toBe(true);
+  });
+});

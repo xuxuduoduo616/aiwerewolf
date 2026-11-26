@@ -1083,3 +1083,79 @@ describe('P0-5: Deterministic baseline metrics (distribution, fallback rate, tie
     expect(stats.voteSeats.size).toBe(8); // 8 alive others
   });
 });
+
+describe('tactical self-ballots', () => {
+  it.each([MODE_9_PLAYER, MODE_12_PLAYER])('keeps each role out of its normal and mistake pools on $id', async config => {
+    const players = config.roles.map((role, i) => mkPlayer(i + 1, role));
+    globalBeliefTracker.init(players);
+    for (const actor of players) {
+      for (const accuracy of [0, 0.85, 1]) {
+        setAIDifficulty(accuracy);
+        for (const roll of [0, 0.45, 0.99]) {
+          const ordinary = await generateAIAction(actor, players, [], 'VOTE', [], 1, {
+            rng: () => roll, deferVoteBeliefUpdate: true,
+          });
+          expect(ordinary.targetId).not.toBe(actor.id);
+          expect(ordinary.trace?.candidates.map(c => c.targetId)).not.toContain(actor.id);
+        }
+      }
+    }
+  });
+
+  it.each(Object.values(Role))('permits a rare, attributed public plan for %s without self-suspicion', async role => {
+    const players = make9Board();
+    const actor = mkPlayer(6, role);
+    players[5] = actor;
+    globalBeliefTracker.init(players);
+    const cast = (roll: number, round = 1, extra = {}) =>
+      generateAIAction(actor, players, [], 'VOTE', [], round, { rng: () => roll, ...extra });
+
+    expect((await cast(0)).targetId).not.toBe(actor.id);
+    const event = globalBeliefTracker.updateFromSpeech(1, 'Player 6, please vote for yourself to break the tie.', players, { round: 1 });
+    expect((await cast(0.5)).targetId).not.toBe(actor.id);
+    const ballot = await cast(0.01);
+    expect(ballot.targetId).toBe(actor.id);
+    expect(ballot.trace?.evidenceEventIds).toEqual([event?.eventId]);
+    expect(globalBeliefTracker.getSeatMemory(actor.id)?.suspicion.has(actor.id)).toBe(false);
+    expect((await cast(0, 2)).targetId).not.toBe(actor.id);
+    expect((await cast(0, 1, { excludedTargetIds: new Set([actor.id]) })).targetId).not.toBe(actor.id);
+    for (const ineligible of [{ ...actor, isAlive: false }, { ...actor, canVote: false }]) {
+      expect((await generateAIAction(ineligible, players, [], 'VOTE', [], 1, { rng: () => 0 })).targetId).toBeNull();
+    }
+    globalBeliefTracker.updateFromSpeech(1, '6号，请不要自票。', players, { round: 1 });
+    expect((await cast(0)).targetId).not.toBe(actor.id);
+  });
+
+  it.each([
+    'you should not', "you shouldn’t", 'you can not', 'you cannot', "you can't",
+  ])('honors a same-seat modal cancellation (%s) before the tactical draw', negation => {
+    const players = make9Board();
+    const actor = players[5];
+    const vote = (speech: string) => {
+      const beliefs = new BeliefTracker();
+      beliefs.init(players);
+      beliefs.updateFromSpeech(1, speech, players, { round: 1 });
+      return selectAction(actor, players, beliefs, 'VOTE', 1, [], 1, { rng: () => 0 }).targetId;
+    };
+    const request = 'Player 6, you should vote for yourself.';
+    const cancel = `Player 6, ${negation} vote for yourself.`;
+    expect(vote(request)).toBe(actor.id);
+    expect(vote(`${request} ${cancel}`)).toBe(vote(''));
+    expect(vote(`${cancel} ${request}`)).toBe(actor.id);
+    expect(vote(`${request} Player 5, ${negation} vote for yourself.`)).toBe(actor.id);
+  });
+
+  it('ignores an accusation, pressure, other seats, own speech, questions and quoted or hypothetical instructions', () => {
+    const players = make9Board();
+    const actor = players[5];
+    const beliefs = new BeliefTracker();
+    beliefs.init(players);
+    for (const text of [
+      'Everyone vote for Player 6.', 'Player 6 is suspicious.', 'Player 5, vote for yourself.',
+      'Player 6, vote for yourself?', 'Player 6, vote for yourself if this ties.',
+      'Player 1 said "My plan. Player 6, vote for yourself. End of plan."', 'Player 6, vote for yourself tomorrow.',
+    ]) beliefs.updateFromSpeech(1, text, players, { round: 1 });
+    beliefs.updateFromSpeech(6, 'Player 6, vote for yourself.', players, { round: 1 });
+    expect(selectAction(actor, players, beliefs, 'VOTE', 1, [], 1, { rng: () => 0 }).targetId).not.toBe(actor.id);
+  });
+});

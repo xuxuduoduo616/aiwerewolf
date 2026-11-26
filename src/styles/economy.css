@@ -218,6 +218,12 @@
   line-height: 1.42;
 }
 .economy-global-feedback--game { bottom: max(18px, env(safe-area-inset-bottom)); }
+@media (min-width: 1024px) {
+  .economy-global-feedback--game { max-width: min(420px, calc(100vw - 190px)); }
+}
+@media (max-width: 1023px) {
+  .economy-global-feedback--game { bottom: calc(68px + env(safe-area-inset-bottom, 0px)); }
+}
 
 .economy-section-heading { margin: 26px 0 12px; }
 .economy-section-heading > svg { width: 20px; color: #87857f; }

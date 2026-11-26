@@ -30,6 +30,7 @@ const SMOKE_SPECS = [
   '**/voice-input.spec.ts',
   '**/night-chat.spec.ts',
   '**/multi-model.spec.ts',
+  '**/role-showcase-and-skills.spec.ts',
 ];
 const DEEP_SPECS = [
   '**/replay-review.spec.ts',

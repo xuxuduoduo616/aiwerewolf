@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 400">
+  <defs>
+    <filter id="bleed" x="-16%" y="-12%" width="132%" height="124%">
+      <feTurbulence type="fractalNoise" baseFrequency=".042 .062" numOctaves="3" seed="11" result="grain"/>
+      <feDisplacementMap in="SourceGraphic" in2="grain" scale="27" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+  <g fill="white" filter="url(#bleed)">
+    <path d="M45 98Q63 44 135 25Q181 9 213 42Q261 54 252 114Q290 140 262 192Q285 228 254 266Q257 307 215 345Q156 394 98 365Q57 361 51 313Q16 294 35 241Q8 210 32 176Q12 131 45 98Z"/>
+    <path d="M19 153Q47 60 161 14Q76 52 30 150ZM50 345Q137 403 255 288Q171 407 75 367ZM259 192Q280 159 271 83Q294 145 265 206Z" opacity=".74"/>
+    <circle cx="29" cy="74" r="5"/><circle cx="19" cy="94" r="3"/><circle cx="268" cy="62" r="7"/><circle cx="281" cy="76" r="3"/>
+    <ellipse cx="22" cy="293" rx="5" ry="10"/><circle cx="264" cy="321" r="6"/><circle cx="250" cy="340" r="3"/><circle cx="79" cy="376" r="4"/>
+  </g>
+</svg>

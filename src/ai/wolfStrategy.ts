@@ -61,7 +61,7 @@ const latestNightSuggestion = (history: WolfChatMessage[], players: Player[]): P
       if (!/kill|night target|tonight|刀|击杀/i.test(clause)) continue;
       const ids = Array.from(clause.matchAll(/\bPlayer\s*(\d+)\b/gi), match => Number(match[1]));
       if (/do not|don't|cancel|不要|别/i.test(clause) && ids.length < 2) return undefined;
-      const proposed = ids.slice().reverse().map(id => players.find(player => player.id === id && player.isAlive && player.role !== 'Werewolf')).find(Boolean);
+      const proposed = ids.slice().reverse().map(id => players.find(player => player.id === id && player.isAlive)).find(Boolean);
       if (proposed) return proposed;
     }
   }
@@ -72,7 +72,7 @@ export const wolfNightFallback = (
   confirmedTargetId?: number | null,
 ): string => {
   const plan = wolfPlanFor(speaker, players, history);
-  const target = players.find(player => player.id === confirmedTargetId && player.isAlive && player.role !== 'Werewolf');
+  const target = players.find(player => player.id === confirmedTargetId && player.isAlive);
   const human = players.find(player => player.isHuman && player.role === 'Werewolf');
   const humanPlan = human ? wolfPlanFor(human, players, history) : undefined;
   const proposed = latestNightSuggestion(history, players);
@@ -102,11 +102,11 @@ export const wolfNightFallback = (
     quiet: "I'll avoid drawing attention back to you while you keep a low profile. We still need independent public observations so neither of us looks absent.",
   };
   const goodTarget = players.find(player => player.isAlive && player.role !== 'Werewolf');
-  const line = plan.role === 'support' && proposed
+  const line = plan.role === 'support' && proposed && !target
     ? `I understand your suggestion to target Player ${proposed.id} tonight; the final choice is still yours. We should weigh removing that player's influence against making our daytime connections too obvious.`
     : plan.role === 'support' && plan.hasInstructions && humanPlan
     ? humanSupport[humanPlan.role] || roles.support
-    : !plan.hasInstructions && plan.role === 'support' && goodTarget
+    : !target && !plan.hasInstructions && plan.role === 'support' && goodTarget
       ? `We could consider Player ${goodTarget.id} as a night target while we divide tomorrow's responsibilities. We should avoid matching every argument, which would make us look linked.`
       : roles[plan.role];
   return `${line}${target ? ` The confirmed night target remains Player ${target.id}.` : proposed && plan.role !== 'support' ? ` Your proposed night target is Player ${proposed.id}, pending your confirmation.` : ''}`;

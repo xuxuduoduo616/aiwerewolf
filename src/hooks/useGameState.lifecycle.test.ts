@@ -4,6 +4,8 @@ import { MODE_9_PLAYER, MODE_12_PLAYER } from '../constants';
 import { getTerminalRewardRequest } from '../economy/gameRewards';
 import * as aiStyles from '../services/aiStyles';
 import * as replay from '../replay';
+import { globalBeliefTracker } from '../ai/beliefTracker';
+import { selectAction } from '../ai/actionSelector';
 
 // A dependency-aware hook runner: executes the real hook, effects, timer
 // callbacks and async continuations without requiring an installed DOM library.
@@ -575,6 +577,42 @@ describe('human-first private wolf discussion', () => {
   const entry = (speakerId: number, message = `Player ${speakerId} acknowledges the plan. I will keep our public reasoning independent.`) => ({ id: `reply-${speakerId}-${message}`, round: 1, speakerId, message, strategyTag: '补位' as const });
   const respond = () => ai.generateWolfChat.mockImplementation(async ([wolf]) => [entry(wolf.id)]);
 
+  it('commits real night-chat instructions to the addressed wolf only for tactical voting', async () => {
+    begin();
+    send('7号，请自票。 3号，请自票。'); await settle();
+    const vote = (seat: number) => selectAction(game.players[seat - 1], game.players, globalBeliefTracker,
+      'VOTE', 1, [], 1, { rng: () => 0 });
+    expect(vote(7).targetId).toBe(7);
+    expect(vote(9).targetId).not.toBe(9);
+    expect(vote(3).targetId).not.toBe(3);
+    expect(globalBeliefTracker.getSeatMemory(3)?.visibleEvents.some(e => e.kind === 'wolf-plan')).toBe(false);
+    send('7号，别自票。'); await settle();
+    expect(vote(7).targetId).not.toBe(7);
+  });
+
+  it.each([
+    { config: MODE_9_PLAYER, targetId: 1, save: true },
+    { config: MODE_12_PLAYER, targetId: 2, save: false },
+  ])('carries a locked wolf victim through Witch and dawn on $config.id (save=$save)', async ({ config, targetId, save }) => {
+    start(config); await advance(700);
+    const witch = game.players.find(p => p.role === Role.WITCH)!;
+    if (!save) {
+      globalBeliefTracker.updateFromSpeech(1, `Player ${targetId} is a wolf.`, game.players, { round: 1 });
+    }
+    game.handlePlayerAction(targetId); flush();
+    game.handlePlayerAction(config.playerCount); flush();
+    expect(game.nightState.wolfKillId).toBe(targetId);
+    expect(game.logs.find(l => l.message.startsWith('Wolf target locked'))?.visibility).toBe('wolf-private');
+    game.skipWolfChat(); flush();
+    await advance(700); await advance(700);
+    expect(game.nightState).toMatchObject({ wolfKillId: targetId, witchSaved: save });
+    const info = globalBeliefTracker.getSeatMemory(witch.id)?.visibleEvents.find(e => e.kind === 'witch-info');
+    expect(info?.payload).toMatchObject({ wolfKillId: targetId, saved: save });
+    expect(globalBeliefTracker.getSeatMemory(config.playerCount)?.visibleEvents.some(e => e.kind === 'witch-info')).toBe(false);
+    await advance(700);
+    expect(game.players[targetId - 1]).toMatchObject({ isAlive: save, isRevealed: false });
+  });
+
   it('reserves 15 seconds for the human and keeps the full 120-second window', async () => {
     begin(); respond();
     expect(game.wolfCountdown).toBe(120);
@@ -849,5 +887,29 @@ describe('opening ceremony hold', () => {
     leave();
     expect(game.introPending).toBe(false);
     expect(game.phase).toBe(GamePhase.LOBBY);
+  });
+});
+
+describe('human self-vote settlement', () => {
+  it.each(Object.values(Role))('records the deciding self-ballot for %s and applies the existing exile rule', async role => {
+    const roles = [...MODE_12_PLAYER.roles];
+    const oldSeat = roles.indexOf(role);
+    [roles[0], roles[oldSeat]] = [roles[oldSeat], roles[0]];
+    start({ ...MODE_12_PLAYER, roles });
+    game.setPhase(GamePhase.DAY_VOTING); flush();
+    game.handlePlayerAction(1); flush();
+    await advance(3_000);
+    expect(game.voteRecords.find(v => v.voterId === 1)?.targetId).toBe(1);
+    expect(game.me).toMatchObject({ isAlive: role === Role.IDIOT, canVote: false });
+    if (role === Role.HUNTER) {
+      expect(game.phase).toBe(GamePhase.DAY_HUNTER_SHOT);
+      game.handlePlayerAction(2); flush();
+      expect(game.players[1].isAlive).toBe(false);
+    }
+    if (role === Role.IDIOT) {
+      game.setPhase(GamePhase.DAY_VOTING); flush();
+      game.handlePlayerAction(1); flush(); await advance(3_000);
+      expect(game.voteRecords.filter(v => v.voterId === 1).at(-1)?.targetId).toBeNull();
+    }
   });
 });

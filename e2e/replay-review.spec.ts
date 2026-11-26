@@ -1,4 +1,5 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
+import historicalReplay from '../src/ai/__fixtures__/replays/local-9p-001.replay.json' with { type: 'json' };
 import {
   enterGuestLobby,
   startNinePlayerGame,
@@ -333,6 +334,16 @@ test.describe('post-game replay review', () => {
     expect(await page.getByTestId('replay-final-ranking-row').count()).toBeGreaterThan(0);
     await expect(page.getByTestId('replay-suspicion-chart')).toBeVisible();
     await expect(page.getByTestId('replay-votes')).toBeVisible();
+    const voteReport = page.getByTestId('replay-votes');
+    await expect(voteReport).not.toContainText(/\p{Script=Han}|translation unavailable/iu);
+    await expect(voteReport).toContainText('No reason recorded.');
+    for (const row of await voteReport.getByTestId('replay-vote-row').all()) {
+      // Every generated AI ballot in this match provided an actual reason.
+      if (await row.getAttribute('data-voter') !== '1') {
+        await expect(row.locator('p').last()).toHaveText(/^[A-Za-z].+\.$/);
+        await expect(row).not.toContainText('No reason recorded.');
+      }
+    }
     await expect(page.getByTestId('replay-share-slot')).toHaveCount(1);
     await page.screenshot({ path: test.info().outputPath('replay-review-1440x900-top.png') });
 
@@ -406,6 +417,20 @@ test.describe('post-game replay review', () => {
     await page.getByRole('button', { name: 'Close replay review' }).click();
     await expect(page.getByTestId('replay-review-panel')).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Return to Lobby', exact: true })).toBeVisible();
+
+    // The same GAME_OVER button reads the latest saved record on every open.
+    // Replay an archived Chinese match verbatim through that storage boundary.
+    const archivedStore = JSON.stringify({ version: 1, replays: [historicalReplay] });
+    await page.evaluate(([key, value]) => localStorage.setItem(key, value), [REPLAY_STORAGE_KEY, archivedStore]);
+    await page.getByTestId('replay-review-open').click();
+    await expect(voteReport.getByTestId('replay-vote-row')).toHaveCount(historicalReplay.votes.length);
+    await expect(voteReport).not.toContainText(/\p{Script=Han}|translation unavailable/iu);
+    await expect(voteReport.locator('[data-round="1"][data-voter="3"][data-target="2"]'))
+      .toContainText('Voted for Seat 2, the most suspicious player.');
+    await expect(voteReport.locator('[data-round="1"][data-voter="2"][data-target="9"]'))
+      .toContainText('Chose a target at random on the lower difficulty setting.');
+    await expect(page.getByTestId('replay-wolf-chat-row').first()).toContainText(historicalReplay.wolfChat[0].message);
+    expect(await page.evaluate(key => localStorage.getItem(key), REPLAY_STORAGE_KEY)).toBe(archivedStore);
 
     // ── Zero panel network / zero provider calls ───────────────────────────
     expect(audit.functions).toEqual([]);

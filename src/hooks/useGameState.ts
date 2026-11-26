@@ -41,6 +41,7 @@ import { selectAction, type ActionDecision } from '../ai/actionSelector';
 import { preloadSpeechPools } from '../services/speechLibrary';
 import { shuffleRoles } from '../services/roleDeal';
 import { createReplayRecorder, saveReplay, type ReplayRecorder } from '../replay';
+import type { HumanSkillCueEvent, HumanSkillCueKind } from '../services/roleShowcaseConfig';
 
 const AI_STYLE_KEYS = Object.keys(CUSTOM_AI_STYLES);
 const MY_PLAYER_ID = 1;
@@ -278,6 +279,7 @@ export function useGameState(authContext: AuthContext) {
   // Opt-in hold so the opening ceremony can finish (and mask asset preloading)
   // before the first night timer starts. Off unless startGame asks for it.
   const [introPending, setIntroPending] = useState(false);
+  const [humanSkillCue, setHumanSkillCue] = useState<HumanSkillCueEvent | null>(null);
   const [isMuted, setIsMuted] = useState(false);
   // Audio prefs (browser-tts-mvp): restored from localStorage, synced to the
   // speechAudio service below. ttsEnabled defaults to OFF — flipping the
@@ -330,6 +332,8 @@ export function useGameState(authContext: AuthContext) {
   const wolfRevisionRef = useRef(0);
   const wolfKillRef = useRef<number | null>(null);
   const saveStartedGenerationRef = useRef<number | null>(null);
+  const introReleasedGenerationRef = useRef<number | null>(null);
+  const skillCueSeqRef = useRef(0);
   const timerCleanupsRef = useRef(new Set<() => void>());
   // H2-A: replay capture stays in memory for the whole match and is persisted
   // exactly once at GAME_OVER. The refs below only guard against duplicate
@@ -446,7 +450,9 @@ export function useGameState(authContext: AuthContext) {
   };
 
   const leaveGame = () => {
+    introReleasedGenerationRef.current = null;
     setIntroPending(false);
+    setHumanSkillCue(null);
     if (!matchActiveRef.current) return;
     // H1-F/OBS-DENOM: only a match without a winner is an abandonment. A match
     // that already reached GAME_OVER was finalized by the effect below, and
@@ -771,7 +777,9 @@ export function useGameState(authContext: AuthContext) {
     }
     invalidateMatch();
     matchActiveRef.current = true;
+    introReleasedGenerationRef.current = null;
     setIntroPending(Boolean(options.holdForIntro));
+    setHumanSkillCue(null);
     const nextLanguage = resolveGameLanguage(language);
     startMatch({ boardId: nextConfig.id, difficulty, language: nextLanguage, isGuest });
     setPause({ isPaused: false });
@@ -989,6 +997,13 @@ export function useGameState(authContext: AuthContext) {
     }
     wolfHistoryRef.current = [...wolfHistoryRef.current, entry];
     setWolfChat(wolfHistoryRef.current);
+    const seq = wolfHistoryRef.current.length;
+    globalBeliefTracker.ingestVisibleEvent({
+      eventId: `wolf-plan:r${entry.round}:s${entry.speakerId}:n${seq}`,
+      seq, round: entry.round, phase: GamePhase.NIGHT_WEREWOLVES,
+      visibility: 'wolf-team', kind: 'wolf-plan', actorId: entry.speakerId,
+      payload: { message: entry.message },
+    });
     replayRecorderRef.current?.recordWolfChat({ round: entry.round, speakerId: entry.speakerId, message: entry.message });
     // Private entries never enter the non-wolf human's log, even as a spectator.
     if (me?.role === Role.WEREWOLF) return addLog(entry.message, false, entry.speakerId, entry.message, 'wolf', entry.dialogueSource, 'wolf-private');
@@ -1494,7 +1509,7 @@ export function useGameState(authContext: AuthContext) {
       // P1B: capture uncontaminated pre-vote belief snapshots BEFORE any updateFromVote runs.
       recordReplayPreVoteBeliefSnapshots(currentRound);
 
-      if (humanCanVote && humanTargetId) {
+      if (humanCanVote && humanTargetId !== null && players.some(p => p.id === humanTargetId && p.isAlive)) {
         votes[humanTargetId] = (votes[humanTargetId] || 0) + 1;
         votesByVoter[MY_PLAYER_ID] = humanTargetId;
         addLog(`You voted Player ${humanTargetId}.`, true, undefined, `You voted for Player ${humanTargetId}.`, 'vote');
@@ -1709,6 +1724,25 @@ export function useGameState(authContext: AuthContext) {
     else setPhase(GamePhase.NIGHT_START);
   };
 
+  const emitHumanSkillCue = (kind: HumanSkillCueKind, targetId: number | null, round: number): void => {
+    skillCueSeqRef.current += 1;
+    setHumanSkillCue({
+      id: `skill-${matchGenerationRef.current}-${skillCueSeqRef.current}`,
+      kind,
+      actorId: MY_PLAYER_ID,
+      targetId,
+      round,
+    });
+  };
+
+  const dismissHumanSkillCue = (id?: string): void => {
+    setHumanSkillCue(prev => {
+      if (!prev) return null;
+      if (id && prev.id !== id) return prev;
+      return null;
+    });
+  };
+
   const handlePlayerAction = (targetId: number) => {
     if (!canProgress() || processingScopeRef.current) return;
     // Hunter shot: a dead Hunter can still act (the only dead-human action path)
@@ -1720,7 +1754,7 @@ export function useGameState(authContext: AuthContext) {
     if (!me?.isAlive || !target) return;
 
     if (phase === GamePhase.NIGHT_WEREWOLVES && me.role === Role.WEREWOLF) {
-      if (!playerClockRef.current || wolfKillRef.current !== null || !target.isAlive || target.role === Role.WEREWOLF) return;
+      if (!playerClockRef.current || wolfKillRef.current !== null || !target.isAlive) return;
       wolfKillRef.current = targetId;
       setNightState(prev => ({ ...prev, wolfKillId: targetId }));
       replayRecorderRef.current?.recordNightAction({
@@ -1732,6 +1766,7 @@ export function useGameState(authContext: AuthContext) {
         outcome: 'ACT',
       });
       addLog(`Wolf target locked: Player ${targetId}.`, true, undefined, `Werewolf target locked: Player ${targetId}.`, 'wolf', undefined, 'wolf-private');
+      emitHumanSkillCue('WOLF_KILL_CONFIRM', targetId, Math.max(1, roundCount));
       if (phaseScope.wolfResponseStarted && !phaseScope.wolfComposing) void requestWolfResponses();
     } else if (phase === GamePhase.NIGHT_SEER && me.role === Role.SEER) {
       if (!isTargetableAliveOther(players, MY_PLAYER_ID, targetId)) return;
@@ -1755,6 +1790,7 @@ export function useGameState(authContext: AuthContext) {
         targetId,
         outcome: 'ACT',
       });
+      emitHumanSkillCue('SEER_CHECK', targetId, currentRound);
       setPhase(GamePhase.NIGHT_WITCH);
     } else if (phase === GamePhase.NIGHT_WITCH && me.role === Role.WITCH) {
       if (!isTargetableAliveOther(players, MY_PLAYER_ID, targetId) || !witchStatus.hasPoison) return;
@@ -1776,11 +1812,12 @@ export function useGameState(authContext: AuthContext) {
         outcome: 'ACT',
       });
       addLog(`Poison Player ${targetId}.`, true, undefined, `You chose to poison Player ${targetId}.`, 'action', undefined, 'human-private');
+      emitHumanSkillCue('WITCH_POISON', targetId, currentRound);
       setPhase(GamePhase.DAY_ANNOUNCE);
     } else if (phase === GamePhase.DAY_HUNTER_SHOT) {
       handleHunterShot(targetId);
     } else if (phase === GamePhase.DAY_VOTING) {
-      if (!me.canVote || !target.isAlive || target.id === MY_PLAYER_ID) return;
+      if (!me.canVote || !target.isAlive) return;
       finishVote(targetId);
     }
   };
@@ -1806,6 +1843,7 @@ export function useGameState(authContext: AuthContext) {
       outcome: 'ACT',
     });
     addLog('Witch used antidote.', true, undefined, `You used the antidote to save Player ${nightState.wolfKillId}.`, 'action', undefined, 'human-private');
+    emitHumanSkillCue('WITCH_SAVE', nightState.wolfKillId, currentRound);
     setPhase(GamePhase.DAY_ANNOUNCE);
   };
 
@@ -1828,6 +1866,7 @@ export function useGameState(authContext: AuthContext) {
       outcome: 'HOLD',
     });
     addLog('Witch passed.', true, undefined, 'The Witch chose not to use a potion.', 'action', undefined, 'human-private');
+    emitHumanSkillCue('WITCH_HOLD', null, currentRound);
     setPhase(GamePhase.DAY_ANNOUNCE);
   };
 
@@ -1848,7 +1887,11 @@ export function useGameState(authContext: AuthContext) {
     return 'Waiting for the system and AI players.';
   })();
 
-  const releaseIntro = (): void => setIntroPending(false);
+  const releaseIntro = (): void => {
+    if (introReleasedGenerationRef.current === matchGenerationRef.current) return;
+    introReleasedGenerationRef.current = matchGenerationRef.current;
+    setIntroPending(false);
+  };
 
   const skipCurrentSpeech = (): void => {
     if (!canProgress()) return;
@@ -1883,5 +1926,6 @@ export function useGameState(authContext: AuthContext) {
     finishVote, handleHumanSpeechSubmit,
     skipCurrentSpeech, togglePause, handleWolfChatSubmit, interruptWolfChat, skipWolfChat,
     introPending, releaseIntro,
+    humanSkillCue, dismissHumanSkillCue,
   };
 }

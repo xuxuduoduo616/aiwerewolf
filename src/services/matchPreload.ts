@@ -1,3 +1,5 @@
+import type { Role } from '../types';
+import { getRoleShowcaseSpec } from './roleShowcaseConfig';
 import { preloadSpeechPools } from './speechLibrary';
 
 interface PreloadablePlayer {
@@ -16,14 +18,23 @@ const preloadImage = (url: string): Promise<void> => new Promise(resolve => {
 
 /**
  * Everything the first minute of a match needs: speech pools for the dealt
- * roles and every seat avatar. Never rejects; slow assets are capped by the
+ * roles, every seat avatar, and only the human player's role showcase portrait
+ * (never all six role videos). Never rejects; slow assets are capped by the
  * caller's timeout so the ceremony can always finish.
  */
-export const preloadMatchAssets = async (players: readonly PreloadablePlayer[]): Promise<void> => {
+export const preloadMatchAssets = async (
+  players: readonly PreloadablePlayer[],
+  humanRole?: Role,
+): Promise<void> => {
   const avatars = [...new Set(players.map(player => player.avatarUrl).filter((url): url is string => Boolean(url)))];
+  const portraitUrl = humanRole ? getRoleShowcaseSpec(humanRole).portraitSrc : null;
+  const imageUrls = portraitUrl && !avatars.includes(portraitUrl)
+    ? [...avatars, portraitUrl]
+    : avatars;
+
   await Promise.all([
     preloadSpeechPools(players.map(player => player.role)).catch(() => undefined),
-    ...avatars.map(preloadImage),
+    ...imageUrls.map(preloadImage),
   ]);
 };
 

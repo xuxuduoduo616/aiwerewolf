@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowRight, BookOpen, Moon, UserRound } from 'lucide-react';
 import type { SkinProduct } from '../economy/catalog';
+import LobbyRoleBubbles from './LobbyRoleBubbles';
 import LobbyVillageScene from './LobbyVillageScene';
 
 interface Props {
@@ -38,6 +39,7 @@ const RefinedLobby: React.FC<Props> = ({
       </div>
 
       <LobbyVillageScene equippedSkin={equippedSkin} />
+      <LobbyRoleBubbles />
     </div>
 
     <footer className="night-lobby-footer">

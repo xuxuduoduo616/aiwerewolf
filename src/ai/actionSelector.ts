@@ -7,9 +7,9 @@
  */
 
 import { canWitchSelfSave } from '../gameEngine';
-import { Role, type GamePhase, type Player, type VoteRecord } from '../types';
+import { Role, GamePhase, type Player, type VoteRecord } from '../types';
 import { BeliefTracker } from './beliefTracker';
-import type { SeatMemory, SpeechEventPayload, VoteEventPayload } from './playerMemory';
+import type { SeatMemory, SpeechEventPayload, VoteEventPayload, WolfPlanEventPayload } from './playerMemory';
 
 export type ActionType = 'KILL' | 'CHECK' | 'VOTE' | 'POISON' | 'SAVE' | 'SHOOT';
 export type ActionOutcome = 'ACT' | 'HOLD' | 'NO_TARGET';
@@ -62,6 +62,43 @@ export interface SelectActionOptions {
 }
 
 const TIE_EPSILON = 1e-9;
+
+// A direct, seat-addressed plan permits an occasional self-ballot. Neither
+// difficulty mistakes nor suspicion rankings ever select the actor's own seat.
+const TACTICAL_SELF_VOTE_CHANCE = 0.12;
+
+const selfVotePlanEvent = (seat: SeatMemory, round: number): string | undefined => {
+  for (let i = seat.visibleEvents.length - 1; i >= 0; i--) {
+    const event = seat.visibleEvents[i];
+    if (event.round !== round || event.actorId === null || event.actorId === seat.seatId) continue;
+    let text: string;
+    if (event.kind === 'speech' && event.visibility === 'public' && event.phase === GamePhase.DAY_DISCUSSION) {
+      text = (event.payload as SpeechEventPayload).text;
+    } else if (event.kind === 'wolf-plan' && event.visibility === 'wolf-team' &&
+      event.phase === GamePhase.NIGHT_WEREWOLVES && seat.knownTeammateIds.has(event.actorId)) {
+      text = (event.payload as WolfPlanEventPayload).message;
+    } else {
+      continue;
+    }
+
+    // Accept direct instructions only. Questions, quotations, accusations
+    // and conditional suggestions cannot authorize this unusual move.
+    if (/["“”‘「」『』]|(?:^|\s)'/.test(text)) continue;
+    const sentences = text.match(/[^.!?。！？;；\n]+[.!?。！？;；]?/g) ?? [];
+    for (const sentence of sentences.reverse()) {
+      const line = sentence.trim();
+      if (/[?？]|\b(?:unless|if)\b|如果|除非/i.test(line)) continue;
+      if (event.kind === 'speech' && /\btomorrow\b|明天/i.test(line)) continue;
+      const en = /^(?:player|seat)\s*(\d+)\s*[,：:]?\s*(?:please\s+)?(?:you\s+)?(?:(?:should|can)\s+)?(?:(not|never|do not|don['’]t|cannot|can['’]t|shouldn['’]t)\s+)?(?:vote (?:for )?yourself|self[- ]vote)(?:\s+(?:today|this round|tomorrow))?(?:\s+to\s+[\w -]+)?[.!;]?$/i.exec(line);
+      const zh = /^(\d+)\s*号(?:玩家)?\s*[,，：:]?\s*(?:请|你可以|你)?(?:今天|明天|这轮)?(不要|不用|别)?(?:自票|自投|投(?:你)?自己)[。！；!;.]?$/.exec(line);
+      const directive = en ?? zh;
+      if (directive && Number(directive[1]) === seat.seatId) {
+        return directive[2] ? undefined : event.eventId;
+      }
+    }
+  }
+  return undefined;
+};
 
 const clamp01 = (value: number): number =>
   Math.max(0, Math.min(1, Number.isFinite(value) ? value : 0));
@@ -294,6 +331,7 @@ export const selectAction = (
     randomized: boolean;
     fallback: boolean;
     candidates?: readonly DecisionCandidateScore[];
+    evidenceEventIds?: string[];
   }): ActionDecision => {
     const latencyMs = Math.max(0, Math.round((nowMs() - startedAt) * 1000) / 1000);
     const trace: DecisionTrace = {
@@ -304,7 +342,7 @@ export const selectAction = (
       outcome: params.outcome,
       targetId: params.targetId,
       candidates: sortCandidates(params.candidates ?? []),
-      evidenceEventIds: collectEvidenceIds(beliefs, actor.id, params.targetId),
+      evidenceEventIds: params.evidenceEventIds ?? collectEvidenceIds(beliefs, actor.id, params.targetId),
       tieBroken: params.tieBroken,
       randomized: params.randomized,
       fallback: params.fallback,
@@ -319,6 +357,23 @@ export const selectAction = (
       trace,
     };
   };
+
+  if (type === 'VOTE') {
+    if (!actor.isAlive || !actor.canVote) {
+      return finalize({
+        targetId: null, reason: 'This seat cannot vote.', outcome: 'NO_TARGET',
+        tieBroken: false, randomized: false, fallback: false,
+      });
+    }
+    const plan = seatMemory && !excludedTargetIds?.has(actor.id) && selfVotePlanEvent(seatMemory, round);
+    if (plan && rng() < TACTICAL_SELF_VOTE_CHANCE) {
+      return finalize({
+        targetId: actor.id, reason: 'Cast a tactical self-vote after a direct request this round.',
+        outcome: 'ACT', tieBroken: false, randomized: true, fallback: false,
+        evidenceEventIds: [plan],
+      });
+    }
+  }
 
   // Witch SAVE has its own target (wolfKillId, which may equal actor.id on Night 1).
   if (type === 'SAVE') {
@@ -427,7 +482,7 @@ export const selectAction = (
       case 'CHECK':
         return alive.filter(p => !p.isRevealed && !checkedTargetIds.has(p.id) && allowed(p));
       case 'VOTE':
-        // Target legality is alive non-self players (canVote is voter eligibility, not target eligibility)
+        // Ordinary votes always consider other living seats, including players who lost their vote.
         return alive.filter(allowed);
       case 'POISON':
         return alive.filter(p => !p.isRevealed && allowed(p));

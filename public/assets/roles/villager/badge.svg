@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <defs>
+    <radialGradient id="vb-bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#1e262e"/>
+      <stop offset="100%" stop-color="#0b0e12"/>
+    </radialGradient>
+    <radialGradient id="vb-lantern" cx="50%" cy="46%" r="54%">
+      <stop offset="0%" stop-color="#fffbeb"/>
+      <stop offset="55%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#b45309"/>
+    </radialGradient>
+  </defs>
+  <circle cx="32" cy="32" r="28" fill="url(#vb-bg)" stroke="#e2e8f0" stroke-width="2.4"/>
+  <circle cx="32" cy="32" r="23" stroke="#64748b" stroke-width="1.2" stroke-dasharray="6 3"/>
+  <!-- Woven Conical Straw Hat -->
+  <path d="M 14 27 L 32 14 L 50 27 Q 32 31 14 27 Z" fill="#786348" stroke="#f5f5f4" stroke-width="2" stroke-linejoin="round"/>
+  <!-- Glowing Amber Paper Lantern -->
+  <rect x="27" y="31" width="10" height="3" fill="#292524" stroke="#f5f5f4" stroke-width="1.2"/>
+  <ellipse cx="32" cy="41" rx="9" ry="9" fill="url(#vb-lantern)" stroke="#fef3c7" stroke-width="1.8"/>
+  <path d="M 24 41 Q 32 43 40 41" stroke="#b45309" stroke-width="1.4"/>
+  <path d="M 32 50 V 55" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/>
+</svg>

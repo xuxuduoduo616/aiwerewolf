@@ -351,15 +351,31 @@
     overflow-anchor: none;
   }
 
+  .game-room.sketch-scene::before,
+  .game-room.sketch-scene::after {
+    position: fixed;
+    inset: 0;
+  }
+
+  .game-room.sketch-scene::after {
+    animation: none;
+  }
+
+  .game-room.sketch-scene:has(~ .game-room-role-dock) {
+    height: calc(100vh - 58px - env(safe-area-inset-bottom, 0px));
+    height: calc(100dvh - 58px - env(safe-area-inset-bottom, 0px));
+    min-height: 0;
+  }
+
   .game-room-layout {
     display: block;
-    min-height: 100vh;
-    min-height: 100dvh;
+    min-height: 100%;
+    max-width: 100%;
+    overflow-x: clip;
   }
 
   .game-room-main {
-    min-height: 100vh;
-    min-height: 100dvh;
+    min-height: 100%;
   }
 
   .game-room-header {
@@ -745,4 +761,69 @@
 
 @media (max-width: 1023px) {
   .game-room .phase-panel { inset: auto !important; width: 100% !important; height: auto !important; }
+
+  .game-room-role-dock {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 45;
+    display: flex;
+    align-items: center;
+    min-height: calc(58px + env(safe-area-inset-bottom, 0px));
+    padding:
+      7px
+      max(12px, env(safe-area-inset-right, 0px))
+      calc(7px + env(safe-area-inset-bottom, 0px))
+      max(12px, env(safe-area-inset-left, 0px));
+    background: rgba(6, 6, 8, 0.96);
+    border-top: 1px solid rgba(63, 63, 70, 0.55);
+  }
+
+  .game-room-role-dock .role-identity-badge {
+    position: static;
+    left: auto;
+    bottom: auto;
+  }
+}
+
+@media (min-width: 1024px) {
+  .game-room-role-dock {
+    display: contents;
+  }
+}
+
+.role-identity-badge {
+  position: fixed;
+  left: max(16px, env(safe-area-inset-left, 0px));
+  bottom: max(16px, env(safe-area-inset-bottom, 0px));
+  z-index: 45;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1px solid rgba(244, 244, 245, 0.26);
+  border-radius: 999px;
+  background: rgba(9, 9, 11, 0.88);
+  color: #f4f4f5;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+}
+
+.role-identity-badge:hover {
+  background: rgba(24, 24, 27, 0.94);
+  border-color: rgba(244, 244, 245, 0.5);
+}
+
+.role-identity-badge:focus-visible {
+  outline: 2px solid #fafafa;
+  outline-offset: 2px;
+}
+
+.role-identity-badge__label {
+  white-space: nowrap;
 }

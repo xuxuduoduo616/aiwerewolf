@@ -544,13 +544,13 @@ export const generateAIAction = async (
   const effectiveRound = Math.max(1, round);
   const rng = options?.rng ?? Math.random;
 
-  // SAVE evaluates tonight's wolfKillId (which may be self on Night 1) directly via ActionSelector.
-  if (type === 'SAVE') {
-    return selectAction(
+  // These policies handle their own eligibility, including narrowly permitted self-targets.
+  if (type === 'SAVE' || type === 'VOTE') {
+    const decision = selectAction(
       player,
       players,
       globalBeliefTracker,
-      'SAVE',
+      type,
       effectiveRound,
       voteRecords,
       currentAccuracy,
@@ -561,6 +561,10 @@ export const generateAIAction = async (
         mistakeRate: options?.mistakeRate ?? currentMistakeRate,
       },
     );
+    if (type === 'VOTE' && decision.targetId !== null && !options?.deferVoteBeliefUpdate) {
+      globalBeliefTracker.updateFromVote(player.id, decision.targetId, { players, round: effectiveRound });
+    }
+    return decision;
   }
 
   const excludedTargetIds = options?.excludedTargetIds;
@@ -573,7 +577,6 @@ export const generateAIAction = async (
       if (type === 'KILL') return p.role !== 'Werewolf';
       if (type === 'CHECK') return !p.isRevealed && !checkedTargetIds.has(p.id);
       if (type === 'POISON') return !p.isRevealed;
-      if (type === 'VOTE') return p.isAlive;
       if (type === 'SHOOT') return p.isAlive;
       return true;
     })
@@ -629,12 +632,6 @@ export const generateAIAction = async (
 
   // Deterministic action path: remote models may shape speech only.
   if (l1Decision.targetId !== null && valid.includes(l1Decision.targetId)) {
-    if (type === 'VOTE' && !options?.deferVoteBeliefUpdate) {
-      globalBeliefTracker.updateFromVote(player.id, l1Decision.targetId, {
-        players,
-        round: effectiveRound,
-      });
-    }
     return l1Decision;
   }
 
@@ -815,7 +812,7 @@ JSON：{"messages":[{"speakerId":number,"message":"中文","strategyTag":"刀口
     const complete = conciseWolfText(libText);
     const libGuard = guardSpeechText(complete || '', players, language);
     const libOk = Boolean(
-      complete && libText.length > 15 && libGuard.ok && !context.history.length
+      complete && libText.length > 15 && libGuard.ok && !context.history.length && context.confirmedTargetId == null
         && (language === 'en' ? isEnglish(libGuard.text) : isChinese(libGuard.text)),
     );
     const fallbackMsg = libOk

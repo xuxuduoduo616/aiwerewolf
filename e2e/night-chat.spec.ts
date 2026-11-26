@@ -76,10 +76,11 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 
     await page.screenshot({ path: `output/playwright/night-chat-${viewport.width}.png`, fullPage: true });
     await info.attach('night-chat', { path: `output/playwright/night-chat-${viewport.width}.png`, contentType: 'image/png' });
     await page.getByRole('button', { name: 'Resume', exact: true }).click();
-    await page.locator('.game-player-seat').nth(3).getByRole('button').click();
+    const targetId = viewport.width === 1440 ? 1 : viewport.width === 390 ? 2 : 4;
+    await page.locator('.game-player-seat').nth(targetId - 1).getByRole('button').click();
     await page.getByRole('button', { name: 'KILL', exact: true }).click();
     await expect(page.locator(phaseLabel)).toHaveText('Werewolves Hunt');
-    await expect(page.getByText('Confirmed target: Player 4', { exact: true })).toBeVisible();
+    await expect(page.getByText(`Confirmed target: Player ${targetId}`, { exact: true })).toBeVisible();
     await page.getByRole('button', { name: 'Skip night chat', exact: true }).click();
     await expect(page.locator(phaseLabel)).not.toHaveText('Werewolves Hunt');
     await expect(draft).toHaveCount(0);

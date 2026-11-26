@@ -64,3 +64,17 @@ test.describe('first-day speech and exile vote', () => {
     expect(providerRequests, 'the day-1 flow must not call external AI/TTS Functions').toEqual([]);
   });
 });
+
+test('a living Hunter can cast a self-ballot through the seat and VOTE button', async ({ page }) => {
+  await page.addInitScript(() => { Math.random = () => 0.1667; });
+  await enterGuestLobby(page);
+  await startNinePlayerGame(page);
+  await expect(page.getByText('Your role: Hunter', { exact: true })).toBeVisible();
+  await expect(advanceToHumanSpeech(page)).resolves.toBe('human');
+  await page.locator('[data-speech-input-row] input').fill('I will use my own ballot.');
+  await page.getByRole('button', { name: 'Send speech' }).click();
+  await expect(advanceToVoting(page)).resolves.toBe('voting');
+  await page.locator('.game-player-seat').first().getByRole('button').click();
+  await page.getByRole('button', { name: 'VOTE', exact: true }).click();
+  await expect(page.getByText(/Vote record: 1->1(?:,|$)/).first()).toBeVisible({ timeout: 25_000 });
+});
