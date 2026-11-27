@@ -437,8 +437,11 @@ describe('Contested Seer claims & credibility weighting', () => {
     // Contested check-wolf delta is discounted by 0.6x relative to uncontested
     expect(contestedDelta).toBeCloseTo(uncontestedDelta * 0.6, 6);
 
-    // True Seer Seat 3 sets fake-claiming Seat 2's credibility to 0.0
+    // True Seer Seat 3 sets fake-claiming Seat 2's credibility to 0.0 and suspicion >= 0.95 (isolated to Seer)
     expect(beliefs.getSeatMemory(3)!.credibility.get(2)).toBe(0.0);
+    expect(beliefs.getSuspicion(3, 2)).toBeGreaterThanOrEqual(0.95);
+    expect(beliefs.getRecentReasons(3, 2).some(r => r.tag === 'counter-seer-claim')).toBe(true);
+    expect(beliefs.getSuspicion(8, 2)).toBe(0.5);
   });
 });
 

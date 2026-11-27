@@ -421,6 +421,22 @@ export class PlayerMemoryStore {
           seat.credibility.set(rc.speakerId, 0.0);
           const existing = seat.publicRoleClaims.get(rc.speakerId);
           if (existing) existing.contested = true;
+          if (seat.isAlive && !this.isLockedSeerFact(seat, rc.speakerId)) {
+            const prevSus = seat.suspicion.get(rc.speakerId) ?? DEFAULT_SUSPICION;
+            const nextSus = Math.max(prevSus, 0.95);
+            if (nextSus > prevSus + 1e-9) {
+              seat.suspicion.set(rc.speakerId, nextSus);
+              this.pushReason(seat, {
+                eventId: event.eventId,
+                round: event.round,
+                actorId: rc.speakerId,
+                targetId: rc.speakerId,
+                delta: nextSus - prevSus,
+                tag: 'counter-seer-claim',
+                polarity: 'accuse',
+              });
+            }
+          }
         }
       }
     }

@@ -232,6 +232,125 @@ const computeGoodBlocSignal = (
   return Math.min(0.25, signal);
 };
 
+interface SeerCheckTargetSignal {
+  isCounterSeer: boolean;
+  sidedWithCounterSeer: boolean;
+  attackedTrueSeer: boolean;
+  votedAgainstTrueSeer: boolean;
+  evidenceEventIds: string[];
+}
+
+const COUNTER_SEER_CHECK_PENALTY = -1.2;
+const SEER_CHARGER_CHECK_BONUS = 0.45;
+const SEER_MULTI_SIGNAL_CHECK_BONUS = 0.05;
+const SEER_LOW_PRESENCE_CHECK_WEIGHT = 0.08;
+
+/**
+ * Strictly seat-visible behavioral analysis for Seer night CHECK target selection.
+ * Reads ONLY `seatMemory.publicRoleClaims` and `visibility === 'public'` speech/vote
+ * events in `seatMemory.visibleEvents` (zero cross-seat private or hidden-role reads).
+ */
+const evaluateSeerCheckSignals = (
+  seatMemory: SeatMemory,
+  actorId: number,
+  candidateIds: ReadonlySet<number>,
+): Map<number, SeerCheckTargetSignal> => {
+  const counterSeerIds = new Set<number>();
+  const counterSeerEventIds = new Map<number, string>();
+  for (const [seatId, claim] of seatMemory.publicRoleClaims.entries()) {
+    if (seatId !== actorId && claim.claimedRole === Role.SEER) {
+      counterSeerIds.add(seatId);
+      if (claim.eventId) counterSeerEventIds.set(seatId, claim.eventId);
+    }
+  }
+
+  const signals = new Map<number, SeerCheckTargetSignal>();
+  for (const candidateId of candidateIds) {
+    if (counterSeerIds.has(candidateId)) {
+      const claimEventId = counterSeerEventIds.get(candidateId);
+      signals.set(candidateId, {
+        isCounterSeer: true,
+        sidedWithCounterSeer: false,
+        attackedTrueSeer: false,
+        votedAgainstTrueSeer: false,
+        evidenceEventIds: claimEventId ? [claimEventId] : [],
+      });
+      continue;
+    }
+
+    const counterSeerStance = new Map<number, { stance: 'support' | 'oppose'; eventId: string }>();
+    let trueSeerSpeechStance: { stance: 'attack' | 'support'; round: number; eventId: string } | null = null;
+    let lastVoteAgainstTrueSeer: { round: number; eventId: string } | null = null;
+
+    for (const event of seatMemory.visibleEvents) {
+      if (event.visibility !== 'public') continue;
+      if (event.kind === 'speech' && event.actorId === candidateId) {
+        const payload = event.payload as SpeechEventPayload;
+        for (const claim of payload.claims) {
+          if (claim.confidence <= 0) continue;
+          if (counterSeerIds.has(claim.targetId)) {
+            if (claim.polarity === 'defend' || claim.polarity === 'check-good') {
+              counterSeerStance.set(claim.targetId, { stance: 'support', eventId: event.eventId });
+            } else if (claim.polarity === 'accuse' || claim.polarity === 'check-wolf') {
+              counterSeerStance.set(claim.targetId, { stance: 'oppose', eventId: event.eventId });
+            }
+          }
+          if (claim.targetId === actorId) {
+            if (claim.polarity === 'accuse' || claim.polarity === 'check-wolf') {
+              trueSeerSpeechStance = { stance: 'attack', round: event.round, eventId: event.eventId };
+            } else if (claim.polarity === 'defend' || claim.polarity === 'check-good') {
+              trueSeerSpeechStance = { stance: 'support', round: event.round, eventId: event.eventId };
+            }
+          }
+        }
+      } else if (event.kind === 'vote') {
+        const payload = event.payload as VoteEventPayload;
+        if (payload.voterId !== candidateId) continue;
+        if (payload.targetId === actorId) {
+          lastVoteAgainstTrueSeer = { round: event.round, eventId: event.eventId };
+        } else if (payload.targetId !== null && counterSeerIds.has(payload.targetId)) {
+          counterSeerStance.set(payload.targetId, { stance: 'oppose', eventId: event.eventId });
+        }
+      }
+    }
+
+    const supportEvents: string[] = [];
+    for (const entry of counterSeerStance.values()) {
+      if (entry.stance === 'support') supportEvents.push(entry.eventId);
+    }
+    const sidedWithCounterSeer = supportEvents.length > 0;
+    const attackedTrueSeer = trueSeerSpeechStance?.stance === 'attack';
+    const votedAgainstTrueSeer = Boolean(
+      lastVoteAgainstTrueSeer &&
+        !(
+          trueSeerSpeechStance?.stance === 'support' &&
+          trueSeerSpeechStance.round > lastVoteAgainstTrueSeer.round
+        ),
+    );
+
+    const evidenceSet = new Set<string>();
+    for (const id of supportEvents) {
+      if (id) evidenceSet.add(id);
+    }
+    if (attackedTrueSeer && trueSeerSpeechStance?.eventId) {
+      evidenceSet.add(trueSeerSpeechStance.eventId);
+    }
+    if (votedAgainstTrueSeer && lastVoteAgainstTrueSeer?.eventId) {
+      evidenceSet.add(lastVoteAgainstTrueSeer.eventId);
+    }
+
+    signals.set(candidateId, {
+      isCounterSeer: false,
+      sidedWithCounterSeer,
+      attackedTrueSeer,
+      votedAgainstTrueSeer,
+      evidenceEventIds: [...evidenceSet].slice(-5),
+    });
+  }
+
+  return signals;
+};
+
 const pickPackConsensus = (
   scored: readonly DecisionCandidateScore[],
   round: number,
@@ -654,22 +773,69 @@ export const selectAction = (
         });
       }
 
-      // Information value: opposing/contested Seer claims > uncertain active seats near 0.50 > extremes.
+      const candidateIds = new Set(unchecked.map(p => p.id));
+      const checkSignals = evaluateSeerCheckSignals(seatMemory, actor.id, candidateIds);
+
+      // True Seer check priority:
+      // 1) Non-counter-Seer seats charging/siding with opposing Seer or attacking/voting True Seer
+      // 2) Low-presence / swing unknown seats near 0.50 suspicion
+      // 3) Opposing Seer claimers ONLY as last-resort fallback when no other legal target remains
       const scored = unchecked.map(p => {
         const sus = beliefs.getSuspicion(actor.id, p.id);
         const uncertainty = 1 - Math.abs(sus - 0.5) * 2;
-        const claim = seatMemory.publicRoleClaims.get(p.id);
-        const seerClaimBonus = claim?.claimedRole === Role.SEER ? 0.4 : 0;
-        const vocalBonus = 0.15 * beliefs.getPublicInfluence(actor.id, p.id);
-        return { targetId: p.id, score: uncertainty + seerClaimBonus + vocalBonus };
+        const influence = beliefs.getPublicInfluence(actor.id, p.id);
+        const lowPresenceBonus = SEER_LOW_PRESENCE_CHECK_WEIGHT * (1 - influence);
+        const sig = checkSignals.get(p.id);
+
+        if (sig?.isCounterSeer) {
+          return {
+            targetId: p.id,
+            score: uncertainty + lowPresenceBonus + COUNTER_SEER_CHECK_PENALTY,
+          };
+        }
+
+        const hasSpeechHostility = Boolean(sig && (sig.sidedWithCounterSeer || sig.attackedTrueSeer));
+        const hasVoteHostility = Boolean(sig?.votedAgainstTrueSeer);
+        const chargeBonus =
+          !beliefs.isConfirmedGood(p.id) && (hasSpeechHostility || hasVoteHostility)
+            ? SEER_CHARGER_CHECK_BONUS +
+              (hasSpeechHostility && hasVoteHostility ? SEER_MULTI_SIGNAL_CHECK_BONUS : 0)
+            : 0;
+
+        return {
+          targetId: p.id,
+          score: uncertainty + lowPresenceBonus + chargeBonus,
+        };
       });
 
       const { chosen, tieBroken } = pickMaxScored(scored, rng);
-      const claim = seatMemory.publicRoleClaims.get(chosen.targetId);
-      const reason =
-        claim?.claimedRole === Role.SEER
-          ? `预言家核验对跳预言家 ${chosen.targetId}号`
-          : `预言家验证不确定目标 ${chosen.targetId}号`;
+      const chosenSig = checkSignals.get(chosen.targetId);
+      const chosenInfluence = beliefs.getPublicInfluence(actor.id, chosen.targetId);
+
+      let reason: string;
+      if (chosenSig?.isCounterSeer) {
+        reason = `无其他未验目标，兜底查验对跳预言家 ${chosen.targetId}号`;
+      } else if (chosenSig?.sidedWithCounterSeer && (chosenSig.attackedTrueSeer || chosenSig.votedAgainstTrueSeer)) {
+        reason = `优先查验给对跳站边冲锋并踩真预的 ${chosen.targetId}号`;
+      } else if (chosenSig?.sidedWithCounterSeer) {
+        reason = `优先查验给对跳预言家冲锋站边的 ${chosen.targetId}号`;
+      } else if (chosenSig?.attackedTrueSeer && chosenSig.votedAgainstTrueSeer) {
+        reason = `优先查验公开踩并投票抗推真预言家的 ${chosen.targetId}号`;
+      } else if (chosenSig?.votedAgainstTrueSeer) {
+        reason = `优先查验投票抗推真预言家的 ${chosen.targetId}号`;
+      } else if (chosenSig?.attackedTrueSeer) {
+        reason = `优先查验公开质疑真预言家的 ${chosen.targetId}号`;
+      } else if (chosenInfluence <= 0.1) {
+        reason = `优先查验低存在感摇摆未知位 ${chosen.targetId}号`;
+      } else {
+        reason = `预言家查验摇摆未知目标 ${chosen.targetId}号`;
+      }
+
+      const signalEvidence = chosenSig?.evidenceEventIds ?? [];
+      const evidenceEventIds =
+        signalEvidence.length > 0
+          ? signalEvidence
+          : collectEvidenceIds(beliefs, actor.id, chosen.targetId);
 
       return finalize({
         targetId: chosen.targetId,
@@ -679,6 +845,7 @@ export const selectAction = (
         randomized: false,
         fallback: false,
         candidates: scored,
+        evidenceEventIds,
       });
     }
 

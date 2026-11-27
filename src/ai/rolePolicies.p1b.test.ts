@@ -336,22 +336,119 @@ describe('P1B AC2: Vote & death observer updates without hidden-role leaks', () 
 });
 
 describe('P1B AC3: Role-specific policies & DecisionTrace', () => {
-  it('Seer CHECK prioritizes opposing Seer claim over quiet neutral seats', () => {
+  it('Seer CHECK skips opposing Seer claim and vocal neutral seats to probe quiet unknown seats', () => {
     const board = make12Board();
     const tracker = new BeliefTracker();
     tracker.init(board);
     const seer = board.find(p => p.id === 6)!;
 
+    // Seat 3 counter-claims Seer; Seat 8 gives a vocal non-hostile speech (raises influence > 0)
     tracker.updateFromSpeech(3, '我是预言家，昨晚验了10号是金水。', board, { round: 1, eventId: 'seer-claim-3' });
+    tracker.updateFromSpeech(8, '我是猎人，大家先冷静听完这一轮发言再决定。', board, {
+      round: 1,
+      eventId: 'vocal-neutral-8',
+    });
+
+    expect(tracker.getSuspicion(6, 3)).toBeGreaterThanOrEqual(0.95);
+    expect(tracker.getPublicInfluence(6, 8)).toBeGreaterThan(0);
 
     const check = selectAction(seer, board, tracker, 'CHECK', 2, [], 1.0, {
       rng: () => 0,
       phase: GamePhase.NIGHT_SEER,
     });
     expect(check.outcome).toBe('ACT');
-    expect(check.targetId).toBe(3);
+    expect(check.targetId).not.toBe(3);
+    expect(check.targetId).not.toBe(8);
+    expect(check.reason).toContain('低存在感摇摆未知位');
     expect(check.trace?.actionType).toBe('CHECK');
-    expect(check.trace?.candidates[0].targetId).toBe(3);
+    // Opposing Seer claim must sink to the very bottom of candidates
+    const candidates = check.trace?.candidates ?? [];
+    expect(candidates[candidates.length - 1].targetId).toBe(3);
+    expect(candidates[candidates.length - 1].score).toBeLessThan(0);
+  });
+
+  it('Seer CHECK prioritizes counter-Seer backers, anti-Seer attackers, and anti-Seer voters (deduplicated per seat)', () => {
+    const board = make12Board();
+    const seer = board.find(p => p.id === 6)!;
+
+    // Case A: Seat 4 publicly defends / sides with opposing Seer Seat 3 (even if repeated across speeches)
+    const trackerBacker = new BeliefTracker();
+    trackerBacker.init(board);
+    trackerBacker.updateFromSpeech(3, '我是预言家，6号是查杀。', board, { round: 1, eventId: 'fake-seer-3' });
+    trackerBacker.updateFromVote(3, 6, board, 1, 'fake-seer-vote-6');
+    trackerBacker.updateFromSpeech(4, '我相信3号是真预言家，大家站边3号。', board, { round: 1, eventId: 'charge-4-a' });
+    const singleCheck = selectAction(seer, board, trackerBacker, 'CHECK', 2, [], 1.0, {
+      rng: () => 0,
+      phase: GamePhase.NIGHT_SEER,
+    });
+    expect(singleCheck.targetId).toBe(4);
+    expect(singleCheck.reason).toContain('冲锋站边');
+    expect(singleCheck.trace?.candidates[0].targetId).toBe(4);
+    expect(singleCheck.trace?.evidenceEventIds).toContain('charge-4-a');
+    const scoreAfterOneSpeech = singleCheck.trace!.candidates[0].score;
+
+    // Repeating same-direction support in a second speech does not stack unboundedly
+    trackerBacker.updateFromSpeech(4, '我还是力保3号真预言家。', board, { round: 2, eventId: 'charge-4-b' });
+    const repeatCheck = selectAction(seer, board, trackerBacker, 'CHECK', 3, [], 1.0, {
+      rng: () => 0,
+      phase: GamePhase.NIGHT_SEER,
+    });
+    expect(repeatCheck.targetId).toBe(4);
+    expect(repeatCheck.trace!.candidates[0].score).toBeLessThanOrEqual(scoreAfterOneSpeech);
+
+    // Case B: Seat 5 publicly attacks / questions True Seer Seat 6
+    const trackerAttacker = new BeliefTracker();
+    trackerAttacker.init(board);
+    trackerAttacker.updateFromSpeech(3, '我是预言家，昨晚验了10号是金水。', board, { round: 1, eventId: 'fake-seer-3b' });
+    trackerAttacker.updateFromSpeech(5, '6号是假预言家，今天必须投6号。', board, { round: 1, eventId: 'attack-6-by-5' });
+    const attackCheck = selectAction(seer, board, trackerAttacker, 'CHECK', 2, [], 1.0, {
+      rng: () => 0,
+      phase: GamePhase.NIGHT_SEER,
+    });
+    expect(attackCheck.targetId).toBe(5);
+    expect(attackCheck.reason).toContain('质疑真预言家');
+    expect(attackCheck.trace?.evidenceEventIds).toContain('attack-6-by-5');
+
+    // Case C: Seat 2 quietly votes against True Seer Seat 6 during daytime ballot
+    const trackerVoter = new BeliefTracker();
+    trackerVoter.init(board);
+    trackerVoter.updateFromSpeech(3, '我是预言家，昨晚验了10号是金水。', board, { round: 1, eventId: 'fake-seer-3c' });
+    trackerVoter.updateFromVote(2, 6, board, 1, 'vote-r1-2-on-6');
+    const voteCheck = selectAction(seer, board, trackerVoter, 'CHECK', 2, [], 1.0, {
+      rng: () => 0,
+      phase: GamePhase.NIGHT_SEER,
+    });
+    expect(voteCheck.targetId).toBe(2);
+    expect(voteCheck.reason).toContain('投票抗推真预言家');
+    expect(voteCheck.trace?.evidenceEventIds).toContain('vote-r1-2-on-6');
+  });
+
+  it('Seer CHECK falls back to checking opposing Seer claim when all other legal targets are exhausted', () => {
+    const board = make12Board().map(p =>
+      p.id === 9 ? { ...p, isRevealed: true, canVote: false } : p,
+    );
+    const tracker = new BeliefTracker();
+    tracker.init(board);
+    const seer = board.find(p => p.id === 6)!;
+
+    tracker.updateFromSpeech(3, '我是预言家，昨晚验了10号是金水。', board, { round: 1, eventId: 'seer-claim-3-endgame' });
+
+    // Check every living unrevealed seat except Seer (6), revealed Idiot (9), and opposing Seer (3)
+    for (const p of board) {
+      if (p.id !== 6 && p.id !== 3 && p.id !== 9) {
+        tracker.recordSeerCheck(6, p.id, p.role !== Role.WEREWOLF, { round: 1 });
+      }
+    }
+
+    const fallbackCheck = selectAction(seer, board, tracker, 'CHECK', 4, [], 1.0, {
+      rng: () => 0,
+      phase: GamePhase.NIGHT_SEER,
+    });
+    expect(fallbackCheck.outcome).toBe('ACT');
+    expect(fallbackCheck.targetId).toBe(3);
+    expect(fallbackCheck.reason).toContain('兜底查验对跳预言家');
+    expect(fallbackCheck.trace?.candidates).toHaveLength(1);
+    expect(fallbackCheck.trace?.candidates[0].targetId).toBe(3);
   });
 
   it('Werewolf KILL targets legitimate public Seer claim instead of own daytime scapegoat and never peeks hidden Seer', () => {
