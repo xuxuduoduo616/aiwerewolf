@@ -26,7 +26,7 @@
 .skin-store-hero h1,
 .economy-section-heading h2 {
   margin: 0;
-  font-family: Cinzel, Georgia, serif;
+  font-family: var(--font-ink-brush);
   letter-spacing: .025em;
 }
 
@@ -184,7 +184,7 @@
 .check-in-hero > svg { position: relative; z-index: 1; width: 42px; height: 42px; color: #d7bd7b; }
 .check-in-hero > div,
 .check-in-hero > button { position: relative; z-index: 1; }
-.check-in-hero strong { display: block; font-family: Cinzel, Georgia, serif; font-size: clamp(1.5rem, 4vw, 2.25rem); }
+.check-in-hero strong { display: block; font-family: var(--font-ink-brush); font-size: clamp(1.5rem, 4vw, 2.25rem); }
 .check-in-hero span { display: block; margin-top: 4px; color: #a5a39d; font-size: .78rem; }
 
 .economy-unavailable,
@@ -357,7 +357,7 @@
 .wuxia-character { pointer-events: none; }
 .skin-card-heading { padding: 11px 3px 6px; }
 .skin-card-heading > span { color: #8b8983; font-size: .61rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
-.skin-card-heading h2 { margin: 4px 0; font-family: Cinzel, Georgia, serif; font-size: .98rem; }
+.skin-card-heading h2 { margin: 4px 0; font-family: var(--font-ink-brush); font-size: .98rem; }
 .skin-card-heading p { min-height: 2.7em; margin: 0; color: #96938d; font-size: .7rem; line-height: 1.42; }
 .skin-card-state { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 7px 3px; }
 .skin-card-state strong { font-size: .7rem; }
@@ -427,7 +427,7 @@
   background: rgba(14, 14, 16, .98);
   box-shadow: 0 20px 60px rgba(0, 0, 0, .58);
 }
-.onboarding-panel h2 { margin: 0; font-family: Cinzel, Georgia, serif; font-size: 1.2rem; }
+.onboarding-panel h2 { margin: 0; font-family: var(--font-ink-brush); font-size: 1.2rem; }
 .onboarding-panel > p:not(.economy-eyebrow) { margin: 8px 0 17px; color: #aaa7a0; font-size: .8rem; line-height: 1.5; }
 .onboarding-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; margin-top: auto; }
 .onboarding-target-action { position: fixed; z-index: 1002; background: transparent; border: 0; border-radius: 8px; cursor: pointer; }

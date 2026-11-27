@@ -23,9 +23,11 @@ export const ONBOARDING_STEPS: readonly OnboardingStep[] = [
   },
   {
     id: 'promotions',
-    selector: UI_PRESENTATION.showLegacyLobby ? '[data-tour-target="promotions"]' : '[data-tour-target="match-details"]',
-    title: 'You and the AI village',
-    description: 'Play Werewolf with AI players on a 9- or 12-player board.',
+    selector: UI_PRESENTATION.showLegacyLobby ? '[data-tour-target="promotions"]' : '[data-tour-target="bgm-player"]',
+    title: UI_PRESENTATION.showLegacyLobby ? 'You and the AI village' : 'Background Music',
+    description: UI_PRESENTATION.showLegacyLobby
+      ? 'Play Werewolf with AI players on a 9- or 12-player board.'
+      : 'Play, pause, or switch Jianghu instrumental tracks anytime here.',
   },
   {
     id: 'navigation',

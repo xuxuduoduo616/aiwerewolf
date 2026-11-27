@@ -913,3 +913,46 @@ describe('human self-vote settlement', () => {
     }
   });
 });
+
+describe('human Seer cumulative check persistence', () => {
+  it('retains Night 1 and Night 2 check results simultaneously and clears them across matches', () => {
+    const seerBoard: GameConfig = {
+      ...MODE_9_PLAYER,
+      roles: [
+        Role.SEER,
+        Role.WEREWOLF,
+        Role.WEREWOLF,
+        Role.WITCH,
+        Role.VILLAGER,
+        Role.HUNTER,
+        Role.WEREWOLF,
+        Role.VILLAGER,
+        Role.VILLAGER,
+      ],
+    };
+    start(seerBoard);
+
+    // Night 1: Human Seer (Seat 1) checks Seat 2 (Werewolf)
+    game.setPhase(GamePhase.NIGHT_SEER); flush();
+    game.handlePlayerAction(2); flush();
+    expect(game.phase).toBe(GamePhase.NIGHT_WITCH);
+    expect(game.humanSeerChecks).toEqual({ 2: false });
+
+    // Night 2: Human Seer checks Seat 3 (Werewolf) — Seat 2's check MUST persist
+    game.setPhase(GamePhase.NIGHT_SEER); flush();
+    game.handlePlayerAction(3); flush();
+    expect(game.phase).toBe(GamePhase.NIGHT_WITCH);
+    expect(game.humanSeerChecks).toEqual({ 2: false, 3: false });
+
+    // Night 3: Human Seer checks Seat 5 (Villager) — Seats 2, 3, and 5 all persist
+    game.setPhase(GamePhase.NIGHT_SEER); flush();
+    game.handlePlayerAction(5); flush();
+    expect(game.humanSeerChecks).toEqual({ 2: false, 3: false, 5: true });
+
+    // Leaving or starting a fresh game clears prior-match Seer checks
+    leave();
+    expect(game.humanSeerChecks).toEqual({});
+    start(seerBoard);
+    expect(game.humanSeerChecks).toEqual({});
+  });
+});

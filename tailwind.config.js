@@ -7,8 +7,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        cinzel: ['Cinzel', 'serif'],
-        sans: ['Lato', 'sans-serif'],
+        cinzel: ['Fondamento', '"Eagle Lake"', 'Cinzel', 'Georgia', 'serif'],
+        sans: ['Kurale', 'Georgia', '"PingFang SC"', '"Noto Sans SC"', 'serif'],
       },
     },
   },

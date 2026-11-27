@@ -1,0 +1,194 @@
+/* ─── Oriental Ink-Wash Dynamic World Backdrop ──────────────────────────────
+   Full-bleed multi-layer living backdrop shared across Sign In, Lobby,
+   Match Setup, Game Room (Night & Day), Shop, Profile, and Village views.
+   Compositor-friendly animations only, with strict reduced-motion fallback. */
+
+.ink-world {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--ink-fallback, #080a0e);
+  isolation: isolate;
+}
+
+.ink-world-still,
+.ink-world-webgl,
+.ink-world-particles {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.ink-world-still {
+  object-fit: cover;
+  object-position: var(--ink-focal-desktop, 50% 50%);
+  transform: none;
+}
+
+.ink-world-webgl {
+  opacity: 0;
+  transition: opacity 480ms ease;
+}
+
+.ink-world-webgl.is-ready {
+  opacity: 1;
+}
+
+/* Whisper-subtle drifting ink mist bands that preserve razor-sharp 3K brushwork. */
+.ink-world-mist {
+  position: absolute;
+  inset: -8% -18%;
+  pointer-events: none;
+  will-change: transform, opacity;
+  mix-blend-mode: screen;
+}
+
+.ink-world-mist--far {
+  opacity: 0.06;
+  background:
+    radial-gradient(ellipse 42% 18% at 24% 72%, rgba(188, 198, 210, 0.28), transparent 72%),
+    radial-gradient(ellipse 46% 20% at 72% 66%, rgba(176, 186, 198, 0.22), transparent 74%);
+  animation: inkMistDriftFar 38s ease-in-out infinite alternate;
+}
+
+.ink-world-mist--near {
+  opacity: 0.04;
+  background:
+    radial-gradient(ellipse 36% 14% at 62% 80%, rgba(206, 212, 218, 0.24), transparent 70%),
+    radial-gradient(ellipse 34% 15% at 18% 84%, rgba(190, 198, 206, 0.20), transparent 72%);
+  animation: inkMistDriftNear 27s ease-in-out infinite alternate;
+}
+
+@keyframes inkMistDriftFar {
+  0%   { transform: translate3d(-4%, 0.6%, 0) scale(1.01); opacity: 0.05; }
+  50%  { transform: translate3d(1.5%, -0.8%, 0) scale(1.02); opacity: 0.08; }
+  100% { transform: translate3d(5%, 0.4%, 0) scale(1.01); opacity: 0.05; }
+}
+
+@keyframes inkMistDriftNear {
+  0%   { transform: translate3d(4.5%, -0.5%, 0); opacity: 0.03; }
+  50%  { transform: translate3d(-1.5%, 0.9%, 0); opacity: 0.06; }
+  100% { transform: translate3d(-5%, -0.4%, 0); opacity: 0.03; }
+}
+
+/* Independent transparent foreground ink foliage with prime-ratio harmonic sway. */
+.ink-world-layer {
+  position: absolute;
+  pointer-events: none;
+  opacity: var(--ink-fg-opacity, 0.34);
+  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.55));
+  will-change: transform;
+}
+
+.ink-world-layer--pine {
+  top: -12px;
+  left: -18px;
+  width: min(34vw, 430px);
+  height: auto;
+  transform-origin: 8% 12%;
+  animation: inkPineSway 11.4s ease-in-out infinite;
+}
+
+.ink-world-layer--bamboo {
+  top: -10px;
+  right: -14px;
+  width: min(24vw, 300px);
+  height: auto;
+  transform-origin: 92% 8%;
+  animation: inkBambooSway 8.7s ease-in-out infinite;
+}
+
+@keyframes inkPineSway {
+  0%, 100% { transform: rotate(0deg) translate3d(0, 0, 0); }
+  28%      { transform: rotate(1.15deg) translate3d(4px, 2px, 0); }
+  57%      { transform: rotate(-0.65deg) translate3d(-2px, 1px, 0); }
+  81%      { transform: rotate(0.75deg) translate3d(3px, 1.5px, 0); }
+}
+
+@keyframes inkBambooSway {
+  0%, 100% { transform: rotate(0deg) skewX(0deg) translate3d(0, 0, 0); }
+  23%      { transform: rotate(-1.55deg) skewX(-0.9deg) translate3d(-4px, 2px, 0); }
+  52%      { transform: rotate(0.85deg) skewX(0.5deg) translate3d(2px, -1px, 0); }
+  76%      { transform: rotate(-1.15deg) skewX(-0.6deg) translate3d(-3px, 1px, 0); }
+}
+
+.ink-world-particles {
+  z-index: 2;
+}
+
+/* Balanced Xuan-ink readability scrim + cinematic edge vignette. */
+.ink-world-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 50% 48%, rgba(6, 8, 12, calc(var(--ink-scrim-opacity, 0.36) * 0.55)) 0%, rgba(5, 7, 10, calc(var(--ink-scrim-opacity, 0.36) * 1.18)) 100%),
+    linear-gradient(180deg, rgba(6, 8, 11, 0.42) 0%, rgba(6, 8, 11, 0.08) 28%, rgba(6, 8, 11, 0.14) 72%, rgba(5, 7, 10, 0.62) 100%);
+}
+
+/* Sign In & Lobby keep the right-side hero vista ultra-crisp while protecting left-side typography. */
+.ink-world[data-ink-scene='sign-in'] .ink-world-scrim,
+.ink-world[data-ink-scene='lobby'] .ink-world-scrim {
+  background:
+    linear-gradient(90deg, rgba(7, 9, 13, 0.68) 0%, rgba(7, 9, 13, 0.36) 42%, rgba(7, 9, 13, 0.02) 68%, rgba(7, 9, 13, 0.14) 100%),
+    linear-gradient(180deg, rgba(6, 8, 11, 0.32) 0%, transparent 18%, transparent 78%, rgba(5, 7, 10, 0.58) 100%);
+}
+
+/* Game Room keeps the central seat ring and action console calm and ultra-readable. */
+.ink-world[data-ink-scene='game-night'] .ink-world-scrim,
+.ink-world[data-ink-scene='game-day'] .ink-world-scrim {
+  background:
+    radial-gradient(ellipse at 50% 50%, rgba(7, 9, 13, 0.46) 0%, rgba(6, 8, 11, 0.24) 68%, rgba(5, 7, 10, 0.58) 100%);
+}
+
+/* Match Setup, Shop, Profile, Village use a soft centered veil for dense interactive cards. */
+.ink-world[data-ink-scene='match-setup'] .ink-world-scrim,
+.ink-world[data-ink-scene='shop'] .ink-world-scrim,
+.ink-world[data-ink-scene='profile'] .ink-world-scrim,
+.ink-world[data-ink-scene='village'] .ink-world-scrim {
+  background:
+    radial-gradient(ellipse at 50% 45%, rgba(8, 10, 14, 0.56) 0%, rgba(6, 8, 11, 0.34) 64%, rgba(5, 7, 10, 0.64) 100%),
+    linear-gradient(180deg, rgba(6, 8, 11, 0.48) 0%, rgba(6, 8, 11, 0.16) 24%, rgba(6, 8, 11, 0.24) 76%, rgba(5, 7, 10, 0.72) 100%);
+}
+
+@media (max-width: 768px) {
+  .ink-world-still {
+    object-position: var(--ink-focal-mobile, 50% 50%);
+  }
+
+  .ink-world-layer--pine {
+    width: min(56vw, 240px);
+    opacity: calc(var(--ink-fg-opacity, 0.34) * 0.72);
+  }
+
+  .ink-world-layer--bamboo {
+    width: min(38vw, 170px);
+    opacity: calc(var(--ink-fg-opacity, 0.34) * 0.72);
+  }
+
+  .ink-world[data-ink-scene='sign-in'] .ink-world-scrim,
+  .ink-world[data-ink-scene='lobby'] .ink-world-scrim {
+    background:
+      linear-gradient(180deg, rgba(6, 8, 11, 0.38) 0%, rgba(6, 8, 11, 0.56) 46%, rgba(6, 8, 11, 0.74) 100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ink-world-still {
+    transform: none;
+  }
+
+  .ink-world-mist,
+  .ink-world-layer {
+    animation: none;
+  }
+
+  .ink-world-mist {
+    opacity: 0.08;
+  }
+}

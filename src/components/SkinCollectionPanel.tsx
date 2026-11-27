@@ -33,7 +33,7 @@ const SkinCollectionPanel: React.FC<SkinCollectionProps> = ({ economy, onOpenSto
       <p className="economy-live-feedback" role="status" aria-live="polite">{economy?.feedback}</p>
       <div className="skin-grid">
         <article className={`skin-card${equippedId === null ? ' is-equipped' : ''}`} data-owned-skin="default">
-          <div className="skin-card-art skin-collection-default"><LobbyVillageScene /></div>
+          <div className="skin-card-art skin-collection-default"><LobbyVillageScene variant="card" /></div>
           <div className="skin-card-heading"><span>Original · Permanent</span><h3>Default Outfit</h3><p>Your original village traveler. Always included in your collection.</p></div>
           <div className="skin-card-state"><span className="skin-status">{equippedId === null ? 'Equipped' : 'Owned'}</span><strong>Free · Always owned</strong></div>
         </article>

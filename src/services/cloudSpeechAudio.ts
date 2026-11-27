@@ -76,6 +76,7 @@ interface CloudSpeech {
   rate: number;
   maxPlaybackMs: number;
   requestTimeoutMs?: number;
+  onAudibleChange?: (audible: boolean) => void;
 }
 
 /** One cancellable request and player, with separate request/playback deadlines. */
@@ -107,6 +108,7 @@ function playCloudClip(options: CloudSpeech) {
       return; // keep the in-flight request/player until resume
     }
     settled = true;
+    options.onAudibleChange?.(false);
     clearTimeout(timer);
     controller.abort();
     if (player) {
@@ -175,6 +177,7 @@ function playCloudClip(options: CloudSpeech) {
       player.playbackRate = options.rate;
       player.onplaying = () => {
         started = true;
+        options.onAudibleChange?.(true);
         if (paused || settled || playbackDeadline !== undefined) return;
         clearTimeout(timer);
         playbackDeadline = Date.now() + playbackRemaining;
@@ -208,6 +211,7 @@ function playCloudClip(options: CloudSpeech) {
       }
       if (player) {
         clearTimeout(timer);
+        options.onAudibleChange?.(false);
         player.pause();
       }
     },
@@ -250,6 +254,7 @@ export function playCloudSpeech(options: CloudSpeech, chunks?: string[]) {
   const finish = (fallback: BrowserFallback | null) => {
     if (settled) return;
     settled = true;
+    options.onAudibleChange?.(false);
     clearTimeout(timer);
     active?.cancel();
     resolveResult(fallback);

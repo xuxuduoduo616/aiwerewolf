@@ -14,9 +14,12 @@ import type { UtilityDestination } from './components/UtilityMenu';
 import UnavailableNotice from './components/UnavailableNotice';
 import LoginView from './components/LoginView';
 import ScreenFallback, { ScreenCurtain } from './components/ScreenFallback';
+import InkWorldBackdrop from './scene/InkWorldBackdrop';
+import { resolveShellSceneId } from './scene/inkSceneConfig';
 import { useDisplayLanguage } from './i18n';
 import { mapGameSetupToConfig, type GameSetup, type LobbySubview } from './lobbyFeatures';
 import { useLobbyFeatures } from './hooks/useLobbyFeatures';
+import { useLobbyBgm } from './hooks/useLobbyBgm';
 import { useEconomy, type EconomyViewState } from './hooks/useEconomy';
 import { SKIN_CATALOG_BY_ID } from './economy/catalog';
 import { useEquippedSkinProduct } from './economy/equippedSkin';
@@ -137,6 +140,10 @@ const App: React.FC = () => {
   });
   const startRequestLockedRef = React.useRef(false);
   const pendingStartRef = React.useRef<{ setup: GameSetup; models: readonly AIExpressionModel[]; config: NonNullable<ReturnType<typeof mapGameSetupToConfig>> } | null>(null);
+  const isLobbyBgmActive = auth.isAuthenticated
+    && !auth.isRestoringSession
+    && (game.phase === GamePhase.LOBBY || game.phase === GamePhase.LOGIN);
+  const lobbyBgm = useLobbyBgm(isLobbyBgmActive);
 
   const applyEconomyRoute = React.useCallback((route: EconomyRoute) => {
     setUtilityView(null);
@@ -270,9 +277,10 @@ const App: React.FC = () => {
   if (auth.isRestoringSession) {
     return (
       <div className="login-page sketch-scene flex font-sans text-zinc-200" aria-busy="true">
-        <div className="text-center">
+        <InkWorldBackdrop sceneId="sign-in" />
+        <div className="relative z-10 text-center">
           <Loader2 className="w-8 h-8 mx-auto animate-spin text-zinc-400" />
-          <p className="mt-3 text-sm text-zinc-500">Restoring your session...</p>
+          <p className="mt-3 text-sm text-zinc-300">Restoring your session...</p>
         </div>
       </div>
     );
@@ -366,6 +374,7 @@ const App: React.FC = () => {
             identityName={publicName}
             identityHandle={publicHandle}
             isGuest={auth.isGuest}
+            bgm={lobbyBgm}
             onSignIn={() => {
               auth.leaveGuestForAuth();
               game.setPhase(GamePhase.LOGIN);
@@ -564,6 +573,7 @@ const App: React.FC = () => {
       onOpenUtilityMenu={() => setUtilityView('menu')}
       utilityTriggerRef={utilityTriggerRef}
       fullscreen={false}
+      sceneId={resolveShellSceneId(utilityView, activeView, lobbySubview)}
       coins={displayedCoins}
       coupons={0}
       crystals={displayedCrystals}

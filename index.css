@@ -32,6 +32,11 @@
 
   /* Blur */
   --blur-panel: 12px;
+
+  /* Oriental Ink-Wash Brush & Literary Typography */
+  --font-ink-brush: 'Eagle Lake', 'Fondamento', Georgia, serif;
+  --font-ink-literary: 'Fondamento', 'Kurale', Georgia, serif;
+  --font-ink-ui: 'Kurale', Georgia, 'PingFang SC', 'Noto Sans SC', serif;
 }
 
 /* ─── Base ─────────────────────────────────────────────────────────────── */
@@ -49,7 +54,10 @@ body,
 body {
   margin: 0;
   background: #050505;
-  font-family: 'Lato', sans-serif;
+  font-family: var(--font-ink-ui);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   overflow-x: hidden;
   overflow-y: auto;
 }
@@ -139,55 +147,67 @@ video {
   outline-offset: 3px;
 }
 
-.cinzel { font-family: 'Cinzel', serif; }
+.cinzel {
+  font-family: var(--font-ink-literary);
+  font-feature-settings: "kern" 1, "liga" 1;
+}
+
+/* Shared ink-brush display headings across pages, dialogs, and game console */
+.account-panel h2,
+.app-page-header h1,
+.lobby-feature-header h1,
+.accessible-dialog__title,
+.game-room-phase-summary h2,
+.phase-label-in,
+.game-over-wolves h1,
+.game-over-village h1 {
+  font-family: var(--font-ink-brush);
+  letter-spacing: 0.015em;
+}
+
+.guest-trial-label h3,
+.app-section-heading h2 {
+  font-family: var(--font-ink-literary);
+  letter-spacing: 0.025em;
+}
 
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* ─── Sketch scene (動態背景 / Dynamic sketchy village background) ─────── */
+/* ─── Sketch scene (living Oriental ink-wash backdrop container) ─────── */
 .sketch-scene {
   position: relative;
   background:
-    radial-gradient(circle at 50% 35%, rgba(120,120,120,0.16), transparent 34rem),
-    linear-gradient(180deg, rgba(21, 21, 21, 0.68) 0%, rgba(6, 6, 6, 0.78) 72%);
+    radial-gradient(circle at 50% 35%, rgba(120,120,120,0.08), transparent 34rem),
+    linear-gradient(180deg, rgba(12, 14, 18, 0.28) 0%, rgba(6, 7, 10, 0.36) 72%);
   isolation: isolate;
   overflow: hidden;
 }
 
-/* Sketch hatching layer — pencil-stroke texture */
+/* Subtle fallback hatching layer — stays hushed behind InkWorldBackdrop */
 .sketch-scene::before {
   content: "";
   position: absolute;
   inset: 0;
   z-index: -2;
   pointer-events: none;
+  opacity: 0.08;
   background:
-    linear-gradient(120deg, transparent 0 34%, rgba(255,255,255,0.04) 34% 35%, transparent 35%),
-    repeating-linear-gradient(
-      -45deg,
-      transparent 0px,
-      transparent 18px,
-      rgba(255,255,255,0.018) 18px,
-      rgba(255,255,255,0.018) 19px
-    ),
     radial-gradient(ellipse at 18% 86%, rgba(180,180,180,0.10), transparent 18rem),
     radial-gradient(ellipse at 80% 12%, rgba(255,255,255,0.07), transparent 18rem);
-  filter: grayscale(1) contrast(1.2);
 }
 
-/* Wind / fog layer — animated */
+/* Wind / fog layer — hushed when InkWorldBackdrop provides GPU mist */
 .sketch-scene::after {
   content: "";
   position: absolute;
   inset: -12%;
   z-index: -1;
   pointer-events: none;
-  opacity: 0.38;
+  opacity: 0.08;
   background:
-    repeating-linear-gradient(100deg, transparent 0 16px, rgba(255,255,255,0.03) 17px, transparent 18px),
-    radial-gradient(ellipse at 20% 80%, rgba(255,255,255,0.07), transparent 30rem),
-    radial-gradient(ellipse at 80% 20%, rgba(255,255,255,0.05), transparent 24rem),
-    radial-gradient(ellipse at 50% 95%, rgba(255,255,255,0.10), transparent 26rem);
+    radial-gradient(ellipse at 20% 80%, rgba(255,255,255,0.06), transparent 30rem),
+    radial-gradient(ellipse at 80% 20%, rgba(255,255,255,0.04), transparent 24rem);
   animation: villageWind 14s ease-in-out infinite alternate;
 }
 
@@ -308,11 +328,11 @@ video {
 .seat-stage {
   position: absolute;
   inset: 16px;
-  border: 1px solid rgba(113,113,122,0.24);
+  border: 1px solid rgba(226, 218, 204, 0.16);
   border-radius: 18px;
   background:
-    radial-gradient(ellipse at 50% 52%, rgba(24,24,27,0.78) 0 24%, rgba(9,9,11,0.50) 45%, rgba(0,0,0,0.16) 72%),
-    linear-gradient(180deg, rgba(255,255,255,0.025), transparent);
+    radial-gradient(ellipse at 50% 52%, rgba(14, 16, 20, 0.44) 0 28%, rgba(8, 10, 14, 0.24) 55%, rgba(0, 0, 0, 0.08) 78%),
+    linear-gradient(180deg, rgba(255, 250, 240, 0.02), transparent);
   overflow: hidden;
 }
 /* Dashed circle outline for seating ring */
@@ -320,7 +340,7 @@ video {
   content: "";
   position: absolute;
   inset: 8% 12%;
-  border: 1px dashed rgba(212,212,216,0.18);
+  border: 1px dashed rgba(226, 218, 204, 0.18);
   border-radius: 50%;
 }
 /* Subtle vignette corner darks */
@@ -329,14 +349,14 @@ video {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(0,0,0,0.35) 100%);
+  background: radial-gradient(ellipse at 50% 50%, transparent 45%, rgba(0, 0, 0, 0.28) 100%);
 }
 
-/* Night phase — deeper & cooler background */
+/* Night phase — deeper & cooler atmospheric tint */
 .seat-stage.night {
   background:
-    radial-gradient(ellipse at 50% 52%, rgba(14,14,26,0.84) 0 24%, rgba(6,6,18,0.60) 45%, rgba(0,0,8,0.28) 72%),
-    linear-gradient(180deg, rgba(180,200,255,0.025), transparent);
+    radial-gradient(ellipse at 50% 52%, rgba(10, 12, 22, 0.50) 0 28%, rgba(6, 8, 16, 0.30) 55%, rgba(0, 0, 6, 0.12) 78%),
+    linear-gradient(180deg, rgba(180, 200, 255, 0.02), transparent);
 }
 
 /* ─── Center Console ────────────────────────────────────────────────────── */

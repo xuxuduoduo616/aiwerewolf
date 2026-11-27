@@ -1,6 +1,8 @@
 import React from 'react';
 import { ArrowRight, BookOpen, Moon, UserRound } from 'lucide-react';
 import type { SkinProduct } from '../economy/catalog';
+import type { LobbyBgmController } from '../hooks/useLobbyBgm';
+import LobbyBgmPlayer from './LobbyBgmPlayer';
 import LobbyRoleBubbles from './LobbyRoleBubbles';
 import LobbyVillageScene from './LobbyVillageScene';
 
@@ -12,18 +14,27 @@ interface Props {
   identityHandle: string;
   isGuest: boolean;
   onSignIn: () => void;
+  bgm?: LobbyBgmController;
 }
 
 const RefinedLobby: React.FC<Props> = ({
-  onStartGame, onOpenTutorial, identityName, identityHandle, isGuest, onSignIn, equippedSkin,
+  onStartGame, onOpenTutorial, identityName, identityHandle, isGuest, onSignIn, equippedSkin, bgm,
 }) => (
   <section className="night-lobby" aria-labelledby="night-heading">
-    <header className="night-lobby-identity" data-tour-target="identity">
-      <div className="night-identity-copy">
-        <UserRound size={18} aria-hidden="true" />
-        <div><span className="night-eyebrow">Welcome to the village</span><p title={identityHandle}>{identityName}</p></div>
+    <header className="night-lobby-header">
+      <div className="night-lobby-identity" data-tour-target="identity">
+        <div className="night-identity-copy">
+          <UserRound size={18} aria-hidden="true" />
+          <div><span className="night-eyebrow">Welcome to the village</span><p title={identityHandle}>{identityName}</p></div>
+        </div>
+        {isGuest && (
+          <button type="button" className="night-text-button night-signin-cta" onClick={onSignIn}>
+            Sign in or create account <ArrowRight size={14} aria-hidden="true" />
+          </button>
+        )}
       </div>
-      {isGuest && <button type="button" className="night-text-button" onClick={onSignIn}>Sign in or create account <ArrowRight size={15} aria-hidden="true" /></button>}
+
+      <LobbyBgmPlayer bgm={bgm} />
     </header>
 
     <div className="night-hero">

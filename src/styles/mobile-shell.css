@@ -52,7 +52,7 @@
     radial-gradient(ellipse at 80% 80%, rgba(30, 20, 50, 0.20), transparent 50%),
     linear-gradient(180deg, rgba(13, 13, 16, 0.76) 0%, rgba(10, 10, 15, 0.82) 40%, rgba(8, 8, 12, 0.90) 100%);
   color: #e0ddd5;
-  font-family: 'Lato', 'PingFang SC', 'Noto Sans SC', sans-serif;
+  font-family: var(--font-ink-ui);
   position: relative;
   overflow: visible;
   overflow-wrap: anywhere;

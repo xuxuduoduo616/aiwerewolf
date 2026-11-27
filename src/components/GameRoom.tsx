@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import InkWorldBackdrop from '../scene/InkWorldBackdrop';
 
 interface GameRoomProps {
   header: React.ReactNode;
@@ -78,6 +79,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ header, children, sidebar, boardLab
 
   return (
     <div ref={roomRef} className="game-room sketch-scene text-zinc-200 font-sans" data-time={timeOfDay}>
+      <InkWorldBackdrop sceneId={timeOfDay === 'day' ? 'game-day' : 'game-night'} />
       <div className="game-room-layout">
         <main className="game-room-main">
           {header}

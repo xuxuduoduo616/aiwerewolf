@@ -290,6 +290,7 @@ export function useGameState(authContext: AuthContext) {
   const [translateEnabled, setTranslateEnabled] = useState(true);
   const [userInput, setUserInput] = useState('');
   const [aiSeerLastCheck, setAiSeerLastCheck] = useState<{ targetId: number; isGood: boolean } | null>(null);
+  const [humanSeerChecks, setHumanSeerChecks] = useState<Record<number, boolean>>({});
   const [speakingQueue, setSpeakingQueue] = useState<Player[]>([]);
   const [currentSpeaker, setCurrentSpeaker] = useState<Player | null>(null);
   const [deadThisRound, setDeadThisRound] = useState<number[]>([]);
@@ -469,6 +470,7 @@ export function useGameState(authContext: AuthContext) {
     setWolfCountdown(null);
     setVoteTimer(null);
     setSelectedPlayerId(null);
+    setHumanSeerChecks({});
     setUserInput('');
     setPhase(GamePhase.LOBBY);
   };
@@ -906,6 +908,7 @@ export function useGameState(authContext: AuthContext) {
     setWitchStatus({ hasSave: true, hasPoison: true });
     setNightState({ wolfKillId: null, witchPoisonId: null, witchSaved: false });
     setAiSeerLastCheck(null);
+    setHumanSeerChecks({});
     setSpeakingQueue([]);
     setCurrentSpeaker(null);
     setDeadThisRound([]);
@@ -1775,6 +1778,7 @@ export function useGameState(authContext: AuthContext) {
       globalBeliefTracker.recordSeerCheck(MY_PLAYER_ID, targetId, isGood);
       addLog(`Check Player ${targetId}: ${isGood ? 'GOOD' : 'WOLF'}.`, true, undefined, `Player ${targetId} check result: ${isGood ? 'GOOD' : 'WOLF'}.`, 'action', undefined, 'human-private');
       setAiSeerLastCheck({ targetId, isGood });
+      setHumanSeerChecks(prev => ({ ...prev, [targetId]: isGood }));
       // H2-A: human seer path of the check chain.
       replayRecorderRef.current?.recordCheck({
         round: currentRound,
@@ -1916,7 +1920,7 @@ export function useGameState(authContext: AuthContext) {
     speakingQueue, currentSpeaker, spokenPlayerIds,
     deadThisRound, voteRecords, wolfChat, wolfCountdown, wolfThinking, wolfSpeakerId,
     pendingHunterId, savedRecordId,
-    speechTimer, voteTimer, aiSeerLastCheck,
+    speechTimer, voteTimer, aiSeerLastCheck, humanSeerChecks,
     // derived
     me, selectedPlayer, phaseHint,
     logsEndRef,

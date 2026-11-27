@@ -31,20 +31,31 @@ const witchVictim = ({ viewer, phase, nightState, canSeeWitchVictim = true }: Wi
 type PlayerKnowledgeBadgeProps = WitchKnowledgeProps & {
   playerId: number;
   seerCheck: { targetId: number; isGood: boolean } | null;
+  seerChecks?: Readonly<Record<number, boolean>>;
 };
 
 export const PlayerKnowledgeBadge = ({
-  playerId, seerCheck, ...knowledge
+  playerId, seerCheck, seerChecks, ...knowledge
 }: PlayerKnowledgeBadgeProps) => {
   let label: string;
   let description: string;
   let color: string;
 
-  // The shared check state may belong to the AI Seer. Other roles must not see it.
-  if (knowledge.viewer?.role === Role.SEER && seerCheck?.targetId === playerId) {
-    label = seerCheck.isGood ? 'Known Good' : 'Confirmed Wolf';
-    description = `Your Seer check: ${seerCheck.isGood ? 'not a werewolf' : 'werewolf'}.`;
-    color = seerCheck.isGood
+  // The shared single-check state may belong to the AI Seer; cumulative checks belong to the human Seer.
+  // Other roles must never see either.
+  const seerCheckedIsGood =
+    knowledge.viewer?.role === Role.SEER
+      ? seerChecks && Object.prototype.hasOwnProperty.call(seerChecks, playerId)
+        ? seerChecks[playerId]
+        : seerCheck?.targetId === playerId
+          ? seerCheck.isGood
+          : undefined
+      : undefined;
+
+  if (seerCheckedIsGood !== undefined) {
+    label = seerCheckedIsGood ? 'Known Good' : 'Confirmed Wolf';
+    description = `Your Seer check: ${seerCheckedIsGood ? 'not a werewolf' : 'werewolf'}.`;
+    color = seerCheckedIsGood
       ? 'bg-emerald-900/90 border-emerald-500 text-emerald-200'
       : 'bg-red-950/90 border-red-500 text-red-200';
   } else if (witchVictim(knowledge) === playerId) {

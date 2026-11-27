@@ -1,56 +1,182 @@
+/* ─── Oriental Ink-Wash Role Spirit Seals (Lobby Interactive Orbs) ─────────
+   Harmonized with the living Moonlit Wolf Village painting and 1440x1920
+   ink-wash role portraits: translucent smoked-ink medallions framed by
+   calligraphic brush halos rather than glossy soap bubbles. */
+
 .night-hero { position: relative; isolation: isolate; }
-.role-sky { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.role-sky { position: absolute; inset: 0; z-index: 5; pointer-events: none; }
+
 .role-orb {
-  --dx: 19px; --dy: 10px;
-  position: absolute; left: var(--x); top: var(--y);
-  width: clamp(46px, 4.6vw, 68px); aspect-ratio: 1; border-radius: 50%;
-  display: grid; place-items: center; pointer-events: auto; cursor: pointer;
-  color: var(--tint); border: 1px solid color-mix(in srgb, currentColor 51%, transparent);
-  background: radial-gradient(ellipse at 29% 15%, #fff4 0%, #fff1 6%, transparent 32%),
-    radial-gradient(circle at 54% 65%, #12121a36 27%, color-mix(in srgb, currentColor 20%, transparent) 80%, #fff2);
-  box-shadow: inset 0 -2px 6px #fff1, 0 0 17px color-mix(in srgb, currentColor 9%, transparent);
+  --dx: 14px;
+  --dy: 9px;
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: clamp(50px, 4.8vw, 68px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  pointer-events: auto;
+  cursor: pointer;
+  color: var(--tint);
+  border: 1px solid color-mix(in srgb, currentColor 42%, rgba(232, 224, 210, 0.22));
+  background:
+    radial-gradient(circle at 36% 28%, color-mix(in srgb, currentColor 22%, rgba(244, 238, 226, 0.14)) 0%, transparent 46%),
+    radial-gradient(circle at 52% 58%, rgba(10, 12, 16, 0.72) 22%, color-mix(in srgb, currentColor 18%, rgba(16, 18, 24, 0.56)) 82%, rgba(235, 228, 214, 0.16) 100%);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow:
+    inset 0 0 12px rgba(5, 7, 10, 0.65),
+    inset 0 1px 1px rgba(245, 239, 226, 0.22),
+    0 6px 22px rgba(0, 0, 0, 0.52),
+    0 0 24px color-mix(in srgb, currentColor 20%, transparent);
+  transition: transform 240ms ease, border-color 240ms ease, box-shadow 240ms ease;
   animation: role-orbit var(--period) ease-in-out var(--offset) infinite;
 }
+
+/* Inner calligraphic ink seal ring */
 .role-orb::before {
-  content: ''; position: absolute; inset: 4px; border-radius: inherit; transform: rotate(-32deg);
-  border: 1px solid transparent; border-top-color: #fff5; border-bottom-color: #fff2;
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: inherit;
+  border: 1px solid transparent;
+  border-top-color: color-mix(in srgb, currentColor 62%, rgba(248, 240, 224, 0.4));
+  border-right-color: color-mix(in srgb, currentColor 24%, transparent);
+  border-bottom-color: rgba(248, 240, 224, 0.16);
+  transform: rotate(-28deg);
+  transition: transform 420ms ease;
 }
-.role-orb svg { width: 47%; height: 47%; stroke-width: 1.55; filter: drop-shadow(0 1px 3px #0009); }
-.role-orb--werewolf { --x: 34%; --y: 5%; --period: 19s; --offset: -4s; --tint: #df9d99; }
-.role-orb--seer { --x: 62%; --y: 29%; --period: 23s; --offset: -14s; --tint: #afabd9; --dx: -16px; --dy: 20px; }
-.role-orb--witch { --x: 54%; --y: 76%; --period: 26s; --offset: -6s; --tint: #98c2b6; --dx: 24px; }
-.role-orb--hunter { --x: 91%; --y: 84%; --period: 22s; --offset: -13s; --tint: #d3bb86; --dx: -16px; }
-.role-orb:hover, .role-orb:focus-visible { animation-play-state: paused; border-color: currentColor; }
-.role-orb:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+
+/* Faint outer Xuan-mist halo */
+.role-orb::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: inherit;
+  border: 1px dashed color-mix(in srgb, currentColor 26%, transparent);
+  opacity: 0.65;
+  animation: role-seal-spin 28s linear infinite;
+}
+
+.role-orb svg {
+  width: 46%;
+  height: 46%;
+  stroke-width: 1.5;
+  filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.85));
+}
+
+/* Spatial placement harmoniously framing the Moonlit Wolf Village vista on the right */
+.role-orb--werewolf { --x: 58%; --y: 8%;  --period: 21s; --offset: -4s;  --tint: #df7d78; }
+.role-orb--seer     { --x: 86%; --y: 19%; --period: 25s; --offset: -14s; --tint: #a9bce2; --dx: -12px; --dy: 14px; }
+.role-orb--witch    { --x: 62%; --y: 72%; --period: 27s; --offset: -6s;  --tint: #8cc9b2; --dx: 16px;  --dy: -10px; }
+.role-orb--hunter   { --x: 88%; --y: 78%; --period: 23s; --offset: -11s; --tint: #dfb97a; --dx: -14px; --dy: -11px; }
+
+.role-orb:hover,
+.role-orb:focus-visible {
+  animation-play-state: paused;
+  border-color: color-mix(in srgb, currentColor 82%, #f5efe2);
+  box-shadow:
+    inset 0 0 14px rgba(5, 7, 10, 0.55),
+    0 8px 28px rgba(0, 0, 0, 0.65),
+    0 0 32px color-mix(in srgb, currentColor 40%, transparent);
+}
+
+.role-orb:hover::before,
+.role-orb:focus-visible::before {
+  transform: rotate(32deg);
+}
+
+.role-orb:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+
 @keyframes role-orbit {
-  0%, 100% { transform: translateX(var(--dx)); }
-  25% { transform: translateY(var(--dy)); }
-  50% { transform: translateX(calc(-1 * var(--dx))); }
-  75% { transform: translateY(calc(-1 * var(--dy))); }
+  0%, 100% { transform: translate3d(var(--dx), 0, 0); }
+  25%      { transform: translate3d(0, var(--dy), 0); }
+  50%      { transform: translate3d(calc(-1 * var(--dx)), 0, 0); }
+  75%      { transform: translate3d(0, calc(-1 * var(--dy)), 0); }
 }
-.role-ink-bloom { position: absolute; margin: 0; z-index: 1; animation: role-bloom .65s cubic-bezier(.17,.68,.2,1) both; transition: opacity .55s ease; }
+
+@keyframes role-seal-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Ink-wash portrait bloom card */
+.role-ink-bloom {
+  position: absolute;
+  margin: 0;
+  z-index: 3;
+  animation: role-bloom .65s cubic-bezier(.17,.68,.2,1) both;
+  transition: opacity .55s ease;
+  filter: drop-shadow(0 20px 44px rgba(0, 0, 0, 0.78));
+}
 .role-ink-bloom[data-closing="true"] { opacity: 0; }
-.role-ink-wash, .role-ink-portrait {
-  position: absolute; inset: 0; width: 100%; height: 100%; mask: url('./role-ink-mask.svg') center / 100% 100% no-repeat;
+.role-ink-wash,
+.role-ink-portrait {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  mask: url('./role-ink-mask.svg') center / 100% 100% no-repeat;
+  -webkit-mask: url('./role-ink-mask.svg') center / 100% 100% no-repeat;
 }
-.role-ink-wash { background: radial-gradient(ellipse at 40% 35%, #696263, #302b31 44%, #958476 87%); transform: rotate(-7deg) scale(1.05); }
-.role-ink-portrait { object-fit: cover; animation: role-develop .65s ease-out .26s both; }
-.role-ink-bloom figcaption { position: absolute; bottom: 9%; left: 12%; right: 12%; text-align: center; font-size: 18px; letter-spacing: .12em; color: #fff4df; text-shadow: 0 1px 5px #000; background: linear-gradient(90deg, transparent, #121015d9, transparent); animation: role-develop .6s ease .4s both; }
-@keyframes role-bloom { from { transform: scale(.035) rotate(7deg); } }
-@keyframes role-develop { from { opacity: 0; clip-path: circle(0% at 48% 48%); } to { opacity: 1; clip-path: circle(80% at 48% 48%); } }
+.role-ink-wash {
+  background: radial-gradient(ellipse at 40% 35%, #5c5454, #201e24 48%, #857368 88%);
+  transform: rotate(-6deg) scale(1.06);
+}
+.role-ink-portrait {
+  object-fit: cover;
+  animation: role-develop .65s ease-out .24s both;
+}
+.role-ink-bloom figcaption {
+  position: absolute;
+  bottom: 9%;
+  left: 12%;
+  right: 12%;
+  text-align: center;
+  font-family: var(--font-ink-brush);
+  font-size: 19px;
+  letter-spacing: .10em;
+  color: #f8f0df;
+  text-shadow: 0 2px 8px #000;
+  background: linear-gradient(90deg, transparent, rgba(12, 11, 16, 0.88), transparent);
+  padding: 4px 0;
+  animation: role-develop .6s ease .38s both;
+}
+
+@keyframes role-bloom {
+  from { transform: scale(.04) rotate(6deg); }
+}
+@keyframes role-develop {
+  from { opacity: 0; clip-path: circle(0% at 48% 48%); }
+  to   { opacity: 1; clip-path: circle(80% at 48% 48%); }
+}
+
 @media (max-width: 1100px) {
-  .role-orb { width: 46px; --dx: 7px; --dy: 5px; }
-  .role-orb--werewolf { --x: 55%; --y: 1%; }
-  .role-orb--seer { --x: 81%; --y: 6%; }
-  .role-orb--witch { --x: 9%; --y: auto; bottom: 22%; }
-  .role-orb--hunter { --x: 80%; --y: auto; bottom: 10%; }
+  .role-orb { width: 48px; --dx: 7px; --dy: 5px; }
+  .role-orb--werewolf { --x: 56%; --y: 2%; }
+  .role-orb--seer     { --x: 82%; --y: 7%; }
+  .role-orb--witch    { --x: 10%; --y: auto; bottom: 18%; }
+  .role-orb--hunter   { --x: 78%; --y: auto; bottom: 10%; }
 }
+
 @media (prefers-reduced-motion: reduce) {
   .role-ink-bloom { transition: none; }
-  .role-orb, .role-ink-bloom, .role-ink-portrait, .role-ink-bloom figcaption { animation: none; }
+  .role-orb,
+  .role-orb::after,
+  .role-ink-bloom,
+  .role-ink-portrait,
+  .role-ink-bloom figcaption {
+    animation: none;
+  }
 }
+
 @media (max-width: 640px) {
   .night-hero { padding-top: 84px; }
-  .role-orb--werewolf { --x: 36%; --y: 9px; }
-  .role-orb--seer { --x: 77%; --y: 23px; }
+  .role-orb--werewolf { --x: 34%; --y: 8px; }
+  .role-orb--seer     { --x: 76%; --y: 20px; }
 }

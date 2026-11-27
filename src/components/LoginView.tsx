@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ArrowRight, KeyRound, Loader2, Moon, Play, Shield, Trophy } from 'lucide-react';
 import type { AuthState } from '../hooks/useAuth';
+import { prefetchLobbyBgm } from '../hooks/useLobbyBgm';
 import type { GameRecord } from '../types';
+import InkWorldBackdrop from '../scene/InkWorldBackdrop';
 import TurnstileWidget from './TurnstileWidget';
 
 interface Props {
@@ -23,6 +25,10 @@ const LoginView: React.FC<Props> = ({ auth, onReady, onGuest }) => {
   const codeLogin = auth.loginMethod === 'CODE';
   const resendWait = Math.max(0, Math.ceil((resendAt - now) / 1000));
 
+  useEffect(() => {
+    const timer = window.setTimeout(() => prefetchLobbyBgm(), 600);
+    return () => window.clearTimeout(timer);
+  }, []);
   useEffect(() => {
     if (auth.authErrorField) formRef.current?.querySelector<HTMLInputElement>(`#auth-${auth.authErrorField}`)?.focus();
   }, [auth.authError, auth.authErrorField]);
@@ -57,6 +63,7 @@ const LoginView: React.FC<Props> = ({ auth, onReady, onGuest }) => {
 
   return (
     <main className="login-page sketch-scene flex font-sans text-zinc-200">
+      <InkWorldBackdrop sceneId="sign-in" />
       <div className="auth-layout">
         <header className="auth-brand">
           <Moon aria-hidden="true" size={27} />

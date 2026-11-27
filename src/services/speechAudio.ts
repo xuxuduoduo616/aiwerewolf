@@ -78,6 +78,26 @@ const spokenIds = new Set<string>();
 let current: { utterance: UtteranceLike; finish: () => void; pause: () => void; resume: () => void } | null = null;
 let browserPaused = false;
 let cloud: ReturnType<typeof playCloudSpeech> | null = null;
+let audibleActive = false;
+const speechActivityListeners = new Set<(audible: boolean) => void>();
+
+const setAudibleSpeaking = (next: boolean): void => {
+  if (audibleActive === next) return;
+  audibleActive = next;
+  for (const listener of speechActivityListeners) {
+    try { listener(next); } catch { /* listener errors must never affect TTS */ }
+  }
+};
+
+/** Subscribe to real-time audible AI speech state (Qwen cloud WAV & browser TTS). */
+export const subscribeSpeechActivity = (listener: (audible: boolean) => void): (() => void) => {
+  speechActivityListeners.add(listener);
+  return () => {
+    speechActivityListeners.delete(listener);
+  };
+};
+
+export const isAudiblySpeaking = (): boolean => audibleActive;
 
 /** Per-`playerId:lang` voice assignment, invalidated on voiceschanged. */
 const voiceCache = new Map<string, VoiceLike>();
@@ -268,6 +288,7 @@ const cancelCurrent = (): void => {
     // Cancelling is best-effort — never throw into game code.
   }
   browserPaused = false;
+  setAudibleSpeaking(false);
   const finish = current?.finish;
   current = null;
   if (finish) finish(); // settle the pending enqueue promise immediately
@@ -324,7 +345,10 @@ const enqueueBrowser = (
       clearTimeout(timeoutId);
       utterance.onend = null;
       utterance.onerror = null;
-      if (current?.utterance === utterance) current = null;
+      if (current?.utterance === utterance) {
+        current = null;
+        setAudibleSpeaking(false);
+      }
       resolve();
     };
     let remaining = maxDurationMs;
@@ -338,6 +362,7 @@ const enqueueBrowser = (
         if (!synth.pause || browserPaused) return;
         synth.pause();
         browserPaused = true;
+        setAudibleSpeaking(false);
         remaining = Math.max(0, deadline - Date.now());
         clearTimeout(timeoutId);
       },
@@ -345,12 +370,14 @@ const enqueueBrowser = (
         if (!synth.resume || !browserPaused) return;
         synth.resume();
         browserPaused = false;
+        setAudibleSpeaking(true);
         clearTimeout(timeoutId);
         deadline = Date.now() + remaining;
         timeoutId = setTimeout(finish, remaining);
       },
     };
     try {
+      setAudibleSpeaking(true);
       synth.speak(utterance);
     } catch {
       finish(); // a throwing backend must never stall the AI turn
@@ -386,6 +413,7 @@ export const enqueue = (
   const request = playCloudSpeech({
     text, lang, seat: speakerPlayerId, accessToken,
     volume: prefs.volume, rate: prefs.rate, maxPlaybackMs: speechMaxDurationMs(text),
+    onAudibleChange: setAudibleSpeaking,
   }, chunks ?? undefined);
   cloud = request;
   return request.result.then(fallback => {

@@ -24,8 +24,9 @@ import NightSkillEffectOverlay from '../components/NightSkillEffectOverlay';
 import PhaseAtmosphere from '../components/PhaseAtmosphere';
 import PhaseWorkspace from '../components/PhaseWorkspace';
 import MatchFullscreenButton from '../components/MatchFullscreenButton';
+import { useGameBgm } from '../hooks/useGameBgm';
 import { getTimeOfDay, useFallenPlayers, usePhaseCue } from '../motion/phaseCues';
-import { Clock3, LogOut, Pause, Play, ScrollText, Skull, Trophy, User as UserIcon } from 'lucide-react';
+import { Clock3, LogOut, Music2, Pause, Play, ScrollText, Skull, Trophy, User as UserIcon } from 'lucide-react';
 
 const MY_PLAYER_ID = 1;
 
@@ -81,6 +82,14 @@ const GameScreen: React.FC<GameScreenProps> = ({
   const timeOfDay = getTimeOfDay(game.phase);
   const humanWolfNight = game.phase === GamePhase.NIGHT_WEREWOLVES && game.me?.role === Role.WEREWOLF && game.me.isAlive;
   const canSeeWitchVictim = game.witchStatus.hasSave || game.nightState.witchSaved;
+  const gameBgm = useGameBgm({
+    phase: game.phase,
+    isMuted: game.isMuted,
+    volume: game.audioVolume,
+    isPaused: game.isPaused,
+    overlayActive: Boolean(game.introPending || replayShowcaseOpen || game.humanSkillCue),
+    urgentVote: game.voteTimer !== null && game.voteTimer <= 5,
+  });
 
   useEffect(() => {
     if (game.phase === GamePhase.GAME_OVER || game.phase === GamePhase.LOBBY || game.phase === GamePhase.LOGIN) {
@@ -184,6 +193,19 @@ const GameScreen: React.FC<GameScreenProps> = ({
           onRateChange={game.setTtsRate} onMuteChange={game.setIsMuted}
         />
         <div className="game-room-utility-controls">
+          <button
+            type="button"
+            onClick={gameBgm.toggleBgm}
+            className="icon-button"
+            aria-pressed={gameBgm.bgmEnabled}
+            aria-label={gameBgm.bgmEnabled ? 'Mute background music' : 'Unmute background music'}
+            title={gameBgm.bgmEnabled ? 'Background music: On' : 'Background music: Off'}
+            data-game-bgm-movement={gameBgm.movement ?? 'none'}
+            data-game-bgm-ducked={gameBgm.isDuckedForSpeech ? 'true' : 'false'}
+          >
+            <Music2 className={`w-4 h-4${gameBgm.bgmEnabled ? '' : ' opacity-45'}`} aria-hidden="true" />
+            <span>BGM</span>
+          </button>
           <MatchFullscreenButton />
           <button
             ref={gameInfoTriggerRef}
@@ -266,6 +288,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
                           phase={game.phase}
                           nightState={game.nightState}
                           seerCheck={game.aiSeerLastCheck}
+                          seerChecks={game.me?.role === Role.SEER ? game.humanSeerChecks : undefined}
                           canSeeWitchVictim={canSeeWitchVictim}
                         />
                   }

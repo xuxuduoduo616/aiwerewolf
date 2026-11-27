@@ -1,6 +1,8 @@
 import React from 'react';
 import BottomNav from './BottomNav';
 import TopStatusBar from './TopStatusBar';
+import InkWorldBackdrop from '../scene/InkWorldBackdrop';
+import type { InkSceneId } from '../scene/inkSceneConfig';
 import '../styles/mobile-shell.css';
 import '../styles/app-integration.css';
 import '../styles/lobby-refinement.css';
@@ -14,6 +16,8 @@ interface Props {
   children: React.ReactNode;
   /** When true, renders full-screen (no shell chrome). Used for LOGIN. */
   fullscreen?: boolean;
+  /** Active ink-wash world backdrop scene for the current page. */
+  sceneId?: InkSceneId;
   /** Live wallet balances from useWallet hook. */
   coins?: number;
   coupons?: number;
@@ -27,6 +31,7 @@ const GlobalShell: React.FC<Props> = ({
   onNavigate,
   children,
   fullscreen,
+  sceneId = 'lobby',
   coins = 0,
   coupons = 0,
   crystals = 0,
@@ -37,6 +42,7 @@ const GlobalShell: React.FC<Props> = ({
 
   return (
     <div className={`wol-shell${UI_PRESENTATION.showLegacyLobby ? '' : ' wol-shell--refined'}`}>
+      <InkWorldBackdrop sceneId={sceneId} />
       <TopStatusBar
         quiet={!UI_PRESENTATION.showLegacyLobby}
         coins={coins}

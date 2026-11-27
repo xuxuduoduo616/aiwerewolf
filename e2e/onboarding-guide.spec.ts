@@ -32,6 +32,13 @@ for (const viewport of [
       expect(highlight.y + highlight.height).toBeLessThanOrEqual(bounds!.y);
       expect(highlight.x).toBeGreaterThanOrEqual(0);
       expect(highlight.x + highlight.width).toBeLessThanOrEqual(viewport.width);
+      if (id === 'promotions') {
+        const bgmTarget = (await page.locator('[data-tour-target="bgm-player"]').boundingBox())!;
+        expect(highlight.x).toBeLessThanOrEqual(bgmTarget.x);
+        expect(highlight.x + highlight.width).toBeGreaterThanOrEqual(bgmTarget.x + bgmTarget.width);
+        expect(highlight.y).toBeLessThanOrEqual(bgmTarget.y);
+        expect(highlight.y + highlight.height).toBeGreaterThanOrEqual(bgmTarget.y + bgmTarget.height);
+      }
       if (id === 'match-setup') {
         const target = (await page.locator('[data-tour-target="match-setup"]').boundingBox())!;
         const start = (await page.locator('[data-tour-target="match-setup"] > .app-primary-button').boundingBox())!;

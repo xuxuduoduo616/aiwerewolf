@@ -35,6 +35,27 @@ describe('role-private seat knowledge', () => {
     expect(badge({ viewer, seerCheck: null })).toBe('');
   });
 
+  it('persists all previously checked seats across multiple nights for the human Seer', () => {
+    const seerChecks = { 2: false, 3: false, 5: true };
+    const latestCheck = { targetId: 5, isGood: true };
+    const aliveSeer = { role: Role.SEER, isAlive: true };
+    const deadSeer = { role: Role.SEER, isAlive: false };
+
+    // Night 1 check (Seat 2 = wolf) and Night 2 check (Seat 3 = wolf) stay visible after Night 3 check (Seat 5 = good)
+    expect(badge({ viewer: aliveSeer, playerId: 2, seerCheck: latestCheck, seerChecks })).toContain('Confirmed Wolf');
+    expect(badge({ viewer: aliveSeer, playerId: 3, seerCheck: latestCheck, seerChecks })).toContain('Confirmed Wolf');
+    expect(badge({ viewer: aliveSeer, playerId: 5, seerCheck: latestCheck, seerChecks })).toContain('Known Good');
+    expect(badge({ viewer: aliveSeer, playerId: 6, seerCheck: latestCheck, seerChecks })).toBe('');
+
+    // Checked badges persist for the human Seer even after elimination or at GAME_OVER
+    expect(badge({ viewer: deadSeer, playerId: 2, phase: GamePhase.DAY_VOTING, seerCheck: latestCheck, seerChecks })).toContain('Confirmed Wolf');
+    expect(badge({ viewer: deadSeer, playerId: 5, phase: GamePhase.GAME_OVER, seerCheck: latestCheck, seerChecks })).toContain('Known Good');
+
+    // Non-Seer roles never see cumulative Seer checks
+    expect(badge({ viewer: { role: Role.VILLAGER, isAlive: true }, playerId: 2, seerCheck: latestCheck, seerChecks })).toBe('');
+    expect(badge({ viewer: { role: Role.WITCH, isAlive: true }, playerId: 2, seerCheck: latestCheck, seerChecks })).toBe('');
+  });
+
   it('distinguishes the current Wolf Target, the attacked player and a saved player', () => {
     expect(badge({ playerId: 9, phase: GamePhase.NIGHT_WITCH })).toContain('Wolf Target');
     expect(badge({ playerId: 9 })).toContain('Attacked');

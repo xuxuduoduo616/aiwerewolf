@@ -3,6 +3,7 @@ import LobbySideMenus from './LobbySideMenus';
 import LobbyActionButtons from './LobbyActionButtons';
 import ActivityBanner from './ActivityBanner';
 import RefinedLobby from './RefinedLobby';
+import type { LobbyBgmController } from '../hooks/useLobbyBgm';
 import type { SkinProduct } from '../economy/catalog';
 import { UI_PRESENTATION } from '../uiPresentation';
 import type { ShellView } from './GlobalShell';
@@ -24,6 +25,7 @@ interface Props {
   identityHandle: string;
   isGuest: boolean;
   onSignIn: () => void;
+  bgm?: LobbyBgmController;
 }
 
 const LOBBY_CHAT_PREVIEW = [
@@ -72,10 +74,11 @@ const LobbyHome: React.FC<Props> = ({
   identityHandle,
   isGuest,
   onSignIn,
+  bgm,
 }) => {
   if (!UI_PRESENTATION.showLegacyLobby) {
     return <RefinedLobby equippedSkin={equippedSkin} onStartGame={onStartGame} onOpenTutorial={onOpenTutorial}
-      identityName={identityName} identityHandle={identityHandle} isGuest={isGuest} onSignIn={onSignIn} />;
+      identityName={identityName} identityHandle={identityHandle} isGuest={isGuest} onSignIn={onSignIn} bgm={bgm} />;
   }
   return (
     <section className="wol-lobby" aria-label="Lobby">

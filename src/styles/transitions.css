@@ -114,10 +114,10 @@
   animation-delay: 220ms;
 }
 .match-intro-title {
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-ink-brush);
   font-size: clamp(2.25rem, 8vw, 3.75rem);
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-weight: 400;
+  letter-spacing: 0.05em;
   animation-delay: 320ms;
 }
 .match-intro-subtitle {
@@ -145,7 +145,7 @@
   color: #a1a1aa;
 }
 .match-intro-role strong {
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-ink-brush);
   font-size: 1.35rem;
 }
 .match-intro-skip {
@@ -245,10 +245,10 @@
 }
 .role-showcase-title {
   margin: 0;
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-ink-brush);
   font-size: clamp(1.75rem, 6vw, 2.5rem);
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-weight: 400;
+  letter-spacing: 0.06em;
   color: #fafafa;
 }
 .role-showcase-subtitle {
@@ -378,10 +378,10 @@
   padding: 10px 14px 12px;
 }
 .night-skill-label {
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-ink-brush);
   font-size: 0.95rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-weight: 400;
+  letter-spacing: 0.06em;
 }
 .night-skill-target {
   font-size: 0.75rem;
@@ -438,9 +438,10 @@
   animation: phaseBanner 1900ms var(--ease-out-soft) forwards;
 }
 .phase-banner strong {
-  font-family: 'Cinzel', serif;
-  font-size: 1.1rem;
-  letter-spacing: 0.12em;
+  font-family: var(--font-ink-brush);
+  font-size: 1.12rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
 }
 .phase-banner span {
   font-size: 0.75rem;
