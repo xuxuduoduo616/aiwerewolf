@@ -81,4 +81,55 @@ describe('useEconomy guest/account isolation', () => {
     expect(fetchImpl).not.toHaveBeenCalled();
     expect(local.setItem).not.toHaveBeenCalledWith(GUEST_ECONOMY_STORAGE_KEY, expect.any(String));
   });
+
+  it('preserves milestone avatar-frame items in accountViewState.inventory and exposes unequipSkin', async () => {
+    const local = installStorage();
+    const fetchImpl = vi.fn(async () => new Response(JSON.stringify({
+      data: {
+        catalog: [
+          {
+            id: 'mist-wanderer', name: 'Mist Wanderer', itemKind: 'skin', tier: 'basic',
+            currency: 'coins', price: 800, assetKey: 'skins/mist-wanderer', purchaseEnabled: true,
+          },
+          {
+            id: 'avatar-frame:ink-ring', name: 'Ink Ring Avatar Frame', itemKind: 'avatar_frame',
+            tier: 'common', currency: null, price: 0, assetKey: 'frames/ink-ring', purchaseEnabled: false,
+          },
+        ],
+        wallet: { coins: 100, crystals: 0 },
+        inventory: [
+          {
+            id: 'mist-wanderer', name: 'Mist Wanderer', itemKind: 'skin', tier: 'basic',
+            assetKey: 'skins/mist-wanderer', source: 'purchase', acquiredAt: '2026-08-24T10:00:00.000Z',
+          },
+          {
+            id: 'avatar-frame:ink-ring', name: 'Ink Ring Avatar Frame', itemKind: 'avatar_frame', tier: 'common',
+            assetKey: 'frames/ink-ring', source: 'check_in_milestone', acquiredAt: '2026-08-24T10:00:00.000Z',
+          },
+        ],
+        equippedSkinId: null,
+        checkIn: { streak: 7, lastClaimDate: '2026-08-24', serverDate: '2026-08-24', claimedMilestoneDays: [7] },
+        onboarding: { completed: true, completedAt: '2026-08-24T09:00:00.000Z' },
+        ledger: [],
+        nextCursor: null,
+      },
+    }), { status: 200, headers: { 'Content-Type': 'application/json' } })) as unknown as typeof fetch;
+
+    const account: SupabaseSession = {
+      accessToken: 'synthetic-account-generation',
+      user: { id: 'account-a' },
+    };
+    const Probe = () => {
+      const economy = useEconomy(account, false, { fetchImpl, storage: local.storage });
+      return <output>{typeof economy.unequipSkin}|{economy.state.inventory.join(',')}</output>;
+    };
+    const loadingHtml = renderToStaticMarkup(<Probe />);
+    expect(loadingHtml).toContain('function|');
+
+    const GuestProbe = () => {
+      const economy = useEconomy(null, true, { fetchImpl, storage: local.storage }, guestId);
+      return <output>{typeof economy.unequipSkin}</output>;
+    };
+    expect(renderToStaticMarkup(<GuestProbe />)).toContain('function');
+  });
 });

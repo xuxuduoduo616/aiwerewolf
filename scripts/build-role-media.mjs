@@ -5,13 +5,7 @@
  * Renders raster masters and supporting ink-wash SVG artwork via local Playwright
  * Chromium to PNG, encodes 3:4 portrait `.webp` (1440x1920), 1:1 skill `.webp`
  * (768x768), silent H.264 `yuv420p` `+faststart` `.mp4` entrance/VFX clips via
- * `/opt/homebrew/bin/ffmpeg`, crisp vector `badge.svg`, and offline bilingual
- * voiceovers (`voice-en.mp3`, `voice-zh.mp3`) via macOS `say` + `ffmpeg`.
- *
- * Audio provenance:
- *   All generated `.mp3` voice tracks are `preview-local-tts` offline preview
- *   assets synthesized locally with macOS `say` and normalized via `ffmpeg`
- *   (`silenceremove` + EBU R128 `loudnorm`). Zero external APIs or keys.
+ * ffmpeg, and vector badges. Qwen role recordings are bundled separately.
  *
  * Usage:
  *   node scripts/build-role-media.mjs --roles witch --skills witch-save,witch-poison
@@ -37,9 +31,8 @@ const PUBLIC_SKILLS_DIR = path.join(REPO_ROOT, 'public', 'assets', 'skills');
 
 const FFMPEG_BIN = existsSync('/opt/homebrew/bin/ffmpeg') ? '/opt/homebrew/bin/ffmpeg' : 'ffmpeg';
 const FFPROBE_BIN = existsSync('/opt/homebrew/bin/ffprobe') ? '/opt/homebrew/bin/ffprobe' : 'ffprobe';
-const SAY_BIN = existsSync('/usr/bin/say') ? '/usr/bin/say' : 'say';
 
-export const TTS_PROVENANCE = 'preview-local-tts';
+const VOICE_MODELS = ['qwen-audio-3.1-tts-flash', 'qwen3-tts-flash'];
 
 export const MEDIA_SPEC = {
   portrait: {
@@ -74,7 +67,7 @@ export const MEDIA_SPEC = {
   },
   voice: {
     minDurationSec: 2.0,
-    maxDurationSec: 3.8,
+    maxDurationSec: 10,
     sampleRate: 44100,
     bitrate: '128k',
   },
@@ -1837,98 +1830,36 @@ export const ROLE_SPECS = {
     masterPortraitPath: path.join(SCRIPT_DIR, 'assets', 'witch-portrait-master.png'),
     buildPortraitSvg: buildWitchPortraitSvg,
     buildBadgeSvg: buildWitchBadgeSvg,
-    lines: {
-      en: {
-        voice: 'Moira',
-        text: 'One drop mends the soul; another seals the night.',
-      },
-      zh: {
-        voice: 'Tingting',
-        text: '一滴回魂续命，一滴封喉断夜。',
-      },
-    },
   },
   seer: {
     id: 'seer',
     masterPortraitPath: path.join(SCRIPT_DIR, 'assets', 'seer-portrait-master.png'),
     buildPortraitSvg: buildSeerPortraitSvg,
     buildBadgeSvg: buildSeerBadgeSvg,
-    lines: {
-      en: {
-        voice: 'Samantha',
-        text: 'Beneath the ink-stained moon, no mask hides its true shadow.',
-      },
-      zh: {
-        voice: 'Meijia',
-        text: '水墨孤月之下，真假终见分晓。',
-      },
-    },
   },
   werewolf: {
     id: 'werewolf',
     masterPortraitPath: path.join(SCRIPT_DIR, 'assets', 'werewolf-portrait-master.png'),
     buildPortraitSvg: buildWerewolfPortraitSvg,
     buildBadgeSvg: buildWerewolfBadgeSvg,
-    lines: {
-      en: {
-        voice: 'Daniel',
-        rate: 195,
-        text: 'Walk among the lanterns by day; let the fangs speak at midnight.',
-      },
-      zh: {
-        voice: 'Rocko (Chinese (China mainland))',
-        text: '白昼隐入灯火，子夜利爪封喉。',
-      },
-    },
   },
   hunter: {
     id: 'hunter',
     masterPortraitPath: path.join(SCRIPT_DIR, 'assets', 'hunter-portrait-master.png'),
     buildPortraitSvg: buildHunterPortraitSvg,
     buildBadgeSvg: buildHunterBadgeSvg,
-    lines: {
-      en: {
-        voice: 'Aman',
-        text: 'Even if I fall tonight, my final bolt never misses.',
-      },
-      zh: {
-        voice: 'Eddy (Chinese (China mainland))',
-        text: '纵使今夜倒下，最后一箭也绝不落空。',
-      },
-    },
   },
   idiot: {
     id: 'idiot',
     masterPortraitPath: path.join(SCRIPT_DIR, 'assets', 'idiot-portrait-master.png'),
     buildPortraitSvg: buildIdiotPortraitSvg,
     buildBadgeSvg: buildIdiotBadgeSvg,
-    lines: {
-      en: {
-        voice: 'Karen',
-        text: 'Laugh at the fool if you wish—only the waking survive the crowd.',
-      },
-      zh: {
-        voice: 'Grandpa (Chinese (China mainland))',
-        text: '世人笑我痴狂，唯有清醒者死里逃生。',
-      },
-    },
   },
   villager: {
     id: 'villager',
     masterPortraitPath: path.join(SCRIPT_DIR, 'assets', 'villager-portrait-master.png'),
     buildPortraitSvg: buildVillagerPortraitSvg,
     buildBadgeSvg: buildVillagerBadgeSvg,
-    lines: {
-      en: {
-        voice: 'Tessa',
-        rate: 205,
-        text: 'No mystic art in hand, only clear eyes to pierce the fog.',
-      },
-      zh: {
-        voice: 'Flo (Chinese (China mainland))',
-        text: '手中虽无奇术，明眼亦能破雾寻狼。',
-      },
-    },
   },
 };
 
@@ -2145,36 +2076,6 @@ const encodeSkillMp4 = async (page, tmpDir, skillId, posterPath, outMp4Path) => 
 };
 
 
-/**
- * Generate offline `preview-local-tts` voice track via macOS `say` + `ffmpeg`.
- */
-const generateLocalTtsMp3 = async ({ voice, rate, text, tmpDir, outMp3Path }) => {
-  const rawAiff = path.join(tmpDir, `${path.basename(outMp3Path, '.mp3')}.aiff`);
-  const sayArgs = ['-v', voice, ...(rate ? ['-r', String(rate)] : []), '-o', rawAiff, text];
-  await runExec(SAY_BIN, sayArgs);
-  const audioFilter = [
-    'silenceremove=start_periods=1:start_silence=0.05:start_threshold=-45dB',
-    'areverse',
-    'silenceremove=start_periods=1:start_silence=0.05:start_threshold=-45dB',
-    'areverse',
-    'apad=pad_dur=0.12',
-    'loudnorm=I=-16:TP=-1.5:LRA=11',
-  ].join(',');
-
-  await runExec(FFMPEG_BIN, [
-    '-y',
-    '-i', rawAiff,
-    '-af', audioFilter,
-    '-ar', String(MEDIA_SPEC.voice.sampleRate),
-    '-ac', '1',
-    '-c:a', 'libmp3lame',
-    '-b:a', MEDIA_SPEC.voice.bitrate,
-    '-fflags', '+bitexact',
-    '-map_metadata', '-1',
-    '-metadata', `comment=${TTS_PROVENANCE}`,
-    outMp3Path,
-  ]);
-};
 
 // ---------------------------------------------------------------------------
 // Build Orchestration
@@ -2282,28 +2183,10 @@ const buildRoleAssets = async (page, tmpDir, roleId, artworkOnly) => {
     return ['portrait.webp', 'entrance.mp4'].map(file => path.relative(REPO_ROOT, path.join(roleDir, file)));
   }
 
-  // 4. Offline preview-local-tts bilingual voiceovers
-  await generateLocalTtsMp3({
-    voice: spec.lines.en.voice,
-    rate: spec.lines.en.rate,
-    text: spec.lines.en.text,
-    tmpDir,
-    outMp3Path: path.join(roleDir, 'voice-en.mp3'),
-  });
-  await generateLocalTtsMp3({
-    voice: spec.lines.zh.voice,
-    rate: spec.lines.zh.rate,
-    text: spec.lines.zh.text,
-    tmpDir,
-    outMp3Path: path.join(roleDir, 'voice-zh.mp3'),
-  });
-
   return [
     path.relative(REPO_ROOT, badgePath),
     path.relative(REPO_ROOT, path.join(roleDir, 'portrait.webp')),
     path.relative(REPO_ROOT, path.join(roleDir, 'entrance.mp4')),
-    path.relative(REPO_ROOT, path.join(roleDir, 'voice-en.mp3')),
-    path.relative(REPO_ROOT, path.join(roleDir, 'voice-zh.mp3')),
   ];
 };
 
@@ -2455,6 +2338,8 @@ const validateVoiceMp3 = async (filePath) => {
   if (audioStreams.length !== 1) errors.push(`audioStreams=${audioStreams.length} (expected 1)`);
   if (videoStreams.length !== 0) errors.push(`videoStreams=${videoStreams.length} (expected 0)`);
 
+  const credit = meta.format?.tags?.comment ?? '';
+  if (!VOICE_MODELS.some(model => credit.startsWith(model + '/'))) errors.push('Missing Qwen voice credit');
   const as = audioStreams[0];
   if (as && as.codec_name !== 'mp3') errors.push(`codec=${as.codec_name} (expected mp3)`);
   const duration = Number(meta.format?.duration ?? as?.duration ?? 0);
@@ -2465,7 +2350,7 @@ const validateVoiceMp3 = async (filePath) => {
   return {
     ok: errors.length === 0,
     errors,
-    summary: `${as?.codec_name || '?'} ${as?.sample_rate || '?'}Hz ${duration.toFixed(3)}s ${size}B (${TTS_PROVENANCE})`,
+    summary: `${as?.codec_name || '?'} ${as?.sample_rate || '?'}Hz ${duration.toFixed(3)}s ${size}B (${credit})`,
   };
 };
 
@@ -2655,7 +2540,7 @@ const main = async () => {
       produced.push(...(await buildSkillAssets(page, tmpDir, skillId)));
     }
 
-    console.log(`Built ${produced.length} role/skill media assets (tts=${TTS_PROVENANCE}):`);
+    console.log(`Built ${produced.length} role/skill media assets:`);
     for (const rel of produced) console.log(`- ${rel}`);
   } finally {
     await browser.close();

@@ -205,7 +205,8 @@ describe('cosmetic and tutorial contracts', () => {
     for (const label of ['Basic · Coins', 'Premium · Crystals', '800 Coins', '1,400 Coins', '2,200 Coins', '3,200 Coins', '20 Crystals', '40 Crystals', '80 Crystals']) {
       expect(html).toContain(label);
     }
-    expect(html).toContain('Art prompt metadata');
+    expect(html).not.toContain('Art prompt metadata');
+    expect(html).not.toContain('skin-prompt-metadata');
     expect(html.match(/class="skin-earnability"/g)).toHaveLength(4);
     for (const days of [12, 14, 24, 35]) {
       expect(html).toContain(`From zero: ${days} check-ins.`);

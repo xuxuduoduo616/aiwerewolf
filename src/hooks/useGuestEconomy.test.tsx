@@ -75,4 +75,31 @@ describe('useGuestEconomy identity runtime', () => {
     expect(writesAfterAccountAction).toBe(1);
     expect(storage.values.has(getGuestEconomyStorageKey(guestId))).toBe(true);
   });
+
+  it('exposes unequipSkin with account boundary and already-default feedback', () => {
+    const storage = installMemoryStorage();
+    const AccountProbe = () => {
+      const economy = useGuestEconomy(false);
+      const code = useRef('');
+      if (!code.current) {
+        const result = economy.unequipSkin();
+        if ('code' in result) code.current = result.code;
+      }
+      return <output>{code.current}|{economy.feedback}</output>;
+    };
+    const accountMarkup = renderToStaticMarkup(<AccountProbe />);
+    expect(accountMarkup).toContain(`account-unavailable|${ACCOUNT_ECONOMY_UNAVAILABLE}`);
+    expect(storage.setItem).not.toHaveBeenCalled();
+
+    const GuestDefaultProbe = () => {
+      const economy = useGuestEconomy(true, guestId);
+      const didRun = useRef(false);
+      if (!didRun.current) {
+        didRun.current = true;
+        economy.unequipSkin();
+      }
+      return <output>{economy.feedback}</output>;
+    };
+    expect(renderToStaticMarkup(<GuestDefaultProbe />)).toContain('Default outfit is already equipped.');
+  });
 });

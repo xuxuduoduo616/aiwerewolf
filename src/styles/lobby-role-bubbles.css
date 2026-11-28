@@ -72,6 +72,7 @@
 .role-orb--seer     { --x: 86%; --y: 19%; --period: 25s; --offset: -14s; --tint: #a9bce2; --dx: -12px; --dy: 14px; }
 .role-orb--witch    { --x: 62%; --y: 72%; --period: 27s; --offset: -6s;  --tint: #8cc9b2; --dx: 16px;  --dy: -10px; }
 .role-orb--hunter   { --x: 88%; --y: 78%; --period: 23s; --offset: -11s; --tint: #dfb97a; --dx: -14px; --dy: -11px; }
+.role-orb--idiot    { --x: 74%; --y: 46%; --period: 24s; --offset: -9s;  --tint: #c5a4c8; --dx: 13px;  --dy: 12px; }
 
 .role-orb:hover,
 .role-orb:focus-visible {
@@ -162,6 +163,7 @@
   .role-orb--seer     { --x: 82%; --y: 7%; }
   .role-orb--witch    { --x: 10%; --y: auto; bottom: 18%; }
   .role-orb--hunter   { --x: 78%; --y: auto; bottom: 10%; }
+  .role-orb--idiot    { --x: 86%; --y: 38%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -179,4 +181,5 @@
   .night-hero { padding-top: 84px; }
   .role-orb--werewolf { --x: 34%; --y: 8px; }
   .role-orb--seer     { --x: 76%; --y: 20px; }
+  .role-orb--idiot    { --x: 55%; --y: 14px; bottom: auto; }
 }

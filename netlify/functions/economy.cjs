@@ -48,6 +48,11 @@ const ACTIONS = Object.freeze({
       p_skin_id: body.skinId,
     }),
   },
+  unequip_skin: {
+    rpc: 'economy_unequip_skin',
+    fields: ['action', 'idempotencyKey'],
+    params: (body) => ({ p_idempotency_key: body.idempotencyKey }),
+  },
 });
 
 const getHeader = (headers, name) => {
@@ -187,8 +192,15 @@ const parsePostBody = (event) => {
   return { body, contract };
 };
 
-const mapRpcError = (error, origin) => {
+const mapRpcError = (error, origin, action = '') => {
   const safeMessage = error && typeof error.message === 'string' ? error.message : '';
+  const errorCode = error && typeof error.code === 'string' ? error.code : '';
+  if (
+    action === 'unequip_skin'
+    && (errorCode === 'PGRST202' || errorCode === '42883' || safeMessage.includes('economy_unequip_skin'))
+  ) {
+    return response(409, 'UNEQUIP_UNAVAILABLE', origin);
+  }
   const known = [
     ['ECONOMY_UNAUTHORIZED', 401, 'UNAUTHORIZED'],
     ['ECONOMY_IDEMPOTENCY_CONFLICT', 409, 'IDEMPOTENCY_CONFLICT'],
@@ -286,7 +298,7 @@ exports.handler = async function handler(event = {}) {
 
   try {
     const result = await client.rpc(parsed.contract.rpc, parsed.contract.params(parsed.body));
-    if (result.error) return mapRpcError(result.error, origin);
+    if (result.error) return mapRpcError(result.error, origin, parsed.body.action);
     if (!isRecord(result.data)) return response(502, 'ECONOMY_UPSTREAM_ERROR', origin);
     return success(result.data, origin);
   } catch {

@@ -76,7 +76,8 @@ export type AccountMutationAction =
   | 'claim_check_in'
   | 'finish_onboarding'
   | 'unlock_skin'
-  | 'equip_skin';
+  | 'equip_skin'
+  | 'unequip_skin';
 
 export interface AccountIntent {
   version: typeof ACCOUNT_INTENT_VERSION;
@@ -419,7 +420,7 @@ export const readAccountIntents = (storage: Storage | null = typeof localStorage
       isRecord(intent) && exactKeys(intent, ['version', 'scope', 'action', 'fingerprint', 'requestId'])
       && intent.version === ACCOUNT_INTENT_VERSION
       && typeof intent.scope === 'string' && /^account-[a-z0-9]+$/.test(intent.scope)
-      && ['claim_check_in', 'finish_onboarding', 'unlock_skin', 'equip_skin'].includes(String(intent.action))
+      && ['claim_check_in', 'finish_onboarding', 'unlock_skin', 'equip_skin', 'unequip_skin'].includes(String(intent.action))
       && typeof intent.fingerprint === 'string' && /^[a-z_]+:[a-z0-9]+$/.test(intent.fingerprint)
       && typeof intent.requestId === 'string' && IDEMPOTENCY_KEY.test(intent.requestId)
     ))) return { status: 'corrupt', intents: [] };
@@ -496,6 +497,7 @@ export const reconcileConfirmedAccountIntents = (
     if (item.itemKind === 'skin') confirmed.add(intentFingerprint('unlock_skin', item.id));
   }
   if (state.equippedSkinId) confirmed.add(intentFingerprint('equip_skin', state.equippedSkinId));
+  else confirmed.add(intentFingerprint('unequip_skin'));
   const remaining = current.intents.filter(intent => (
     intent.scope !== scope || !confirmed.has(intent.fingerprint)
   ));
@@ -512,6 +514,7 @@ export const stateConfirmsIntent = (
     case 'finish_onboarding': return state.onboarding.completed;
     case 'unlock_skin': return state.inventory.some(item => item.id === value && item.itemKind === 'skin');
     case 'equip_skin': return state.equippedSkinId === value;
+    case 'unequip_skin': return state.equippedSkinId === null;
   }
 };
 

@@ -4,8 +4,8 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { Role, type Player } from '../types';
 import { SKIN_CATALOG } from '../economy/catalog';
+import { getSkinAvatarUrl } from '../economy/skinAssets';
 import { PlayerCard } from './PlayerCard';
-import SkinArtwork from './SkinArtwork';
 
 const player: Player = {
   id: 1, name: 'Fixture Human', role: Role.SEER, camp: 'VILLAGE', isAlive: true,
@@ -15,26 +15,26 @@ const player: Player = {
 const markup = (props: Partial<React.ComponentProps<typeof PlayerCard>> = {}) => renderToStaticMarkup(
   <PlayerCard player={player} isMe revealRole={false} onClick={() => {}} {...props} />,
 );
-const parts = (html: string) => [...html.matchAll(/data-equipment="([^"]+)"/g)].map(match => match[1]);
 
 describe('human seat skin presentation', () => {
-  it.each(SKIN_CATALOG)('shares $id geometry with the store and retains the 56/64px boundary', product => {
+  it.each(SKIN_CATALOG)('renders $id WuxiaAvatar and retains the 56/64px boundary', product => {
     for (const compact of [true, false]) {
-      const html = markup({ equippedSkin: product, compact });
-      expect(parts(html)).toEqual(parts(renderToStaticMarkup(<SkinArtwork product={product} />)));
+      const html = markup({ equippedSkin: product, equippedFrame: 'crimson-moon', compact });
+      expect(html).toContain(`src="${getSkinAvatarUrl(product.id)}"`);
       expect(html).toContain(compact ? 'w-14 h-14' : 'w-16 h-16');
       expect(html).toContain(`Fixture Human wearing ${product.name}`);
-      expect(html).not.toContain('<img');
+      expect(html).toContain('wuxia-avatar-frame--crimson-moon');
       expect(html).toContain('Seer');
     }
   });
-  it('preserves the default image for AI, absent and unknown equipment', () => {
-    for (const props of [{}, { equippedSkin: SKIN_CATALOG[0], isMe: false }, { equippedSkin: { ...SKIN_CATALOG[0], id: 'unknown' } }]) {
+  it('uses player.avatarUrl for AI seats and default skin avatar for absent/unknown human equipment', () => {
+    const aiHtml = markup({ equippedSkin: SKIN_CATALOG[0], isMe: false });
+    expect(aiHtml).toContain('src="/fixture-avatar.svg"');
+    expect(aiHtml).not.toContain('Seer');
+    for (const props of [{}, { equippedSkin: { ...SKIN_CATALOG[0], id: 'unknown' } }]) {
       const html = markup(props);
-      expect(html).toContain('src="/fixture-avatar.svg"');
-      expect(html).not.toContain('wuxia-character-avatar');
+      expect(html).toContain(`src="${getSkinAvatarUrl(null)}"`);
     }
-    expect(markup({ isMe: false, equippedSkin: SKIN_CATALOG[0] })).not.toContain('Seer');
   });
   it.each([9, 12])('preserves badges, selected/speaking/finished/dead states in a %i-seat board', count => {
     const html = renderToStaticMarkup(<>{Array.from({ length: count }, (_, index) => <PlayerCard key={index}
@@ -43,7 +43,7 @@ describe('human seat skin presentation', () => {
       isSelected={index === 0} isSpeaking={index === 1} hasSpoken={index === 2}
       isWolfTeammate={index === 3} customBadge={index === 0 ? <span>Known Good</span> : undefined}
     />)}</>);
-    expect(html.match(/wuxia-character-avatar/g)).toHaveLength(1);
+    expect(html.match(/wuxia-avatar-img/g)).toHaveLength(count);
     for (const state of ['speaking-ring', 'Finished speaking', 'Werewolf teammate', 'Known Good', 'No Vote', 'OUT', 'border-zinc-100 bg-zinc-800']) expect(html).toContain(state);
   });
   it('keeps all status overlays when the equipped human is speaking or dead', () => {

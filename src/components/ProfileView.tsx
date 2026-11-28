@@ -5,6 +5,8 @@ import BackpackPanel from './BackpackPanel';
 import SkinCollectionPanel from './SkinCollectionPanel';
 import ProfileSubTabs from './ProfileSubTabs';
 import { getTabId, getTabPanelId } from './TabBar';
+import WuxiaAvatar from './WuxiaAvatar';
+import { resolveEquippedAvatarFrame, resolveEquippedSkinProduct } from '../economy/equippedSkin';
 
 type SubTab = 'outfits' | 'decorations' | 'runwolf' | 'scenes' | 'skins' | 'backpack';
 const PROFILE_TABS: readonly SubTab[] = ['outfits', 'decorations', 'runwolf', 'scenes', 'skins', 'backpack'];
@@ -22,6 +24,8 @@ interface Props {
 
 const ProfileView: React.FC<Props> = ({ identityName, identityHandle, isGuest, onSignIn, onSignOut, economy, onOpenStore }) => {
   const [subTab, setSubTab] = useState<SubTab>('outfits');
+  const equippedSkin = economy ? resolveEquippedSkinProduct(economy) : null;
+  const equippedFrame = economy ? resolveEquippedAvatarFrame(economy) : null;
 
   const renderPanel = () => {
     switch (subTab) {
@@ -52,18 +56,12 @@ const ProfileView: React.FC<Props> = ({ identityName, identityHandle, isGuest, o
       }}>
         {/* Avatar */}
         <div style={{ position: 'relative', flexShrink: 0 }}>
-          <div style={{
-            width: 56, height: 56, borderRadius: '50%',
-            background: 'linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02))',
-            border: '2px solid rgba(255,255,255,0.12)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            overflow: 'hidden',
-          }}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" style={{ width: 28, height: 28 }}>
-              <circle cx="12" cy="8" r="4" strokeLinecap="round"/>
-              <path d="M4 21v-2a4 4 0 014-4h8a4 4 0 014 4v2" strokeLinecap="round"/>
-            </svg>
-          </div>
+          <WuxiaAvatar
+            skin={equippedSkin}
+            frame={equippedFrame}
+            size="seat-compact"
+            alt={`${identityName} avatar`}
+          />
           {/* Level badge */}
           <div style={{
             position: 'absolute', bottom: -2, left: -2,

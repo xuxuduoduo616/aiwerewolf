@@ -28,7 +28,7 @@ create table if not exists public.economy_mutation_receipts (
   ),
   action text not null check (action in (
     'claim_check_in', 'finish_onboarding', 'claim_gameplay_reward',
-    'unlock_skin', 'equip_skin'
+    'unlock_skin', 'equip_skin', 'unequip_skin'
   )),
   canonical_payload jsonb not null check (jsonb_typeof(canonical_payload) = 'object'),
   status text not null default 'pending' check (status in ('pending', 'completed')),
@@ -295,7 +295,7 @@ begin
   end if;
   if p_action not in (
     'claim_check_in', 'finish_onboarding', 'claim_gameplay_reward',
-    'unlock_skin', 'equip_skin'
+    'unlock_skin', 'equip_skin', 'unequip_skin'
   ) or p_idempotency_key is null
     or char_length(p_idempotency_key) not between 16 and 128
     or p_idempotency_key !~ '^[A-Za-z0-9][A-Za-z0-9._:-]+$'
@@ -748,6 +748,36 @@ begin
 end;
 $$;
 
+create or replace function public.economy_unequip_skin(
+  p_idempotency_key text
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path = pg_catalog, public
+as $$
+declare
+  v_user_id uuid := auth.uid();
+  v_receipt record;
+  v_result jsonb;
+begin
+  if v_user_id is null then raise exception 'ECONOMY_UNAUTHORIZED' using errcode = 'P0001'; end if;
+  select * into v_receipt from public.economy_begin_receipt(
+    'unequip_skin', p_idempotency_key, '{}'::jsonb
+  );
+  if v_receipt.replayed then return v_receipt.stored_result; end if;
+
+  perform public.economy_ensure_user(v_user_id);
+  perform 1 from public.economy_player_state where user_id = v_user_id for update;
+
+  update public.economy_player_state
+  set equipped_skin_id = null, updated_at = now()
+  where user_id = v_user_id;
+  v_result := jsonb_build_object('action', 'unequip_skin', 'equippedSkinId', null);
+  return public.economy_complete_receipt(v_user_id, v_receipt.receipt_id, v_result);
+end;
+$$;
+
 create or replace function public.economy_get_state(
   p_ledger_limit integer default 25,
   p_ledger_cursor uuid default null
@@ -842,7 +872,7 @@ begin
 end;
 $$;
 
--- Only the six public contracts are callable by authenticated clients. Helper
+-- Only the seven public contracts are callable by authenticated clients. Helper
 -- functions remain private despite SECURITY DEFINER.
 revoke all on function public.economy_forbid_ledger_mutation() from public, anon, authenticated;
 revoke all on function public.economy_begin_receipt(text, text, jsonb) from public, anon, authenticated;
@@ -857,6 +887,7 @@ revoke all on function public.economy_finish_onboarding(text) from public, anon,
 revoke all on function public.economy_claim_gameplay_reward(text, uuid) from public, anon, authenticated;
 revoke all on function public.economy_unlock_skin(text, text) from public, anon, authenticated;
 revoke all on function public.economy_equip_skin(text, text) from public, anon, authenticated;
+revoke all on function public.economy_unequip_skin(text) from public, anon, authenticated;
 
 grant execute on function public.economy_get_state(integer, uuid) to authenticated;
 grant execute on function public.economy_claim_check_in(text) to authenticated;
@@ -864,5 +895,6 @@ grant execute on function public.economy_finish_onboarding(text) to authenticate
 grant execute on function public.economy_claim_gameplay_reward(text, uuid) to authenticated;
 grant execute on function public.economy_unlock_skin(text, text) to authenticated;
 grant execute on function public.economy_equip_skin(text, text) to authenticated;
+grant execute on function public.economy_unequip_skin(text) to authenticated;
 
 commit;

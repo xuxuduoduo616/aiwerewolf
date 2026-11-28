@@ -37,7 +37,7 @@ test('the match intro holds keyboard focus until it closes', async ({ page }) =>
   // exercise keyboard focus even when its other assets are already cached.
   let releaseAvatars!: () => void;
   const avatarsReady = new Promise<void>(resolve => { releaseAvatars = resolve; });
-  await page.route('https://api.dicebear.com/**', async route => {
+  await page.route('**/assets/avatars/ai-*.webp', async route => {
     await avatarsReady;
     await route.abort();
   });

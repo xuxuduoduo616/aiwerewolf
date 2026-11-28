@@ -8,6 +8,7 @@ import {
   GUEST_ECONOMY_STORAGE_KEY,
   GUEST_ECONOMY_VERSION,
   claimGuestDailyCheckIn,
+  describeEconomyEvent,
   equipGuestSkin,
   finishGuestTutorial,
   parseGuestEconomyLedger,
@@ -16,6 +17,7 @@ import {
   getGuestEconomyStorageKey,
   recordGuestTutorialSkip,
   rewardGuestGame,
+  unequipGuestSkin,
   unlockGuestSkin,
 } from './ledger';
 import { BASIC_SKIN_PRICES, PREMIUM_SKIN_PRICES, SKIN_CATALOG } from './catalog';
@@ -300,5 +302,47 @@ describe('fail-closed recovery and account boundary', () => {
     expect(result.state.coins).toBe(0);
     expect(result.state.inventory).toEqual([]);
     expect(operation).not.toHaveBeenCalled();
+  });
+
+  it('unequips an equipped skin, restores default outfit idempotently, and preserves v1 ledger replay', () => {
+    const { storage } = createMemoryStorage();
+    const guestA = 'guest:11111111-1111-4111-8111-111111111111';
+    for (let day = 0; day < 20; day += 1) {
+      expect(claimGuestDailyCheckIn(storage, localNoon(day), guestA).ok).toBe(true);
+    }
+    expect(unlockGuestSkin('mist-wanderer', storage, localNoon(20), guestA).ok).toBe(true);
+    expect(equipGuestSkin('mist-wanderer', storage, localNoon(20), guestA).state.equippedSkinId).toBe('mist-wanderer');
+
+    const alreadyDefault = unequipGuestSkin(storage, localNoon(20), 'guest:22222222-2222-4222-8222-222222222222');
+    expect(alreadyDefault).toMatchObject({ ok: true, code: 'already-applied' });
+
+    const unequipped = unequipGuestSkin(storage, localNoon(21), guestA);
+    expect(unequipped.ok).toBe(true);
+    expect(unequipped.code).toBe('applied');
+    expect(unequipped.state.equippedSkinId).toBeNull();
+    expect(unequipped.event?.type).toBe('SKIN_UNEQUIPPED');
+    expect(unequipped.event?.idempotencyKey).toBe('skin-unequip:v1');
+    expect(unequipped.event && describeEconomyEvent(unequipped.event)).toBe('Default outfit restored');
+
+    const repeat = unequipGuestSkin(storage, localNoon(21), guestA);
+    expect(repeat).toMatchObject({ ok: true, code: 'already-applied' });
+    expect(repeat.state.events).toHaveLength(unequipped.state.events.length);
+
+    expect(equipGuestSkin('mist-wanderer', storage, localNoon(22), guestA).state.equippedSkinId).toBe('mist-wanderer');
+    const secondUnequip = unequipGuestSkin(storage, localNoon(23), guestA);
+    expect(secondUnequip.ok).toBe(true);
+    expect(secondUnequip.event?.idempotencyKey).toBe('skin-unequip:v2');
+
+    const raw = storage.getItem(getGuestEconomyStorageKey(guestA)) ?? '{}';
+    const parsed = JSON.parse(raw) as { events: Array<Record<string, unknown>> };
+    const forgedKey = structuredClone(parsed);
+    const lastIdx = forgedKey.events.length - 1;
+    forgedKey.events[lastIdx].idempotencyKey = 'skin-unequip:v99';
+    forgedKey.events[lastIdx].id = 'skin-unequip:v99';
+    expect(parseGuestEconomyLedger(JSON.stringify(forgedKey), guestA)).toBeNull();
+
+    const forgedPrev = structuredClone(parsed);
+    forgedPrev.events[lastIdx].previousSkinId = 'bamboo-vigil';
+    expect(parseGuestEconomyLedger(JSON.stringify(forgedPrev), guestA)).toBeNull();
   });
 });

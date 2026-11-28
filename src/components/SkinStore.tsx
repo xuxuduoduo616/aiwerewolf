@@ -4,6 +4,7 @@ import AccessibleDialog from './AccessibleDialog';
 import EconomyBalances from './EconomyBalances';
 import SkinArtwork from './SkinArtwork';
 import SkinEarnability from './SkinEarnability';
+import WuxiaAvatar from './WuxiaAvatar';
 import { SKIN_CATALOG, type SkinProduct } from '../economy/catalog';
 import { localDayFromDate } from '../economy/ledger';
 import { economyRouteHash } from '../economy/routes';
@@ -91,17 +92,50 @@ export const SkinPreviewContent = ({
 }: {
   product: SkinProduct;
   presentation: SkinPresentation;
-}) => (
-  <div className="skin-preview-content">
-    <SkinArtwork product={{ ...product, name: presentation.name }} large />
-    <div>
-      <strong>{presentation.name}</strong>
-      <p>{presentation.tier ? `${presentation.tier} cosmetic` : 'Verified tier unavailable'}</p>
-      {!presentation.verified && <p>Verified catalog details and price are unavailable for this cosmetic.</p>}
-      <p>{product.description}</p>
+}) => {
+  const previewSkin: SkinProduct = {
+    ...product,
+    name: presentation.name,
+    tier: presentation.tier ?? product.tier,
+  };
+
+  return (
+    <div className="skin-preview-content">
+      <SkinArtwork product={{ ...product, name: presentation.name }} large />
+      <div className="skin-preview-details">
+        <strong>{presentation.name}</strong>
+        <p>
+          {presentation.tier ? `${presentation.tier} cosmetic` : 'Verified tier unavailable'}
+          {product.season === 'tidal' ? ' · Tidal Season' : ''}
+        </p>
+        {!presentation.verified && <p>Verified catalog details and price are unavailable for this cosmetic.</p>}
+        <p>{product.description}</p>
+        <div className="skin-preview-surfaces">
+          <div className="skin-preview-surface" data-preview-surface="match-seat">
+            <span className="skin-preview-seat-badge">1</span>
+            <WuxiaAvatar
+              skin={previewSkin}
+              size="seat"
+              alt={`${presentation.name} in-match seat avatar preview`}
+            />
+            <span className="skin-preview-surface-label">YOU</span>
+          </div>
+          <div className="skin-preview-surface" data-preview-surface="lobby-badge">
+            <WuxiaAvatar
+              skin={previewSkin}
+              size="md"
+              alt={`${presentation.name} lobby badge preview`}
+            />
+            <div className="skin-preview-lobby-meta">
+              <span>Village Traveler</span>
+              <strong>{presentation.name}</strong>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const SkinStore: React.FC<Props> = ({
   state,
@@ -237,10 +271,6 @@ const SkinStore: React.FC<Props> = ({
               {serverEnabled && presentation.currency === 'coins' && presentation.price !== null && (
                 <SkinEarnability price={presentation.price} progress={checkInProgress} owned={owned} />
               )}
-              <details className="skin-prompt-metadata">
-                <summary>Art prompt metadata</summary>
-                <p>{product.prompt}</p>
-              </details>
               <div className="skin-card-actions">
                 <button type="button" onClick={() => setPreview(product)}><Eye aria-hidden="true" /> Preview</button>
                 {owned ? (

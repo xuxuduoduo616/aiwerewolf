@@ -12,6 +12,7 @@ import {
   parseAccountEconomyEnvelope,
   postAccountEconomyMutation,
   readAccountIntents,
+  reconcileConfirmedAccountIntents,
   stateConfirmsIntent,
   type AccountEconomyState,
 } from './accountEconomy';
@@ -294,6 +295,54 @@ describe('persistent account intent registry', () => {
     expect(readAccountIntents(storage).intents).toHaveLength(1);
     expect(stateConfirmsIntent(parsed, created.intent, 'mist-wanderer')).toBe(true);
     expect(clearAccountIntent(created.intent, storage)).toBe(true);
+    expect(readAccountIntents(storage).intents).toHaveLength(0);
+  });
+
+  it('supports unequip_skin intents, reconciliation, and mutation transport without skinId', async () => {
+    const fetchImpl = vi.fn(async () => new Response(JSON.stringify({ data: { action: 'unequip_skin', equippedSkinId: null } }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    })) as unknown as typeof fetch;
+
+    await expect(postAccountEconomyMutation(
+      { accessToken: 'token', fetchImpl },
+      'unequip_skin',
+      'economy:11111111-1111-4111-8111-111111111111',
+      'mist-wanderer',
+    )).rejects.toThrow('ECONOMY_REQUEST_INVALID');
+
+    await postAccountEconomyMutation(
+      { accessToken: 'token', fetchImpl },
+      'unequip_skin',
+      'economy:11111111-1111-4111-8111-111111111111',
+    );
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+    const [, init] = (fetchImpl as unknown as ReturnType<typeof vi.fn>).mock.calls[0];
+    expect(JSON.parse(String(init.body))).toEqual({
+      action: 'unequip_skin',
+      idempotencyKey: 'economy:11111111-1111-4111-8111-111111111111',
+    });
+
+    const storage = memoryStorage();
+    const scope = accountScope('a');
+    const created = getOrCreateAccountIntent(
+      scope, 'unequip_skin', intentFingerprint('unequip_skin'), storage,
+      () => 'economy:22222222-2222-4222-8222-222222222222',
+    );
+    expect(created.status).toBe('ready');
+    expect(readAccountIntents(storage).status).toBe('valid');
+    if (created.status !== 'ready') return;
+
+    const equipped = parseAccountEconomyEnvelope(validEnvelope());
+    expect(equipped).not.toBeNull();
+    if (!equipped) return;
+    expect(stateConfirmsIntent(equipped, created.intent)).toBe(false);
+    expect(reconcileConfirmedAccountIntents(scope, equipped, storage)).toBe(true);
+    expect(readAccountIntents(storage).intents).toHaveLength(1);
+
+    const unequipped: AccountEconomyState = { ...equipped, equippedSkinId: null };
+    expect(stateConfirmsIntent(unequipped, created.intent)).toBe(true);
+    expect(reconcileConfirmedAccountIntents(scope, unequipped, storage)).toBe(true);
     expect(readAccountIntents(storage).intents).toHaveLength(0);
   });
 });

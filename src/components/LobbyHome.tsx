@@ -5,6 +5,7 @@ import ActivityBanner from './ActivityBanner';
 import RefinedLobby from './RefinedLobby';
 import type { LobbyBgmController } from '../hooks/useLobbyBgm';
 import type { SkinProduct } from '../economy/catalog';
+import type { WuxiaAvatarFrame } from './WuxiaAvatar';
 import { UI_PRESENTATION } from '../uiPresentation';
 import type { ShellView } from './GlobalShell';
 import type { LobbySubview } from '../lobbyFeatures';
@@ -21,6 +22,9 @@ interface Props {
   onOpenTutorial: () => void;
   equippedSkinName?: string | null;
   equippedSkin?: SkinProduct | null;
+  equippedFrame?: WuxiaAvatarFrame | null;
+  onOpenWardrobe?: () => void;
+  onOpenSkinStore?: () => void;
   identityName: string;
   identityHandle: string;
   isGuest: boolean;
@@ -70,6 +74,9 @@ const LobbyHome: React.FC<Props> = ({
   onOpenTutorial,
   equippedSkinName,
   equippedSkin,
+  equippedFrame,
+  onOpenWardrobe,
+  onOpenSkinStore,
   identityName,
   identityHandle,
   isGuest,
@@ -77,7 +84,7 @@ const LobbyHome: React.FC<Props> = ({
   bgm,
 }) => {
   if (!UI_PRESENTATION.showLegacyLobby) {
-    return <RefinedLobby equippedSkin={equippedSkin} onStartGame={onStartGame} onOpenTutorial={onOpenTutorial}
+    return <RefinedLobby equippedSkin={equippedSkin} equippedFrame={equippedFrame} onOpenWardrobe={onOpenWardrobe} onOpenSkinStore={onOpenSkinStore} onStartGame={onStartGame} onOpenTutorial={onOpenTutorial}
       identityName={identityName} identityHandle={identityHandle} isGuest={isGuest} onSignIn={onSignIn} bgm={bgm} />;
   }
   return (

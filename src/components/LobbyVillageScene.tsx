@@ -1,12 +1,13 @@
 import React from 'react';
 import type { SkinProduct } from '../economy/catalog';
 import { INK_SCENES } from '../scene/inkSceneConfig';
-import { isWuxiaSkinId } from './WuxiaCharacter';
+import { isWuxiaSkinId } from '../economy/skinAssets';
 
 interface Props {
   equippedSkin?: SkinProduct | null;
   /** 'vista' keeps the Lobby right stage open over the living village backdrop; 'card' renders a framed swordsman vignette for Profile wardrobe cards. */
   variant?: 'vista' | 'card';
+  onPreviewOutfit?: () => void;
 }
 
 /**
@@ -43,18 +44,19 @@ const LobbyVillageScene: React.FC<Props> = ({ equippedSkin, variant = 'vista' })
       className="night-village-art night-village-vista"
       data-equipped-skin={product?.id ?? 'default'}
       data-scene-stage="ink-vista"
-      role="img"
+      role="region"
       aria-label={
         product
           ? `Moonlit Wolf Village ink-wash vista attuned to the ${product.name} outfit`
           : 'Moonlit Wolf Village ink-wash vista beneath a crimson-rimmed silver moon'
       }
     >
-      <div className="night-vista-frame" aria-hidden="true">
+      <div className="night-vista-frame">
         {product && (
           <div
             className="night-vista-seal"
             data-skin-id={product.id}
+            aria-hidden="true"
             style={{ '--vista-accent': product.accent } as React.CSSProperties}
           >
             <span className="night-vista-seal-ring" />
@@ -65,9 +67,6 @@ const LobbyVillageScene: React.FC<Props> = ({ equippedSkin, variant = 'vista' })
           </div>
         )}
       </div>
-      <span className="night-eyebrow night-vista-caption">
-        {product ? `${product.name} · Moonlit Wolf Village` : 'Shadows of the village'}
-      </span>
     </div>
   );
 };

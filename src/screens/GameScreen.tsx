@@ -5,6 +5,7 @@ import type { useGameState } from '../hooks/useGameState';
 import type { useRecords } from '../hooks/useRecords';
 import type { DisplayLanguage } from '../i18n';
 import type { SkinProduct } from '../economy/catalog';
+import type { WuxiaAvatarFrame } from '../components/WuxiaAvatar';
 import { resolveVoteResult } from '../gameEngine';
 import { playTick } from '../services/speechAudio';
 import { PlayerCard } from '../components/PlayerCard';
@@ -55,6 +56,7 @@ export interface GameScreenProps {
   principalId: string | null;
   displayLanguage: DisplayLanguage;
   equippedSkinProduct: SkinProduct | null;
+  equippedFrame?: WuxiaAvatarFrame | null;
   economyFeedback: string | null | undefined;
   gameControlsSeen: Set<string>;
   /** Leave the match; App owns navigation and start/leave locks. */
@@ -67,7 +69,7 @@ export interface GameScreenProps {
  * and login never pay for game-room code.
  */
 const GameScreen: React.FC<GameScreenProps> = ({
-  game, rec, isGuest, principalId, displayLanguage, equippedSkinProduct,
+  game, rec, isGuest, principalId, displayLanguage, equippedSkinProduct, equippedFrame,
   economyFeedback, gameControlsSeen, onReturnToLobby,
 }) => {
   const [isGameInfoOpen, setIsGameInfoOpen] = useState(false);
@@ -273,6 +275,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
                 <PlayerCard
                   player={player} isMe={player.id === MY_PLAYER_ID}
                   equippedSkin={player.id === MY_PLAYER_ID ? equippedSkinProduct : null}
+                  equippedFrame={player.id === MY_PLAYER_ID ? equippedFrame : null}
                   revealRole={game.phase === GamePhase.GAME_OVER}
                   isSelected={game.selectedPlayerId === player.id}
                   isSpeaking={game.currentSpeaker?.id === player.id || game.wolfSpeakerId === player.id}

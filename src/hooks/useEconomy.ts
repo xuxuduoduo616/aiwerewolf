@@ -42,14 +42,14 @@ export interface UseEconomyResult {
   rewardGame: (gameId: string, won: boolean) => EconomyActionReturn;
   unlockSkin: (skinId: string) => EconomyActionReturn;
   equipSkin: (skinId: string) => EconomyActionReturn;
+  unequipSkin: () => EconomyActionReturn;
 }
 
 const accountViewState = (account: ReturnType<typeof useAccountEconomy>): EconomyViewState => ({
   coins: account.state.wallet.coins,
   crystals: account.state.wallet.crystals,
   inventory: account.state.inventory
-    .filter(item => item.itemKind === 'skin')
-    .map(item => `skin:${item.id}`),
+    .map(item => (item.itemKind === 'skin' ? `skin:${item.id}` : item.id)),
   equippedSkinId: account.state.equippedSkinId,
   checkInStreak: account.state.checkIn.streak,
   lastCheckInDay: account.state.checkIn.lastClaimDate,
@@ -109,6 +109,7 @@ export const useEconomy = (
         rewardGame: guest.rewardGame,
         unlockSkin: guest.unlockSkin,
         equipSkin: guest.equipSkin,
+        unequipSkin: guest.unequipSkin,
       };
     }
     return {
@@ -129,6 +130,7 @@ export const useEconomy = (
       rewardGame: (_gameId: string, _won: boolean) => account.rewardGame(),
       unlockSkin: account.unlockSkin,
       equipSkin: account.equipSkin,
+      unequipSkin: account.unequipSkin,
     };
   }, [account, guest, isGuest]);
 };

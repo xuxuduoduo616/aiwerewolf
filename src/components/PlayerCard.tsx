@@ -3,7 +3,7 @@ import { getPlayerModelBadge } from '../ai/modelRouting';
 import { Player, Role } from '../types';
 import { User, Eye, FlaskConical, Crosshair, Skull, Mic, BadgeHelp, PawPrint, Moon, Check } from 'lucide-react';
 import type { SkinProduct } from '../economy/catalog';
-import WuxiaCharacter, { isWuxiaSkinId } from './WuxiaCharacter';
+import { WuxiaAvatar, type WuxiaAvatarFrame } from './WuxiaAvatar';
 
 interface PlayerCardProps {
   player: Player;
@@ -17,6 +17,7 @@ interface PlayerCardProps {
   customBadge?: React.ReactNode;
   isWolfTeammate?: boolean;
   equippedSkin?: SkinProduct | null;
+  equippedFrame?: WuxiaAvatarFrame | null;
 }
 
 const ROLE_LABELS_EN: Record<Role, string> = {
@@ -61,6 +62,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
   customBadge,
   isWolfTeammate,
   equippedSkin,
+  equippedFrame,
 }) => {
   const showRole = revealRole || isMe || player.isRevealed;
 
@@ -88,24 +90,22 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
       )}
 
       <div className="relative mt-2">
-        {isMe && equippedSkin && isWuxiaSkinId(equippedSkin.id) ? (
-          <svg
-            className={`wuxia-character-avatar ${compact ? 'w-14 h-14' : 'w-16 h-16'} rounded-full border-2 border-zinc-600 bg-zinc-950 shadow-md`}
-            viewBox="0 0 240 300"
-            role="img"
-            aria-label={`${player.name} wearing ${equippedSkin.name}`}
-            data-ui-copy-category="USER_AUTHORED"
-            data-ui-copy-allow="USER_PLAYER_NAME"
-          >
-            <WuxiaCharacter product={equippedSkin} />
-          </svg>
-        ) : <img
-          src={player.avatarUrl}
-          alt={player.name}
-          data-ui-copy-category="USER_AUTHORED"
-          data-ui-copy-allow="USER_PLAYER_NAME"
-          className={`${compact ? 'w-14 h-14' : 'w-16 h-16'} rounded-full object-cover border-2 border-zinc-600 bg-zinc-950 shadow-md`}
-        />}
+        {isMe ? (
+          <WuxiaAvatar
+            skin={equippedSkin}
+            frame={equippedFrame}
+            size={compact ? 'seat-compact' : 'seat'}
+            alt={equippedSkin ? `${player.name} wearing ${equippedSkin.name}` : player.name}
+            userAuthoredAlt
+          />
+        ) : (
+          <WuxiaAvatar
+            src={player.avatarUrl}
+            size={compact ? 'seat-compact' : 'seat'}
+            alt={player.name}
+            userAuthoredAlt
+          />
+        )}
         {customBadge && <div className="absolute -top-2 -right-2 z-10">{customBadge}</div>}
         {isWolfTeammate && (
           <div

@@ -1,4 +1,5 @@
 import type { Role } from '../types';
+import { getSkinAvatarUrl } from '../economy/skinAssets';
 import { getRoleShowcaseSpec } from './roleShowcaseConfig';
 import { preloadSpeechPools } from './speechLibrary';
 
@@ -25,8 +26,11 @@ const preloadImage = (url: string): Promise<void> => new Promise(resolve => {
 export const preloadMatchAssets = async (
   players: readonly PreloadablePlayer[],
   humanRole?: Role,
+  equippedSkinId?: string | null,
 ): Promise<void> => {
-  const avatars = [...new Set(players.map(player => player.avatarUrl).filter((url): url is string => Boolean(url)))];
+  const seatAvatars = players.map(player => player.avatarUrl).filter((url): url is string => Boolean(url));
+  const skinAvatarUrl = equippedSkinId !== undefined ? getSkinAvatarUrl(equippedSkinId) : null;
+  const avatars = [...new Set(skinAvatarUrl ? [...seatAvatars, skinAvatarUrl] : seatAvatars)];
   const portraitUrl = humanRole ? getRoleShowcaseSpec(humanRole).portraitSrc : null;
   const imageUrls = portraitUrl && !avatars.includes(portraitUrl)
     ? [...avatars, portraitUrl]

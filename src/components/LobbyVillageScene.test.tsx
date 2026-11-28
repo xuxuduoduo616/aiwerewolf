@@ -10,6 +10,7 @@ describe('lobby ink-wash vista scene', () => {
     for (const equippedSkin of [null, { ...SKIN_CATALOG[0], id: 'retired-skin' }]) {
       const html = renderToStaticMarkup(<LobbyVillageScene equippedSkin={equippedSkin} />);
       expect(html).toContain('data-equipped-skin="default"');
+      expect(html).not.toContain('data-lobby-scroll-card');
       expect(html).toContain('data-scene-stage="ink-vista"');
       expect(html).not.toContain('night-traveler-cape');
       expect(html).not.toContain('wuxia-character');
@@ -26,6 +27,8 @@ describe('lobby ink-wash vista scene', () => {
       isGuest onSignIn={noop} equippedSkin={product}
     />);
     expect(html).toContain(`data-equipped-skin="${product.id}"`);
+    expect(html).not.toContain('data-lobby-scroll-card');
+    expect(html).toContain('night-identity-trigger');
     expect(html).toContain(`data-skin-id="${product.id}"`);
     expect(html).toContain(product.name);
     expect(html).toContain('data-scene-stage="ink-vista"');

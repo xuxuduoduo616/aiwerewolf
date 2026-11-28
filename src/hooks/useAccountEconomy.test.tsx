@@ -579,4 +579,55 @@ describe('useAccountEconomy live effects and transport behavior', () => {
     await harness.settle();
     expect(setItem.mock.calls.some(([key]) => key === 'aiwerewolf:economy:v1')).toBe(false);
   });
+
+  it('short-circuits unequipSkin when already default and confirms unequip_skin when equipped', async () => {
+    const sharedStorage = storage();
+    const alreadyDefaultState = accountState({ equippedSkinId: null });
+    const fetchDefault = vi.fn(async () => response(envelope(alreadyDefaultState))) as unknown as typeof fetch;
+    const defaultHarness = mount(session('account-a', 'generation-a'), fetchDefault, sharedStorage).harness;
+    await defaultHarness.settle();
+    await expect(defaultHarness.result.unequipSkin()).resolves.toBe(true);
+    await defaultHarness.settle();
+    expect(defaultHarness.result.feedback).toBe('Default outfit is already equipped.');
+    expect(fetchDefault).toHaveBeenCalledTimes(1);
+
+    const equippedState = accountState({ equippedSkinId: 'mist-wanderer' });
+    const unequippedState = accountState({ equippedSkinId: null });
+    const calls: Array<{ method: string; body?: string }> = [];
+    const queue = [response(envelope(equippedState)), response({ data: { action: 'unequip_skin', equippedSkinId: null } }), response(envelope(unequippedState))];
+    const fetchEquipped = vi.fn(async (_url: string | URL | Request, init?: RequestInit) => {
+      calls.push({ method: init?.method ?? 'GET', body: typeof init?.body === 'string' ? init.body : undefined });
+      return queue.shift() as Response;
+    }) as unknown as typeof fetch;
+    const equippedHarness = mount(session('account-a', 'generation-a'), fetchEquipped, sharedStorage).harness;
+    await equippedHarness.settle();
+    await expect(equippedHarness.result.unequipSkin()).resolves.toBe(true);
+    await equippedHarness.settle();
+    expect(equippedHarness.result.phase).toBe('ready');
+    expect(equippedHarness.result.state.equippedSkinId).toBeNull();
+    expect(equippedHarness.result.feedback).toBe('Default outfit equipped. Gameplay is unchanged.');
+    expect(JSON.parse(calls[1].body ?? '{}')).toMatchObject({ action: 'unequip_skin' });
+    expect(sharedStorage.getItem(ACCOUNT_INTENT_STORAGE_KEY)).toContain('"intents":[]');
+  });
+
+  it.each([
+    [409, 'UNEQUIP_UNAVAILABLE'],
+    [400, 'UNKNOWN_ACTION'],
+  ] as const)('clears unequip intent and stays ready on pre-migration %s/%s', async (status, code) => {
+    const sharedStorage = storage();
+    const equippedState = accountState({ equippedSkinId: 'mist-wanderer' });
+    const fetchImpl = vi.fn(async (_url: string | URL | Request, init?: RequestInit) => (
+      init?.method === 'POST' ? response({ code }, status) : response(envelope(equippedState))
+    )) as unknown as typeof fetch;
+    const { harness } = mount(session('account-a', 'generation-a'), fetchImpl, sharedStorage);
+    await harness.settle();
+    await expect(harness.result.unequipSkin()).resolves.toBe(false);
+    await harness.settle();
+    expect(harness.result.phase).toBe('ready');
+    expect(harness.result.state.equippedSkinId).toBe('mist-wanderer');
+    expect(harness.result.feedback).toBe(
+      'Default outfit restore is unavailable until the server economy update is applied. Nothing was changed.',
+    );
+    expect(sharedStorage.getItem(ACCOUNT_INTENT_STORAGE_KEY)).toContain('"intents":[]');
+  });
 });

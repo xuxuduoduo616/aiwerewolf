@@ -35,4 +35,17 @@ describe('ProfileView public identity', () => {
     expect(html).toContain('Sign out');
     expect(html).not.toContain('user-1');
   });
+
+  it('renders WuxiaAvatar in the profile header instead of a hardcoded wireframe svg', () => {
+    const html = renderToStaticMarkup(
+      <ProfileView
+        identityName="Village Traveler"
+        identityHandle="@player_one"
+        isGuest={false}
+        onSignIn={vi.fn()}
+      />,
+    );
+    expect(html).toContain('wuxia-avatar');
+    expect(html).toContain('Village Traveler avatar');
+  });
 });

@@ -55,6 +55,7 @@ export interface UseAccountEconomyResult {
   rewardGame: () => false;
   unlockSkin: (skinId: string) => Promise<boolean>;
   equipSkin: (skinId: string) => Promise<boolean>;
+  unequipSkin: () => Promise<boolean>;
   clearFeedback: () => void;
 }
 
@@ -358,6 +359,20 @@ export const useAccountEconomy = (
           setSnapshot({ ...emptySnapshot(marker, phase), feedback: feedbackForError(error), pendingAction: action });
           return false;
         }
+        if (
+          action === 'unequip_skin'
+          && error instanceof AccountEconomyRequestError
+          && (error.code === 'UNEQUIP_UNAVAILABLE' || error.code === 'UNKNOWN_ACTION')
+        ) {
+          clearAccountIntent(intent, storage);
+          setSnapshot(current => current.marker === marker ? {
+            ...current,
+            phase: 'ready',
+            pendingAction: null,
+            feedback: 'Default outfit restore is unavailable until the server economy update is applied. Nothing was changed.',
+          } : current);
+          return false;
+        }
         setSnapshot(current => current.marker === marker ? {
           ...current,
           phase: 'ready',
@@ -391,6 +406,17 @@ export const useAccountEconomy = (
       || !visible.state.inventory.some(item => item.id === skinId && item.itemKind === 'skin')) return Promise.resolve(false);
     return mutate('equip_skin', skinId, 'Cosmetic equipment confirmed by the account server. Gameplay is unchanged.');
   }, [mutate, visible.phase, visible.state.inventory]);
+  const unequipSkin = useCallback(() => {
+    if (visible.phase !== 'ready') return Promise.resolve(false);
+    if (visible.state.equippedSkinId === null) {
+      setSnapshot(current => current.marker === marker ? {
+        ...current,
+        feedback: 'Default outfit is already equipped.',
+      } : current);
+      return Promise.resolve(true);
+    }
+    return mutate('unequip_skin', '', 'Default outfit equipped. Gameplay is unchanged.');
+  }, [marker, mutate, visible.phase, visible.state.equippedSkinId]);
   const skipTutorial = useCallback(() => {
     setSnapshot(current => current.marker === marker ? {
       ...current,
@@ -421,8 +447,9 @@ export const useAccountEconomy = (
     rewardGame,
     unlockSkin,
     equipSkin,
+    unequipSkin,
     clearFeedback: () => setSnapshot(current => current.marker === marker ? { ...current, feedback: '' } : current),
-  }), [checkIn, equipSkin, finishTutorial, loadMore, marker, refresh, rewardGame, skipTutorial, unlockSkin, visible]);
+  }), [checkIn, equipSkin, finishTutorial, loadMore, marker, refresh, rewardGame, skipTutorial, unequipSkin, unlockSkin, visible]);
 };
 
 export default useAccountEconomy;

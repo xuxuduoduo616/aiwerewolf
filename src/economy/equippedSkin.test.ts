@@ -3,7 +3,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import type { UseEconomyResult } from '../hooks/useEconomy';
 import { SKIN_CATALOG } from './catalog';
-import { resolveEquippedSkinProduct, useEquippedSkinProduct } from './equippedSkin';
+import {
+  resolveEquippedAvatarFrame,
+  resolveEquippedSkinProduct,
+  useEquippedAvatarFrame,
+  useEquippedSkinProduct,
+} from './equippedSkin';
 
 type Input = Parameters<typeof resolveEquippedSkinProduct>[0];
 const ready = (id: string = SKIN_CATALOG[0].id): Input => ({
@@ -54,5 +59,53 @@ describe('equipped cosmetic authority and subject boundaries', () => {
   it('does not expose equipment without a current principal', () => {
     const Probe = () => React.createElement('output', null, useEquippedSkinProduct(ready(), null)?.id ?? 'default-avatar');
     expect(renderToStaticMarkup(React.createElement(Probe))).toContain('default-avatar');
+  });
+
+  it('resolves avatar frames with crimson-moon priority over ink-ring and enforces catalog/principal boundaries', () => {
+    const guestInk = {
+      ...ready(),
+      state: { ...ready().state, inventory: ['avatar-frame:ink-ring'] },
+    };
+    expect(resolveEquippedAvatarFrame(guestInk)).toBe('ink-ring');
+
+    const guestBoth = {
+      ...ready(),
+      state: { ...ready().state, inventory: ['avatar-frame:ink-ring', 'avatar-frame:crimson-moon'] },
+    };
+    expect(resolveEquippedAvatarFrame(guestBoth)).toBe('crimson-moon');
+    expect(resolveEquippedAvatarFrame({ ...guestBoth, ledgerCorrupt: true })).toBeNull();
+    expect(resolveEquippedAvatarFrame({ ...guestBoth, phase: 'loading' })).toBeNull();
+
+    const accountBoth = {
+      ...guestBoth,
+      mode: 'account' as const,
+      state: {
+        ...guestBoth.state,
+        accountCatalog: [
+          {
+            id: 'avatar-frame:ink-ring', name: 'Ink Ring Avatar Frame', itemKind: 'avatar_frame' as const,
+            tier: 'common' as const, currency: null, price: 0, assetKey: 'frames/ink-ring', purchaseEnabled: false,
+          },
+          {
+            id: 'avatar-frame:crimson-moon', name: 'Crimson Moon Avatar Frame', itemKind: 'avatar_frame' as const,
+            tier: 'rare' as const, currency: null, price: 0, assetKey: 'frames/crimson-moon', purchaseEnabled: false,
+          },
+        ],
+      },
+    };
+    expect(resolveEquippedAvatarFrame(accountBoth)).toBe('crimson-moon');
+    expect(resolveEquippedAvatarFrame({
+      ...accountBoth,
+      state: { ...accountBoth.state, accountCatalog: [] },
+    })).toBeNull();
+
+    const FrameProbe = () => React.createElement(
+      'output',
+      null,
+      useEquippedAvatarFrame(guestBoth, 'guest:11111111-1111-4111-8111-111111111111') ?? 'none',
+    );
+    expect(renderToStaticMarkup(React.createElement(FrameProbe))).toContain('crimson-moon');
+    const NoPrincipalProbe = () => React.createElement('output', null, useEquippedAvatarFrame(guestBoth, null) ?? 'none');
+    expect(renderToStaticMarkup(React.createElement(NoPrincipalProbe))).toContain('none');
   });
 });

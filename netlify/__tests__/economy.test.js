@@ -8,9 +8,11 @@ import { PGlite } from '@electric-sql/pglite';
 const testDir = dirname(fileURLToPath(import.meta.url));
 const functionPath = join(testDir, '../functions/economy.cjs');
 const sqlPath = join(testDir, '../../docs/economy-schema.sql');
+const migrationPath = join(testDir, '../../supabase/migrations/20261128142121_economy_unequip_skin.sql');
 const paymentPath = join(testDir, '../functions/payment-escrow.cjs');
 const functionSource = readFileSync(functionPath, 'utf8');
 const sqlSource = readFileSync(sqlPath, 'utf8');
+const migrationSource = readFileSync(migrationPath, 'utf8');
 const paymentSource = readFileSync(paymentPath, 'utf8');
 
 const sqlPrerequisites = `
@@ -543,6 +545,35 @@ describe('economy RPC allowlist and server authority', () => {
     expect(throwResult.body).not.toContain(TOKEN);
   });
 
+  it('routes unequip_skin to economy_unequip_skin, rejects extra fields, and maps missing-RPC errors to UNEQUIP_UNAVAILABLE', async () => {
+    const handler = loadHandler();
+    const okResult = await handler(postEvent({ action: 'unequip_skin', idempotencyKey: IDEMPOTENCY_KEY }));
+    expect(okResult.statusCode).toBe(200);
+    expect(rpc).toHaveBeenCalledWith('economy_unequip_skin', { p_idempotency_key: IDEMPOTENCY_KEY });
+
+    const extraFieldResult = await handler(postEvent({
+      action: 'unequip_skin',
+      idempotencyKey: IDEMPOTENCY_KEY,
+      skinId: 'mist-wanderer',
+    }));
+    expect(extraFieldResult.statusCode).toBe(400);
+    expect(parse(extraFieldResult)).toEqual({ code: 'INVALID_REQUEST' });
+
+    for (const error of [
+      { code: 'PGRST202', message: 'Could not find the function public.economy_unequip_skin(p_idempotency_key) in the schema cache' },
+      { code: '42883', message: 'function public.economy_unequip_skin(text) does not exist' },
+      { message: 'schema cache lookup failed for economy_unequip_skin' },
+    ]) {
+      const missingRpcHandler = loadHandler({
+        rpcImplementation: async () => ({ data: null, error }),
+      });
+      const result = await missingRpcHandler(postEvent({ action: 'unequip_skin', idempotencyKey: IDEMPOTENCY_KEY }));
+      expect(result.statusCode).toBe(409);
+      expect(parse(result)).toEqual({ code: 'UNEQUIP_UNAVAILABLE' });
+      expect(result.body).not.toMatch(/schema|function|PGRST202|42883|economy_unequip_skin/i);
+    }
+  });
+
   it('enforces default, bounded and cursor-aware ledger pagination', async () => {
     const handler = loadHandler();
     const bounded = await handler(createEvent({
@@ -1013,6 +1044,53 @@ describe('economy SQL behavior in PGlite', () => {
     expect(await countRows('economy_inventory', fundedUser.userId)).toBe(1);
     expect(await countRows('economy_ledger', fundedUser.userId)).toBe(1);
     expect(await countRows('economy_mutation_receipts', fundedUser.userId)).toBe(2);
+
+    const unequipKey = sqlKey('unequip-owned', fundedUser.identity);
+    const unequipped = await callSqlJson(
+      fundedUser.userId,
+      'public.economy_unequip_skin($1)',
+      [unequipKey],
+    );
+    expect(unequipped).toEqual({ action: 'unequip_skin', equippedSkinId: null });
+    const replayUnequip = await callSqlJson(
+      fundedUser.userId,
+      'public.economy_unequip_skin($1)',
+      [unequipKey],
+    );
+    expect(replayUnequip).toEqual(unequipped);
+    const afterUnequip = await sqlDb.query(`
+      select equipped_skin_id from public.economy_player_state where user_id = $1
+    `, [fundedUser.userId]);
+    expect(afterUnequip.rows).toEqual([{ equipped_skin_id: null }]);
+    expect(await countRows('economy_mutation_receipts', fundedUser.userId)).toBe(3);
+
+    const secondUnequip = await callSqlJson(
+      fundedUser.userId,
+      'public.economy_unequip_skin($1)',
+      [sqlKey('unequip-already-null', fundedUser.identity)],
+    );
+    expect(secondUnequip).toEqual({ action: 'unequip_skin', equippedSkinId: null });
+  });
+
+  it('applies the unequip migration idempotently in PGlite and allows unequip_skin receipts', async () => {
+    const migrationDb = new PGlite();
+    await migrationDb.exec(sqlPrerequisites);
+    await migrationDb.exec(sqlSource);
+    await migrationDb.exec(migrationSource);
+    await migrationDb.exec(migrationSource);
+
+    const migrationUser = sqlUuid(9, 1);
+    await migrationDb.query('insert into auth.users (id) values ($1)', [migrationUser]);
+    const result = await migrationDb.transaction(async (tx) => {
+      await tx.query('set local role authenticated');
+      await tx.query("select set_config('request.jwt.claim.sub', $1, true)", [migrationUser]);
+      return tx.query(
+        'select public.economy_unequip_skin($1) as result',
+        [sqlKey('migration-unequip', 1)],
+      );
+    });
+    expect(result.rows[0].result).toEqual({ action: 'unequip_skin', equippedSkinId: null });
+    await migrationDb.close();
   });
 });
 
@@ -1035,11 +1113,12 @@ describe('economy SQL atomic, reward, ownership and RLS contract', () => {
     expect(sqlSource).toMatch(/alter table public\.economy_gameplay_claims enable row level security/);
     expect(sqlSource).toMatch(/using \(\(select auth\.uid\(\)\) = user_id\)/);
     expect(sqlSource).toMatch(/revoke all on public\.economy_wallets[\s\S]*from public, anon, authenticated/);
-    expect(sqlSource.match(/grant execute on function public\.economy_/g)).toHaveLength(6);
+    expect(sqlSource.match(/grant execute on function public\.economy_/g)).toHaveLength(7);
 
     for (const name of [
       'economy_claim_check_in', 'economy_finish_onboarding',
       'economy_claim_gameplay_reward', 'economy_unlock_skin', 'economy_equip_skin',
+      'economy_unequip_skin',
     ]) {
       const signature = new RegExp(`function public\\.${name}\\(([^)]*)\\)`, 'i').exec(sqlSource)?.[1] || '';
       expect(signature).not.toMatch(/user_?id|date|price|reward|balance|result/i);

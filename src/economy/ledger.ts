@@ -38,7 +38,8 @@ export type GuestEconomyEventType =
   | 'TUTORIAL_FINISHED'
   | 'GAME_REWARD'
   | 'SKIN_UNLOCKED'
-  | 'SKIN_EQUIPPED';
+  | 'SKIN_EQUIPPED'
+  | 'SKIN_UNEQUIPPED';
 
 interface GuestEconomyEventBase {
   id: string;
@@ -84,13 +85,19 @@ export interface SkinEquippedEvent extends GuestEconomyEventBase {
   skinId: string;
 }
 
+export interface SkinUnequippedEvent extends GuestEconomyEventBase {
+  type: 'SKIN_UNEQUIPPED';
+  previousSkinId: string;
+}
+
 export type GuestEconomyEvent =
   | CheckInEvent
   | TutorialSkippedEvent
   | TutorialFinishedEvent
   | GameRewardEvent
   | SkinUnlockedEvent
-  | SkinEquippedEvent;
+  | SkinEquippedEvent
+  | SkinUnequippedEvent;
 
 export interface GuestEconomyLedgerV1 {
   schema: typeof GUEST_ECONOMY_SCHEMA;
@@ -242,6 +249,7 @@ export const reduceGuestEconomyLedger = (events: readonly unknown[]): GuestEcono
   const idempotencyKeys = new Set<string>();
   let lastOccurredAt = -Infinity;
   let equipEventCount = 0;
+  let unequipEventCount = 0;
 
   for (const candidate of events) {
     if (!isRecord(candidate) || !commonEventIsValid(candidate)) return null;
@@ -345,6 +353,16 @@ export const reduceGuestEconomyLedger = (events: readonly unknown[]): GuestEcono
         if (delta.coins !== 0 || delta.crystals !== 0 || state.equippedSkinId === candidate.skinId) return null;
         state.equippedSkinId = candidate.skinId as string;
         equipEventCount += 1;
+        break;
+      }
+      case 'SKIN_UNEQUIPPED': {
+        if (!isValidId(candidate.previousSkinId) || !SKIN_CATALOG_BY_ID.has(candidate.previousSkinId)) return null;
+        if (state.equippedSkinId !== candidate.previousSkinId) return null;
+        const expectedKey = `skin-unequip:v${unequipEventCount + 1}`;
+        if (candidate.idempotencyKey !== expectedKey) return null;
+        if (delta.coins !== 0 || delta.crystals !== 0) return null;
+        state.equippedSkinId = null;
+        unequipEventCount += 1;
         break;
       }
       default:
@@ -651,6 +669,26 @@ export const equipGuestSkin = (
   return appendEvent(event, storage, principalId);
 };
 
+export const unequipGuestSkin = (
+  storage?: Storage | null,
+  now = new Date(),
+  principalId?: string,
+): EconomyMutationResult => {
+  const current = readActiveGuestLedger(storage, principalId);
+  if (current.status === 'corrupt') return mutationFailure('ledger-corrupt');
+  if (current.state.equippedSkinId === null) {
+    return { ok: true, code: 'already-applied', state: current.state };
+  }
+  const unequipEventCount = current.state.events.filter(event => event.type === 'SKIN_UNEQUIPPED').length;
+  const key = `skin-unequip:v${unequipEventCount + 1}`;
+  const event: SkinUnequippedEvent = {
+    ...makeBaseEvent('SKIN_UNEQUIPPED', key, { coins: 0, crystals: 0 }, now),
+    type: 'SKIN_UNEQUIPPED',
+    previousSkinId: current.state.equippedSkinId,
+  };
+  return appendEvent(event, storage, principalId);
+};
+
 export const describeEconomyEvent = (event: GuestEconomyEvent): string => {
   switch (event.type) {
     case 'CHECK_IN':
@@ -669,5 +707,7 @@ export const describeEconomyEvent = (event: GuestEconomyEvent): string => {
       return `Skin unlocked · ${SKIN_CATALOG_BY_ID.get(event.skinId)?.name ?? event.skinId}`;
     case 'SKIN_EQUIPPED':
       return `Skin equipped · ${SKIN_CATALOG_BY_ID.get(event.skinId)?.name ?? event.skinId}`;
+    case 'SKIN_UNEQUIPPED':
+      return 'Default outfit restored';
   }
 };

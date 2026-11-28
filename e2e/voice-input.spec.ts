@@ -26,9 +26,9 @@ import {
  * The fake device emits a synthetic tone, so the recognized text would be
  * meaningless: this spec never asserts real recognition content.
  *
- * Pre-existing third-party assets: `index.html` loads Google Fonts, the login
- * page loads the Cloudflare Turnstile script, and player seats load DiceBear
- * avatars. Those are application assets unrelated to voice. The catch-all
+ * Pre-existing third-party assets: `index.html` loads Google Fonts and the login
+ * page loads the Cloudflare Turnstile script. Those are application assets
+ * unrelated to voice. The catch-all
  * route below aborts every non-local request before any network I/O, so no
  * third-party host ever receives or answers a request; the audit then proves
  * that the voice flow itself adds none of them, that no external request
@@ -45,7 +45,6 @@ const PRE_EXISTING_STATIC_HOSTS = new Set([
   'fonts.googleapis.com',
   'fonts.gstatic.com',
   'challenges.cloudflare.com',
-  'api.dicebear.com',
 ]);
 const ASR_PROVIDER_URL = /qwen|dashscope|aliyuncs|bailian/i;
 

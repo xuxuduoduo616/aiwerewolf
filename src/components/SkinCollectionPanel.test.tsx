@@ -10,7 +10,7 @@ const makeEconomy = (): Economy => ({
   mode: 'guest', phase: 'ready', ledgerCorrupt: false,
   state: { ...createEmptyGuestEconomyState(), serverDate: null, guestEvents: [], accountLedger: [], accountCatalog: [], nextCursor: null },
   statusMessage: '', feedback: '', mutationsDisabled: false, pendingAction: null,
-  refresh: vi.fn(), equipSkin: vi.fn(),
+  refresh: vi.fn(), equipSkin: vi.fn(), unequipSkin: vi.fn(),
 });
 
 describe('verified profile wardrobe', () => {
@@ -61,5 +61,18 @@ describe('verified profile wardrobe', () => {
     expect(html).toContain('Refresh Collection');
     expect(html).not.toContain('Mist Wanderer');
     expect(html).not.toContain('is-equipped');
+  });
+
+  it('renders Equip Default button when a non-default skin is equipped and disables it when default is equipped', () => {
+    const economy = makeEconomy();
+    const defaultHtml = renderToStaticMarkup(<SkinCollectionPanel economy={economy} />);
+    expect(defaultHtml).toContain('data-skin-id="default"');
+    expect(defaultHtml).not.toContain('Equip Default');
+
+    economy.state.inventory = ['skin:mist-wanderer'];
+    economy.state.equippedSkinId = 'mist-wanderer';
+    const equippedHtml = renderToStaticMarkup(<SkinCollectionPanel economy={economy} />);
+    expect(equippedHtml).toContain('aria-label="Equip Default Outfit"');
+    expect(equippedHtml).toContain('Equip Default');
   });
 });

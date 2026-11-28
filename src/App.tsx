@@ -22,7 +22,7 @@ import { useLobbyFeatures } from './hooks/useLobbyFeatures';
 import { useLobbyBgm } from './hooks/useLobbyBgm';
 import { useEconomy, type EconomyViewState } from './hooks/useEconomy';
 import { SKIN_CATALOG_BY_ID } from './economy/catalog';
-import { useEquippedSkinProduct } from './economy/equippedSkin';
+import { useEquippedAvatarFrame, useEquippedSkinProduct } from './economy/equippedSkin';
 import { navigateEconomyRoute, readEconomyRoute, type EconomyRoute } from './economy/routes';
 import { getTerminalRewardRequest } from './economy/gameRewards';
 import type { SkinStoreFilter } from './components/SkinStore';
@@ -101,6 +101,7 @@ const App: React.FC = () => {
   const [startRequestRevision, setStartRequestRevision] = useState(0);
   const [shopSection, setShopSection] = useState<ShopSection>('skins');
   const [skinStoreFilter, setSkinStoreFilter] = useState<SkinStoreFilter>('all');
+  const pendingSkinFilterRef = React.useRef<SkinStoreFilter | null>(null);
   const [isTutorialOpen, setIsTutorialOpen] = useState(false);
   const [tutorialStage, setTutorialStage] = useState<'lobby' | 'single-player' | 'match-setup'>('lobby');
   const fullGuideRef = React.useRef(false);
@@ -152,11 +153,20 @@ const App: React.FC = () => {
         setActiveView('home');
         setLobbySubview('home');
         break;
-      case 'skin-store':
+      case 'skin-store': {
         setActiveView('shop');
         setShopSection(route.section);
-        setSkinStoreFilter(route.season === 'tidal' ? 'tidal' : 'all');
+        const pendingFilter = pendingSkinFilterRef.current;
+        pendingSkinFilterRef.current = null;
+        setSkinStoreFilter(
+          route.season === 'tidal'
+            ? 'tidal'
+            : pendingFilter && pendingFilter !== 'tidal'
+              ? pendingFilter
+              : 'all',
+        );
         break;
+      }
       case 'online-qualifier':
         setActiveView('home');
         setLobbySubview('online-qualifier');
@@ -220,6 +230,7 @@ const App: React.FC = () => {
   const displayedCrystals = economy.state.crystals;
   const equippedSkinName = resolveEquippedSkinName(economy.state, auth.isGuest);
   const equippedSkinProduct = useEquippedSkinProduct(economy, auth.isGuest ? guestPrincipalId : auth.session?.user.id ?? null);
+  const equippedFrame = useEquippedAvatarFrame(economy, auth.isGuest ? guestPrincipalId : auth.session?.user.id ?? null);
 
   const openStartGame = () => {
     void loadGameScreen();
@@ -326,6 +337,7 @@ const App: React.FC = () => {
           principalId={principalId}
           displayLanguage={displayLanguage}
           equippedSkinProduct={equippedSkinProduct}
+          equippedFrame={equippedFrame}
           economyFeedback={economy.feedback}
           gameControlsSeen={gameControlsSeenRef.current}
           onReturnToLobby={returnToLobby}
@@ -371,6 +383,9 @@ const App: React.FC = () => {
             onOpenTutorial={() => { fullGuideRef.current = true; setTutorialStage('lobby'); setIsTutorialOpen(true); }}
             equippedSkinName={equippedSkinName}
             equippedSkin={equippedSkinProduct}
+            equippedFrame={equippedFrame}
+            onOpenWardrobe={() => navigateShell('profile')}
+            onOpenSkinStore={() => navigateEconomy({ page: 'skin-store', season: 'all', section: 'skins' })}
             identityName={publicName}
             identityHandle={publicHandle}
             isGuest={auth.isGuest}
@@ -504,9 +519,19 @@ const App: React.FC = () => {
             skinFilter={skinStoreFilter}
             onSkinFilterChange={filter => {
               setSkinStoreFilter(filter);
+              const targetSeason = filter === 'tidal' ? 'tidal' : 'all';
+              const currentRoute = readEconomyRoute();
+              if (
+                currentRoute.page === 'skin-store'
+                && currentRoute.section === 'skins'
+                && currentRoute.season === targetSeason
+              ) {
+                return;
+              }
+              pendingSkinFilterRef.current = filter;
               navigateEconomyRoute({
                 page: 'skin-store',
-                season: filter === 'tidal' ? 'tidal' : 'all',
+                season: targetSeason,
                 section: 'skins',
               });
             }}

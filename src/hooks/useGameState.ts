@@ -17,7 +17,8 @@ import {
   Winner,
   WolfChatMessage,
 } from '../types';
-import { AI_NAMES, AVATAR_SEEDS, MAX_WOLF_CHAT_LENGTH } from '../constants';
+import { AI_NAMES, MAX_WOLF_CHAT_LENGTH } from '../constants';
+import { getAiAvatarUrl, getSkinAvatarUrl } from '../economy/skinAssets';
 import { generateAIAction, generateAIDialogue, generateWolfChat, resetAIMemory, setAIDifficulty } from '../ai/aiOrchestrator';
 import { CUSTOM_AI_STYLES, pickRolePersona } from '../services/aiStyles';
 import {
@@ -813,7 +814,7 @@ export function useGameState(authContext: AuthContext) {
         isAlive: true,
         canVote: true,
         isRevealed: false,
-        avatarUrl: `https://api.dicebear.com/7.x/notionists/svg?seed=${isHuman ? 'MySelf' : AVATAR_SEEDS[index % AVATAR_SEEDS.length]}&backgroundColor=transparent`,
+        avatarUrl: isHuman ? getSkinAvatarUrl(null) : getAiAvatarUrl(index),
         aiPersonality: isHuman ? 'Human' : styleConf.label,
         aiModelLabel: isHuman ? 'HUMAN' : assigned ? getExpressionModel(assigned).label : '',
         aiStyleId: isHuman ? undefined : styleKey,

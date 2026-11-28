@@ -8,6 +8,7 @@ import {
   readGuestEconomyLedgerForPrincipal,
   recordGuestTutorialSkip,
   rewardGuestGame,
+  unequipGuestSkin,
   unlockGuestSkin,
   type EconomyMutationResult,
   type GuestEconomyState,
@@ -16,7 +17,7 @@ import {
 
 export const ACCOUNT_ECONOMY_UNAVAILABLE = 'Account rewards and cosmetic changes are unavailable until the server economy is enabled.';
 
-type EconomyAction = 'check-in' | 'tutorial-skip' | 'tutorial-finish' | 'game-reward' | 'skin-unlock' | 'skin-equip';
+type EconomyAction = 'check-in' | 'tutorial-skip' | 'tutorial-finish' | 'game-reward' | 'skin-unlock' | 'skin-equip' | 'skin-unequip';
 type GuestActionReturn = EconomyMutationResult | Promise<boolean>;
 export type EconomyIdentity = 'guest' | 'account';
 const GUEST_LEDGER_LOCK = 'aiwerewolf:guest-economy-ledger';
@@ -39,6 +40,7 @@ export interface UseGuestEconomyResult {
   rewardGame: (gameId: string, won: boolean) => GuestActionReturn;
   unlockSkin: (skinId: string) => GuestActionReturn;
   equipSkin: (skinId: string) => GuestActionReturn;
+  unequipSkin: () => GuestActionReturn;
 }
 
 const accountUnavailableResult = (): EconomyMutationResult => ({
@@ -76,6 +78,7 @@ const feedbackForResult = (action: EconomyAction, result: EconomyMutationResult)
     if (action === 'tutorial-finish') return 'The guide reward was already recorded.';
     if (action === 'game-reward') return 'This match result was already recorded.';
     if (action === 'skin-equip') return 'This cosmetic is already equipped.';
+    if (action === 'skin-unequip') return 'Default outfit is already equipped.';
     return 'This action was already recorded.';
   }
   switch (action) {
@@ -87,6 +90,7 @@ const feedbackForResult = (action: EconomyAction, result: EconomyMutationResult)
       : 'Match completed. The local daily reward cap was already reached.';
     case 'skin-unlock': return 'Cosmetic unlocked.';
     case 'skin-equip': return 'Cosmetic equipped. Gameplay is unchanged.';
+    case 'skin-unequip': return 'Default outfit equipped. Gameplay is unchanged.';
   }
 };
 
@@ -185,6 +189,7 @@ export const useGuestEconomy = (isGuest: boolean, guestPrincipalId: string | nul
   );
   const unlockSkin = useCallback((skinId: string) => run('skin-unlock', () => unlockGuestSkin(skinId, undefined, new Date(), guestPrincipalId ?? undefined)), [guestPrincipalId, run]);
   const equipSkin = useCallback((skinId: string) => run('skin-equip', () => equipGuestSkin(skinId, undefined, new Date(), guestPrincipalId ?? undefined)), [guestPrincipalId, run]);
+  const unequipSkin = useCallback(() => run('skin-unequip', () => unequipGuestSkin(undefined, new Date(), guestPrincipalId ?? undefined)), [guestPrincipalId, run]);
 
   const current = snapshot?.principal === principal ? snapshot : initial;
   return {
@@ -200,6 +205,7 @@ export const useGuestEconomy = (isGuest: boolean, guestPrincipalId: string | nul
     rewardGame,
     unlockSkin,
     equipSkin,
+    unequipSkin,
   };
 };
 

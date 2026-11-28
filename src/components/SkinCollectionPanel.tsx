@@ -2,11 +2,12 @@ import React from 'react';
 import { SKIN_CATALOG } from '../economy/catalog';
 import { resolveSkinPresentation } from './SkinStore';
 import SkinArtwork from './SkinArtwork';
-import LobbyVillageScene from './LobbyVillageScene';
-import type { UseEconomyResult } from '../hooks/useEconomy';
+import type { EconomyActionReturn, UseEconomyResult } from '../hooks/useEconomy';
 
 export interface SkinCollectionProps {
-  economy?: Pick<UseEconomyResult, 'phase' | 'ledgerCorrupt' | 'mode' | 'state' | 'statusMessage' | 'refresh' | 'feedback' | 'mutationsDisabled' | 'pendingAction' | 'equipSkin'>;
+  economy?: Pick<UseEconomyResult, 'phase' | 'ledgerCorrupt' | 'mode' | 'state' | 'statusMessage' | 'refresh' | 'feedback' | 'mutationsDisabled' | 'pendingAction' | 'equipSkin'> & {
+    unequipSkin?: () => EconomyActionReturn;
+  };
   onOpenStore?: () => void;
 }
 
@@ -33,9 +34,26 @@ const SkinCollectionPanel: React.FC<SkinCollectionProps> = ({ economy, onOpenSto
       <p className="economy-live-feedback" role="status" aria-live="polite">{economy?.feedback}</p>
       <div className="skin-grid">
         <article className={`skin-card${equippedId === null ? ' is-equipped' : ''}`} data-owned-skin="default">
-          <div className="skin-card-art skin-collection-default"><LobbyVillageScene variant="card" /></div>
+          <div className="skin-card-art skin-collection-default"><SkinArtwork defaultOutfit /></div>
           <div className="skin-card-heading"><span>Original · Permanent</span><h3>Default Outfit</h3><p>Your original village traveler. Always included in your collection.</p></div>
           <div className="skin-card-state"><span className="skin-status">{equippedId === null ? 'Equipped' : 'Owned'}</span><strong>Free · Always owned</strong></div>
+          <div className="skin-card-actions">
+            {!verified || equippedId === null ? (
+              <button type="button" className="skin-primary-action" disabled>
+                {equippedId === null ? 'Equipped' : 'Default Outfit'}
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="skin-primary-action"
+                disabled={economy?.mutationsDisabled || economy?.pendingAction !== null}
+                onClick={() => { void economy?.unequipSkin?.(); }}
+                aria-label="Equip Default Outfit"
+              >
+                {economy?.pendingAction === 'unequip_skin' ? 'Verifying Default…' : 'Equip Default'}
+              </button>
+            )}
+          </div>
         </article>
         {owned.map(product => {
           const presentation = resolveSkinPresentation(product, Boolean(isGuest), economy?.state.accountCatalog.find(item => item.id === product.id));

@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { PawPrint } from 'lucide-react';
+import { PawPrint, VenetianMask } from 'lucide-react';
 import { Role } from '../types';
 import { getRoleShowcaseSpec } from '../services/roleShowcaseConfig';
 import RoleBadgeIcon from './RoleBadgeIcon';
 import '../styles/lobby-role-bubbles.css';
 
-const roles = [Role.WEREWOLF, Role.SEER, Role.WITCH, Role.HUNTER];
+const roles = [Role.WEREWOLF, Role.SEER, Role.WITCH, Role.HUNTER, Role.IDIOT];
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
 
 interface Bloom {
@@ -89,7 +89,13 @@ export default function LobbyRoleBubbles() {
             reveal(role, event.currentTarget);
           }
         }}>
-        {role === Role.WEREWOLF ? <PawPrint aria-hidden="true" /> : <RoleBadgeIcon role={role} />}
+        {role === Role.WEREWOLF ? (
+          <PawPrint aria-hidden="true" />
+        ) : role === Role.IDIOT ? (
+          <VenetianMask aria-hidden="true" />
+        ) : (
+          <RoleBadgeIcon role={role} />
+        )}
       </button>;
     })}
     {bloom && <figure key={bloom.id} className="role-ink-bloom" data-closing={bloom.closing} style={bloom.style}>
